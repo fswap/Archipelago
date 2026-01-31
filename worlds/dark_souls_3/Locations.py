@@ -200,6 +200,8 @@ class DS3LocationData:
         if self.hostile_npc: names.append("Hostile NPC Rewards")
         if self.npc: names.append("Friendly NPC Rewards")
         if self.lizard: names.append("Small Crystal Lizards")
+        if self.drop: names.append("Drops")
+        if self.shop: names.append("Shops")
         if self.hidden: names.append("Hidden")
 
         default_item = item_dictionary[cast(str, self.default_item_name)]
@@ -688,7 +690,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("US: Cornyx's Skirt - kill Cornyx", "Cornyx's Skirt",
                         static='02,0:50006141::', npc=True),
         DS3LocationData("US: Tower Key - kill Irina", "Tower Key",
-                        omit=is_unrandomized_and_missable, missable=missable_quest, npc=True),
+                        omit=is_unrandomized_and_missable, missable=missable_quest, npc=True,
+                        drop=True),
         DS3LocationData("US: Flynn's Ring - tower village, rooftop", "Flynn's Ring"),
         DS3LocationData("US: Undead Bone Shard - by white tree", "Undead Bone Shard"),
         DS3LocationData("US: Alluring Skull - foot, behind carriage", "Alluring Skull x2"),
@@ -852,7 +855,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         missable=missable_quest, conditional=True, npc=True, shop=True),
         DS3LocationData("FS: Londor Braille Divine Tome - Yuria shop", "Londor Braille Divine Tome",
                         static='99,0:-1:40000,110000,70000116:', missable=missable_quest,
-                        conditional=True, npc=True),
+                        conditional=True, npc=True, shop=True),
         DS3LocationData("FS: Darkdrift - kill Yuria", "Darkdrift", missable=missable_quest,
                         conditional=True, drop=True, npc=True),  # kill her or kill Soul of Cinder
 
@@ -3155,6 +3158,8 @@ location_name_groups: Dict[str, Set[str]] = {
     "Hostile NPC Rewards": set(),
     "Friendly NPC Rewards": set(),
     "Small Crystal Lizards": set(),
+    "Drops": set(),
+    "Shops": set(),
     "Upgrade": set(),
     "Small Souls": set(),
     "Boss Souls": set(),
@@ -3181,6 +3186,9 @@ location_descriptions = {
                            "invaders and initially-friendly NPCs that must be fought as part of their quest.",
     "Friendly NPC Rewards": "Items given by friendly NPCs as part of their quests or from " + \
                             "non-violent interaction.",
+    "Drops": "Drops from anything other than bosses, including minibosses, mimics, lizards, " + \
+             "NPCs, or just normal enemies.",
+    "Shops": "Locations in NPC shops such as the Shrine Handmaiden, Greirat, Cornyx, and so on.",
     "Upgrade": "Locations that contain upgrade items in vanilla, including titanite, gems, and " + \
                "Shriving Stones.",
     "Small Souls": "Locations that contain soul items in vanilla, not including boss souls.",
