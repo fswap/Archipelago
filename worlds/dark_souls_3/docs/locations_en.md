@@ -132,6 +132,12 @@ following NPCs' quests are supported:
   starting class. He can't be killed for his drops until you've given him all
   three Pyromancy Tomes that he accepts.
 
+* **Orbeck** will always give a Young Dragon Ring replacement regardless of your
+  starting class. He won't leave Firelink because you didn't give him a scroll
+  quiickly enough. He can't be killed for his drops until you've given him all
+  four Scrolls *and* you've received the Slumbering Dragoncrest Ring
+  replacement.
+
 * **Yoel** won't die until you get five levels of hollowing.
 
 * **Yuria** can't be killed until after you've married Anri. No Fire Keeper Soul
@@ -158,6 +164,21 @@ you'll always be able to buy all the transposition items for a given boss soul
 if you really need to, so those locations can contain progression items. Note
 that Ludleth *does* add a hefty surcharge for replacement souls, so you'll still
 have to think carefully before cracking a boss soul for levels.
+
+## Other Event Changes
+
+This mod makes a few additional unobtrusive changes to the game's event logic
+that are always on.
+
+* Orbeck no longer cares which specific spells you buy from him when giving you
+  the replacements for the Young Dragon Ring and the Slumbering Dragoncrast
+  Ring, because there's no easy way to know which items correspond to the four
+  spells that cause him to give you the item.
+
+* Fix a Crystal Lizard in Lothric castle sometimes despawning permanently
+  without being killed or dropping its item.
+
+* Remove a duplicate item from near the Undead Settlement birch tree.
 
 ## Understanding Location Names
 
@@ -1463,7 +1484,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Seething Chaos - Ludleth for Demon Prince</td><td>Boss weapon for Demon Prince</td></tr>
 <tr><td>FS: Silvercat Ring - Sirris for killing Creighton</td><td>Given by Sirris talking to her in Firelink Shrine after invading and vanquishing Creighton.</td></tr>
 <tr><td>FS: Skull Ring - kill Ludleth</td><td>Dropped by Ludleth upon death, including after placing all cinders. Note that if killed before giving Transposing Kiln, transposition is not possible.</td></tr>
-<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for buying four specific spells</td><td>Given by Orbeck after purchasing the shop items corresponding to Aural Decoy, Farron Flashsword, Spook (starting items), and Pestilent Mist (after giving one scroll).</td></tr>
+<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for one scroll and buying seven spells</td><td>Given by Orbeck after purchasing the shop items corresponding to Aural Decoy, Farron Flashsword, Spook (starting items), and Pestilent Mist (after giving one scroll).</td></tr>
 <tr><td>FS: Smough&#x27;s Armor - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Gauntlets - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Helm - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
@@ -2270,7 +2291,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>US: Hawk Ring - Giant Archer</td><td>Dropped by Giant, either by killing him or collecting all of the birch tree items locations in the base game.</td></tr>
 <tr><td>US: Heavy Gem - Hawkwood</td><td>Given or dropped by Hawkwood after defeating Curse-Rotted Greatwood or Crystal Sage</td></tr>
 <tr><td>US: Heavy Gem - chasm, lizard</td><td>Drop by Crystal Lizard in ravine accessible by Grave Key or dropping down near Eygon.</td></tr>
-<tr><td>US: Homeward Bone - foot, drop overlook</td><td>Under Foot of the High Wall bonfire, around where Yoel can be first met</td></tr>
+<tr><td>US: Homeward Bone - foot, drop overlook</td><td>At the start of Fire Demon area, to the right shortly after dropping down.</td></tr>
 <tr><td>US: Homeward Bone - stable roof</td><td>In the thrall area across the bridge from the first Undead Settlement building, on a roof overlooking the ravine bridge.</td></tr>
 <tr><td>US: Homeward Bone - tower village, jump from roof</td><td>At the end of the loop from the Siegward Demon fight, after dropping down from the roof onto the tower with Chloranthy Ring, to the right of the tower entrance</td></tr>
 <tr><td>US: Homeward Bone - tower village, right at start</td><td>Under Foot of the High Wall bonfire, around where Yoel can be first met</td></tr>
