@@ -203,7 +203,7 @@ one that's included with Archipelago by default.
   required. The default is still just defeating Soul of Cinder.
 
 * Death link is now more customizable. You can choose to only send death links
-  when you die *without* picking up your sould. You can also enable "death link
+  when you die *without* picking up your souls. You can also enable "death link
   amnesty", which allows you to choose how many deaths you have to experience
   before sending a death link to your team.
 
