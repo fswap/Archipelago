@@ -197,6 +197,8 @@ class DS3LocationData:
         if self.hostile_npc: names.append("Hostile NPC Rewards")
         if self.npc: names.append("Friendly NPC Rewards")
         if self.lizard: names.append("Small Crystal Lizards")
+        if self.drop: names.append("Drops")
+        if self.shop: names.append("Shops")
         if self.hidden: names.append("Hidden")
 
         default_item = item_dictionary[cast(str, self.default_item_name)]
@@ -629,7 +631,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         static='02,0:50006141::', npc=True),
         DS3LocationData("US: Cornyx's Skirt - kill Cornyx", "Cornyx's Skirt",
                         static='02,0:50006141::', npc=True),
-        DS3LocationData("US: Tower Key - kill Irina", "Tower Key", missable=True, npc=True),
+        DS3LocationData("US: Tower Key - kill Irina", "Tower Key", missable=True, npc=True,
+                        drop=True),
         DS3LocationData("US: Flynn's Ring - tower village, rooftop", "Flynn's Ring"),
         DS3LocationData("US: Undead Bone Shard - by white tree", "Undead Bone Shard"),
         DS3LocationData("US: Alluring Skull - foot, behind carriage", "Alluring Skull x2"),
@@ -781,13 +784,15 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("FS: Soul Greatsword - Yoel/Yuria shop", "Soul Greatsword",
                         static='99,0:-1:50000,110000,70000450,70000475:', missable=True,
                         npc=True, shop=True),
-        DS3LocationData("FS: Dark Hand - Yuria shop", "Dark Hand", missable=True, npc=True),
+        DS3LocationData("FS: Dark Hand - Yuria shop", "Dark Hand", missable=True, npc=True,
+                        shop=True),
         DS3LocationData("FS: Untrue White Ring - Yuria shop", "Untrue White Ring", missable=True,
-                        npc=True),
+                        npc=True, shop=True),
         DS3LocationData("FS: Untrue Dark Ring - Yuria shop", "Untrue Dark Ring", missable=True,
-                        npc=True),
+                        npc=True, shop=True),
         DS3LocationData("FS: Londor Braille Divine Tome - Yuria shop", "Londor Braille Divine Tome",
-                        static='99,0:-1:40000,110000,70000116:', missable=True, npc=True),
+                        static='99,0:-1:40000,110000,70000116:', missable=True, npc=True,
+                        shop=True),
         DS3LocationData("FS: Darkdrift - kill Yuria", "Darkdrift", missable=True, drop=True,
                         npc=True),  # kill her or kill Soul of Cinder
 
@@ -3081,6 +3086,8 @@ location_name_groups: Dict[str, Set[str]] = {
     "Hostile NPC Rewards": set(),
     "Friendly NPC Rewards": set(),
     "Small Crystal Lizards": set(),
+    "Drops": set(),
+    "Shops": set(),
     "Upgrade": set(),
     "Small Souls": set(),
     "Boss Souls": set(),
@@ -3107,6 +3114,9 @@ location_descriptions = {
                            "invaders and initially-friendly NPCs that must be fought as part of their quest.",
     "Friendly NPC Rewards": "Items given by friendly NPCs as part of their quests or from " + \
                             "non-violent interaction.",
+    "Drops": "Drops from anything other than bosses, including minibosses, mimics, lizards, " + \
+             "NPCs, or just normal enemies.",
+    "Shops": "Locations in NPC shops such as the Shrine Handmaiden, Greirat, Cornyx, and so on.",
     "Upgrade": "Locations that contain upgrade items in vanilla, including titanite, gems, and " + \
                "Shriving Stones.",
     "Small Souls": "Locations that contain soul items in vanilla, not including boss souls.",
