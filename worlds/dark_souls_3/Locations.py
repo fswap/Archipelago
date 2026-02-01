@@ -3087,45 +3087,45 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("FS: Dark Edge - Karla", "Dark Edge", shop=True, npc=True),
 
         # Quelana Pyromancy Tome
-        DS3LocationData("FS: Firestorm - Karla for Quelana Tome", "Firestorm", missable=True,
-                        shop=True, npc=True),
-        DS3LocationData("FS: Rapport - Karla for Quelana Tome", "Rapport", missable=True,
-                        shop=True, npc=True),
-        DS3LocationData("FS: Fire Whip - Karla for Quelana Tome", "Fire Whip", missable=True,
-                        shop=True, npc=True),
+        DS3LocationData("FS: Firestorm - Karla for Quelana Tome", "Firestorm",
+                        missable=missable_quest, shop=True, npc=True),
+        DS3LocationData("FS: Rapport - Karla for Quelana Tome", "Rapport",
+                        missable=missable_quest, shop=True, npc=True),
+        DS3LocationData("FS: Fire Whip - Karla for Quelana Tome", "Fire Whip",
+                        missable=missable_quest, shop=True, npc=True),
 
         # Grave Warden Pyromancy Tome
         DS3LocationData("FS: Black Flame - Karla for Grave Warden Tome", "Black Flame",
-                        missable=True, shop=True, npc=True),
+                        missable=missable_quest, shop=True, npc=True),
         DS3LocationData("FS: Black Fire Orb - Karla for Grave Warden Tome", "Black Fire Orb",
-                        missable=True, shop=True, npc=True),
+                        missable=missable_quest, shop=True, npc=True),
 
         # Deep Braille Divine Tome. This can also be given to Irina in missable quest mode, but
         # it'll fail her quest
-        DS3LocationData("FS: Gnaw - Karla for Deep Braille Tome", "Gnaw", missable=True,
+        DS3LocationData("FS: Gnaw - Karla for Deep Braille Tome", "Gnaw", missable=missable_quest,
                         npc=True, shop=True),
         DS3LocationData("FS: Deep Protection - Karla for Deep Braille Tome", "Deep Protection",
-                        missable=True, npc=True, shop=True),
+                        missable=missable_quest, npc=True, shop=True),
 
         # Londor Braille Divine Tome. This can also be given to Irina in missable quest mode, but
         # it'll fail her quest
         DS3LocationData("FS: Vow of Silence - Karla for Londor Tome", "Vow of Silence",
-                        missable=True, npc=True, shop=True),
-        DS3LocationData("FS: Dark Blade - Karla for Londor Tome", "Dark Blade", missable=True,
-                        npc=True, shop=True),
-        DS3LocationData("FS: Dead Again - Karla for Londor Tome", "Dead Again", missable=True,
-                        npc=True, shop=True),
+                        missable=missable_quest, npc=True, shop=True),
+        DS3LocationData("FS: Dark Blade - Karla for Londor Tome", "Dark Blade",
+                        missable=missable_quest, npc=True, shop=True),
+        DS3LocationData("FS: Dead Again - Karla for Londor Tome", "Dead Again",
+                        missable=missable_quest, npc=True, shop=True),
 
         # Drops on death. Missable because the player would have to decide between killing her or
         # seeing everything she sells.
         DS3LocationData("FS: Karla's Pointed Hat - kill Karla", "Karla's Pointed Hat",
-                        static='07,0:50006150::', missable=True, drop=True, npc=True),
+                        static='07,0:50006150::', missable=missable_quest, drop=True, npc=True),
         DS3LocationData("FS: Karla's Coat - kill Karla", "Karla's Coat",
-                        static='07,0:50006150::', missable=True, drop=True, npc=True),
+                        static='07,0:50006150::', missable=missable_quest, drop=True, npc=True),
         DS3LocationData("FS: Karla's Gloves - kill Karla", "Karla's Gloves",
-                        static='07,0:50006150::', missable=True, drop=True, npc=True),
+                        static='07,0:50006150::', missable=missable_quest, drop=True, npc=True),
         DS3LocationData("FS: Karla's Trousers - kill Karla", "Karla's Trousers",
-                        static='07,0:50006150::', missable=True, drop=True, npc=True),
+                        static='07,0:50006150::', missable=missable_quest, drop=True, npc=True),
     ],
 }
 
