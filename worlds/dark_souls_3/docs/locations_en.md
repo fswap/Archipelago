@@ -68,6 +68,11 @@ at once:
 
 * **Small Crystal Lizards:** Drops from small crystal lizards.
 
+* **Drops:** Drops from anything other than bosses, including minibosses,
+  mimics, lizards, NPCs, or just normal enemies.
+
+* **Shops:** Locations in shops, including soul transposition.
+
 * **Upgrade:** Locations that contain upgrade items in vanilla, including
   titanite, gems, and Shriving Stones.
 
