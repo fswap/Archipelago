@@ -153,6 +153,9 @@ following NPCs' quests are supported:
 
 * **Horace** can't be killed until he goes hollow.
 
+* **Karla** can't be killed for her drops until you've given her all four tomes
+  that she accepts.
+
 ### `unmissable_invasions`
 
 This option changes how scripted invasions work so that their rewards are
