@@ -824,7 +824,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("US: Mound-makers - Hodrick", "Mound-makers", missable=True),
         DS3LocationData("US: Sharp Gem - lizard by Dilapidated Bridge", "Sharp Gem", lizard=True),
         DS3LocationData("US: Heavy Gem - chasm, lizard", "Heavy Gem", lizard=True),
-        DS3LocationData("US: Siegbräu - Siegward", "Siegbräu", missable=True, npc=True),
+        DS3LocationData("US: Siegbräu - Siegward", "Siegbräu", missable=missable_quest, npc=True),
         DS3LocationData("US: Vertebra Shackle - Hodrick drop", "Vertebra Shackle",
                         conditional=True, missable=missable_invasion, hostile_npc=True),
         DS3LocationData("US: Heavy Gem - Hawkwood", "Heavy Gem", static='00,0:50006070::',
@@ -1102,8 +1102,6 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         boss=True),
         DS3LocationData("CD: Black Eye Orb - Rosaria from Leonhard's quest", "Black Eye Orb",
                         missable=True, npc=True),
-        DS3LocationData("CD: Winged Spear - kill Patches", "Winged Spear", drop=True,
-                        missable=True),  # Patches (kill)
         DS3LocationData("CD: Spider Shield - NPC drop on path", "Spider Shield",
                         hostile_npc=True),  # Brigand
         DS3LocationData("CD: Notched Whip - Cleansing Chapel", "Notched Whip"),
@@ -1233,15 +1231,29 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Leggings of Thorns", missable=True, hostile_npc=True),
 
         # Unbreakable Patches
+        DS3LocationData("CD: Catarina Helm - Patches", "Catarina Helm", missable=missable_quest,
+                        shop=True, npc=True),
+        DS3LocationData("CD: Catarina Armor - Patches", "Catarina Armor", missable=missable_quest,
+                        shop=True, npc=True),
+        DS3LocationData("CD: Catarina Gauntlets - Patches", "Catarina Gauntlets",
+                        missable=missable_quest, shop=True, npc=True),
+        DS3LocationData("CD: Catarina Leggings - Patches", "Catarina Leggings",
+                        missable=missable_quest, shop=True, npc=True),
+        DS3LocationData("CD: Pierce Shield - Patches", "Pierce Shield", missable=missable_quest,
+                        shop=True, npc=True),
+        DS3LocationData("CD: Shotel - Patches", "Shotel", missable=missable_quest, npc=True,
+                        shop=True),
         DS3LocationData("CD: Rusted Coin - don't forgive Patches", "Rusted Coin",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
         DS3LocationData("FS: Rusted Gold Coin - don't forgive Patches", "Rusted Gold Coin",
-                        static='99,0:50006201::', missable=True,
+                        static='99,0:50006201::', missable=missable_quest,
                         npc=True),  # Don't forgive Patches
-        DS3LocationData("CD: Shotel - Patches", "Shotel", missable=True, npc=True, shop=True),
-        DS3LocationData("CD: Ember - Patches", "Ember", missable=True, npc=True, shop=True),
-        DS3LocationData("CD: Horsehoof Ring - Patches", "Horsehoof Ring", missable=True,
-                        npc=True, drop=True, shop=True),  # (kill or buy)
+        DS3LocationData("FS: Ember - Patches", "Ember", missable=missable_quest, npc=True,
+                        shop=True),
+        DS3LocationData("FS: Horsehoof Ring - Patches after discussing Greirat", "Horsehoof Ring",
+                        missable=missable_quest, npc=True, drop=True, shop=True),  # (kill or buy)
+        DS3LocationData("FS: Winged Spear - kill Patches", "Winged Spear", missable=missable_quest,
+                        npc=True, drop=True),  # Patches (kill)
     ],
     "Farron Keep": [
         DS3LocationData("FK: Lightning Spear - upper keep, far side of the wall",
@@ -1681,8 +1693,10 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Twinkling Titanite", lizard=True),
         DS3LocationData("IBV: Large Titanite Shard - Distant Manor, under overhang",
                         "Large Titanite Shard"),
-        DS3LocationData("IBV: Siegbräu - Siegward", "Siegbräu", missable=True, npc=True),
-        DS3LocationData("IBV: Emit Force - Siegward", "Emit Force", missable=True, npc=True),
+        DS3LocationData("IBV: Siegbräu - Siegward", "Siegbräu", missable=missable_quest,
+                        npc=True),
+        DS3LocationData("IBV: Emit Force - Siegward", "Emit Force", missable=missable_quest,
+                        npc=True),
         DS3LocationData("IBV -> ID", None),
 
         # After winning both Londor Pale Shade invasions
@@ -1717,8 +1731,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Mirrah Chain Leggings", missable=True, hostile_npc=True, npc=True),
     ],
     "Irithyll Dungeon": [
-        DS3LocationData("ID: Titanite Slab - Siegward", "Titanite Slab", missable=True,
-                        npc=True),
+        DS3LocationData("ID: Titanite Slab - Siegward", "Titanite Slab", missable=missable_quest,
+                        conditional=True, npc=True),
         DS3LocationData("ID: Murakumo - Alva drop", "Murakumo", missable=True,
                         hostile_npc=True),
         DS3LocationData("ID: Large Titanite Shard - after bonfire, second cell on left",
@@ -1861,13 +1875,12 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("PC: Twinkling Titanite - halls above swamp, lizard #2",
                         "Twinkling Titanite", lizard=True),
         DS3LocationData("PC: Siegbräu - Siegward after killing boss", "Siegbräu",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
 
         # Siegward drops (kill or quest)
         DS3LocationData("PC: Storm Ruler - Siegward", "Storm Ruler", static='02,0:50006218::',
-                        omit=is_unrandomized_and_missable, missable=True, drop=True, npc=True),
-        DS3LocationData("PC: Pierce Shield - Siegward", "Pierce Shield", missable=True,
-                        drop=True, npc=True),
+                        omit=is_unrandomized_and_missable, missable=missable_quest, drop=True,
+                        npc=True),
     ],
     # We consider "Anor Londo" to be everything accessible only after killing Pontiff. This doesn't
     # match up one-to-one with where the game pops up the region name, but it balances items better
@@ -2374,7 +2387,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Unbreakable Patches
         DS3LocationData("FS: Hidden Blessing - Patches after searching GA", "Hidden Blessing",
-                        missable=True, npc=True, shop=True),
+                        missable=missable_quest, npc=True, shop=True),
     ],
     "Untended Graves": [
         DS3LocationData("UG: Soul of Champion Gundyr", "Soul of Champion Gundyr", prominent=True,
@@ -3047,8 +3060,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
     ],
 
     # Unlockable shops. We only bother creating a "region" for these for shops that are locked
-    # behind keys and always have items available either through the shop or through the NPC's
-    # ashes.
+    # behind keys.
     "Greirat's Shop": [
         DS3LocationData("FS: Blue Tearstone Ring - Greirat", "Blue Tearstone Ring",
                         static='01,0:50006120::', npc=True),

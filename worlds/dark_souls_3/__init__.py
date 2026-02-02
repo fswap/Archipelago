@@ -917,20 +917,23 @@ class DarkSouls3World(World):
             "FS: Hidden Blessing - Greirat from IBV",
             "FS: Titanite Scale - Greirat from IBV",
             "FS: Twinkling Titanite - Greirat from IBV",
-            "FS: Ember - shop for Greirat's Ashes"
         ], lambda state: (
             self._can_go_to(state, "Irithyll of the Boreal Valley")
             and self._can_get(state, "FS: Divine Blessing - Greirat from US")
             and (
-                # In unmissable mode, Greirat can't die in Irithyll.
+                # In unmissable mode, Greirat can't die in Irithyll, but he will only leave once
+                # Patches has set up shop in Firelink.
                 (
-                    self._can_get(state, "IBV: Soul of Pontiff Sulyvahn")
-                    or self._can_get(state, "PC: Soul of Yhorm the Giant")
+                    (
+                        self._can_get(state, "IBV: Soul of Pontiff Sulyvahn")
+                        or self._can_get(state, "PC: Soul of Yhorm the Giant")
+                    )
+                    and self._can_get(state, "FS: Ember - Patches")
                 )
                 if self.options.unmissable_quests
                 # Either Patches or Siegward can save Greirat, but we assume the player will want
                 # to use Patches because it's harder to screw up
-                else self._can_get(state, "CD: Shotel - Patches")
+                else self._can_get(state, "FS: Ember - Patches")
             )
         ))
         self._add_location_rule([
@@ -948,33 +951,32 @@ class DarkSouls3World(World):
         # Rosaria's Bed Chamber bonfire before getting tricked by him, so we assume these locations
         # require the bell tower.
         self._add_location_rule([
-            "CD: Shotel - Patches",
-            "CD: Ember - Patches",
+            "FS: Ember - Patches",
             "FS: Rusted Gold Coin - don't forgive Patches"
-        ], lambda state: (
-            self._can_go_to(state, "Firelink Shrine Bell Tower")
-            and self._can_go_to(state, "Cathedral of the Deep")
-        ))
+        ], lambda state: self._can_go_to(state, "Firelink Shrine Bell Tower"))
+
+        self._add_location_rule(
+            "FS: Horsehoof Ring - Patches after discussing Greirat",
+            lambda state: (
+                self._can_go_to(state, "Firelink Shrine Bell Tower")
+                and self._can_get(state, "Greirat's Shop")
+            )
+        )
 
         # Patches sells this after you tell him to search for Greirat in Grand Archives
         self._add_location_rule([
             "FS: Hidden Blessing - Patches after searching GA"
         ], lambda state: (
-            self._can_get(state, "CD: Shotel - Patches")
+            self._can_get(state, "FS: Ember - Patches")
             and self._can_get(state, "FS: Ember - shop for Greirat's Ashes")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         # Only make the player kill Patches once all his other items are available
-        self._add_location_rule([
-            "CD: Winged Spear - kill Patches",
-            # You don't _have_ to kill him for this, but he has to be in Firelink at the same time
-            # as Greirat to get it in the shop and that may not be feasible if the player progresses
-            # Greirat's quest much faster.
-            "CD: Horsehoof Ring - Patches",
-        ], lambda state: (
-            self._can_get(state, "FS: Hidden Blessing - Patches after searching GA")
-            and self._can_get(state, "FS: Rusted Gold Coin - don't forgive Patches")
-        ))
+        self._add_location_rule(
+            ["FS: Winged Spear - kill Patches"],
+            lambda state: self._can_get(state, "FS: Hidden Blessing - Patches after searching GA"),
+        )
 
         ## Leonhard
 
@@ -1021,20 +1023,29 @@ class DarkSouls3World(World):
 
         ## Siegward
 
+        # Free Siegward from the well and meet him hin the kitchen
+        self._add_location_rule([
+            "IBV: Siegbräu - Siegward",
+            "IBV: Emit Force - Siegward",
+        ], lambda state: (
+            state.has("Catarina Helm", self.player),
+            state.has("Catarina Armor", self.player),
+            state.has("Catarina Gauntlets", self.player),
+            state.has("Catarina Leggings", self.player),
+        ))
+
         # Unlock Siegward's cell after progressing his quest
         self._add_location_rule([
             "ID: Titanite Slab - Siegward",
         ], lambda state: (
             state.has("Old Cell Key", self.player)
-            # Progressing Siegward's quest requires buying his armor from Patches.
-            and self._can_get(state, "CD: Shotel - Patches")
+            and self._can_get(state, "IBV: Siegbräu - Siegward")
         ))
 
         # These drop after completing Siegward's quest and talking to him in Yhorm's arena
         self._add_location_rule([
             "PC: Siegbräu - Siegward after killing boss",
             "PC: Storm Ruler - Siegward",
-            "PC: Pierce Shield - Siegward",
         ], lambda state: (
             self._can_get(state, "ID: Titanite Slab - Siegward")
             and self._can_get(state, "PC: Soul of Yhorm the Giant")

@@ -122,12 +122,17 @@ This option makes quest-related NPCs immortal and updates their quests to
 remove places where they can be missed or failed entirely. Currently the
 following NPCs' quests are supported:
 
-* **Greirat** will always survive pillaging Irithyll, regardless of what you do
-  with Siegward or Patches. Instead of returning from his trips after you beat
-  a boss, he'll return from Undead Settlement after you beat either the Road of
-  Sacrifices or Farron Keep boss, and he'll return from Irithyll after you beat
-  either the Irithyll or Profaned Capital boss. (If you've already killed one
-  of these bosses, he'll be back next time you return to Firelink.)
+* **Greirat** will always survive pillaging Irithyll. He will return once
+  Patches leaves to rescue him; Siegward cannot save him. In addition to
+  returning from his trips after you beat a boss, he'll return immediately from
+  Undead Settlement if you've already beaten either the Road of Sacrifices or
+  Farron Keep boss, and he'll return immediately from Irithyll if you've already
+  beaten either the Irithyll or Profaned Capital boss.
+
+* **Yoel** won't die until you get five levels of hollowing.
+
+* **Yuria** can't be killed until after you've married Anri. No Fire Keeper Soul
+  is available, so you can't fail her quest by reversing your hollowing.
 
 * **Irina** will not accept dark tomes at all. She can't be killed for her drop
   until you've given her both the Braille Divine Tome of Carim and the Braille
@@ -137,21 +142,32 @@ following NPCs' quests are supported:
   starting class. He can't be killed for his drops until you've given him all
   three Pyromancy Tomes that he accepts.
 
+* **Siegward** won't leave the upper undead settlement or the Irithyll kitchen
+  until he's given you a Siegbräu. He can be rescued from the well by giving him
+  all four pieces of his armor set, which are now progression items. If you kill
+  Yhorm without him, his corpse will contain his final Siegbräu (his other
+  items that only drop when fighting Yhorm aren't randomized).
+
 * **Orbeck** will always give a Young Dragon Ring replacement regardless of your
   starting class. He won't leave Firelink because you didn't give him a scroll
   quiickly enough. He can't be killed for his drops until you've given him all
   four Scrolls *and* you've received the Slumbering Dragoncrest Ring
   replacement.
 
-* **Yoel** won't die until you get five levels of hollowing.
-
-* **Yuria** can't be killed until after you've married Anri. No Fire Keeper Soul
-  is available, so you can't fail her quest by reversing your hollowing.
-
 * **Anri** will not die or go hollow if you tell them where Horace is. Their
   quest will always take the "dark" path that leads to you marrying them.
 
 * **Horace** can't be killed until he goes hollow.
+
+* **Patches** will only appear in the cathedral after you get your first
+  Siegbräu from Siegward. He will appear even if the Rosaria's Bed Chamber
+  bonfire is already lit. You cannot claim not to know him, and he won't leave
+  until you've taken the Rusted Coin replacement and visited the Firelink Shrine
+  bell tower.
+
+  In addition to returning from his trips to Irithyll and Grand Archives after
+  you beat a boss, Patches will return from Irithyll if you've already beaten
+  the Grand Archives boss.
 
 * **Karla** can't be killed for her drops until you've given her all four tomes
   that she accepts.
@@ -1023,6 +1039,10 @@ static _Dark Souls III_ randomizer].
 <tr><td>CD: Barbed Straight Sword - Kirk drop</td><td>Dropped by Longfinger Kirk when he invades in the cathedral central room</td></tr>
 <tr><td>CD: Black Eye Orb - Rosaria from Leonhard&#x27;s quest</td><td>On Rosaria&#x27;s corpse after joining Rosaria&#x27;s Fingers, exhausting Leonhard&#x27;s dialogue there and reaching the Profaned Capital bonfire.</td></tr>
 <tr><td>CD: Blessed Gem - upper roofs, rafters</td><td>In the rafters leading to Rosaria, guarded by a Cathedral Knight to the right</td></tr>
+<tr><td>CD: Catarina Armor - Patches</td><td>Armor sold by Patches</td></tr>
+<tr><td>CD: Catarina Gauntlets - Patches</td><td>Armor sold by Patches</td></tr>
+<tr><td>CD: Catarina Helm - Patches</td><td>Armor sold by Patches</td></tr>
+<tr><td>CD: Catarina Leggings - Patches</td><td>Armor sold by Patches</td></tr>
 <tr><td>CD: Crest Shield - path, drop down by Cathedral of the Deep bonfire</td><td>On a grave near the Cathedral of the Deep bonfire, accessed by dropping down to the right</td></tr>
 <tr><td>CD: Curse Ward Greatshield - by ladder from white tree to moat</td><td>Taking a right after the Infested Corpse graveyard, before the shortcut ladder down to the Ravenous Crystal Lizard area</td></tr>
 <tr><td>CD: Deep Braille Divine Tome - mimic by side chapel</td><td>Dropped by the Mimic before the room with the patrolling Cathedral Knight and Deep Accursed</td></tr>
@@ -1034,7 +1054,6 @@ static _Dark Souls III_ randomizer].
 <tr><td>CD: Drang Shoes - main hall east</td><td>In the Giant Slave muck pit leading up to Deacons</td></tr>
 <tr><td>CD: Duel Charm - by first elevator</td><td>After opening the cathedral&#x27;s backdoor, where the Deacon enemies are first seen, under a fountain that spouts poison</td></tr>
 <tr><td>CD: Duel Charm - next to Patches in onion armor</td><td>To the right of the bridge leading to Rosaria, from the Deacons side. Patches will lower the bridge if you try to cross from this side.</td></tr>
-<tr><td>CD: Ember - Patches</td><td>Sold by Patches in Firelink Shrine</td></tr>
 <tr><td>CD: Ember - by back door</td><td>Past the pair of Grave Wardens and the Cathedral backdoor against a wall, guarded by a greataxe-wielding Large Hollow Soldier</td></tr>
 <tr><td>CD: Ember - edge of platform before boss</td><td>On the edge of the chapel before Deacons overlooking the Giant Slaves</td></tr>
 <tr><td>CD: Ember - side chapel upstairs, up ladder</td><td>Up a ladder and past the Cathedral Evangelist from the top level of the room with the patrolling Cathedral Knight and Deep Accursed</td></tr>
@@ -1051,7 +1070,6 @@ static _Dark Souls III_ randomizer].
 <tr><td>CD: Herald Trousers - path, by fire</td><td>Guarded by the Cathedral Evangelist after the Crystal Sage fight</td></tr>
 <tr><td>CD: Heysel Pick - Heysel Corpse-Grub in Rosaria&#x27;s Bed Chamber</td><td>Dropped by the Heysel Corpse-grub in Rosaria&#x27;s Bed Chamber</td></tr>
 <tr><td>CD: Homeward Bone - outside main hall south door</td><td>Past the cathedral doors guarded by the Giant Slave opposite to the Deacons fight</td></tr>
-<tr><td>CD: Horsehoof Ring - Patches</td><td>Sold or dropped by Patches after he mentions Greirat</td></tr>
 <tr><td>CD: Large Soul of an Unknown Traveler - by white tree #1</td><td>In the graveyard with the White Birch and Infested Corpses</td></tr>
 <tr><td>CD: Large Soul of an Unknown Traveler - by white tree #2</td><td>In the graveyard with the White Birch and Infested Corpses</td></tr>
 <tr><td>CD: Large Soul of an Unknown Traveler - lower roofs, semicircle balcony</td><td>On the cathedral roof after climbing up the flying buttresses, on the edge of the semicircle platform balcony</td></tr>
@@ -1068,6 +1086,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>CD: Paladin&#x27;s Ashes - path, guarded by lower NPC</td><td>At the very start of the area, guarded by the Fallen Knight</td></tr>
 <tr><td>CD: Pale Tongue - main hall east</td><td>In the Giant Slave muck pit leading up to Deacons</td></tr>
 <tr><td>CD: Pale Tongue - upper roofs, outdoors far end</td><td>Before the rafters on the way to Rosaria, up a flying buttress and straight right, passing a halberd-wielding Large Hollow Soldier</td></tr>
+<tr><td>CD: Pierce Shield - Patches</td><td>Sold by Patches</td></tr>
 <tr><td>CD: Poisonbite Ring - moat, hall past miniboss</td><td>In the pit with the Infested Corpse, accessible from the Ravenous Crystal Lizard area or from dropping down near the second Cleansing Chapel shortcut</td></tr>
 <tr><td>CD: Red Bug Pellet - lower roofs, up stairs between buttresses</td><td>In the area after the cathedral roof against the wall of the cathedral, down the path from the Cathedral Evangelist.</td></tr>
 <tr><td>CD: Red Bug Pellet - right of cathedral front doors</td><td>Up the stairs past the Infested Corpse graveyard and the left, toward the roof path to the right of the cathedral doors</td></tr>
@@ -1101,7 +1120,6 @@ static _Dark Souls III_ randomizer].
 <tr><td>CD: Twinkling Titanite - path, lizard #2</td><td>Dropped by the second Crystal Lizard after the Crystal Sage fight</td></tr>
 <tr><td>CD: Undead Bone Shard - gravestone by white tree</td><td>In the graveyard with the Infested Corpses, on a coffin partly hanging off of the ledge</td></tr>
 <tr><td>CD: Undead Hunter Charm - lower roofs, up stairs between buttresses</td><td>In the area after the cathedral roof guarded by a Cathedral Evangelist. Can be jumped to from a flying buttress or by going around and back</td></tr>
-<tr><td>CD: Winged Spear - kill Patches</td><td>Dropped by Patches when killed in his own armor.</td></tr>
 <tr><td>CD: Xanthous Crown - Heysel Corpse-Grub in Rosaria&#x27;s Bed Chamber</td><td>Dropped by the Heysel Corpse-grub in Rosaria&#x27;s Bed Chamber</td></tr>
 <tr><td>CD: Young White Branch - by white tree #1</td><td>By the White Birch tree in the Infested Corpse graveyard</td></tr>
 <tr><td>CD: Young White Branch - by white tree #2</td><td>By the White Birch tree in the Infested Corpse graveyard</td></tr>
@@ -1347,6 +1365,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Ember - Greirat</td><td>Sold by Greirat after recruiting him, or in his ashes</td></tr>
 <tr><td>FS: Ember - Greirat from US</td><td>Sold by Greirat after pillaging Undead Settlement</td></tr>
 <tr><td>FS: Ember - Mortician&#x27;s Ashes</td><td>Sold by Handmaid after giving Mortician&#x27;s Ashes</td></tr>
+<tr><td>FS: Ember - Patches</td><td>Sold by Greirat after recruiting him, or in his ashes</td></tr>
 <tr><td>FS: Ember - above shrine entrance</td><td>Above the Firelink Shrine entrance, up the stairs/slope from either left or right of the entrance</td></tr>
 <tr><td>FS: Ember - path right of Firelink entrance</td><td>On a cliffside to the right of the main path leading up to Firelink Shrine, guarded by a dog</td></tr>
 <tr><td>FS: Ember - shop</td><td>Sold by Handmaid</td></tr>
@@ -1420,6 +1439,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Homeward Bone - path above shrine entrance</td><td>To the right of the Firelink Shrine entrance, up a slope and before the ledge on top of a coffin</td></tr>
 <tr><td>FS: Homing Crystal Soulmass - Orbeck for Crystal Scroll</td><td>Sold by Orbeck after giving him the Crystal Scroll</td></tr>
 <tr><td>FS: Homing Soulmass - Orbeck for Logan&#x27;s Scroll</td><td>Sold by Orbeck after giving him Logan&#x27;s Scroll</td></tr>
+<tr><td>FS: Horsehoof Ring - Patches after discussing Greirat</td><td>Sold or dropped by Patches after he mentions Greirat</td></tr>
 <tr><td>FS: Karla&#x27;s Coat - Prisoner Chief&#x27;s Ashes</td><td>Sold by Handmaid after giving Prisoner Chief&#x27;s Ashes</td></tr>
 <tr><td>FS: Karla&#x27;s Coat - kill Karla</td><td>Dropped from Karla upon death</td></tr>
 <tr><td>FS: Karla&#x27;s Gloves - Prisoner Chief&#x27;s Ashes</td><td>Sold by Handmaid after giving Prisoner Chief&#x27;s Ashes</td></tr>
@@ -1492,7 +1512,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Seething Chaos - Ludleth for Demon Prince</td><td>Boss weapon for Demon Prince</td></tr>
 <tr><td>FS: Silvercat Ring - Sirris for killing Creighton</td><td>Given by Sirris talking to her in Firelink Shrine after invading and vanquishing Creighton.</td></tr>
 <tr><td>FS: Skull Ring - kill Ludleth</td><td>Dropped by Ludleth upon death, including after placing all cinders. Note that if killed before giving Transposing Kiln, transposition is not possible.</td></tr>
-<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for one scroll and buying seven spells</td><td>Given by Orbeck after purchasing the shop items corresponding to Aural Decoy, Farron Flashsword, Spook (starting items), and Pestilent Mist (after giving one scroll).</td></tr>
+<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for one scroll and buying seven spells</td><td>Given by Orbeck after purchasing four sorceries from him and giving him one scroll.</td></tr>
 <tr><td>FS: Smough&#x27;s Armor - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Gauntlets - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Helm - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
@@ -1533,6 +1553,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Washing Pole - Easterner&#x27;s Ashes</td><td>Sold by Handmaid after giving Easterner&#x27;s Ashes</td></tr>
 <tr><td>FS: White Dragon Breath - Ludleth for Oceiros</td><td>Boss weapon for Oceiros, the Consumed King</td></tr>
 <tr><td>FS: White Sign Soapstone - shop</td><td>Sold by both Shrine Handmaid and Untended Graves Handmaid</td></tr>
+<tr><td>FS: Winged Spear - kill Patches</td><td>Dropped by Patches when killed in his own armor.</td></tr>
 <tr><td>FS: Wolf Knight&#x27;s Greatsword - Ludleth for Abyss Watchers</td><td>Boss weapon for Abyss Watchers</td></tr>
 <tr><td>FS: Wolf Ring+2 - left of boss room exit</td><td>After Iudex Gundyr on the left</td></tr>
 <tr><td>FS: Wolnir&#x27;s Crown - shop after killing CC boss</td><td>Sold by Handmaid after defeating High Lord Wolnir</td></tr>
@@ -1543,7 +1564,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Xanthous Trousers - Xanthous Ashes</td><td>Sold by Handmaid after giving Xanthous Ashes</td></tr>
 <tr><td>FS: Yhorm&#x27;s Great Machete - Ludleth for Yhorm</td><td>Boss weapon for Yhorm the Giant</td></tr>
 <tr><td>FS: Yhorm&#x27;s Greatshield - Ludleth for Yhorm</td><td>Boss weapon for Yhorm the Giant</td></tr>
-<tr><td>FS: Young Dragon Ring - Orbeck for one scroll and buying three spells</td><td>Given by Orbeck after purchasing four sorceries from him, and giving him one scroll, as a non-sorcerer.</td></tr>
+<tr><td>FS: Young Dragon Ring - Orbeck for one scroll and buying three spells</td><td>Given by Orbeck after purchasing four sorceries from him and giving him one scroll.</td></tr>
 <tr><td>FSBT: Armor of the Sun - crow for Siegbräu</td><td>Trade Siegbräu with crow</td></tr>
 <tr><td>FSBT: Blessed Gem - crow for Moaning Shield</td><td>Trade Moaning Shield with crow</td></tr>
 <tr><td>FSBT: Covetous Silver Serpent Ring - illusory wall past rafters</td><td>From the Firelink Shrine roof, past the rafters and an illusory wall</td></tr>
@@ -1911,7 +1932,6 @@ static _Dark Souls III_ randomizer].
 <tr><td>PC: Magic Stoneplate Ring+2 - tower base</td><td>At the base of the Profaned Capital structure, going all the way around the outside wall clockwise</td></tr>
 <tr><td>PC: Onislayer Greatarrow - bridge</td><td>Item on the bridge descending from the Profaned Capital bonfire into the Profaned Flame building</td></tr>
 <tr><td>PC: Onislayer Greatbow - drop from bridge</td><td>From the bridge leading from the Profaned Capital bonfire to Yhorm, onto the ruined pillars shortcut to the right, behind you after the first dropdown.</td></tr>
-<tr><td>PC: Pierce Shield - Siegward</td><td>Dropped by Siegward upon death or quest completion, and sold by Patches while Siegward is in the well.</td></tr>
 <tr><td>PC: Poison Arrow - chapel roof</td><td>At the far end of the roof with the Court Sorcerer</td></tr>
 <tr><td>PC: Poison Gem - swamp, below halls</td><td>In the inner cave of the Profaned Capital toxic pool</td></tr>
 <tr><td>PC: Purging Stone - chapel ground floor</td><td>At the back of the room with the three Monstrosities of Sin on the first floor</td></tr>
