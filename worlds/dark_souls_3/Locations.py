@@ -1248,8 +1248,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("FS: Rusted Gold Coin - don't forgive Patches", "Rusted Gold Coin",
                         static='99,0:50006201::', missable=missable_quest,
                         npc=True),  # Don't forgive Patches
-        DS3LocationData("FS: Ember - Patches", "Ember", missable=missable_quest, npc=True,
-                        shop=True),
+        DS3LocationData("FS: Ember - Patches", "Ember", missable=missable_quest,
+                        static='99,0:-1:110000,200000,70000400,70000425:', npc=True, shop=True),
         DS3LocationData("FS: Horsehoof Ring - Patches after discussing Greirat", "Horsehoof Ring",
                         missable=missable_quest, npc=True, drop=True, shop=True),  # (kill or buy)
         DS3LocationData("FS: Winged Spear - kill Patches", "Winged Spear", missable=missable_quest,

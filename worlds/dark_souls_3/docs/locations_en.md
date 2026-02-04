@@ -1365,7 +1365,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Ember - Greirat</td><td>Sold by Greirat after recruiting him, or in his ashes</td></tr>
 <tr><td>FS: Ember - Greirat from US</td><td>Sold by Greirat after pillaging Undead Settlement</td></tr>
 <tr><td>FS: Ember - Mortician&#x27;s Ashes</td><td>Sold by Handmaid after giving Mortician&#x27;s Ashes</td></tr>
-<tr><td>FS: Ember - Patches</td><td>Sold by Greirat after recruiting him, or in his ashes</td></tr>
+<tr><td>FS: Ember - Patches</td><td>Sold by Patches in Firelink Shrine</td></tr>
 <tr><td>FS: Ember - above shrine entrance</td><td>Above the Firelink Shrine entrance, up the stairs/slope from either left or right of the entrance</td></tr>
 <tr><td>FS: Ember - path right of Firelink entrance</td><td>On a cliffside to the right of the main path leading up to Firelink Shrine, guarded by a dog</td></tr>
 <tr><td>FS: Ember - shop</td><td>Sold by Handmaid</td></tr>
@@ -1512,7 +1512,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Seething Chaos - Ludleth for Demon Prince</td><td>Boss weapon for Demon Prince</td></tr>
 <tr><td>FS: Silvercat Ring - Sirris for killing Creighton</td><td>Given by Sirris talking to her in Firelink Shrine after invading and vanquishing Creighton.</td></tr>
 <tr><td>FS: Skull Ring - kill Ludleth</td><td>Dropped by Ludleth upon death, including after placing all cinders. Note that if killed before giving Transposing Kiln, transposition is not possible.</td></tr>
-<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for one scroll and buying seven spells</td><td>Given by Orbeck after purchasing four sorceries from him and giving him one scroll.</td></tr>
+<tr><td>FS: Slumbering Dragoncrest Ring - Orbeck for one scroll and buying seven spells</td><td>Given by Orbeck after purchasing seven sorceries from him and giving him one scroll.</td></tr>
 <tr><td>FS: Smough&#x27;s Armor - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Gauntlets - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
 <tr><td>FS: Smough&#x27;s Helm - shop after killing AL boss</td><td>Sold by Handmaid after defeating Alrich, Devourer of Gods</td></tr>
@@ -1564,7 +1564,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Xanthous Trousers - Xanthous Ashes</td><td>Sold by Handmaid after giving Xanthous Ashes</td></tr>
 <tr><td>FS: Yhorm&#x27;s Great Machete - Ludleth for Yhorm</td><td>Boss weapon for Yhorm the Giant</td></tr>
 <tr><td>FS: Yhorm&#x27;s Greatshield - Ludleth for Yhorm</td><td>Boss weapon for Yhorm the Giant</td></tr>
-<tr><td>FS: Young Dragon Ring - Orbeck for one scroll and buying three spells</td><td>Given by Orbeck after purchasing four sorceries from him and giving him one scroll.</td></tr>
+<tr><td>FS: Young Dragon Ring - Orbeck for one scroll and buying three spells</td><td>Given by Orbeck after purchasing three sorceries from him and giving him one scroll.</td></tr>
 <tr><td>FSBT: Armor of the Sun - crow for Siegbräu</td><td>Trade Siegbräu with crow</td></tr>
 <tr><td>FSBT: Blessed Gem - crow for Moaning Shield</td><td>Trade Moaning Shield with crow</td></tr>
 <tr><td>FSBT: Covetous Silver Serpent Ring - illusory wall past rafters</td><td>From the Firelink Shrine roof, past the rafters and an illusory wall</td></tr>
