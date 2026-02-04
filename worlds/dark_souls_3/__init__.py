@@ -959,7 +959,7 @@ class DarkSouls3World(World):
             "FS: Horsehoof Ring - Patches after discussing Greirat",
             lambda state: (
                 self._can_go_to(state, "Firelink Shrine Bell Tower")
-                and self._can_get(state, "Greirat's Shop")
+                and self._can_go_to(state, "Greirat's Shop")
             )
         )
 
