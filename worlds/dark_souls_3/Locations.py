@@ -365,7 +365,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         conditional=True),
         # Only if you say where the ashes were found
         DS3LocationData("FS: Hidden Blessing - Dreamchaser's Ashes", "Hidden Blessing",
-                        missable=True, shop=True),
+                        static='99,0:-1:110000,70000117:', missable=True, shop=True),
         DS3LocationData("FS: Lloyd's Shield Ring - Paladin's Ashes", "Lloyd's Shield Ring",
                         shop=True, conditional=True),
         DS3LocationData("FS: Ember - Grave Warden's Ashes", "Ember",
@@ -1252,8 +1252,9 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         static='99,0:-1:110000,200000,70000400,70000425:', npc=True, shop=True),
         DS3LocationData("FS: Horsehoof Ring - Patches after discussing Greirat", "Horsehoof Ring",
                         missable=missable_quest, npc=True, drop=True, shop=True),  # (kill or buy)
-        DS3LocationData("FS: Winged Spear - kill Patches", "Winged Spear", missable=missable_quest,
-                        npc=True, drop=True),  # Patches (kill)
+        DS3LocationData("FS: Winged Spear - kill Patches", "Winged Spear",
+                        static='04,0:50006202::', missable=missable_quest, npc=True,
+                        drop=True),  # Patches (kill)
     ],
     "Farron Keep": [
         DS3LocationData("FK: Lightning Spear - upper keep, far side of the wall",
@@ -2387,7 +2388,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Unbreakable Patches
         DS3LocationData("FS: Hidden Blessing - Patches after searching GA", "Hidden Blessing",
-                        missable=missable_quest, npc=True, shop=True),
+                        static='99,0:-1:110000,200000,70000401,70000426:', missable=missable_quest,
+                        npc=True, shop=True),
     ],
     "Untended Graves": [
         DS3LocationData("UG: Soul of Champion Gundyr", "Soul of Champion Gundyr", prominent=True,

@@ -955,6 +955,8 @@ class DarkSouls3World(World):
             "FS: Rusted Gold Coin - don't forgive Patches"
         ], lambda state: self._can_go_to(state, "Firelink Shrine Bell Tower"))
 
+        # Patches only offers this for sale once he's in Firelink and you've
+        # freed Greirat.
         self._add_location_rule(
             "FS: Horsehoof Ring - Patches after discussing Greirat",
             lambda state: (

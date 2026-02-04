@@ -163,7 +163,9 @@ following NPCs' quests are supported:
   Siegbräu from Siegward. He will appear even if the Rosaria's Bed Chamber
   bonfire is already lit. You cannot claim not to know him, and he won't leave
   until you've taken the Rusted Coin replacement and visited the Firelink Shrine
-  bell tower.
+  bell tower. He will talk about Greirat and offer the Horsehead Ring
+  replacement for sale as long as you've met Greirat, regardless of whether he's
+  in Firelink Shrine.
 
   In addition to returning from his trips to Irithyll and Grand Archives after
   you beat a boss, Patches will return from Irithyll if you've already beaten
@@ -1428,9 +1430,9 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Heavy Soul Arrow - Orbeck</td><td>Sold by Orbeck</td></tr>
 <tr><td>FS: Heavy Soul Arrow - Yoel/Yuria shop</td><td>Sold by Yoel/Yuria</td></tr>
 <tr><td>FS: Helm of Favor - shop after killing water reserve minibosses</td><td>Sold by Handmaid after killing Sulyvahn&#x27;s Beasts in Water Reserve</td></tr>
-<tr><td>FS: Hidden Blessing - Dreamchaser&#x27;s Ashes</td><td>Sold by Greirat after pillaging Irithyll</td></tr>
+<tr><td>FS: Hidden Blessing - Dreamchaser&#x27;s Ashes</td><td>Sold by Handmaid after giving Dreamchaser&#x27;s Ashes, saying where they were found</td></tr>
 <tr><td>FS: Hidden Blessing - Greirat from IBV</td><td>Sold by Greirat after pillaging Irithyll</td></tr>
-<tr><td>FS: Hidden Blessing - Patches after searching GA</td><td>Sold by Handmaid after giving Dreamchaser&#x27;s Ashes, saying where they were found</td></tr>
+<tr><td>FS: Hidden Blessing - Patches after searching GA</td><td>Sold by Patches after Greirat pillages Lothric Castle, telling Patches, and Patches returning</td></tr>
 <tr><td>FS: Hidden Body - Orbeck for Golden Scroll</td><td>Sold by Orbeck after giving him the Golden Scroll</td></tr>
 <tr><td>FS: Hidden Weapon - Orbeck for Golden Scroll</td><td>Sold by Orbeck after giving him the Golden Scroll</td></tr>
 <tr><td>FS: Hollowslayer Greatsword - Ludleth for Greatwood</td><td>Boss weapon for Curse-Rotted Greatwood</td></tr>
