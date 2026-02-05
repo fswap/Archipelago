@@ -218,7 +218,7 @@ all_bosses = [
         },
     ),
     DS3BossInfo(
-        "Nameless King", "Archdragon Peak", 3200851, 13200850, locations = {
+        "Nameless King", "Archdragon Peak End", 3200851, 13200850, locations = {
             "AP: Soul of the Nameless King",
             "FS: Golden Crown - shop after killing AP boss",
             "FS: Dragonscale Armor - shop after killing AP boss",
