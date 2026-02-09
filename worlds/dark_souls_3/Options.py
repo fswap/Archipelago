@@ -115,7 +115,9 @@ class EnableDLCOption(Toggle):
 
 
 class EnableNGPOption(Toggle):
-    """Include items and locations exclusive to NG+ cycles."""
+    """Include items and locations exclusive to NG+ cycles.
+
+    These locations appear in normal NG runs. You don't have to enter NG+ to reach them."""
     display_name = "Enable NG+"
 
 
