@@ -12,7 +12,7 @@
 - [Dark Souls III](https://store.steampowered.com/app/374320/DARK_SOULS_III/)
 - [Dark Souls III AP Client]
 
-[Dark Souls III AP Client]: https://github.com/nex3/ds3-archipelago/releases/latest
+[Dark Souls III AP Client]: https://github.com/fswap/ds3-archipelago/releases/latest
 
 ## Optional Software
 
@@ -67,7 +67,7 @@ To run _Dark Souls III_ in Archipelago mode:
 The [AP client archive] also includes a YAML template that documents all the options. You can
 customize this to suit your needs.
 
-[AP client archive]: https://github.com/nex3/ds3-archipelago/releases/latest
+[AP client archive]: https://github.com/fswap/ds3-archipelago/releases/latest
 
 ### Does this work with Proton?
 
