@@ -218,7 +218,7 @@ all_bosses = [
         },
     ),
     DS3BossInfo(
-        "Nameless King", "Archdragon Peak", 3200851, 13200850, locations = {
+        "Nameless King", "Archdragon Peak End", 3200851, 13200850, locations = {
             "AP: Soul of the Nameless King",
             "FS: Golden Crown - shop after killing AP boss",
             "FS: Dragonscale Armor - shop after killing AP boss",
@@ -351,6 +351,10 @@ all_bosses = [
         "Lords of Cinder", "Kiln of the First Flame", 4100800, 14100800,
         locations = {
             "KFF: Soul of the Lords",
+            "FS: Firelink Helm - shop after beating KFF boss",
+            "FS: Firelink Armor - shop after beating KFF boss",
+            "FS: Firelink Gauntlets - shop after beating KFF boss",
+            "FS: Firelink Leggings - shop after beating KFF boss",
             "FS: Billed Mask - shop after killing Yuria",
             "FS: Black Dress - shop after killing Yuria",
             "FS: Black Gauntlets - shop after killing Yuria",

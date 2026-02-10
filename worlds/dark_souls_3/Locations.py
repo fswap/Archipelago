@@ -2507,25 +2507,27 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Shrine Handmaid after placing all Cinders of a Lord
         DS3LocationData("FS: Titanite Slab - shop after placing all Cinders", "Titanite Slab",
-                        static='99,0:-1:9210,110000:', hidden=True),
-        DS3LocationData("FS: Firelink Helm - shop after placing all Cinders", "Firelink Helm",
+                        static='99,0:-1:9210,110000:', shop=True),
+
+        # Shrine Handmaid after defeating Soul of Cinder
+        DS3LocationData("FS: Firelink Helm - shop after beating KFF boss", "Firelink Helm",
                         boss=True, shop=True),
-        DS3LocationData("FS: Firelink Armor - shop after placing all Cinders", "Firelink Armor",
+        DS3LocationData("FS: Firelink Armor - shop after beating KFF boss", "Firelink Armor",
                         boss=True, shop=True),
-        DS3LocationData("FS: Firelink Gauntlets - shop after placing all Cinders",
+        DS3LocationData("FS: Firelink Gauntlets - shop after beating KFF boss",
                         "Firelink Gauntlets", boss=True, shop=True),
-        DS3LocationData("FS: Firelink Leggings - shop after placing all Cinders",
+        DS3LocationData("FS: Firelink Leggings - shop after beating KFF boss",
                         "Firelink Leggings", boss=True, shop=True),
 
         # Yuria (quest, after Soul of Cinder)
         DS3LocationData("FS: Billed Mask - shop after killing Yuria", "Billed Mask",
-                        missable=True, npc=True),
+                        missable=True, npc=True, shop=True),
         DS3LocationData("FS: Black Dress - shop after killing Yuria", "Black Dress",
-                        missable=True, npc=True),
+                        missable=True, npc=True, shop=True),
         DS3LocationData("FS: Black Gauntlets - shop after killing Yuria", "Black Gauntlets",
-                        missable=True, npc=True),
+                        missable=True, npc=True, shop=True),
         DS3LocationData("FS: Black Leggings - shop after killing Yuria", "Black Leggings",
-                        missable=True, npc=True),
+                        missable=True, npc=True, shop=True),
     ],
 
     # DLC
