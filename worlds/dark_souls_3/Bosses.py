@@ -351,6 +351,10 @@ all_bosses = [
         "Lords of Cinder", "Kiln of the First Flame", 4100800, 14100800,
         locations = {
             "KFF: Soul of the Lords",
+            "FS: Firelink Helm - shop after beating KFF boss",
+            "FS: Firelink Armor - shop after beating KFF boss",
+            "FS: Firelink Gauntlets - shop after beating KFF boss",
+            "FS: Firelink Leggings - shop after beating KFF boss",
             "FS: Billed Mask - shop after killing Yuria",
             "FS: Black Dress - shop after killing Yuria",
             "FS: Black Gauntlets - shop after killing Yuria",
