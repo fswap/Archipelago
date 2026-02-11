@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from collections import defaultdict
 import settings, typing, Utils
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
@@ -174,6 +175,10 @@ class EldenRing(World):
                             if 'ashofwar' not in exclude_local_item_only_lowercase:
                                 self.options.local_items.value.add(item.name)
                             break
+
+        if not self.options.royal_access:
+            for location in location_tables["Leyndell, Royal Capital"]:
+                location.missable = True
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -596,13 +601,12 @@ class EldenRing(World):
             self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
             self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
         
-        using_table = item_table_vanilla
-        if self.options.enable_dlc: using_table = item_table
-        for item in using_table.values(): # loop of whole item table
-            if self.options.map_option.value == 1 and item.map: # add all maps to start inv
-                self.multiworld.push_precollected(self.create_item(item.name))
-        
-        if self.options.map_option.value == 2:
+        if self.options.map_option.value == 1:
+            using_table = item_table_vanilla
+            if self.options.enable_dlc: using_table = item_table
+            for item in using_table.values(): # loop of whole item table
+                if item.map: self.multiworld.push_precollected(self.create_item(item.name))
+        elif self.options.map_option.value == 2:
             self.multiworld.get_location("LG/(GR): Map: Limgrave, West - map pillar", self.player).place_locked_item(self.create_item("Map: Limgrave, West"))
             self.multiworld.get_location("WP/CMR: Map: Weeping Peninsula - to SW", self.player).place_locked_item(self.create_item("Map: Weeping Peninsula"))
             self.multiworld.get_location("LG/SRW: Map: Limgrave, East - W of SRW", self.player).place_locked_item(self.create_item("Map: Limgrave, East"))
@@ -783,10 +787,6 @@ class EldenRing(World):
                 "VM/VM: Bloodhound Claws - enemy drop behind the illusory wall in the right room, down the stairs"
             ], "Drawing-Room Key")
         
-        if not self.options.royal_access:
-            for location in location_tables["Leyndell, Royal Capital"]:
-                location.missable = True
-        
         # MotG/SR spirit summon item
         self._add_location_rule(["MotG/(SR): Primal Glintstone Blade - in chest underground behind jellyfish seal"
             ], lambda state: state.has("Spirit Jellyfish Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
@@ -821,9 +821,11 @@ class EldenRing(World):
                                 lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") 
                                 or self._can_go_to(state, "Volcano Manor"))
         
-        self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required.value))
-        
-        self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._can_go_to(state, "Forbidden Lands") and state.has("Rold Medallion", self.player))
+        self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
+        if self.options.great_runes_required_mountain.value != 0:
+            self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value))
+        else:
+            self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Rold Medallion", self.player))
         
         self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
             state.has("Haligtree Secret Medallion (Left)", self.player) and
@@ -920,7 +922,6 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 3))
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
                     
-        
         if self.options.ending_condition <= 1:
             if self.options.enable_dlc and self.options.ending_condition == 0:
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "EI/GD: Circlet of Light - interact with memory after mainboss")
@@ -2458,6 +2459,133 @@ class EldenRing(World):
             text = "\n" + text + "\n"
             spoiler_handle.write(text)
 
+    @classmethod
+    def stage_post_fill(cls, multiworld: MultiWorld):
+        """If item smoothing is enabled, rearrange items so they scale up smoothly through the run.
+
+        This determines the approximate order a given silo of items (say, soul items) show up in the
+        main game, then rearranges their shuffled placements to match that order. It determines what
+        should come "earlier" or "later" based on sphere order: earlier spheres get lower-level
+        items, later spheres get higher-level ones. Within a sphere, items in ER are distributed in
+        region order, and then the best items in a sphere go into the multiworld.
+        """
+        er_worlds = [world for world in cast(List[EldenRing], multiworld.get_game_worlds(cls.game)) if
+                      world.options.smooth_upgrade_items
+                      or world.options.smooth_rune_items]
+        if not er_worlds:
+            # No worlds need item smoothing.
+            return
+
+        spheres_per_player: Dict[int, List[List[Location]]] = {world.player: [] for world in er_worlds}
+        for sphere in multiworld.get_spheres():
+            locations_per_item_player: Dict[int, List[Location]] = {player: [] for player in spheres_per_player.keys()}
+            for location in sphere:
+                if location.locked:
+                    continue
+                item_player = location.item.player
+                if item_player in locations_per_item_player:
+                    locations_per_item_player[item_player].append(location)
+            for player, locations in locations_per_item_player.items():
+                # Sort for deterministic results.
+                locations.sort()
+                spheres_per_player[player].append(locations)
+
+        for er_world in er_worlds:
+            locations_by_sphere = spheres_per_player[er_world.player]
+
+            # All items in the base game in approximately the order they appear
+            all_item_order: List[ERItemData] = [
+                item_table[location.default_item_name]
+                for region in (region_order + region_order_dlc)
+                # Shuffle locations within each region.
+                for location in er_world._shuffle(location_tables[region])
+                if er_world._is_location_available(location)
+            ]
+
+            # All EldenRingItems for this world that have been assigned anywhere, grouped by name
+            full_items_by_name: Dict[str, List[ERItem]] = defaultdict(list)
+            for location in multiworld.get_filled_locations():
+                if location.item.player == er_world.player and (
+                    location.player != er_world.player or er_world._is_location_available(location)
+                ):
+                    full_items_by_name[location.item.name].append(location.item)
+
+            def smooth_items(item_order: List[Union[ERItemData, ERItem]]) -> None:
+                """Rearrange all items in item_order to match that order.
+
+                Note: this requires that item_order exactly matches the number of placed items from this
+                world matching the given names.
+                """
+
+                # Convert items to full EldenRingItems.
+                converted_item_order: List[ERItem] = [
+                    item for item in (
+                        (
+                            # full_items_by_name won't contain DLC items if the DLC is disabled.
+                            (full_items_by_name[item.name] or [None]).pop(0)
+                            if isinstance(item, ERItemData) else item
+                        )
+                        for item in item_order
+                    )
+                    # Never re-order event items, because they weren't randomized in the first place.
+                    if item and item.code is not None
+                ]
+
+                names = {item.name for item in converted_item_order}
+
+                all_matching_locations = [
+                    loc
+                    for sphere in locations_by_sphere
+                    for loc in sphere
+                    if loc.item.name in names
+                ]
+
+                # It's expected that there may be more total items than there are matching locations if
+                # the player has chosen a more limited accessibility option, since the matching
+                # locations *only* include items in the spheres of accessibility.
+                if len(converted_item_order) < len(all_matching_locations):
+                    raise Exception(
+                        f"ER bug: there are {len(all_matching_locations)} locations that can " +
+                        f"contain smoothed items, but only {len(converted_item_order)} items to smooth."
+                    )
+
+                for sphere in locations_by_sphere:
+                    locations = [loc for loc in sphere if loc.item.name in names]
+
+                    # Check the game, not the player, because we know how to sort within regions for ER
+                    offworld = er_world._shuffle([loc for loc in locations if loc.game != "EldenRing"])
+                    onworld = sorted((loc for loc in locations if loc.game == "EldenRing"),
+                                     key=lambda loc: loc.data.region_value)
+
+                    # Give offworld regions the last (best) items within a given sphere
+                    for location in onworld + offworld:
+                        new_item = er_world._pop_item(location, converted_item_order)
+                        location.item = new_item
+                        new_item.location = location
+
+            if er_world.options.smooth_upgrade_items:
+                smooth_items([
+                    item for item in all_item_order 
+                    if item.upgrade_item and item.classification != ItemClassification.progression
+                ])
+
+            if er_world.options.smooth_rune_items:
+                smooth_items([
+                    item for item in all_item_order
+                    if item.runes and item.classification != ItemClassification.progression
+                ])
+
+            # if er_world.options.smooth_upgraded_weapons:
+            #     upgraded_weapons = [
+            #         location.item
+            #         for location in multiworld.get_filled_locations()
+            #         if location.item.player == er_world.player
+            #         and location.item.level and location.item.level > 0
+            #         and location.item.classification != ItemClassification.progression
+            #     ]
+            #     upgraded_weapons.sort(key=lambda item: item.level)
+            #     smooth_items(upgraded_weapons)
+
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""
         copy = list(seq)
@@ -2521,7 +2649,8 @@ class EldenRing(World):
                 "region_boss_percent": self.options.region_boss_percent.value,
                 "region_boss_type": self.options.region_boss_type.value,
                 "soft_logic": self.options.soft_logic.value,
-                "great_runes_required": self.options.great_runes_required.value,
+                "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,
+                "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
                 "royal_access": self.options.royal_access.value,
                 "enable_dlc": self.options.enable_dlc.value,
                 "messmer_kindle": self.options.messmer_kindle.value,
@@ -2537,6 +2666,8 @@ class EldenRing(World):
                 "crafting_kit_option": self.options.crafting_kit_option.value,
                 "map_option": self.options.map_option.value,
                 "smithing_bell_bearing_option": self.options.smithing_bell_bearing_option.value,
+                "smooth_upgrade_items": self.options.smooth_upgrade_items.value,
+                "smooth_rune_items": self.options.smooth_rune_items.value,
                 "spell_shop_spells_only": self.options.spell_shop_spells_only.value,
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
                 "local_item_option": self.options.local_item_option.value,

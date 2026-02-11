@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, \
     OptionGroup, PerGameCommonOptions, Range, Toggle
 
-## Game Options
+# MARK: Game Options
 
 class EndingCondition(Choice):
     """Ending Condition options
@@ -22,10 +22,10 @@ class EndingCondition(Choice):
 class WorldLogic(Choice):
     """World Logic options
     
-    **Region Lock:** Each region will require a 'Special item'
-    **Region Bosses:** Each region will require % of bosses in that region to be defeated
-    **Region Lock Bosses:** Each region will require % of bosses in that region to be defeated and a 'Special item'
-    **Open World:** No region locking"""
+    **Region Lock:** Each region will require a 'Special item'.
+    **Region Bosses:** Each region will require % of bosses in that region to be defeated.
+    **Region Lock Bosses:** Each region will require % of bosses in that region to be defeated and a 'Special item'.
+    **Open World:** No region locking."""
     display_name = "World Logic"
     option_region_lock = 0
     option_region_bosses = 1
@@ -34,7 +34,7 @@ class WorldLogic(Choice):
     default = 0
     
 class RegionBossPercent(Range):
-    """The % of bosses in a region to unlock the next"""
+    """The % of bosses in a region to unlock the next."""
     display_name = "Region Boss Percent"
     range_start = 1
     range_end = 100
@@ -51,17 +51,26 @@ class RegionSoftLogic(DefaultOnToggle):
     """
     display_name = "Region Soft Logic"
 
-class GreatRunesRequired(Range):
-    """How many great runes are required to enter Leyndell
-    This option is ignored if Region Lock in On"""
+class GreatRunesRequiredLeyndell(Range):
+    """How many great runes are required to enter Leyndell."""
     display_name = "Leyndell Great Runes Required"
-    range_start = 1
+    range_start = 0
     range_end = 7
     default = 2
+    
+class GreatRunesRequiredMountain(Range):
+    """How many great runes are required to enter Mountaintops.
+    If greater than 0 Rold Medallion is not required."""
+    display_name = "Mountaintops Great Runes Required"
+    range_start = 0
+    range_end = 7
+    default = 0
     
 class RoyalAccess(Toggle):
     """Keep Royal Capital graces accessable after it becomes ashen."""
     display_name = "Royal Capital Accessable"
+
+# MARK: DLC
 
 class EnableDLC(Toggle):
     """Enable DLC"""
@@ -75,14 +84,14 @@ class MessmerKindleRequired(Range): # i just picked these numbers idk how many w
     """Messmer Kindle Shards required to access Enir Ilim."""
     display_name = "Messmer Kindle Shards Required"
     range_start = 2
-    range_end = 15
+    range_end = 20
     default = 5
     
 class MessmerKindleMax(Range):
     """How many Messmer Kindle Shards there are."""
     display_name = "Messmer Kindle Shards Max"
     range_start = 2
-    range_end = 15
+    range_end = 20
     default = 10
 
 class DLCTimingOption(Choice):
@@ -98,15 +107,17 @@ class DLCTimingOption(Choice):
     option_late = 2
     default = 1
     
+# MARK: Other Rando
+    
 class EnemyRando(Toggle):
     """Randomizes the enemies."""
-    display_name = "Enemy randomizer"
+    display_name = "Enemy Randomizer"
 
 class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
     display_name = "Material Randomizer"
 
-## Item & Location
+# MARK: Item & Location
 
 class RandomizeStartingLoadout(DefaultOnToggle):
     """Randomizes the equipment characters begin with."""
@@ -158,6 +169,14 @@ class SmithingBellBearingOption(Choice):
     option_progression_randomize = 1
     option_do_not_randomize = 2
     default = 1
+    
+class SmoothUpgradeItems(Toggle): # these fail, Exception: ER bug: there are 518 locations that can contain smoothed items, but only 491 items to smooth.
+    """Smooth Upgrade Items."""
+    display_name = "Smooth Upgrade Items"
+    
+class SmoothRuneItems(Toggle):
+    """Smooth Rune Items."""
+    display_name = "Smooth Rune Items"
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
@@ -258,13 +277,16 @@ class EROptions(PerGameCommonOptions):
     region_boss_percent: RegionBossPercent
     region_boss_type: RegionBossType
     soft_logic: RegionSoftLogic
-    great_runes_required: GreatRunesRequired
+    great_runes_required_leyndell: GreatRunesRequiredLeyndell
+    great_runes_required_mountain: GreatRunesRequiredMountain
     royal_access: RoyalAccess
+    
     enable_dlc: EnableDLC
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
     messmer_kindle_max: MessmerKindleMax
     dlc_timing: DLCTimingOption
+    
     enemy_rando: EnemyRando
     material_rando: MaterialRando
     death_link: DeathLink
@@ -276,6 +298,8 @@ class EROptions(PerGameCommonOptions):
     crafting_kit_option: CraftingKitOption
     map_option: MapOption
     smithing_bell_bearing_option: SmithingBellBearingOption
+    smooth_upgrade_items: SmoothUpgradeItems
+    smooth_rune_items: SmoothRuneItems
     spell_shop_spells_only: SpellShopSpellsOnly
     early_legacy_dungeons:EarlyLegacyDungeonsEarly
     local_item_option: LocalItemOnly
@@ -286,6 +310,16 @@ class EROptions(PerGameCommonOptions):
     missable_location_behavior: MissableLocationBehaviorOption
 
 option_groups = [
+    OptionGroup("Logic", [
+        EndingCondition,
+        WorldLogic,
+        RegionBossPercent,
+        RegionBossType,
+        RegionSoftLogic,
+        GreatRunesRequiredLeyndell,
+        GreatRunesRequiredMountain,
+        RoyalAccess,
+    ]),
     OptionGroup("Equipment", [
         RandomizeStartingLoadout,
         AutoEquipOption,
@@ -301,6 +335,8 @@ option_groups = [
         CraftingKitOption,
         MapOption,
         SmithingBellBearingOption,
+        SmoothUpgradeItems,
+        SmoothRuneItems,
         SpellShopSpellsOnly,
         EarlyLegacyDungeonsEarly,
         LocalItemOnly,

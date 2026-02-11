@@ -259,6 +259,12 @@ class ERLocationData:
     ap_code: Optional[int] = None
     """Archipelago's internal ID for this location (also known as its "address")."""
     
+    region_value: int = 0
+    """The relative value of items in this location's region.
+
+    This is used to sort locations when placing items like the base game.
+    """
+    
     key: Optional[str] = None
     """The key used by the static randomizer"""
 
@@ -6165,8 +6171,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
 }
 
-# for i, region in enumerate(region_order + region_order_dlc):
-#     for location in location_tables[region]: location.region_value = i
+for i, region in enumerate(region_order + region_order_dlc):
+    for location in location_tables[region]: location.region_value = i
 
 for region in region_order_dlc:
     for location in location_tables[region]:
