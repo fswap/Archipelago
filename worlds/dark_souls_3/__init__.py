@@ -249,6 +249,9 @@ class DarkSouls3World(World):
             create_connection("Painted World of Ariandel (After Contraption)", "Dreg Heap")
             create_connection("Dreg Heap", "Ringed City")
 
+            if self.options.goal != {"Kiln of the First Flame Boss"}:
+                create_connection("Kiln of the First Flame", "Dreg Heap")
+
     # For each region, add the associated locations retrieved from the corresponding location_table
     def create_region(self, region_name, location_table) -> Region:
         new_region = Region(region_name, self.player, self.multiworld)
@@ -617,7 +620,13 @@ class DarkSouls3World(World):
             self._add_entrance_rule("Painted World of Ariandel (After Contraption)", "Contraption Key")
             self._add_entrance_rule(
                 "Dreg Heap",
-                lambda state: self._can_get(state, "PW2: Soul of Sister Friede")
+                lambda state: (
+                    self._can_get(state, "PW2: Soul of Sister Friede")
+                    or (
+                        self.options.goal != {"Kiln of the First Flame Boss"}
+                        and self._can_reach_location("Kiln of the First Flame")
+                    )
+                )
             )
             self._add_entrance_rule("Ringed City", lambda state: (
                 state.has("Small Envoy Banner", self.player)
