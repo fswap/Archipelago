@@ -76,6 +76,17 @@ class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
     
+class DLCRandomization(Choice):
+    """How to randomize dlc items.
+    
+    - **Together:** Randomize base and dlc together.
+    - **Separately:** Randomize dlc items to dlc locations.
+    """
+    display_name = "DLC Randomization"
+    option_together = 0
+    option_separately = 1
+    default = 0
+    
 class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
     """Messmer Kindle Shards"""
     display_name = "Messmer Kindle Shards"
@@ -282,6 +293,7 @@ class EROptions(PerGameCommonOptions):
     royal_access: RoyalAccess
     
     enable_dlc: EnableDLC
+    dlc_randomization: DLCRandomization
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
     messmer_kindle_max: MessmerKindleMax
@@ -326,6 +338,7 @@ option_groups = [
     ]),
     OptionGroup("DLC", [
         EnableDLC,
+        DLCRandomization,
         MessmerKindle,
         MessmerKindleRequired,
         MessmerKindleMax,

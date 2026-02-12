@@ -178,6 +178,7 @@ region_order_dlc = [
     "Fog Rift Catacombs",
     "Belurat Gaol",
     "Dragon's Pit",
+    "Ruined Forge Lava Intake",
     
     "Belurat",
     "Belurat Swamp",

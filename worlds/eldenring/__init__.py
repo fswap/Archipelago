@@ -136,9 +136,14 @@ class EldenRing(World):
             item_table["Somberstone Miner's Bell Bearing [4]"].classification = ItemClassification.progression
             item_table["Somberstone Miner's Bell Bearing [5]"].classification = ItemClassification.progression
         
-        if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject keys
-            for item in item_table: 
+        if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock keys
+            for item in item_table:
                 if item_table[item].lock:
+                    item_table[item].inject = True
+        
+        if self.options.map_option.value == 0: # inject maps
+            for item in item_table:
+                if item_table[item].map:
                     item_table[item].inject = True
         
         if self.options.enable_dlc:
@@ -398,6 +403,7 @@ class EldenRing(World):
             create_connection("Cerulean Coast", "Finger Ruins of Rhia")
             
             create_connection("Gravesite Plain", "Fog Rift Catacombs")
+            create_connection("Gravesite Plain", "Ruined Forge Lava Intake")
             create_connection("Gravesite Plain", "Castle Ensis")
             create_connection("Castle Ensis", "Scadu Altus")
             create_connection("Scadu Altus", "Fog Rift Fort")
@@ -510,7 +516,13 @@ class EldenRing(World):
             if item.skip:
                 num_required_extra_items += 1
             else:
-                self.local_itempool.append(self.create_item(default_item_name))
+                if not location.data.dlc:
+                    self.local_itempool.append(self.create_item(default_item_name))
+                elif location.data.dlc:
+                    # make base items dlc if in dlc
+                    dlc_item = self.create_item(default_item_name)
+                    dlc_item.data.found_in_dlc = True
+                    self.local_itempool.append(dlc_item)
 
         injectables = self._create_injectable_items(num_required_extra_items)
         num_required_extra_items -= len(injectables)
@@ -546,11 +558,11 @@ class EldenRing(World):
         
         injectable_mandatory = [
             item for item in all_injectable_items
-            if item.classification == ItemClassification.progression
+            if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful
         ]
         injectable_optional = [
             item for item in all_injectable_items
-            if item.classification != ItemClassification.progression
+            if item.classification != ItemClassification.progression and item.classification != ItemClassification.useful
         ]
 
         number_to_inject = min(num_required_extra_items, len(all_injectable_items))
@@ -851,6 +863,20 @@ class EldenRing(World):
         
         # DLC Rules
         if self.options.enable_dlc:
+            if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
+                for region in location_tables:
+                    for location in location_tables[region]:
+                        if region in region_order:
+                            self._add_item_rule(location.name,
+                                lambda item: (item.player != self.player)
+                                    or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
+                                )
+                        elif region in region_order_dlc:
+                            self._add_item_rule(location.name,
+                                lambda item: (item.player != self.player) 
+                                    or item.data.is_dlc or item.data.found_in_dlc
+                                )
+            
             if self.options.dlc_timing == 2:
                 self._add_entrance_rule("Gravesite Plain",
                     lambda state: state.has("Rold Medallion", self.player)
@@ -2563,7 +2589,7 @@ class EldenRing(World):
                         location.item = new_item
                         new_item.location = location
 
-            if er_world.options.smooth_upgrade_items:
+            if er_world.options.smooth_upgrade_items: # smoothed items cant be filler items
                 smooth_items([
                     item for item in all_item_order 
                     if item.upgrade_item and item.classification != ItemClassification.progression
@@ -2574,17 +2600,6 @@ class EldenRing(World):
                     item for item in all_item_order
                     if item.runes and item.classification != ItemClassification.progression
                 ])
-
-            # if er_world.options.smooth_upgraded_weapons:
-            #     upgraded_weapons = [
-            #         location.item
-            #         for location in multiworld.get_filled_locations()
-            #         if location.item.player == er_world.player
-            #         and location.item.level and location.item.level > 0
-            #         and location.item.classification != ItemClassification.progression
-            #     ]
-            #     upgraded_weapons.sort(key=lambda item: item.level)
-            #     smooth_items(upgraded_weapons)
 
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""
@@ -2653,6 +2668,7 @@ class EldenRing(World):
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
                 "royal_access": self.options.royal_access.value,
                 "enable_dlc": self.options.enable_dlc.value,
+                "dlc_randomization": self.options.dlc_randomization.value,
                 "messmer_kindle": self.options.messmer_kindle.value,
                 "messmer_kindle_required": self.options.messmer_kindle_required.value,
                 "messmer_kindle_max": self.options.messmer_kindle_max.value,
