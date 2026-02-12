@@ -1609,11 +1609,7 @@ class DarkSouls3World(World):
             "goal": [boss.flag for boss in self._goal_bosses()],
             # Reserializing here is silly, but it's easier for the static randomizer.
             "random_enemy_preset": json.dumps(self.options.random_enemy_preset.value),
-            "yhorm": (
-                f"{self.yhorm_location.name} {self.yhorm_location.id}"
-                if self.yhorm_location != default_yhorm_location
-                else None
-            ),
+            "yhorm": f"{self.yhorm_location.name} {self.yhorm_location.id}",
             "apIdsToItemIds": ap_ids_to_ds3_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,
