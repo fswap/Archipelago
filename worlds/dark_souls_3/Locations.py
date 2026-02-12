@@ -340,10 +340,10 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         omit=disable_ngp),
         # Leonhard (quest)
         DS3LocationData("FS: Cracked Red Eye Orb - Leonhard", "Cracked Red Eye Orb x5",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
         # Leonhard (kill or quest), missable because he can disappear sometimes
-        DS3LocationData("FS: Lift Chamber Key - Leonhard", "Lift Chamber Key", missable=True,
-                        npc=True, drop=True),
+        DS3LocationData("FS: Lift Chamber Key - Leonhard", "Lift Chamber Key",
+                        missable=missable_quest, npc=True),
 
         # Shrine Handmaid shop
         DS3LocationData("FS: White Sign Soapstone - shop", "White Sign Soapstone", shop=True),
@@ -1102,7 +1102,16 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("CD: Soul of the Deacons of the Deep", "Soul of the Deacons of the Deep",
                         boss=True),
         DS3LocationData("CD: Black Eye Orb - Rosaria from Leonhard's quest", "Black Eye Orb",
-                        missable=True, npc=True),
+                        missable=True, npc=True,
+                        # Leave this entirely unrandomized in unmissable quests
+                        # mode. We don't have a good way to make this not allow
+                        # an invasion until Leonhard's quest is complete, so
+                        # this is the best way to make sure players don't kill
+                        # him early. We could also make him invulnerable in the
+                        # invasion, but that seems more confusing.
+                        #
+                        # See https://discord.com/channels/529802828278005773/583763085722910752/1471441981858119710
+                        omit=lambda(self, options): options.unmissable_quests),
         DS3LocationData("CD: Spider Shield - NPC drop on path", "Spider Shield",
                         hostile_npc=True),  # Brigand
         DS3LocationData("CD: Notched Whip - Cleansing Chapel", "Notched Whip"),
@@ -2018,17 +2027,12 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         npc=True),
 
         # Shrine Handmaid after killing Ringfinger Leonhard
-        # This is listed here even though you can kill Leonhard immediately because we want the
-        # logic to assume people will do his full quest. Missable because he can disappear forever
-        # if you use up all your Pale Tongues.
         DS3LocationData("FS: Leonhard's Garb - shop after killing Leonhard",
-                        "Leonhard's Garb", hidden=True, npc=True, shop=True, missable=True),
+                        "Leonhard's Garb", npc=True, shop=True, missable=missable_quest),
         DS3LocationData("FS: Leonhard's Gauntlets - shop after killing Leonhard",
-                        "Leonhard's Gauntlets", hidden=True, npc=True, shop=True,
-                        missable=True),
+                        "Leonhard's Gauntlets", npc=True, shop=True, missable=missable_quest),
         DS3LocationData("FS: Leonhard's Trousers - shop after killing Leonhard",
-                        "Leonhard's Trousers", hidden=True, npc=True, shop=True,
-                        missable=True),
+                        "Leonhard's Trousers", npc=True, shop=True, missable=missable_quest),
 
         # Shrine Handmaid after killing Alrich, Devourer of Gods
         DS3LocationData("FS: Smough's Helm - shop after killing AL boss", "Smough's Helm",
@@ -2042,11 +2046,11 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Ringfinger Leonhard (quest or kill)
         DS3LocationData("AL: Crescent Moon Sword - Leonhard drop", "Crescent Moon Sword",
-                        missable=True, npc=True),
-        DS3LocationData("AL: Silver Mask - Leonhard drop", "Silver Mask", missable=True,
-                        npc=True),
-        DS3LocationData("AL: Soul of Rosaria - Leonhard drop", "Soul of Rosaria", missable=True,
-                        npc=True),
+                        missable=missable_quest, npc=True, drop=True),
+        DS3LocationData("AL: Silver Mask - Leonhard drop", "Silver Mask", missable=missable_quest,
+                        npc=True, drop=True),
+        DS3LocationData("AL: Soul of Rosaria - Leonhard drop", "Soul of Rosaria",
+                        missable=missable_quest, npc=True, drop=True),
 
         # Shrine Handmaid after killing Anri or completing their quest
         DS3LocationData("FS: Elite Knight Helm - shop after Anri quest", "Elite Knight Helm",
