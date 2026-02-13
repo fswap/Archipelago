@@ -99,6 +99,12 @@ class DS3LocationData:
     omit: Union[bool, Callable[['DS3LocationData', PerGameCommonOptions], bool]] = False
     """Whether to not include this location in the multiworld at all."""
 
+    randomize: Union[bool, Callable[['DS3LocationData', PerGameCommonOptions], bool]] = True
+    """Whether to allow this location to be randomized.
+
+    Even if this is True, the location may still be unrandomized based on to the player's options.
+    If it's False, though, the location will never be randomized."""
+
     npc: bool = False
     """Whether this item is contingent on killing an NPC or following their quest."""
 
@@ -187,6 +193,21 @@ class DS3LocationData:
         """Whether this location should be omitted given a set of options."""
         return self.omit if isinstance(self.omit, bool) else self.omit(self, options)
 
+    def should_randomize(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be forced to contain its default item."""
+        if not (
+            self.randomize if isinstance(self.randomize, bool)
+            else self.randomize(self, options)
+        ): return False
+
+        return (
+            options.missable_location_behavior == "do_not_randomize"
+            and self.is_missable(options)
+        ) or (
+            options.excluded_location_behavior == "do_not_randomize"
+            and self.name in options.exclude_locations.value
+        )
+
     def location_groups(self) -> List[str]:
         """The names of location groups this location should appear in.
 
@@ -253,17 +274,17 @@ def disable_ngp(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
 
 def is_unrandomized_and_missable(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
     """A utility function for locations that are omitted when they're unrandomized and missable."""
-    if not self.is_missable(options): return False
-    
-    return options.missable_location_behavior == "do_not_randomize" or (
-        options.excluded_location_behavior == "do_not_randomize"
-        and self.name in options.exclude_locations.value
-    )
+    return self.is_missable(options) and not self.should_randomize(options)
 
 
 def missable_quest(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
     """A utility function for locations that are only missable when unmissable_quests is False."""
     return not options.unmissable_quests
+
+
+def unmissable_quest(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
+    """A utility function for location metadata that's only true in unmissable_quests mode."""
+    return options.unmissable_quests
 
 
 def missable_transposition(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
@@ -1111,7 +1132,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         # invasion, but that seems more confusing.
                         #
                         # See https://discord.com/channels/529802828278005773/583763085722910752/1471441981858119710
-                        omit=lambda self, options: options.unmissable_quests),
+                        randomize=missable_quest),
         DS3LocationData("CD: Spider Shield - NPC drop on path", "Spider Shield",
                         hostile_npc=True),  # Brigand
         DS3LocationData("CD: Notched Whip - Cleansing Chapel", "Notched Whip"),
@@ -1222,7 +1243,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("CD: Twinkling Titanite - moat, lizard #2", "Twinkling Titanite",
                         lizard=True),
         DS3LocationData("CD: Rosaria's Fingers - Rosaria", "Rosaria's Fingers",
-                        hidden=True),  # Hidden fall
+                        conditional=unmissable_quest),
         DS3LocationData("CD -> PW1", None),
 
         # Longfinger Kirk drops
