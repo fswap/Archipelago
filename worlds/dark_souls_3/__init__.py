@@ -982,26 +982,32 @@ class DarkSouls3World(World):
 
         ## Leonhard
 
-        self._add_location_rule([
-            # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or
-            # killing Greatwood. This doesn't consume the Pale Tongue, it just has to be in
-            # inventory
-            "FS: Lift Chamber Key - Leonhard",
-            # Progress Leonhard's quest and then return to Rosaria after lighting Profaned Capital
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
-        ], "Pale Tongue")
+        # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or killing
+        # Greatwood. This doesn't consume the Pale Tongue, it just has to be in inventory
+        self._add_location_rule(["FS: Lift Chamber Key - Leonhard"], "Pale Tongue")
 
+        # In unmissable quests mode, we block entry into Rosaria's covenant until Leonhard has given
+        # the Lift Chamber Key lot to avoid the possibility of the player giving Rosaria all the
+        # Pale Tongues they have access to before progressing Leonhard's quest.
+        if self.options.unmissable_quests:
+            self._add_location_rule(
+                ["CD: Rosaria's Fingers - Rosaria"],
+                lambda state: self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            )
+
+        # The Black Eye Orb location won't spawn until you progress Leonhard's quest, kill the
+        # HWL miniboss, and rest at the Profaned Capital bonfire.
         self._add_location_rule([
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
+            "CD: Black Eye Orb - Rosaria from Leonhard's quest"
         ], lambda state: (
-            # The Black Eye Orb location won't spawn until you kill the HWL miniboss and resting at
-            # the Profaned Capital bonfire.
-            self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
+            self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            and self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
             and self._can_go_to(state, "Profaned Capital")
         ))
 
-        # Perhaps counterintuitively, you CAN fight Leonhard before you access the location that
-        # would normally give you the Black Eye Orb.
+        # Perhaps counterintuitively, in missable-quests mode you CAN fight Leonhard before you
+        # access the location that would normally give you the Black Eye Orb. In unmissbale quests
+        # mode, we prevent this by not randomizing the Black Eye Orb at all.
         self._add_location_rule([
             "AL: Crescent Moon Sword - Leonhard drop",
             "AL: Silver Mask - Leonhard drop",
@@ -1461,25 +1467,16 @@ class DarkSouls3World(World):
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
 
         missable = data.is_missable(self.options)
-        if (
-            self.options.missable_location_behavior == "do_not_randomize"
-            and missable
-        ):
-            return _LocationStatus.UNRANDOMIZED_MISSABLE
-        elif (
-            self.options.excluded_location_behavior == "do_not_randomize"
-            and data.name in self.all_excluded_locations
-        ):
-            return (
-                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
-                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
-            )
-        else:
+        if data.should_randomize(self.options):
             return (
                 _LocationStatus.RANDOMIZED_MISSABLE if missable
                 else _LocationStatus.RANDOMIZED_UNMISSABLE
             )
-
+        else:
+            return (
+                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
+                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
+            )
 
     def _goal_bosses(self) -> [DS3BossInfo]:
         """Returns all the bosses that are goals for this run."""

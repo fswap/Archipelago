@@ -99,6 +99,12 @@ class DS3LocationData:
     omit: Union[bool, Callable[['DS3LocationData', PerGameCommonOptions], bool]] = False
     """Whether to not include this location in the multiworld at all."""
 
+    randomize: Union[bool, Callable[['DS3LocationData', PerGameCommonOptions], bool]] = True
+    """Whether to allow this location to be randomized.
+
+    Even if this is True, the location may still be unrandomized based on to the player's options.
+    If it's False, though, the location will never be randomized."""
+
     npc: bool = False
     """Whether this item is contingent on killing an NPC or following their quest."""
 
@@ -187,6 +193,21 @@ class DS3LocationData:
         """Whether this location should be omitted given a set of options."""
         return self.omit if isinstance(self.omit, bool) else self.omit(self, options)
 
+    def should_randomize(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be forced to contain its default item."""
+        if not (
+            self.randomize if isinstance(self.randomize, bool)
+            else self.randomize(self, options)
+        ): return False
+
+        return (
+            options.missable_location_behavior == "do_not_randomize"
+            and self.is_missable(options)
+        ) or (
+            options.excluded_location_behavior == "do_not_randomize"
+            and self.name in options.exclude_locations.value
+        )
+
     def location_groups(self) -> List[str]:
         """The names of location groups this location should appear in.
 
@@ -253,17 +274,17 @@ def disable_ngp(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
 
 def is_unrandomized_and_missable(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
     """A utility function for locations that are omitted when they're unrandomized and missable."""
-    if not self.is_missable(options): return False
-    
-    return options.missable_location_behavior == "do_not_randomize" or (
-        options.excluded_location_behavior == "do_not_randomize"
-        and self.name in options.exclude_locations.value
-    )
+    return self.is_missable(options) and not self.should_randomize(options)
 
 
 def missable_quest(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
     """A utility function for locations that are only missable when unmissable_quests is False."""
     return not options.unmissable_quests
+
+
+def unmissable_quest(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
+    """A utility function for location metadata that's only true in unmissable_quests mode."""
+    return options.unmissable_quests
 
 
 def missable_transposition(self: DS3LocationData, options: PerGameCommonOptions) -> bool:
@@ -340,10 +361,10 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         omit=disable_ngp),
         # Leonhard (quest)
         DS3LocationData("FS: Cracked Red Eye Orb - Leonhard", "Cracked Red Eye Orb x5",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
         # Leonhard (kill or quest), missable because he can disappear sometimes
-        DS3LocationData("FS: Lift Chamber Key - Leonhard", "Lift Chamber Key", missable=True,
-                        npc=True, drop=True),
+        DS3LocationData("FS: Lift Chamber Key - Leonhard", "Lift Chamber Key",
+                        missable=missable_quest, npc=True),
 
         # Shrine Handmaid shop
         DS3LocationData("FS: White Sign Soapstone - shop", "White Sign Soapstone", shop=True),
@@ -1102,7 +1123,16 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("CD: Soul of the Deacons of the Deep", "Soul of the Deacons of the Deep",
                         boss=True),
         DS3LocationData("CD: Black Eye Orb - Rosaria from Leonhard's quest", "Black Eye Orb",
-                        missable=True, npc=True),
+                        missable=True, npc=True,
+                        # Leave this entirely unrandomized in unmissable quests
+                        # mode. We don't have a good way to make this not allow
+                        # an invasion until Leonhard's quest is complete, so
+                        # this is the best way to make sure players don't kill
+                        # him early. We could also make him invulnerable in the
+                        # invasion, but that seems more confusing.
+                        #
+                        # See https://discord.com/channels/529802828278005773/583763085722910752/1471441981858119710
+                        randomize=missable_quest),
         DS3LocationData("CD: Spider Shield - NPC drop on path", "Spider Shield",
                         hostile_npc=True),  # Brigand
         DS3LocationData("CD: Notched Whip - Cleansing Chapel", "Notched Whip"),
@@ -1213,7 +1243,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("CD: Twinkling Titanite - moat, lizard #2", "Twinkling Titanite",
                         lizard=True),
         DS3LocationData("CD: Rosaria's Fingers - Rosaria", "Rosaria's Fingers",
-                        hidden=True),  # Hidden fall
+                        conditional=unmissable_quest),
         DS3LocationData("CD -> PW1", None),
 
         # Longfinger Kirk drops
@@ -2018,17 +2048,12 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         npc=True),
 
         # Shrine Handmaid after killing Ringfinger Leonhard
-        # This is listed here even though you can kill Leonhard immediately because we want the
-        # logic to assume people will do his full quest. Missable because he can disappear forever
-        # if you use up all your Pale Tongues.
         DS3LocationData("FS: Leonhard's Garb - shop after killing Leonhard",
-                        "Leonhard's Garb", hidden=True, npc=True, shop=True, missable=True),
+                        "Leonhard's Garb", npc=True, shop=True, missable=missable_quest),
         DS3LocationData("FS: Leonhard's Gauntlets - shop after killing Leonhard",
-                        "Leonhard's Gauntlets", hidden=True, npc=True, shop=True,
-                        missable=True),
+                        "Leonhard's Gauntlets", npc=True, shop=True, missable=missable_quest),
         DS3LocationData("FS: Leonhard's Trousers - shop after killing Leonhard",
-                        "Leonhard's Trousers", hidden=True, npc=True, shop=True,
-                        missable=True),
+                        "Leonhard's Trousers", npc=True, shop=True, missable=missable_quest),
 
         # Shrine Handmaid after killing Alrich, Devourer of Gods
         DS3LocationData("FS: Smough's Helm - shop after killing AL boss", "Smough's Helm",
@@ -2042,11 +2067,11 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Ringfinger Leonhard (quest or kill)
         DS3LocationData("AL: Crescent Moon Sword - Leonhard drop", "Crescent Moon Sword",
-                        missable=True, npc=True),
-        DS3LocationData("AL: Silver Mask - Leonhard drop", "Silver Mask", missable=True,
-                        npc=True),
-        DS3LocationData("AL: Soul of Rosaria - Leonhard drop", "Soul of Rosaria", missable=True,
-                        npc=True),
+                        missable=missable_quest, npc=True, drop=True),
+        DS3LocationData("AL: Silver Mask - Leonhard drop", "Silver Mask", missable=missable_quest,
+                        npc=True, drop=True),
+        DS3LocationData("AL: Soul of Rosaria - Leonhard drop", "Soul of Rosaria",
+                        missable=missable_quest, npc=True, drop=True),
 
         # Shrine Handmaid after killing Anri or completing their quest
         DS3LocationData("FS: Elite Knight Helm - shop after Anri quest", "Elite Knight Helm",
