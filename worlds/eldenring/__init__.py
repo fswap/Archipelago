@@ -138,19 +138,25 @@ class EldenRing(World):
         
         if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock keys
             for item in item_table:
-                if item_table[item].lock:
+                if (self.options.dlc_start != 1 and self.options.enable_dlc and item_table[item].lock
+                    or not self.options.enable_dlc and item_table[item].lock
+                    or self.options.enable_dlc and item_table[item].lock and item_table[item].is_dlc):
                     item_table[item].inject = True
+                    if item == "Gravesite Lock" and self.options.dlc_start != 0 and self.options.enable_dlc:
+                        item_table[item].inject = False # dont need gravesite lock if starting in dlc
         
         if self.options.map_option.value == 0: # inject maps
             for item in item_table:
-                if item_table[item].map:
+                if (self.options.dlc_start != 1 and self.options.enable_dlc and item_table[item].map
+                    or not self.options.enable_dlc and item_table[item].map
+                    or self.options.enable_dlc and item_table[item].map and item_table[item].is_dlc):
                     item_table[item].inject = True
         
         if self.options.enable_dlc:
             # warming stone craft
-            item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
+            # item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
             
-            if self.options.dlc_timing != 2:
+            if self.options.dlc_timing != 2 and self.options.dlc_start != 1:
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
@@ -190,7 +196,7 @@ class EldenRing(World):
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
             regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
-        else: regions.update({"Roundtable Hold": self.create_region("Roundtable Hold", location_tables["Roundtable Hold"])})
+        else: regions.update({"Roundtable Hold DLC Only": self.create_region("Roundtable Hold DLC Only", location_tables["Roundtable Hold DLC Only"])})
 
         # Create DLC Regions
         if self.options.enable_dlc:
@@ -206,7 +212,8 @@ class EldenRing(World):
         
         if self.options.enable_dlc and self.options.dlc_start != 0:
             self.multiworld.get_entrance("New Game", self.player).connect(regions["Gravesite Plain"])
-            create_connection("Gravesite Plain", "Roundtable Hold")
+            if self.options.dlc_start == 1: create_connection("Gravesite Plain", "Roundtable Hold DLC Only")
+            else: create_connection("Gravesite Plain", "Roundtable Hold")
         else:
             self.multiworld.get_entrance("New Game", self.player).connect(regions["Limgrave"])
             create_connection("Limgrave", "Roundtable Hold")
@@ -562,7 +569,13 @@ class EldenRing(World):
             if item.inject and (not item.is_dlc or self.options.enable_dlc)
         ]
         
+        # if self.options.crafting_kit_option != 2:
+        all_injectable_items += [item_table["Crafting Kit"]]
+        
         if self.options.enable_dlc:
+            if self.options.dlc_start == 1:
+                all_injectable_items += [item_table["Dragon Heart x3"]] # ghostflame breath cannot be gotten without, idk what matt did
+                
             if self.options.messmer_kindle:
                 all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             else:
@@ -625,6 +638,12 @@ class EldenRing(World):
                 self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
                 self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
                 self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
+        else:
+            if self.options.crafting_kit_option.value == 1:
+                self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
+            elif self.options.crafting_kit_option.value == 2:
+                self.multiworld.get_location("RH/DLC: Dagger - Twin maiden shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
+                # self.multiworld.push_precollected(self.create_item("Crafting Kit"))
         
         if self.options.map_option.value == 1:
             using_table = item_table_vanilla
@@ -740,6 +759,7 @@ class EldenRing(World):
         if self.options.world_logic < 3:
             self._region_lock()
         
+        # Base Game Rules
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
             self._key_rules() # make option to choose master or normal rules
             #self._master_key_rules()
@@ -917,6 +937,17 @@ class EldenRing(World):
                         self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
                         self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 
+            # dlc imbued
+            if self.options.dlc_start == 1:
+                self._add_entrance_rule("Rauh Ruins Limited", 
+                    lambda state: state.has("Imbued Sword Key", self.player, 1) or self._can_go_to(state, "Ancient Ruins of Rauh"))
+            else:
+                self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 4))
+                self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 4))
+                self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 4))
+                self._add_entrance_rule("Rauh Ruins Limited", 
+                    lambda state: state.has("Imbued Sword Key", self.player, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
+                
             if self.options.messmer_kindle:
                 self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
             else:
@@ -932,13 +963,6 @@ class EldenRing(World):
             self._add_location_rule("RB/NNM: Spiraltree Seal - \"The Sacred Tower\" Painting reward SW of NNM", 
                                     lambda state: state.has("\"The Sacred Tower\" Painting", self.player) and self._can_go_to(state, "Enir Ilim"))
             self._add_location_rule("JP/JPM: Rock Heart - \"Domain of Dragons\" Painting reward, after first spirit spring head down return path", "\"Domain of Dragons\" Painting")
-            
-            # dlc imbued
-            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 4))
-            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 4))
-            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 4))
-            self._add_entrance_rule("Rauh Ruins Limited", 
-                lambda state: state.has("Imbued Sword Key", self.player, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
             
             # furnace golem / Hefty Furnace Pot
             self._add_location_rule([
@@ -970,22 +994,29 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 3))
             self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 3))
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
-                    
+                   
+        # Ending Rules 
         if self.options.ending_condition <= 1:
-            if self.options.enable_dlc and self.options.ending_condition == 0:
+            if self.options.enable_dlc and self.options.ending_condition == 0 or self.options.enable_dlc and self.options.dlc_start == 1:
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "EI/GD: Circlet of Light - interact with memory after mainboss")
             else:
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "ET: Elden Remembrance - mainboss drop")
                 # make this the mend the elden ring event, idk how todo that rn
         elif self.options.ending_condition == 2:
-            if self.options.enable_dlc:
+            if self.options.enable_dlc and self.options.dlc_start == 1:
+                self._add_location_rule("DLC Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Remembrance DLC"])))
+                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
+            elif self.options.enable_dlc:
                 self._add_location_rule("Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Remembrance"] | self.location_name_groups["Remembrance DLC"])))
                 self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
             else:
                 self._add_location_rule("Victory", lambda state: self._can_get_all(state, self.location_name_groups["Remembrance"]))
                 self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
         else:
-            if self.options.enable_dlc:
+            if self.options.enable_dlc and self.options.dlc_start == 1:
+                self._add_location_rule("DLC Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Boss Reward DLC"])))
+                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
+            elif self.options.enable_dlc:
                 self._add_location_rule("Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Boss Reward"] | self.location_name_groups["Boss Reward DLC"])))
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "Victory")
             else:
@@ -1353,8 +1384,10 @@ class EldenRing(World):
             self._add_location_rule("CL/(CDC): Theodorix's Magma - Dragon Communion, kill boss in CS, SE of CF", 
                 lambda state: self._has_enough_hearts(state, 20) and self._can_go_to(state, "Consecrated Snowfield")) # 2
         
-        if self.options.enable_dlc: # dlc
-            self._add_location_rule("JP/GADC: Ghostflame Breath - Grand Dragon Communion", lambda state: self._has_enough_hearts(state, 23)) # 3
+            if self.options.enable_dlc: # dlc
+                self._add_location_rule("JP/GADC: Ghostflame Breath - Grand Dragon Communion", lambda state: self._has_enough_hearts(state, 23)) # 3
+        else: # dlc only, only need 3
+            self._add_location_rule("JP/GADC: Ghostflame Breath - Grand Dragon Communion", lambda state: self._has_enough_hearts(state, 3)) # 3
     
     def _has_enough_great_runes(self, state: CollectionState, runes_required: int) -> bool:
         """Returns whether the given state has enough great runes."""
@@ -2061,11 +2094,11 @@ class EldenRing(World):
             # "ER/ERD: Forager Brood Cookbook [3] - given by friendly Kindred of Rot to SE, NE corner of cliffs"
             # "ER/ERD: Yellow Fulgurbloom x3 - given by friendly Kindred of Rot to SE, NE corner of cliffs"
 
-            self._add_location_rule([
-                "SA/CC: Forager Brood Cookbook [4] - N of CC, given by friendly Kindred of Rot after you heal it",
-                "SA/CC: Shadow Sunflower x3 - N of CC, given by friendly Kindred of Rot after you heal it"
-                ], lambda state: state.has("Crafting Kit", self.player) 
-                    and (state.has("Nomadic Warrior's Cookbook [19]", self.player) or state.has("Battlefield Priest's Cookbook [4]", self.player)))
+            # self._add_location_rule([
+            #     "SA/CC: Forager Brood Cookbook [4] - N of CC, given by friendly Kindred of Rot after you heal it",
+            #     "SA/CC: Shadow Sunflower x3 - N of CC, given by friendly Kindred of Rot after you heal it"
+            #     ], lambda state: state.has("Crafting Kit", self.player) 
+            #         and (state.has("Nomadic Warrior's Cookbook [19]", self.player) or state.has("Battlefield Priest's Cookbook [4]", self.player)))
             
             # "SA/RFSP: Forager Brood Cookbook [1] - given by friendly Kindred of Rot NW of RFSP"
             # "SA/RFSP: Glintslab Firefly x3 - given by friendly Kindred of Rot NW of RFSP"
@@ -2230,20 +2263,23 @@ class EldenRing(World):
             ),
         ]
             
-        if self.options.dlc_start != 1 and self.options.enable_dlc:
-            remembrances += dlc_remembrances
-        elif self.options.enable_dlc: remembrances = dlc_remembrances
-            
         if self.options.enable_dlc:
+            remembrances += dlc_remembrances
             self._add_location_rule("JP/GADC: Bayle's Flame Lightning - Dragon Communion, Heart of Bayle",
                 lambda state: (state.has("Heart of Bayle", self.player) and self._can_go_to(state, "Jagged Peak Foot")))
             self._add_location_rule("JP/GADC: Bayle's Tyranny - Dragon Communion, Heart of Bayle", 
                 lambda state: (state.has("Heart of Bayle", self.player) and self._can_go_to(state, "Jagged Peak Foot")))
-                
-        for (remembrance, rem_items) in remembrances:
-            self._add_location_rule([
-                f"RH: {item} - Enia for {remembrance}" for item in rem_items
-            ], lambda state, item=remembrance: (state.has(item, self.player) and self._has_enough_great_runes(state, 1)))
+        
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            for (remembrance, rem_items) in remembrances:
+                self._add_location_rule([
+                    f"RH: {item} - Enia for {remembrance}" for item in rem_items
+                ], lambda state, item=remembrance: (state.has(item, self.player) and self._has_enough_great_runes(state, 1)))
+        else:
+            for (remembrance, rem_items) in dlc_remembrances:
+                self._add_location_rule([
+                    f"RH/DLC: {item} - Enia for {remembrance}" for item in rem_items
+                ], lambda state, item=remembrance: (state.has(item, self.player)))
     
     def _add_equipment_of_champions_rules(self) -> None:
         """Adds rules for items obtainable from equipment of champions."""
@@ -2383,14 +2419,18 @@ class EldenRing(World):
             ),
         ]
             
-        if self.options.dlc_start != 1 and self.options.enable_dlc:
-            equipments += dlc_equipments
-        elif self.options.enable_dlc: equipments = dlc_equipments
+        if self.options.enable_dlc: equipments += dlc_equipments
 
-        for (boss, boss_location, eq_items) in equipments:
-            self._add_location_rule([
-                f"RH: {item} - Enia shop, defeat {boss}" for item in eq_items
-            ], lambda state, bl=boss_location: (self._can_get(state, bl) and self._has_enough_great_runes(state, 1)))
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            for (boss, boss_location, eq_items) in equipments:
+                self._add_location_rule([
+                    f"RH: {item} - Enia shop, defeat {boss}" for item in eq_items
+                ], lambda state, bl=boss_location: (self._can_get(state, bl) and self._has_enough_great_runes(state, 1)))
+        else:
+            for (boss, boss_location, eq_items) in dlc_equipments:
+                self._add_location_rule([
+                    f"RH/DLC: {item} - Enia shop, defeat {boss}" for item in eq_items
+                ], lambda state, bl=boss_location: (self._can_get(state, bl)))
             
     def _add_allow_useful_location_rules(self) -> None:
         """Adds rules for locations that can contain useful but not necessary items.

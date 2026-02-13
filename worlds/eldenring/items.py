@@ -1684,7 +1684,7 @@ _vanilla_items = [
     ERItemData("Rogier's Letter", 8223, ERItemCategory.GOODS, skip=True),
     ERItemData("Note: The Preceptor's Secret", 8224, ERItemCategory.GOODS, skip=True),
     ERItemData("Weathered Map", 8225, ERItemCategory.GOODS),
-    ERItemData("Crafting Kit", 8500, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Crafting Kit", 8500, ERItemCategory.GOODS, classification=ItemClassification.progression, skip=True),
     ERItemData("Whetstone Knife", 8590, ERItemCategory.GOODS, classification=ItemClassification.useful),
 
     ERItemData("Map: Limgrave, West", 8600, ERItemCategory.GOODS, map=True, classification=ItemClassification.useful, skip=True),
@@ -2806,6 +2806,8 @@ _dlc_items = [
     ERItemData("Fire Knight Queelign", 2218000, ERItemCategory.GOODS),
     ERItemData("Swordhand of Night Jolán", 2219000, ERItemCategory.GOODS),
     ERItemData("Jolán and Anna", 2220000, ERItemCategory.GOODS),
+    
+    ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable
     
     #MARK: DLC Region Lock Items
     ERItemData("Gravesite Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),

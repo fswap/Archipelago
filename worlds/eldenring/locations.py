@@ -1376,6 +1376,79 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RH: Knifeprint Clue - talk to Fia multiple times", "Knifeprint Clue", key="120300,0:0000400334::", missable=True),
         ERLocationData("RH: Arsenal Charm - talk to Nepheli before and after defeating SV mainboss", "Arsenal Charm", key="100000,0:0000400420::", missable=True),
     ],
+    "Roundtable Hold DLC Only":[ # roundtable                   special
+        # ERLocationData("RH/DLC: Catch Flame - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Flame Sling - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Rejection - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Urgent Heal - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Heal - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Cure Poison - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Flame Fortification - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        # ERLocationData("RH/DLC: Magic Fortification - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
+        ERLocationData("RH/DLC: Dagger - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Longsword - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Rapier - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Scimitar - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Mace - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Battle Axe - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Short Spear - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Heater Shield - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Finger Seal - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Longbow - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Knight Helm - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Knight Armor - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Knight Gauntlets - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Knight Greaves - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Furled Finger's Trick-Mirror - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Host's Trick-Mirror - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: White Cipher Ring - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Blue Cipher Ring - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Rune Arc x5 - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Stonesword Key x3 - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Memory Stone - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        # remembrances
+        ERLocationData("RH/DLC: Greatsword of Damnation - Enia for Remembrance of the Lord of Frenzied Flame", "Greatsword of Damnation", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Greatsword of Radahn (Lord) - Enia for Remembrance of a God and a Lord", "Greatsword of Radahn (Lord)", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Greatsword of Radahn (Light) - Enia for Remembrance of a God and a Lord", "Greatsword of Radahn (Light)", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Putrescence Cleaver - Enia for Remembrance of Putrescence", "Putrescence Cleaver", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Spear of the Impaler - Enia for Remembrance of the Impaler", "Spear of the Impaler", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Poleblade of the Bud - Enia for Remembrance of the Saint of the Bud", "Poleblade of the Bud", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Shadow Sunflower Blossom - Enia for Remembrance of the Shadow Sunflower", "Shadow Sunflower Blossom", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Gazing Finger - Enia for Remembrance of the Mother of Fingers", "Gazing Finger", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Staff of the Great Beyond - Enia for Remembrance of the Mother of Fingers", "Staff of the Great Beyond", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Twin Blades - Enia for Remembrance of the Twin Moon Knight", "Rellana's Twin Blades", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Enraged Divine Beast - Enia for Remembrance of the Dancing Lion", "Enraged Divine Beast", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Twin Moons - Enia for Remembrance of the Twin Moon Knight", "Rellana's Twin Moons", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Blades of Stone - Enia for Remembrance of the Wild Boar Rider", "Blades of Stone", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Vortex of Putrescence - Enia for Remembrance of Putrescence", "Vortex of Putrescence", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Land of Shadow - Enia for Remembrance of the Shadow Sunflower", "Land of Shadow", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Light of Miquella - Enia for Remembrance of a God and a Lord", "Light of Miquella", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Rotten Butterflies - Enia for Remembrance of the Saint of the Bud", "Rotten Butterflies", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Midra's Flame of Frenzy - Enia for Remembrance of the Lord of Frenzied Flame", "Midra's Flame of Frenzy", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Messmer's Orb - Enia for Remembrance of the Impaler", "Messmer's Orb", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Ash of War: Divine Beast Frost Stomp - Enia for Remembrance of the Dancing Lion", "Ash of War: Divine Beast Frost Stomp", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        ERLocationData("RH/DLC: Sword Lance - Enia for Remembrance of the Wild Boar Rider", "Sword Lance", key="111000,0:0000000000:101898:", missable=True, premium=True, dlc=True, shop=True),
+        # equipment of champions
+        ERLocationData("RH/DLC: Young Lion's Helm - Enia shop, defeat EI/DGFS mainboss", "Young Lion's Helm", key="111000,0:0000000000:9143,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Young Lion's Armor - Enia shop, defeat EI/DGFS mainboss", "Young Lion's Armor", key="111000,0:0000000000:9143,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Young Lion's Gauntlets - Enia shop, defeat EI/DGFS mainboss", "Young Lion's Gauntlets", key="111000,0:0000000000:9143,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Young Lion's Greaves - Enia shop, defeat EI/DGFS mainboss", "Young Lion's Greaves", key="111000,0:0000000000:9143,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Messmer's Helm - Enia shop, defeat SK/DCE mainboss", "Messmer's Helm", key="111000,0:0000000000:9146,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Messmer's Armor - Enia shop, defeat SK/DCE mainboss", "Messmer's Armor", key="111000,0:0000000000:9146,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Messmer's Gauntlets - Enia shop, defeat SK/DCE mainboss", "Messmer's Gauntlets", key="111000,0:0000000000:9146,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Messmer's Greaves - Enia shop, defeat SK/DCE mainboss", "Messmer's Greaves", key="111000,0:0000000000:9146,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Gaius's Helm - Enia shop, defeat SV/SKBG mainboss", "Gaius's Helm", key="111000,0:0000000000:9164,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Gaius's Armor - Enia shop, defeat SV/SKBG mainboss", "Gaius's Armor", key="111000,0:0000000000:9164,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Gaius's Gauntlets - Enia shop, defeat SV/SKBG mainboss", "Gaius's Gauntlets", key="111000,0:0000000000:9164,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Helm - Enia shop, defeat CE/CLC mainboss", "Rellana's Helm", key="111000,0:0000000000:9190,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Armor - Enia shop, defeat CE/CLC mainboss", "Rellana's Armor", key="111000,0:0000000000:9190,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Gloves - Enia shop, defeat CE/CLC mainboss", "Rellana's Gloves", key="111000,0:0000000000:9190,101500:", dlc=True, missable=True, shop=True),
+        ERLocationData("RH/DLC: Rellana's Greaves - Enia shop, defeat CE/CLC mainboss", "Rellana's Greaves", key="111000,0:0000000000:9190,101500:", dlc=True, missable=True, shop=True),
+        
+        ERLocationData("RH/DLC: Taunter's Tongue - invader drop", "Dummy item", key="111000,0:0000060300::", hostile_npc=True),
+        ERLocationData("RH/DLC: Talisman Pouch - talk to Enia", "Dummy item", key="111000,0:0000060500:101800,11109777:", npc=True), # not missable now?
+        ERLocationData("RH/DLC: Cipher Pata - on bed in lower area", "Dummy item", key="111000,0:0011107000::"),
+    ],
     "Liurnia of The Lakes":[ # liurnia                                    done
         ERLocationData("LL/JB: Exalted Flesh x3 - given by Alexander after getting him unstuck with oil pots, just above JB", "Exalted Flesh x3", key="130000,0:0000400171::", missable=True),
         ERLocationData("LL/SeI: Volcano Manor Invitation - give Rya her necklace, you will need to buy the item from Boggart or reach altus", "Volcano Manor Invitation", key="160000,0:0000400090::", missable=True),
@@ -3751,6 +3824,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/CDE: Crab Eggs x2 - down right on first roof", "Crab Eggs x2", key="210000,0:0021007420::"),
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
+        # events
+        ERLocationData("DLC Victory", None),
         ERLocationData("Gravesite Bosses", None),
         ERLocationData("Belurat Bosses", None),
         ERLocationData("Ensis Bosses", None),
@@ -6178,6 +6253,9 @@ for i, region in enumerate(region_order + region_order_dlc):
 for region in region_order_dlc:
     for location in location_tables[region]:
         location.dlc = True
+        
+for location in location_tables["Roundtable Hold DLC Only"]:
+    location.dlc = True
 
 for region in [# conditional locations
     # need keys

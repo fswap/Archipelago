@@ -19,8 +19,6 @@ BIG TODO
 
 static rando options
 
-dlc start, roundtable hold is causing issues
-
 
 
 todo later dlc region lock boss rules

@@ -89,6 +89,9 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
+# class DLCStartingItems():
+#     "idk"
+    
 class DLCRandomization(Choice):
     """How to randomize dlc items.
     
@@ -159,8 +162,8 @@ class CraftingKitOption(Choice):
     """Choose how the Crafting Kit is handled.
 
     - **Randomize:** Can be anywhere.
-    - **Early:** Make it anywhere before Altus and not in Caelid.
-    - **Do Not Randomize:** Leave it at its normal spot.
+    - **Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
+    - **Do Not Randomize:** Leave it at its normal spot, if DLC Only is on it'll be in Roundtable Twin Maiden Shop.
     """
     display_name = "Crafting Kit Behavior"
     option_randomize = 0
