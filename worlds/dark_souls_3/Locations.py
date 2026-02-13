@@ -1111,7 +1111,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         # invasion, but that seems more confusing.
                         #
                         # See https://discord.com/channels/529802828278005773/583763085722910752/1471441981858119710
-                        omit=lambda(self, options): options.unmissable_quests),
+                        omit=lambda self, options: options.unmissable_quests),
         DS3LocationData("CD: Spider Shield - NPC drop on path", "Spider Shield",
                         hostile_npc=True),  # Brigand
         DS3LocationData("CD: Notched Whip - Cleansing Chapel", "Notched Whip"),
