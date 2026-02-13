@@ -188,7 +188,9 @@ class EldenRing(World):
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
-        regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
+        else: regions.update({"Roundtable Hold": self.create_region("Roundtable Hold", location_tables["Roundtable Hold"])})
 
         # Create DLC Regions
         if self.options.enable_dlc:
@@ -201,187 +203,197 @@ class EldenRing(World):
             connection.connect(regions[to_region])
 
         regions["Menu"].exits.append(Entrance(self.player, "New Game", regions["Menu"]))
-        self.multiworld.get_entrance("New Game", self.player).connect(regions["Limgrave"])
         
-        # Limgrave
-        create_connection("Limgrave", "Fringefolk Hero's Grave")
-        create_connection("Limgrave", "Stormhill")
-        create_connection("Limgrave", "Coastal Cave")
-        create_connection("Limgrave", "Groveside Cave")
-        create_connection("Limgrave", "Stormfoot Catacombs")
-        create_connection("Limgrave", "Limgrave Tunnels")
-        create_connection("Limgrave", "Murkwater Cave")
-        create_connection("Limgrave", "Murkwater Catacombs")
-        create_connection("Limgrave", "Highroad Cave")
-        create_connection("Limgrave", "Deathtouched Catacombs")
-        create_connection("Limgrave", "Roundtable Hold")
-        
-        create_connection("Limgrave", "Sellia Crystal Tunnel") # in caelid
-        create_connection("Coastal Cave", "Church of Dragon Communion")
-        
-
-            
-        create_connection("Stormhill", "Stormveil Start")
-        create_connection("Stormveil Start", "Stormveil Castle")
-        create_connection("Stormveil Castle", "Stormveil Throne")
-        create_connection("Stormveil Castle", "Divine Tower of Limgrave")
-        
-        create_connection("Limgrave", "Weeping Peninsula")
-        # Weeping Peninsula
-        create_connection("Weeping Peninsula", "Impaler's Catacombs")
-        create_connection("Weeping Peninsula", "Tombsward Catacombs")
-        create_connection("Weeping Peninsula", "Tombsward Cave")
-        create_connection("Weeping Peninsula", "Morne Tunnel")
-        create_connection("Weeping Peninsula", "Earthbore Cave")
-        create_connection("Weeping Peninsula", "Divine Bridge") # in leyndell
-        
-        create_connection("Limgrave", "Siofra River")
-        # Siofra
-        
-        create_connection("Stormhill", "Liurnia of The Lakes")
-        # Liurnia of The Lakes
-        create_connection("Liurnia of The Lakes", "Bellum Highway")
-        create_connection("Liurnia of The Lakes", "Road's End Catacombs")
-        create_connection("Liurnia of The Lakes", "Black Knife Catacombs")
-        create_connection("Liurnia of The Lakes", "Cliffbottom Catacombs")
-        create_connection("Liurnia of The Lakes", "Stillwater Cave")
-        create_connection("Liurnia of The Lakes", "Lakeside Crystal Cave")
-        create_connection("Liurnia of The Lakes", "Academy Crystal Cave")
-        create_connection("Liurnia of The Lakes", "Raya Lucaria Crystal Tunnel")
-        create_connection("Liurnia of The Lakes", "Caria Manor")
-        create_connection("Liurnia of The Lakes", "Carian Study Hall")
-        create_connection("Liurnia of The Lakes", "Carian Study Hall (Inverted)")
-        create_connection("Liurnia of The Lakes", "Ruin-Strewn Precipice")
-        create_connection("Liurnia of The Lakes", "Ainsel River")
-        create_connection("Liurnia of The Lakes", "Ainsel River Main")
-        
-        create_connection("Liurnia of The Lakes", "The Four Belfries (Chapel of Anticipation)")
-        create_connection("Liurnia of The Lakes", "The Four Belfries (Nokron)")
-        create_connection("Liurnia of The Lakes", "The Four Belfries (Farum Azula)")
-        
-        create_connection("Liurnia of The Lakes", "Raya Lucaria Academy")
-        create_connection("Raya Lucaria Academy", "Raya Lucaria Academy Main")
-        create_connection("Raya Lucaria Academy Main", "Raya Lucaria Academy Chest")
-        create_connection("Raya Lucaria Academy Main", "Raya Lucaria Academy Library")
-        
-        
-        create_connection("Limgrave", "Caelid")
-        # Caelid
-        create_connection("Caelid", "Caelid Catacombs")
-        create_connection("Caelid", "Gaol Cave")
-
-        create_connection("Caelid", "Abandoned Cave")
-        create_connection("Caelid", "Great-Jar")
-        create_connection("Caelid", "Minor Erdtree Catacombs")
-        create_connection("Caelid", "Gale Tunnel")
-        create_connection("Caelid", "Redmane Castle Post Radahn")
-        
-        create_connection("Caelid", "Dragonbarrow")
-        create_connection("Dragonbarrow", "Dragonbarrow Cave")
-        create_connection("Dragonbarrow", "Sellia Hideaway")
-        create_connection("Dragonbarrow", "Divine Tower of Caelid")
-        
-        create_connection("Caelid", "Wailing Dunes")
-        create_connection("Wailing Dunes", "War-Dead Catacombs")
-        
-        create_connection("Limgrave", "Nokron, Eternal City Start")
-        create_connection("Nokron, Eternal City Start", "Nokron, Eternal City")
-        create_connection("Nokron, Eternal City", "Deeproot Depths")
-        
-        create_connection("Deeproot Depths", "Deeproot Depths Boss")
-        
-        create_connection("Ainsel River Main", "Lake of Rot")
-        create_connection("Lake of Rot", "Moonlight Altar")
-        
-        create_connection("Liurnia of The Lakes", "Altus Plateau")
-        # Altus
-        create_connection("Altus Plateau", "Sainted Hero's Grave")
-        create_connection("Altus Plateau", "Unsightly Catacombs")
-        create_connection("Altus Plateau", "Perfumer's Grotto")
-        create_connection("Altus Plateau", "Sage's Cave")
-        create_connection("Altus Plateau", "Old Altus Tunnel")
-        create_connection("Altus Plateau", "Altus Tunnel")
-        
-        
-        create_connection("Altus Plateau", "Mt. Gelmir")
-        # Mt Gelmir
-        create_connection("Mt. Gelmir", "Wyndham Catacombs")
-        create_connection("Mt. Gelmir", "Gelmir Hero's Grave")
-        create_connection("Mt. Gelmir", "Seethewater Cave")
-        create_connection("Mt. Gelmir", "Volcano Cave")
-        
-        create_connection("Mt. Gelmir", "Volcano Manor Entrance")
-        
-        create_connection("Volcano Manor Entrance", "Volcano Manor Drawing Room")
-        create_connection("Volcano Manor Drawing Room", "Volcano Manor")
-        create_connection("Volcano Manor", "Volcano Manor Upper")
-       
-        create_connection("Raya Lucaria Academy Main", "Volcano Manor Dungeon")
-        
-        
-        
-        
-        
-        create_connection("Altus Plateau", "Capital Outskirts")
-        # Capital Outskirts
-        create_connection("Capital Outskirts", "Auriza Hero's Grave")
-        create_connection("Capital Outskirts", "Auriza Side Tomb")
-        create_connection("Capital Outskirts", "Sealed Tunnel")
-        
-        create_connection("Capital Outskirts", "Leyndell, Royal Capital")
-        # Leyndell Royal
-        create_connection("Leyndell, Royal Capital", "Leyndell, Royal Capital Unmissable")
-        create_connection("Leyndell, Royal Capital", "Leyndell, Royal Capital Throne")
-        create_connection("Leyndell, Royal Capital", "Divine Tower of East Altus")
-        
-        # Sewers
-        create_connection("Leyndell, Royal Capital", "Subterranean Shunning-Grounds")
-        create_connection("Subterranean Shunning-Grounds", "Leyndell Catacombs")
-        create_connection("Subterranean Shunning-Grounds", "Frenzied Flame Proscription")
-        create_connection("Frenzied Flame Proscription", "Deeproot Depths Upper")
-        
-        
-        create_connection("Divine Tower of East Altus", "Forbidden Lands")
-        # Forbidden Lands
-        create_connection("Forbidden Lands", "Hidden Path to the Haligtree")
-        
-        
-        create_connection("Forbidden Lands", "Mountaintops of the Giants")
-        # Mountaintops
-        create_connection("Mountaintops of the Giants", "Giant-Conquering Hero's Grave")
-        create_connection("Mountaintops of the Giants", "Giants' Mountaintop Catacombs")
-        create_connection("Mountaintops of the Giants", "Spiritcaller Cave")
-        create_connection("Mountaintops of the Giants", "Flame Peak")
-        
-        
-        create_connection("Flame Peak", "Farum Azula")
-        # Farum Azula
-        create_connection("Farum Azula", "Farum Azula Main")
-        create_connection("Farum Azula Main", "Leyndell, Ashen Capital")
-        
-        
-        create_connection("Hidden Path to the Haligtree", "Consecrated Snowfield")
-        # Snowfield
-        create_connection("Consecrated Snowfield", "Consecrated Snowfield Catacombs")
-        create_connection("Consecrated Snowfield", "Cave of the Forlorn")
-        create_connection("Consecrated Snowfield", "Yelough Anix Tunnel")
-
-        create_connection("Consecrated Snowfield", "Miquella's Haligtree")
-        # Haligtree
-        create_connection("Miquella's Haligtree", "Elphael, Brace of the Haligtree")
-        
-        if self.options.dlc_timing != 2:
-            create_connection("Limgrave", "Mohgwyn Palace")
+        if self.options.enable_dlc and self.options.dlc_start != 0:
+            self.multiworld.get_entrance("New Game", self.player).connect(regions["Gravesite Plain"])
+            create_connection("Gravesite Plain", "Roundtable Hold")
         else:
-            create_connection("Consecrated Snowfield", "Mohgwyn Palace")
+            self.multiworld.get_entrance("New Game", self.player).connect(regions["Limgrave"])
+            create_connection("Limgrave", "Roundtable Hold")
+            
         
+        # Base game Regions
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            create_connection("Limgrave", "Fringefolk Hero's Grave")
+            create_connection("Limgrave", "Stormhill")
+            create_connection("Limgrave", "Coastal Cave")
+            create_connection("Limgrave", "Groveside Cave")
+            create_connection("Limgrave", "Stormfoot Catacombs")
+            create_connection("Limgrave", "Limgrave Tunnels")
+            create_connection("Limgrave", "Murkwater Cave")
+            create_connection("Limgrave", "Murkwater Catacombs")
+            create_connection("Limgrave", "Highroad Cave")
+            create_connection("Limgrave", "Deathtouched Catacombs")
+            
+            create_connection("Limgrave", "Sellia Crystal Tunnel") # in caelid
+            create_connection("Coastal Cave", "Church of Dragon Communion")
+            
+
+                
+            create_connection("Stormhill", "Stormveil Start")
+            create_connection("Stormveil Start", "Stormveil Castle")
+            create_connection("Stormveil Castle", "Stormveil Throne")
+            create_connection("Stormveil Castle", "Divine Tower of Limgrave")
+            
+            create_connection("Limgrave", "Weeping Peninsula")
+            # Weeping Peninsula
+            create_connection("Weeping Peninsula", "Impaler's Catacombs")
+            create_connection("Weeping Peninsula", "Tombsward Catacombs")
+            create_connection("Weeping Peninsula", "Tombsward Cave")
+            create_connection("Weeping Peninsula", "Morne Tunnel")
+            create_connection("Weeping Peninsula", "Earthbore Cave")
+            create_connection("Weeping Peninsula", "Divine Bridge") # in leyndell
+            
+            create_connection("Limgrave", "Siofra River")
+            # Siofra
+            
+            create_connection("Stormhill", "Liurnia of The Lakes")
+            # Liurnia of The Lakes
+            create_connection("Liurnia of The Lakes", "Bellum Highway")
+            create_connection("Liurnia of The Lakes", "Road's End Catacombs")
+            create_connection("Liurnia of The Lakes", "Black Knife Catacombs")
+            create_connection("Liurnia of The Lakes", "Cliffbottom Catacombs")
+            create_connection("Liurnia of The Lakes", "Stillwater Cave")
+            create_connection("Liurnia of The Lakes", "Lakeside Crystal Cave")
+            create_connection("Liurnia of The Lakes", "Academy Crystal Cave")
+            create_connection("Liurnia of The Lakes", "Raya Lucaria Crystal Tunnel")
+            create_connection("Liurnia of The Lakes", "Caria Manor")
+            create_connection("Liurnia of The Lakes", "Carian Study Hall")
+            create_connection("Liurnia of The Lakes", "Carian Study Hall (Inverted)")
+            create_connection("Liurnia of The Lakes", "Ruin-Strewn Precipice")
+            create_connection("Liurnia of The Lakes", "Ainsel River")
+            create_connection("Liurnia of The Lakes", "Ainsel River Main")
+            
+            create_connection("Liurnia of The Lakes", "The Four Belfries (Chapel of Anticipation)")
+            create_connection("Liurnia of The Lakes", "The Four Belfries (Nokron)")
+            create_connection("Liurnia of The Lakes", "The Four Belfries (Farum Azula)")
+            
+            create_connection("Liurnia of The Lakes", "Raya Lucaria Academy")
+            create_connection("Raya Lucaria Academy", "Raya Lucaria Academy Main")
+            create_connection("Raya Lucaria Academy Main", "Raya Lucaria Academy Chest")
+            create_connection("Raya Lucaria Academy Main", "Raya Lucaria Academy Library")
+            
+            
+            create_connection("Limgrave", "Caelid")
+            # Caelid
+            create_connection("Caelid", "Caelid Catacombs")
+            create_connection("Caelid", "Gaol Cave")
+
+            create_connection("Caelid", "Abandoned Cave")
+            create_connection("Caelid", "Great-Jar")
+            create_connection("Caelid", "Minor Erdtree Catacombs")
+            create_connection("Caelid", "Gale Tunnel")
+            create_connection("Caelid", "Redmane Castle Post Radahn")
+            
+            create_connection("Caelid", "Dragonbarrow")
+            create_connection("Dragonbarrow", "Dragonbarrow Cave")
+            create_connection("Dragonbarrow", "Sellia Hideaway")
+            create_connection("Dragonbarrow", "Divine Tower of Caelid")
+            
+            create_connection("Caelid", "Wailing Dunes")
+            create_connection("Wailing Dunes", "War-Dead Catacombs")
+            
+            create_connection("Limgrave", "Nokron, Eternal City Start")
+            create_connection("Nokron, Eternal City Start", "Nokron, Eternal City")
+            create_connection("Nokron, Eternal City", "Deeproot Depths")
+            
+            create_connection("Deeproot Depths", "Deeproot Depths Boss")
+            
+            create_connection("Ainsel River Main", "Lake of Rot")
+            create_connection("Lake of Rot", "Moonlight Altar")
+            
+            create_connection("Liurnia of The Lakes", "Altus Plateau")
+            # Altus
+            create_connection("Altus Plateau", "Sainted Hero's Grave")
+            create_connection("Altus Plateau", "Unsightly Catacombs")
+            create_connection("Altus Plateau", "Perfumer's Grotto")
+            create_connection("Altus Plateau", "Sage's Cave")
+            create_connection("Altus Plateau", "Old Altus Tunnel")
+            create_connection("Altus Plateau", "Altus Tunnel")
+            
+            
+            create_connection("Altus Plateau", "Mt. Gelmir")
+            # Mt Gelmir
+            create_connection("Mt. Gelmir", "Wyndham Catacombs")
+            create_connection("Mt. Gelmir", "Gelmir Hero's Grave")
+            create_connection("Mt. Gelmir", "Seethewater Cave")
+            create_connection("Mt. Gelmir", "Volcano Cave")
+            
+            create_connection("Mt. Gelmir", "Volcano Manor Entrance")
+            
+            create_connection("Volcano Manor Entrance", "Volcano Manor Drawing Room")
+            create_connection("Volcano Manor Drawing Room", "Volcano Manor")
+            create_connection("Volcano Manor", "Volcano Manor Upper")
         
-        create_connection("Leyndell, Ashen Capital", "Leyndell, Ashen Capital Throne")
-        create_connection("Leyndell, Ashen Capital Throne", "Erdtree")
+            create_connection("Raya Lucaria Academy Main", "Volcano Manor Dungeon")
+            
+            
+            
+            
+            
+            create_connection("Altus Plateau", "Capital Outskirts")
+            # Capital Outskirts
+            create_connection("Capital Outskirts", "Auriza Hero's Grave")
+            create_connection("Capital Outskirts", "Auriza Side Tomb")
+            create_connection("Capital Outskirts", "Sealed Tunnel")
+            
+            create_connection("Capital Outskirts", "Leyndell, Royal Capital")
+            # Leyndell Royal
+            create_connection("Leyndell, Royal Capital", "Leyndell, Royal Capital Unmissable")
+            create_connection("Leyndell, Royal Capital", "Leyndell, Royal Capital Throne")
+            create_connection("Leyndell, Royal Capital", "Divine Tower of East Altus")
+            
+            # Sewers
+            create_connection("Leyndell, Royal Capital", "Subterranean Shunning-Grounds")
+            create_connection("Subterranean Shunning-Grounds", "Leyndell Catacombs")
+            create_connection("Subterranean Shunning-Grounds", "Frenzied Flame Proscription")
+            create_connection("Frenzied Flame Proscription", "Deeproot Depths Upper")
+            
+            
+            create_connection("Divine Tower of East Altus", "Forbidden Lands")
+            # Forbidden Lands
+            create_connection("Forbidden Lands", "Hidden Path to the Haligtree")
+            
+            
+            create_connection("Forbidden Lands", "Mountaintops of the Giants")
+            # Mountaintops
+            create_connection("Mountaintops of the Giants", "Giant-Conquering Hero's Grave")
+            create_connection("Mountaintops of the Giants", "Giants' Mountaintop Catacombs")
+            create_connection("Mountaintops of the Giants", "Spiritcaller Cave")
+            create_connection("Mountaintops of the Giants", "Flame Peak")
+            
+            
+            create_connection("Flame Peak", "Farum Azula")
+            # Farum Azula
+            create_connection("Farum Azula", "Farum Azula Main")
+            create_connection("Farum Azula Main", "Leyndell, Ashen Capital")
+            
+            
+            create_connection("Hidden Path to the Haligtree", "Consecrated Snowfield")
+            # Snowfield
+            create_connection("Consecrated Snowfield", "Consecrated Snowfield Catacombs")
+            create_connection("Consecrated Snowfield", "Cave of the Forlorn")
+            create_connection("Consecrated Snowfield", "Yelough Anix Tunnel")
+
+            create_connection("Consecrated Snowfield", "Miquella's Haligtree")
+            # Haligtree
+            create_connection("Miquella's Haligtree", "Elphael, Brace of the Haligtree")
+            
+            if self.options.dlc_timing != 2:
+                create_connection("Limgrave", "Mohgwyn Palace")
+            else:
+                create_connection("Consecrated Snowfield", "Mohgwyn Palace")
+            
+            
+            create_connection("Leyndell, Ashen Capital", "Leyndell, Ashen Capital Throne")
+            create_connection("Leyndell, Ashen Capital Throne", "Erdtree")
 
         # Connect DLC Regions
         if self.options.enable_dlc:
-            create_connection("Mohgwyn Palace", "Gravesite Plain")
+            if self.options.dlc_start == 0:
+                create_connection("Mohgwyn Palace", "Gravesite Plain")
+            elif self.options.dlc_start == 2:
+                create_connection("Gravesite Plain", "Limgrave")
             
             create_connection("Gravesite Plain", "Belurat Gaol")
             create_connection("Gravesite Plain", "Belurat")
@@ -597,47 +609,52 @@ class EldenRing(World):
 
         We can't do this in pre_fill because the itempool may not be modified after create_items.
         """
-        if self.options.crafting_kit_option.value == 1:
-            self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"])
-        elif self.options.crafting_kit_option.value == 2:
-            self.multiworld.get_location("LG/(CE): Crafting Kit - Kalé Shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
-            
-        if self.options.smithing_bell_bearing_option.value == 2:
-            self.multiworld.get_location("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [1]"))
-            self.multiworld.get_location("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [2]"))
-            self.multiworld.get_location("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [3]"))
-            self.multiworld.get_location("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [4]"))
-            self.multiworld.get_location("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [1]"))
-            self.multiworld.get_location("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [2]"))
-            self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
-            self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
-            self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            if self.options.crafting_kit_option.value == 1:
+                self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"])
+            elif self.options.crafting_kit_option.value == 2:
+                self.multiworld.get_location("LG/(CE): Crafting Kit - Kalé Shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
+                
+            if self.options.smithing_bell_bearing_option.value == 2:
+                self.multiworld.get_location("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [1]"))
+                self.multiworld.get_location("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [2]"))
+                self.multiworld.get_location("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [3]"))
+                self.multiworld.get_location("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [4]"))
+                self.multiworld.get_location("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [1]"))
+                self.multiworld.get_location("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [2]"))
+                self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
+                self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
+                self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
         
         if self.options.map_option.value == 1:
             using_table = item_table_vanilla
             if self.options.enable_dlc: using_table = item_table
             for item in using_table.values(): # loop of whole item table
-                if item.map: self.multiworld.push_precollected(self.create_item(item.name))
+                if (self.options.dlc_start != 1 and self.options.enable_dlc and item.map 
+                    or not self.options.enable_dlc and item.map 
+                    or self.options.enable_dlc and item.map and item.is_dlc):
+                    self.multiworld.push_precollected(self.create_item(item.name))
         elif self.options.map_option.value == 2:
-            self.multiworld.get_location("LG/(GR): Map: Limgrave, West - map pillar", self.player).place_locked_item(self.create_item("Map: Limgrave, West"))
-            self.multiworld.get_location("WP/CMR: Map: Weeping Peninsula - to SW", self.player).place_locked_item(self.create_item("Map: Weeping Peninsula"))
-            self.multiworld.get_location("LG/SRW: Map: Limgrave, East - W of SRW", self.player).place_locked_item(self.create_item("Map: Limgrave, East"))
-            self.multiworld.get_location("LL/LLS: Map: Liurnia, East - to N", self.player).place_locked_item(self.create_item("Map: Liurnia, East"))
-            self.multiworld.get_location("LL/AGT: Map: Liurnia, North - near grace", self.player).place_locked_item(self.create_item("Map: Liurnia, North"))
-            self.multiworld.get_location("LL/NLLS: Map: Liurnia, West - to NE on map pillar", self.player).place_locked_item(self.create_item("Map: Liurnia, West"))
-            self.multiworld.get_location("AP/AHJ: Map: Altus Plateau - to N by map pillar", self.player).place_locked_item(self.create_item("Map: Altus Plateau"))
-            self.multiworld.get_location("CO/OWPT: Map: Leyndell, Royal Capital - by map pillar", self.player).place_locked_item(self.create_item("Map: Leyndell, Royal Capital"))
-            self.multiworld.get_location("MtG/RI: Map: Mt. Gelmir - to W by map pillar", self.player).place_locked_item(self.create_item("Map: Mt. Gelmir"))
-            self.multiworld.get_location("CL/SASB: Map: Caelid - to SW", self.player).place_locked_item(self.create_item("Map: Caelid"))
-            self.multiworld.get_location("CL/DW: Map: Dragonbarrow - to E", self.player).place_locked_item(self.create_item("Map: Dragonbarrow"))
-            self.multiworld.get_location("MotG/(GLR): Map: Mountaintops of the Giants, West - map pillar NE of GLR", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, West"))
-            self.multiworld.get_location("FP/GG: Map: Mountaintops of the Giants, East - map pillar", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, East"))
-            self.multiworld.get_location("AR/UPR: Map: Ainsel River - NW of UPR in temple by merchant", self.player).place_locked_item(self.create_item("Map: Ainsel River"))
-            self.multiworld.get_location("LR/LRS: Map: Lake of Rot - to S", self.player).place_locked_item(self.create_item("Map: Lake of Rot"))
-            self.multiworld.get_location("SR/SRB: Map: Siofra River - to SE by bottom of stairs", self.player).place_locked_item(self.create_item("Map: Siofra River"))
-            self.multiworld.get_location("MP/MDE: Map: Mohgwyn Palace - to NW", self.player).place_locked_item(self.create_item("Map: Mohgwyn Palace"))
-            self.multiworld.get_location("DD/DD: Map: Deeproot Depths - path to NE in gazebo", self.player).place_locked_item(self.create_item("Map: Deeproot Depths"))
-            self.multiworld.get_location("CS/ICS: Map: Consecrated Snowfield - map pillar to N", self.player).place_locked_item(self.create_item("Map: Consecrated Snowfield"))
+            if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+                self.multiworld.get_location("LG/(GR): Map: Limgrave, West - map pillar", self.player).place_locked_item(self.create_item("Map: Limgrave, West"))
+                self.multiworld.get_location("WP/CMR: Map: Weeping Peninsula - to SW", self.player).place_locked_item(self.create_item("Map: Weeping Peninsula"))
+                self.multiworld.get_location("LG/SRW: Map: Limgrave, East - W of SRW", self.player).place_locked_item(self.create_item("Map: Limgrave, East"))
+                self.multiworld.get_location("LL/LLS: Map: Liurnia, East - to N", self.player).place_locked_item(self.create_item("Map: Liurnia, East"))
+                self.multiworld.get_location("LL/AGT: Map: Liurnia, North - near grace", self.player).place_locked_item(self.create_item("Map: Liurnia, North"))
+                self.multiworld.get_location("LL/NLLS: Map: Liurnia, West - to NE on map pillar", self.player).place_locked_item(self.create_item("Map: Liurnia, West"))
+                self.multiworld.get_location("AP/AHJ: Map: Altus Plateau - to N by map pillar", self.player).place_locked_item(self.create_item("Map: Altus Plateau"))
+                self.multiworld.get_location("CO/OWPT: Map: Leyndell, Royal Capital - by map pillar", self.player).place_locked_item(self.create_item("Map: Leyndell, Royal Capital"))
+                self.multiworld.get_location("MtG/RI: Map: Mt. Gelmir - to W by map pillar", self.player).place_locked_item(self.create_item("Map: Mt. Gelmir"))
+                self.multiworld.get_location("CL/SASB: Map: Caelid - to SW", self.player).place_locked_item(self.create_item("Map: Caelid"))
+                self.multiworld.get_location("CL/DW: Map: Dragonbarrow - to E", self.player).place_locked_item(self.create_item("Map: Dragonbarrow"))
+                self.multiworld.get_location("MotG/(GLR): Map: Mountaintops of the Giants, West - map pillar NE of GLR", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, West"))
+                self.multiworld.get_location("FP/GG: Map: Mountaintops of the Giants, East - map pillar", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, East"))
+                self.multiworld.get_location("AR/UPR: Map: Ainsel River - NW of UPR in temple by merchant", self.player).place_locked_item(self.create_item("Map: Ainsel River"))
+                self.multiworld.get_location("LR/LRS: Map: Lake of Rot - to S", self.player).place_locked_item(self.create_item("Map: Lake of Rot"))
+                self.multiworld.get_location("SR/SRB: Map: Siofra River - to SE by bottom of stairs", self.player).place_locked_item(self.create_item("Map: Siofra River"))
+                self.multiworld.get_location("MP/MDE: Map: Mohgwyn Palace - to NW", self.player).place_locked_item(self.create_item("Map: Mohgwyn Palace"))
+                self.multiworld.get_location("DD/DD: Map: Deeproot Depths - path to NE in gazebo", self.player).place_locked_item(self.create_item("Map: Deeproot Depths"))
+                self.multiworld.get_location("CS/ICS: Map: Consecrated Snowfield - map pillar to N", self.player).place_locked_item(self.create_item("Map: Consecrated Snowfield"))
             if self.options.enable_dlc:
                 self.multiworld.get_location("GP/SR: Map: Gravesite Plain - S of SR", self.player).place_locked_item(self.create_item("Map: Gravesite Plain"))
                 self.multiworld.get_location("SA/HC: Map: Scadu Altus - map pillar to N", self.player).place_locked_item(self.create_item("Map: Scadu Altus"))
@@ -713,186 +730,192 @@ class EldenRing(World):
             return self.random.choice(filler_item_names_vanilla)
 
     def set_rules(self) -> None: #MARK: Rules
-        self._key_rules() # make option to choose master or normal rules
-        #self._master_key_rules()
         
         self._dragon_communion_rules()
-        self._add_shop_rules()
-        self._add_npc_rules()
         self._add_remembrance_rules()
         self._add_equipment_of_champions_rules()
+        self._add_npc_rules()
         self._add_allow_useful_location_rules()
         
-        # indirect connections
-
-        self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Wailing Dunes"))
-        self.multiworld.register_indirect_condition(self.get_region("Caelid"), self.get_entrance("Go To Sellia Crystal Tunnel"))
-        self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths Upper"), self.get_entrance("Go To Deeproot Depths"))
-        self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Ainsel River Main"))
-        self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Leyndell, Royal Capital"))
-        self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
-        self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
-        
-        # World Logic
         if self.options.world_logic < 3:
             self._region_lock()
-            if self.options.soft_logic:
-                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
-                self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-                self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
-           
-            # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
-            # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
+        
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            self._key_rules() # make option to choose master or normal rules
+            #self._master_key_rules()
             
-            # if haligtree region lock adds a key to the evergaol these items would require it
-            # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings"
-            # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall"
-            # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be"
-            # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
+            self._add_shop_rules()
             
-            # only in region lock since it can be bypassed by ruin-strewn precipice
-            self._add_entrance_rule("Altus Plateau", lambda state: 
-                state.has("Dectus Medallion (Left)", self.player) and
-                state.has("Dectus Medallion (Right)", self.player))
+            # indirect connections
 
-        # Custom Rules
-        
-        if not self.options.enemy_rando: # funny shackle rule
-            self._add_entrance_rule("Stormveil Castle", "Margit's Shackle")
-            self._add_entrance_rule("Mohgwyn Palace", "Mohg's Shackle")
-
-        # Item Rules
+            self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Wailing Dunes"))
+            self.multiworld.register_indirect_condition(self.get_region("Caelid"), self.get_entrance("Go To Sellia Crystal Tunnel"))
+            self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths Upper"), self.get_entrance("Go To Deeproot Depths"))
+            self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Ainsel River Main"))
+            self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Leyndell, Royal Capital"))
+            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
+            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
-        # Paintings
-        self._add_location_rule("LG/SR: Incantation Scarab - \"Homing Instinct\" Painting reward to NW", "\"Homing Instinct\" Painting")
-        self._add_location_rule("DB/MEE: Ash of War: Rain of Arrows - \"Redmane\" Painting reward down hidden cliff E of MEE", "\"Redmane\" Painting")
-        self._add_location_rule("WP/CP: Warhawk Ashes - \"Prophecy\" Painting reward to N", "\"Prophecy\" Painting")
-        self._add_location_rule([
-            "LL/BCM: Juvenile Scholar Cap - \"Resurrection\" Painting reward to S by graves",
-            "LL/BCM: Juvenile Scholar Robe - \"Resurrection\" Painting reward to S by graves",
-            "LL/BCM: Larval Tear - \"Resurrection\" Painting reward to S by graves",
-            ], "\"Resurrection\" Painting")
-        self._add_location_rule("AP/RP: Harp Bow - \"Champion's Song\" Painting reward to S top of grave steps", "\"Champion's Song\" Painting")
-        self._add_location_rule("AP/(DMV): Fire's Deadly Sin - \"Flightless Bird\" Painting reward S from boss","\"Flightless Bird\" Painting")
-        self._add_location_rule("MotG/SR: Greathood - Painting reward NW of SR on bridge", "\"Sorcerer\" Painting")
-        
-        # LL/CFT, gesture + glint crown items
-        self._add_location_rule([
-            "LL/(CFT): Cannon of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
-            "LL/(CFT): Gavel of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
-            ],lambda state: state.has("Erudition", self.player) and
-            (state.has("Twinsage Glintstone Crown", self.player) or state.has("Olivinus Glintstone Crown", self.player) or
-             state.has("Lazuli Glintstone Crown", self.player) or state.has("Karolos Glintstone Crown", self.player) or
-             state.has("Witch's Glintstone Crown", self.player)))
-        
-        self._add_location_rule("LL/(CT): Memory Stone - top of tower, requires Erudition gesture", "Erudition")
-        
-        # vm drawing room, stuff that needs key
-        self._add_location_rule([ 
-                "VM/VM: Recusant Finger - on the table in the drawing room",
-                "VM/VM: Letter from Volcano Manor (Istvan) - on the table in the drawing room",
-                "VM/VM: Perfume Bottle - in the first room on the right",
-                "VM/VM: Budding Horn x3 - behind the illusory wall in the right room, next to the stairs",
-                "VM/VM: Fireproof Dried Liver - behind the illusory wall in the right room, down the stairs",
-                "VM/VM: Nomadic Warrior's Cookbook [21] - behind the illusory wall in the right room, all the way around down the dead-end",
-                "VM/VM: Depraved Perfumer Carmaan - behind the illusory wall in the right room, all the way around down the dead-end behind the illusory wall",
-                "VM/VM: Bloodhound Claws - enemy drop behind the illusory wall in the right room, down the stairs"
-            ], "Drawing-Room Key")
-        
-        # MotG/SR spirit summon item
-        self._add_location_rule(["MotG/(SR): Primal Glintstone Blade - in chest underground behind jellyfish seal"
-            ], lambda state: state.has("Spirit Jellyfish Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
-
-        # CS/AR spirit summon item
-        self._add_location_rule(["CS/(AR): Graven-Mass Talisman - top of rise, use Fanged Imp Ashes or bewitching branch to make spirit enemies fight"
-            ], lambda state: state.has("Fanged Imp Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
-
-        # Region Rules
-        
-        self._add_entrance_rule("Stormveil Castle", "Rusty Key")
-        self._add_entrance_rule("Raya Lucaria Academy", "Academy Glintstone Key")
-        self._add_entrance_rule("Carian Study Hall (Inverted)", "Carian Inverted Statue")
-        
-        # festival // altus grace touch or ranni quest stuff
-        self._add_location_rule([
-            "CL/(RC): Smithing Stone [6] - in church during festival",
-        ], lambda state: self._can_go_to(state, "Altus Plateau"))
-        self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
-        
-        self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-        
-        self._add_entrance_rule("Deeproot Depths Upper", lambda state: self._can_go_to(state, "Frenzied Flame Proscription"))
-           
-        self._add_entrance_rule("Moonlight Altar", "Dark Moon Ring")
+            # World Logic
+            if self.options.world_logic < 3:
+                if self.options.soft_logic:
+                    self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
+                    self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
+                    self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
+            
+                # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
+                # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
                 
-        # also from RLA side you can get back into main hall through imp statue
-        self._add_entrance_rule("Volcano Manor", 
-                                lambda state: state.has("Drawing-Room Key", self.player)
-                                or self._can_go_to(state, "Volcano Manor Dungeon")) 
-        self._add_entrance_rule("Volcano Manor Dungeon", 
-                                lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") 
-                                or self._can_go_to(state, "Volcano Manor"))
-        
-        self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
-        if self.options.great_runes_required_mountain.value != 0:
-            self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value))
-        else:
-            self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Rold Medallion", self.player))
-        
-        self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
-            state.has("Haligtree Secret Medallion (Left)", self.player) and
-            state.has("Haligtree Secret Medallion (Right)", self.player))
-        
-        # Smithing bell bearing rules
-        if self.options.smithing_bell_bearing_option.value == 1:
-            self._add_entrance_rule("Altus Plateau", lambda state: self._bell_bearings_required(state, 1, False))
-            self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, False))
-            self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, False))
-            self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, False))
+                # if haligtree region lock adds a key to the evergaol these items would require it
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
+                
+                # only in region lock since it can be bypassed by ruin-strewn precipice
+                self._add_entrance_rule("Altus Plateau", lambda state: 
+                    state.has("Dectus Medallion (Left)", self.player) and
+                    state.has("Dectus Medallion (Right)", self.player))
+
+            # Custom Rules
             
-            self._add_entrance_rule("Dragonbarrow", lambda state: self._bell_bearings_required(state, 1, True))
-            self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, True))
-            self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, True))
-            self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, True))
-            self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._bell_bearings_required(state, 5, True))
-        
-        if self.options.early_legacy_dungeons:
-            self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
-            self._add_entrance_rule("Caelid", "Rusty Key")
-            self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
+            if not self.options.enemy_rando: # funny shackle rule
+                self._add_entrance_rule("Stormveil Castle", "Margit's Shackle")
+                self._add_entrance_rule("Mohgwyn Palace", "Mohg's Shackle")
+
+            # Item Rules
+                
+            # Paintings
+            self._add_location_rule("LG/SR: Incantation Scarab - \"Homing Instinct\" Painting reward to NW", "\"Homing Instinct\" Painting")
+            self._add_location_rule("DB/MEE: Ash of War: Rain of Arrows - \"Redmane\" Painting reward down hidden cliff E of MEE", "\"Redmane\" Painting")
+            self._add_location_rule("WP/CP: Warhawk Ashes - \"Prophecy\" Painting reward to N", "\"Prophecy\" Painting")
+            self._add_location_rule([
+                "LL/BCM: Juvenile Scholar Cap - \"Resurrection\" Painting reward to S by graves",
+                "LL/BCM: Juvenile Scholar Robe - \"Resurrection\" Painting reward to S by graves",
+                "LL/BCM: Larval Tear - \"Resurrection\" Painting reward to S by graves",
+                ], "\"Resurrection\" Painting")
+            self._add_location_rule("AP/RP: Harp Bow - \"Champion's Song\" Painting reward to S top of grave steps", "\"Champion's Song\" Painting")
+            self._add_location_rule("AP/(DMV): Fire's Deadly Sin - \"Flightless Bird\" Painting reward S from boss","\"Flightless Bird\" Painting")
+            self._add_location_rule("MotG/SR: Greathood - Painting reward NW of SR on bridge", "\"Sorcerer\" Painting")
+            
+            # LL/CFT, gesture + glint crown items
+            self._add_location_rule([
+                "LL/(CFT): Cannon of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
+                "LL/(CFT): Gavel of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
+                ],lambda state: state.has("Erudition", self.player) and
+                (state.has("Twinsage Glintstone Crown", self.player) or state.has("Olivinus Glintstone Crown", self.player) or
+                state.has("Lazuli Glintstone Crown", self.player) or state.has("Karolos Glintstone Crown", self.player) or
+                state.has("Witch's Glintstone Crown", self.player)))
+            
+            self._add_location_rule("LL/(CT): Memory Stone - top of tower, requires Erudition gesture", "Erudition")
+            
+            # vm drawing room, stuff that needs key
+            self._add_location_rule([ 
+                    "VM/VM: Recusant Finger - on the table in the drawing room",
+                    "VM/VM: Letter from Volcano Manor (Istvan) - on the table in the drawing room",
+                    "VM/VM: Perfume Bottle - in the first room on the right",
+                    "VM/VM: Budding Horn x3 - behind the illusory wall in the right room, next to the stairs",
+                    "VM/VM: Fireproof Dried Liver - behind the illusory wall in the right room, down the stairs",
+                    "VM/VM: Nomadic Warrior's Cookbook [21] - behind the illusory wall in the right room, all the way around down the dead-end",
+                    "VM/VM: Depraved Perfumer Carmaan - behind the illusory wall in the right room, all the way around down the dead-end behind the illusory wall",
+                    "VM/VM: Bloodhound Claws - enemy drop behind the illusory wall in the right room, down the stairs"
+                ], "Drawing-Room Key")
+            
+            # MotG/SR spirit summon item
+            self._add_location_rule(["MotG/(SR): Primal Glintstone Blade - in chest underground behind jellyfish seal"
+                ], lambda state: state.has("Spirit Jellyfish Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
+
+            # CS/AR spirit summon item
+            self._add_location_rule(["CS/(AR): Graven-Mass Talisman - top of rise, use Fanged Imp Ashes or bewitching branch to make spirit enemies fight"
+                ], lambda state: state.has("Fanged Imp Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
+
+            # Region Rules
+            
+            self._add_entrance_rule("Stormveil Castle", "Rusty Key")
+            self._add_entrance_rule("Raya Lucaria Academy", "Academy Glintstone Key")
+            self._add_entrance_rule("Carian Study Hall (Inverted)", "Carian Inverted Statue")
+            
+            # festival // altus grace touch or ranni quest stuff
+            self._add_location_rule([
+                "CL/(RC): Smithing Stone [6] - in church during festival",
+            ], lambda state: self._can_go_to(state, "Altus Plateau"))
+            self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
+            
+            self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+            
+            self._add_entrance_rule("Deeproot Depths Upper", lambda state: self._can_go_to(state, "Frenzied Flame Proscription"))
+            
+            self._add_entrance_rule("Moonlight Altar", "Dark Moon Ring")
+                    
+            # also from RLA side you can get back into main hall through imp statue
+            self._add_entrance_rule("Volcano Manor", 
+                                    lambda state: state.has("Drawing-Room Key", self.player)
+                                    or self._can_go_to(state, "Volcano Manor Dungeon")) 
+            self._add_entrance_rule("Volcano Manor Dungeon", 
+                                    lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") 
+                                    or self._can_go_to(state, "Volcano Manor"))
+            
+            self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
+            if self.options.great_runes_required_mountain.value != 0:
+                self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value))
+            else:
+                self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Rold Medallion", self.player))
+            
+            self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
+                state.has("Haligtree Secret Medallion (Left)", self.player) and
+                state.has("Haligtree Secret Medallion (Right)", self.player))
+            
+            # Smithing bell bearing rules
+            if self.options.smithing_bell_bearing_option.value == 1:
+                self._add_entrance_rule("Altus Plateau", lambda state: self._bell_bearings_required(state, 1, False))
+                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, False))
+                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, False))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, False))
+                
+                self._add_entrance_rule("Dragonbarrow", lambda state: self._bell_bearings_required(state, 1, True))
+                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, True))
+                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, True))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, True))
+                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._bell_bearings_required(state, 5, True))
+            
+            if self.options.early_legacy_dungeons:
+                self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
+                self._add_entrance_rule("Caelid", "Rusty Key")
+                self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
         # DLC Rules
         if self.options.enable_dlc:
-            if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
-                for region in location_tables:
-                    for location in location_tables[region]:
-                        if region in region_order:
-                            self._add_item_rule(location.name,
-                                lambda item: (item.player != self.player)
-                                    or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
-                                )
-                        elif region in region_order_dlc:
-                            self._add_item_rule(location.name,
-                                lambda item: (item.player != self.player) 
-                                    or item.data.is_dlc or item.data.found_in_dlc
-                                )
-            
-            if self.options.dlc_timing == 2:
-                self._add_entrance_rule("Gravesite Plain",
-                    lambda state: state.has("Rold Medallion", self.player)
-                    and state.has("Haligtree Secret Medallion (Left)", self.player)
-                    and state.has("Haligtree Secret Medallion (Right)", self.player)
-                    and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                    and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-            else:
-                self._add_entrance_rule("Mohgwyn Palace", # can get to normal way or funny medal
-                    lambda state: state.has("Pureblood Knight's Medal", self.player) or self._can_go_to(state, "Consecrated Snowfield"))
-                self._add_entrance_rule("Gravesite Plain", 
-                    lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                    and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                if self.options.dlc_timing == 0:
-                    self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
-                    self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
+            if self.options.dlc_start == 0:
+                if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
+                    for region in location_tables:
+                        for location in location_tables[region]:
+                            if region in region_order:
+                                self._add_item_rule(location.name,
+                                    lambda item: (item.player != self.player)
+                                        or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
+                                    )
+                            elif region in region_order_dlc:
+                                self._add_item_rule(location.name,
+                                    lambda item: (item.player != self.player) 
+                                        or item.data.is_dlc or item.data.found_in_dlc
+                                    )
+                
+                if self.options.dlc_timing == 2:
+                    self._add_entrance_rule("Gravesite Plain",
+                        lambda state: state.has("Rold Medallion", self.player)
+                        and state.has("Haligtree Secret Medallion (Left)", self.player)
+                        and state.has("Haligtree Secret Medallion (Right)", self.player)
+                        and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                else:
+                    self._add_entrance_rule("Mohgwyn Palace", # can get to normal way or funny medal
+                        lambda state: state.has("Pureblood Knight's Medal", self.player) or self._can_go_to(state, "Consecrated Snowfield"))
+                    self._add_entrance_rule("Gravesite Plain", 
+                        lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                    if self.options.dlc_timing == 0:
+                        self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
+                        self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 
             if self.options.messmer_kindle:
                 self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
@@ -981,38 +1004,39 @@ class EldenRing(World):
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
         if self.options.world_logic != "region_bosses":
-            self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
-            self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
-            self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
-            self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
-            
-            self._add_entrance_rule("Siofra River", "South East Underground Lock")
-            self._add_entrance_rule("Nokron, Eternal City Start", "South East Underground Lock")
-            
-            self._add_entrance_rule("Ainsel River", "North Underground Lock")
-            self._add_entrance_rule("Ainsel River Main", "North Underground Lock")
-            self._add_entrance_rule("Deeproot Depths", "North Underground Lock")
-            
-            self._add_entrance_rule("Lake of Rot", "South West Underground Lock")
-            
-            self._add_entrance_rule("Altus Plateau", "Altus Lock")
-            
-            self._add_entrance_rule("Caelid", "Caelid Lock")
-            self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
-            self._add_entrance_rule("Redmane Castle Post Radahn", "Redmane Lock")
-            
-            self._add_entrance_rule("Altus Plateau", "Altus Lock")
-            self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
-            self._add_entrance_rule("Volcano Manor Entrance", "Volcano Lock")
-            self._add_entrance_rule("Volcano Manor Dungeon", "Volcano Lock")
-            
-            self._add_entrance_rule("Mohgwyn Palace", "Mohgwyn Lock")
-            
-            self._add_entrance_rule("Farum Azula", "Farum Azula Lock")
-            self._add_entrance_rule("Leyndell, Ashen Capital", "Ashen Lock")
-            self._add_entrance_rule("Miquella's Haligtree", "Haligtree Lock")
+            if self.options.dlc_start == 0 and self.options.enable_dlc or not self.options.enable_dlc:
+                self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
+                self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
+                self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
+                self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
+                
+                self._add_entrance_rule("Siofra River", "South East Underground Lock")
+                self._add_entrance_rule("Nokron, Eternal City Start", "South East Underground Lock")
+                
+                self._add_entrance_rule("Ainsel River", "North Underground Lock")
+                self._add_entrance_rule("Ainsel River Main", "North Underground Lock")
+                self._add_entrance_rule("Deeproot Depths", "North Underground Lock")
+                
+                self._add_entrance_rule("Lake of Rot", "South West Underground Lock")
+                
+                self._add_entrance_rule("Altus Plateau", "Altus Lock")
+                
+                self._add_entrance_rule("Caelid", "Caelid Lock")
+                self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
+                self._add_entrance_rule("Redmane Castle Post Radahn", "Redmane Lock")
+                
+                self._add_entrance_rule("Altus Plateau", "Altus Lock")
+                self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
+                self._add_entrance_rule("Volcano Manor Entrance", "Volcano Lock")
+                self._add_entrance_rule("Volcano Manor Dungeon", "Volcano Lock")
+                
+                self._add_entrance_rule("Mohgwyn Palace", "Mohgwyn Lock")
+                
+                self._add_entrance_rule("Farum Azula", "Farum Azula Lock")
+                self._add_entrance_rule("Leyndell, Ashen Capital", "Ashen Lock")
+                self._add_entrance_rule("Miquella's Haligtree", "Haligtree Lock")
             if self.options.enable_dlc:
-                self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
+                if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
                 self._add_entrance_rule("Belurat", "Belurat Lock")
                 self._add_entrance_rule("Castle Ensis", "Ensis Lock")
                 self._add_entrance_rule("Fog Rift Fort", "Ensis Lock")
@@ -1031,83 +1055,84 @@ class EldenRing(World):
                 self._add_entrance_rule("Enir Ilim", "Enir Ilim Lock")
         
         if self.options.world_logic != "region_lock" and False: # unfinished always skip
-            if self.options.region_boss_type: # only bosses in both sets are used
-                self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"] & self.location_name_groups["Overworld Bosses"]))
-            else:
-                self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"]))
-                self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"]))
-                self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"]))
-                self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"]))
-                self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"]))
-                self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"]))
-                self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"]))
-                self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"]))
-                self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"]))
-                self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"]))
-                self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"]))
-                self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"]))
-                self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"]))
-                self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"]))
-                self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"]))
-                self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"]))
-                self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"]))
-                self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"]))
-            
-            self._add_entrance_rule("Weeping Peninsula", lambda state: state.has("Limgrave Bosses", self.player))
-            
-            self._add_entrance_rule("Stormveil Start", lambda state: state.has("Weeping Bosses", self.player))
-            self._add_entrance_rule("Liurnia of The Lakes", lambda state: state.has("Stormveil Bosses", self.player))
-            
-            self._add_entrance_rule("Raya Lucaria Academy", lambda state: state.has("Liurnia Bosses", self.player))
-            
-            self._add_entrance_rule("Altus Plateau", lambda state: state.has("Raya Lucaria Bosses", self.player))
-            self._add_entrance_rule("Volcano Manor Dungeon", lambda state: state.has("Raya Lucaria Bosses", self.player))
-            
-            self._add_entrance_rule("Caelid", lambda state: state.has("Altus Bosses", self.player))
-            self._add_entrance_rule("Mt. Gelmir", lambda state: state.has("Altus Bosses", self.player))
-            self._add_entrance_rule("Leyndell, Royal Capital", lambda state: state.has("Altus Bosses", self.player) 
-                    and state.has("Caelid Bosses", self.player) and state.has("Mt. Gelmir Bosses", self.player))
-            
-            self._add_entrance_rule("Nokron, Eternal City Start", lambda state: state.has("Caelid Bosses", self.player))
-            self._add_entrance_rule("Siofra River", lambda state: state.has("Caelid Bosses", self.player))
-            
-            self._add_entrance_rule("Deeproot Depths", lambda state: state.has("South East Underground Bosses", self.player))
-            self._add_entrance_rule("Ainsel River Main", lambda state: state.has("South East Underground Bosses", self.player))
-            self._add_entrance_rule("Ainsel River", lambda state: state.has("South East Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Lake of Rot", lambda state: state.has("North Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Moonlight Altar", lambda state: state.has("South West Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Leyndell Bosses", self.player))
-            self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: state.has("Leyndell Bosses", self.player))
-            
-            self._add_entrance_rule("Miquella's Haligtree", lambda state: state.has("Snowfield Bosses", self.player))
-            if self.options.dlc_timing != 2:
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Liurnia Bosses", self.player))
-            else:
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Snowfield Bosses", self.player))
-            
-            self._add_entrance_rule("Farum Azula", lambda state: state.has("Mountaintops Bosses", self.player))
-            self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: state.has("Farum Bosses", self.player) 
-                                    and state.has("Haligtree Bosses", self.player) and state.has("Mohgwyn Bosses", self.player))
+            if self.options.dlc_start == 0 and self.options.enable_dlc or not self.options.enable_dlc:
+                if self.options.region_boss_type: # only bosses in both sets are used
+                    self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                    self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"] & self.location_name_groups["Overworld Bosses"]))
+                else:
+                    self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"]))
+                    self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"]))
+                    self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"]))
+                    self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"]))
+                    self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"]))
+                    self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"]))
+                    self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"]))
+                    self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"]))
+                    self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"]))
+                    self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"]))
+                    self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"]))
+                    self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"]))
+                    self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"]))
+                    self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"]))
+                    self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"]))
+                    self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"]))
+                    self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"]))
+                    self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"]))
+                
+                self._add_entrance_rule("Weeping Peninsula", lambda state: state.has("Limgrave Bosses", self.player))
+                
+                self._add_entrance_rule("Stormveil Start", lambda state: state.has("Weeping Bosses", self.player))
+                self._add_entrance_rule("Liurnia of The Lakes", lambda state: state.has("Stormveil Bosses", self.player))
+                
+                self._add_entrance_rule("Raya Lucaria Academy", lambda state: state.has("Liurnia Bosses", self.player))
+                
+                self._add_entrance_rule("Altus Plateau", lambda state: state.has("Raya Lucaria Bosses", self.player))
+                self._add_entrance_rule("Volcano Manor Dungeon", lambda state: state.has("Raya Lucaria Bosses", self.player))
+                
+                self._add_entrance_rule("Caelid", lambda state: state.has("Altus Bosses", self.player))
+                self._add_entrance_rule("Mt. Gelmir", lambda state: state.has("Altus Bosses", self.player))
+                self._add_entrance_rule("Leyndell, Royal Capital", lambda state: state.has("Altus Bosses", self.player) 
+                        and state.has("Caelid Bosses", self.player) and state.has("Mt. Gelmir Bosses", self.player))
+                
+                self._add_entrance_rule("Nokron, Eternal City Start", lambda state: state.has("Caelid Bosses", self.player))
+                self._add_entrance_rule("Siofra River", lambda state: state.has("Caelid Bosses", self.player))
+                
+                self._add_entrance_rule("Deeproot Depths", lambda state: state.has("South East Underground Bosses", self.player))
+                self._add_entrance_rule("Ainsel River Main", lambda state: state.has("South East Underground Bosses", self.player))
+                self._add_entrance_rule("Ainsel River", lambda state: state.has("South East Underground Bosses", self.player))
+                
+                self._add_entrance_rule("Lake of Rot", lambda state: state.has("North Underground Bosses", self.player))
+                
+                self._add_entrance_rule("Moonlight Altar", lambda state: state.has("South West Underground Bosses", self.player))
+                
+                self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Leyndell Bosses", self.player))
+                self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: state.has("Leyndell Bosses", self.player))
+                
+                self._add_entrance_rule("Miquella's Haligtree", lambda state: state.has("Snowfield Bosses", self.player))
+                if self.options.dlc_timing != 2:
+                    self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Liurnia Bosses", self.player))
+                else:
+                    self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Snowfield Bosses", self.player))
+                
+                self._add_entrance_rule("Farum Azula", lambda state: state.has("Mountaintops Bosses", self.player))
+                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: state.has("Farum Bosses", self.player) 
+                                        and state.has("Haligtree Bosses", self.player) and state.has("Mohgwyn Bosses", self.player))
             
             if self.options.enable_dlc:
                 if self.options.region_boss_type: # only bosses in both sets are used
@@ -1302,30 +1327,31 @@ class EldenRing(World):
         
     def _dragon_communion_rules(self) -> None: # MARK: Dragon Rules
         """Rules for dragon communion"""
-        self._add_location_rule([
-            "LG/(CDC): Dragonfire - Dragon Communion", # 1
-            "LG/(CDC): Dragonclaw - Dragon Communion", # 1
-            "LG/(CDC): Dragonmaw - Dragon Communion", # 1
-            ], lambda state: self._has_enough_hearts(state, 3)) 
-        
-        # caelid dragon communion
-        self._add_location_rule([
-            "CL/(CDC): Glintstone Breath - Dragon Communion", # 1
-            "CL/(CDC): Rotten Breath - Dragon Communion", # 1
-            "CL/(CDC): Dragonice - Dragon Communion", # 1
-            "CL/(CDC): Agheel's Flame - Dragon Communion, kill boss in LG, NW of DBR", # 2
-            "CL/(CDC): Greyoll's Roar - Dragon Communion, kill enemy in CL, W of FF", # 3
-            "CL/(CDC): Ekzykes's Decay - Dragon Communion, kill boss to NW of here", # 2
-            ], lambda state: self._has_enough_hearts(state, 13)) 
-        
-        self._add_location_rule("CL/(CDC): Smarag's Glintstone Breath - Dragon Communion, kill boss in LL, SW of ACC", 
-            lambda state: self._has_enough_hearts(state, 15) and self._can_go_to(state, "Liurnia of The Lakes")) # 2
-        self._add_location_rule("CL/(CDC): Magma Breath - Dragon Communion, kill boss in MtG, S of FL", 
-            lambda state: self._has_enough_hearts(state, 16) and self._can_go_to(state, "Mt. Gelmir")) # 1
-        self._add_location_rule("CL/(CDC): Borealis's Mist - Dragon Communion, kill boss in MotG, N of FCM", 
-            lambda state: self._has_enough_hearts(state, 18) and self._can_go_to(state, "Mountaintops of the Giants")) # 2
-        self._add_location_rule("CL/(CDC): Theodorix's Magma - Dragon Communion, kill boss in CS, SE of CF", 
-            lambda state: self._has_enough_hearts(state, 20) and self._can_go_to(state, "Consecrated Snowfield")) # 2
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            self._add_location_rule([
+                "LG/(CDC): Dragonfire - Dragon Communion", # 1
+                "LG/(CDC): Dragonclaw - Dragon Communion", # 1
+                "LG/(CDC): Dragonmaw - Dragon Communion", # 1
+                ], lambda state: self._has_enough_hearts(state, 3)) 
+            
+            # caelid dragon communion
+            self._add_location_rule([
+                "CL/(CDC): Glintstone Breath - Dragon Communion", # 1
+                "CL/(CDC): Rotten Breath - Dragon Communion", # 1
+                "CL/(CDC): Dragonice - Dragon Communion", # 1
+                "CL/(CDC): Agheel's Flame - Dragon Communion, kill boss in LG, NW of DBR", # 2
+                "CL/(CDC): Greyoll's Roar - Dragon Communion, kill enemy in CL, W of FF", # 3
+                "CL/(CDC): Ekzykes's Decay - Dragon Communion, kill boss to NW of here", # 2
+                ], lambda state: self._has_enough_hearts(state, 13)) 
+            
+            self._add_location_rule("CL/(CDC): Smarag's Glintstone Breath - Dragon Communion, kill boss in LL, SW of ACC", 
+                lambda state: self._has_enough_hearts(state, 15) and self._can_go_to(state, "Liurnia of The Lakes")) # 2
+            self._add_location_rule("CL/(CDC): Magma Breath - Dragon Communion, kill boss in MtG, S of FL", 
+                lambda state: self._has_enough_hearts(state, 16) and self._can_go_to(state, "Mt. Gelmir")) # 1
+            self._add_location_rule("CL/(CDC): Borealis's Mist - Dragon Communion, kill boss in MotG, N of FCM", 
+                lambda state: self._has_enough_hearts(state, 18) and self._can_go_to(state, "Mountaintops of the Giants")) # 2
+            self._add_location_rule("CL/(CDC): Theodorix's Magma - Dragon Communion, kill boss in CS, SE of CF", 
+                lambda state: self._has_enough_hearts(state, 20) and self._can_go_to(state, "Consecrated Snowfield")) # 2
         
         if self.options.enable_dlc: # dlc
             self._add_location_rule("JP/GADC: Ghostflame Breath - Grand Dragon Communion", lambda state: self._has_enough_hearts(state, 23)) # 3
@@ -1397,549 +1423,549 @@ class EldenRing(World):
         assuming the player _doesn't_ so they aren't forced to start killing allies to advance the
         quest.
         """
-        # MARK: Varré
-        
-        self._add_location_rule([ "LL/(RC): Festering Bloody Finger x5 - talk to Varré after beating SV mainboss",
-        ], lambda state: self._can_get(state, "SV/SeC: Remembrance of the Grafted - mainboss drop"))
-        
-        self._add_location_rule([ 
-            "AP/(WbR): Great Stars - invade Magus",
-            "AP/(WbR): Somber Smithing Stone [6] - invade Magus"
-        ], lambda state: self._has_bloody_finger(state))
-        
-        self._add_location_rule([ "LL/(RC): Lord of Blood's Favor - talk to Varré after invading Magnus in AP",
-        ], lambda state: self._can_get(state, "AP/(WbR): Great Stars - invade Magus"))
-        
-        self._add_location_rule([ 
-            "LL/(RC): Pureblood Knight's Medal - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor",
-            "LL/(RC): Bloody Finger - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"
-        ], lambda state: self._can_get(state, "AP/(WbR): Great Stars - invade Magus") and state.has("Lord of Blood's Favor", self.player))
-        
-        self._add_location_rule([ 
-            "MP/(MDM): Festering Bloody Finger x6 - invade Varré near DMM grace",
-            "MP/(MDM): Varré's Bouquet - invade Varré near DMM grace"
-        ], lambda state: self._can_get(state, "LL/(RC): Bloody Finger - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"))
-        
-        # MARK: Hyetta
-        
-        self._add_location_rule([
-            "FFP/FFP: Frenzied Flame Seal - given by Hyetta at end of her quest",
-            "FFP/FFP: Frenzyflame Stone x5 - given by Hyetta at end of her quest"
-        ], lambda state: ( state.has("Shabriri Grape", self.player, 3) and state.has("Fingerprint Grape", self.player)
-            and self._can_get(state, "LL/(RS): Shabriri Grape - kill invader Edgar")))
-        
-        # MARK: Edgar
-        
-        self._add_location_rule([ 
-            "LL/(RS): Raw Meat Dumpling x5 - kill invader Edgar",
-            "LL/(RS): Shabriri Grape - kill invader Edgar",
-            "LL/(RS): Raw Meat Dumpling 1 - in shack when Edgar invades",
-            "LL/(RS): Raw Meat Dumpling 2 - in shack when Edgar invades",
-            "LL/(RS): Raw Meat Dumpling 3 - in shack when Edgar invades",
-            "LL/(RS): Raw Meat Dumpling 4 - in shack when Edgar invades",
-            "LL/(RS): Raw Meat Dumpling 5 - in shack when Edgar invades",
-            "WP/BS: Banished Knight's Halberd - kill Edgar at Irina's body or at LL/RS"
-        ], lambda state: ( self._can_get(state, "WP/(CM): Grafted Blade Greatsword - boss drop") and self._can_go_to(state, "Liurnia of The Lakes")
-            and state.has("Irina's Letter", self.player)))
-        
-        # MARK: Roderika
-        
-        self._add_location_rule([ 
-            "LG/(SS): Golden Seed - give Roderika Chrysalids' Memento then talk to her at RH, or after SV mainboss item is at SS",
-            "SV/RT: Crimson Hood - shortcut elevator to SE, to SE under dead troll, after Roderika becomes a spirit tuner",
-        ], "Chrysalids' Memento")
-        
-        # MARK: Ensha
-        
-        self._add_location_rule([
-            "RH: Clinging Bone - dropped by Ensha, after getting half of secret medallion",
-            "RH: Royal Remains Helm - Ensha's spot, after getting half of secret medallion",
-            "RH: Royal Remains Armor - Ensha's spot, after getting half of secret medallion",
-            "RH: Royal Remains Gauntlets - Ensha's spot, after getting half of secret medallion",
-            "RH: Royal Remains Greaves - Ensha's spot, after getting half of secret medallion"
-        ], lambda state: (state.has("Haligtree Secret Medallion (Left)", self.player) or
-                          state.has("Haligtree Secret Medallion (Right)", self.player)))
-        
-        # MARK: Sellen
-        
-        self._add_location_rule([ "LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur",
-        ], lambda state: ( self._can_go_to(state, "Mt. Gelmir")))
-        
-        self._add_location_rule([ "DB/(SH): Stars of Ruin - lower first big room N side, need Sellian Sealbreaker, given by Lusat",
-        ], "Sellian Sealbreaker")
-        
-        self._add_location_rule([ "LG/(WR): Starlight Shards - given by Sellen after you show her Stars of Ruin",
-        ], lambda state: ( self._can_get(state, "DB/(SH): Stars of Ruin - lower first big room N side, need Sellian Sealbreaker, given by Lusat") 
-                          and self._can_get(state, "LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur")))
-        
-        self._add_location_rule([ "WP/(WR): Sellen's Primal Glintstone - talk to Sellen",
-        ], lambda state: ( self._can_get(state, "LG/(WR): Starlight Shards - given by Sellen after you show her Stars of Ruin")))
-        
-        self._add_location_rule([ 
-            "RLA/RLGL: Glintstone Kris - given by Sellen after siding with her",
-            "RLA/RLGL: Shard Spiral - side with Sellen, sold in shop",
-            "RLA/RLGL: Witch's Glintstone Crown - side with either",
-            "RLA/RLGL: Ancient Dragon Smithing Stone - side with Jerren",
-            "RLA/RLGL: Eccentric's Hood - side with Sellen",
-            "RLA/RLGL: Eccentric's Armor - side with Sellen",
-            "RLA/RLGL: Eccentric's Manchettes - side with Sellen",
-            "RLA/RLGL: Eccentric's Breeches - side with Sellen",
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            # MARK: Varré
             
-            # idk if you NEED to side with sellen for these
-            "DB/(SH): Lusat's Glintstone Crown - side with Sellen, lower first big room N side, where Lusat was",
-            "DB/(SH): Lusat's Robe - side with Sellen, lower first big room N side, where Lusat was",
-            "DB/(SH): Lusat's Manchettes - side with Sellen, lower first big room N side, where Lusat was",
-            "DB/(SH): Old Sorcerer's Legwraps - side with Sellen, lower first big room N side, where Lusat was",
-            "MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was",
-            "MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was",
-            "MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was"
-        ], lambda state: ( self._can_get(state, "WP/(WR): Sellen's Primal Glintstone - talk to Sellen") 
-                          and self._can_go_to(state, "Raya Lucaria Academy Library") and state.has("Sellen's Primal Glintstone", self.player)))
-        
-        # MARK: Thops
-        
-        self._add_location_rule([ 
-            "RLA/SC: Academy Glintstone Staff - on Thops body just outside",
-            "RLA/SC: Thops's Barrier - on Thops body just outside",
-            "LL/(CIr): Ash of War: Thops's Barrier - scarab in church after Thops moves"
-        ], lambda state: ( state.has("Academy Glintstone Key (Thops)", self.player) and self._can_go_to(state, "Raya Lucaria Academy Main")))
-        
-        # MARK: Corhyn / Goldmask
+            self._add_location_rule([ "LL/(RC): Festering Bloody Finger x5 - talk to Varré after beating SV mainboss",
+            ], lambda state: self._can_get(state, "SV/SeC: Remembrance of the Grafted - mainboss drop"))
+            
+            self._add_location_rule([ 
+                "AP/(WbR): Great Stars - invade Magus",
+                "AP/(WbR): Somber Smithing Stone [6] - invade Magus"
+            ], lambda state: self._has_bloody_finger(state))
+            
+            self._add_location_rule([ "LL/(RC): Lord of Blood's Favor - talk to Varré after invading Magnus in AP",
+            ], lambda state: self._can_get(state, "AP/(WbR): Great Stars - invade Magus"))
+            
+            self._add_location_rule([ 
+                "LL/(RC): Pureblood Knight's Medal - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor",
+                "LL/(RC): Bloody Finger - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"
+            ], lambda state: self._can_get(state, "AP/(WbR): Great Stars - invade Magus") and state.has("Lord of Blood's Favor", self.player))
+            
+            self._add_location_rule([ 
+                "MP/(MDM): Festering Bloody Finger x6 - invade Varré near DMM grace",
+                "MP/(MDM): Varré's Bouquet - invade Varré near DMM grace"
+            ], lambda state: self._can_get(state, "LL/(RC): Bloody Finger - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"))
+            
+            # MARK: Hyetta
+            
+            self._add_location_rule([
+                "FFP/FFP: Frenzied Flame Seal - given by Hyetta at end of her quest",
+                "FFP/FFP: Frenzyflame Stone x5 - given by Hyetta at end of her quest"
+            ], lambda state: ( state.has("Shabriri Grape", self.player, 3) and state.has("Fingerprint Grape", self.player)
+                and self._can_get(state, "LL/(RS): Shabriri Grape - kill invader Edgar")))
+            
+            # MARK: Edgar
+            
+            self._add_location_rule([ 
+                "LL/(RS): Raw Meat Dumpling x5 - kill invader Edgar",
+                "LL/(RS): Shabriri Grape - kill invader Edgar",
+                "LL/(RS): Raw Meat Dumpling 1 - in shack when Edgar invades",
+                "LL/(RS): Raw Meat Dumpling 2 - in shack when Edgar invades",
+                "LL/(RS): Raw Meat Dumpling 3 - in shack when Edgar invades",
+                "LL/(RS): Raw Meat Dumpling 4 - in shack when Edgar invades",
+                "LL/(RS): Raw Meat Dumpling 5 - in shack when Edgar invades",
+                "WP/BS: Banished Knight's Halberd - kill Edgar at Irina's body or at LL/RS"
+            ], lambda state: ( self._can_get(state, "WP/(CM): Grafted Blade Greatsword - boss drop") and self._can_go_to(state, "Liurnia of The Lakes")
+                and state.has("Irina's Letter", self.player)))
+            
+            # MARK: Roderika
+            
+            self._add_location_rule([ 
+                "LG/(SS): Golden Seed - give Roderika Chrysalids' Memento then talk to her at RH, or after SV mainboss item is at SS",
+                "SV/RT: Crimson Hood - shortcut elevator to SE, to SE under dead troll, after Roderika becomes a spirit tuner",
+            ], "Chrysalids' Memento")
+            
+            # MARK: Ensha
+            
+            self._add_location_rule([
+                "RH: Clinging Bone - dropped by Ensha, after getting half of secret medallion",
+                "RH: Royal Remains Helm - Ensha's spot, after getting half of secret medallion",
+                "RH: Royal Remains Armor - Ensha's spot, after getting half of secret medallion",
+                "RH: Royal Remains Gauntlets - Ensha's spot, after getting half of secret medallion",
+                "RH: Royal Remains Greaves - Ensha's spot, after getting half of secret medallion"
+            ], lambda state: (state.has("Haligtree Secret Medallion (Left)", self.player) or
+                            state.has("Haligtree Secret Medallion (Right)", self.player)))
+            
+            # MARK: Sellen
+            
+            self._add_location_rule([ "LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur",
+            ], lambda state: ( self._can_go_to(state, "Mt. Gelmir")))
+            
+            self._add_location_rule([ "DB/(SH): Stars of Ruin - lower first big room N side, need Sellian Sealbreaker, given by Lusat",
+            ], "Sellian Sealbreaker")
+            
+            self._add_location_rule([ "LG/(WR): Starlight Shards - given by Sellen after you show her Stars of Ruin",
+            ], lambda state: ( self._can_get(state, "DB/(SH): Stars of Ruin - lower first big room N side, need Sellian Sealbreaker, given by Lusat") 
+                            and self._can_get(state, "LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur")))
+            
+            self._add_location_rule([ "WP/(WR): Sellen's Primal Glintstone - talk to Sellen",
+            ], lambda state: ( self._can_get(state, "LG/(WR): Starlight Shards - given by Sellen after you show her Stars of Ruin")))
+            
+            self._add_location_rule([ 
+                "RLA/RLGL: Glintstone Kris - given by Sellen after siding with her",
+                "RLA/RLGL: Shard Spiral - side with Sellen, sold in shop",
+                "RLA/RLGL: Witch's Glintstone Crown - side with either",
+                "RLA/RLGL: Ancient Dragon Smithing Stone - side with Jerren",
+                "RLA/RLGL: Eccentric's Hood - side with Sellen",
+                "RLA/RLGL: Eccentric's Armor - side with Sellen",
+                "RLA/RLGL: Eccentric's Manchettes - side with Sellen",
+                "RLA/RLGL: Eccentric's Breeches - side with Sellen",
+                
+                # idk if you NEED to side with sellen for these
+                "DB/(SH): Lusat's Glintstone Crown - side with Sellen, lower first big room N side, where Lusat was",
+                "DB/(SH): Lusat's Robe - side with Sellen, lower first big room N side, where Lusat was",
+                "DB/(SH): Lusat's Manchettes - side with Sellen, lower first big room N side, where Lusat was",
+                "DB/(SH): Old Sorcerer's Legwraps - side with Sellen, lower first big room N side, where Lusat was",
+                "MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was",
+                "MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was",
+                "MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was"
+            ], lambda state: ( self._can_get(state, "WP/(WR): Sellen's Primal Glintstone - talk to Sellen") 
+                            and self._can_go_to(state, "Raya Lucaria Academy Library") and state.has("Sellen's Primal Glintstone", self.player)))
+            
+            # MARK: Thops
+            
+            self._add_location_rule([ 
+                "RLA/SC: Academy Glintstone Staff - on Thops body just outside",
+                "RLA/SC: Thops's Barrier - on Thops body just outside",
+                "LL/(CIr): Ash of War: Thops's Barrier - scarab in church after Thops moves"
+            ], lambda state: ( state.has("Academy Glintstone Key (Thops)", self.player) and self._can_go_to(state, "Raya Lucaria Academy Main")))
+            
+            # MARK: Corhyn / Goldmask
 
-        self._add_location_rule([ 
-            "LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask",
-            "LRC|LAC/RC: Flail - kill Brother Corhyn", # goldmask doesnt need corhyn alive
-            "LRC|LAC/RC: Corhyn's Robe - kill Brother Corhyn"
-        ], "Law of Regression")
-        
-        self._add_location_rule([ 
-            "LAC/RC: Mending Rune of Perfect Order - on Goldmask's body",
-            "LAC/RC: Goldmask's Rags - on Goldmask's body",
-            "LAC/RC: Gold Bracelets - on Goldmask's body",
-            "LAC/RC: Gold Waistwrap - on Goldmask's body"
-        ], lambda state: self._can_get(state, "LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask"))
-        
-        
-        # MARK: Enia
-        
-        self._add_location_rule([ "RH: Talisman Pouch - talk to Enia at 2 great runes or Twin Maiden after farum boss",
-        ], lambda state: ( self._has_enough_great_runes(state, 2)))
-        
-        # MARK: Yura
-        
-        self._add_location_rule([ 
-            "AP/(SCM): Nagakiba - on Yura after RLA invasion",
-            "AP/(SCM): Purifying Crystal Tear - invader drop, requires Yura death",
-            "AP/(SCM): Eleonora's Poleblade - invader drop, requires Yura death"
-        ], lambda state: ( self._can_get(state, "RLA/MAG: Ash of War: Raptor of the Mists - beat invasion at RLA to NE")))
-        
-        # MARK: Latenna
+            self._add_location_rule([ 
+                "LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask",
+                "LRC|LAC/RC: Flail - kill Brother Corhyn", # goldmask doesnt need corhyn alive
+                "LRC|LAC/RC: Corhyn's Robe - kill Brother Corhyn"
+            ], "Law of Regression")
+            
+            self._add_location_rule([ 
+                "LAC/RC: Mending Rune of Perfect Order - on Goldmask's body",
+                "LAC/RC: Goldmask's Rags - on Goldmask's body",
+                "LAC/RC: Gold Bracelets - on Goldmask's body",
+                "LAC/RC: Gold Waistwrap - on Goldmask's body"
+            ], lambda state: self._can_get(state, "LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask"))
+            
+            
+            # MARK: Enia
+            
+            self._add_location_rule([ "RH: Talisman Pouch - talk to Enia at 2 great runes or Twin Maiden after farum boss",
+            ], lambda state: ( self._has_enough_great_runes(state, 2)))
+            
+            # MARK: Yura
+            
+            self._add_location_rule([ 
+                "AP/(SCM): Nagakiba - on Yura after RLA invasion",
+                "AP/(SCM): Purifying Crystal Tear - invader drop, requires Yura death",
+                "AP/(SCM): Eleonora's Poleblade - invader drop, requires Yura death"
+            ], lambda state: ( self._can_get(state, "RLA/MAG: Ash of War: Raptor of the Mists - beat invasion at RLA to NE")))
+            
+            # MARK: Latenna
 
-        self._add_location_rule([ "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus",
-        ], "Haligtree Secret Medallion (Right)") # might need the right medallion, having both kills her if not talked to
-        
-        self._add_location_rule([ "CS/(AD): Somber Ancient Dragon Smithing Stone - summon Latenna at her sister and talk to her",
-        ], lambda state: ( self._can_get(state, "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus"))
-            and self._can_go_to(state, "Mountaintops of the Giants")) # do you need the ashes? its a prompt summon so idk
-        
-        # MARK: D
-        
-        self._add_location_rule([
-            "RH: Litany of Proper Death - D shop, after talking to Gurraq",
-            "RH: Order's Blade - D shop, after talking to Gurraq",
-        ], lambda state: ( self._can_go_to(state, "Dragonbarrow")))
-        
-        # MARK: D, Twin
-        # IDK IF THE WHOLE SET IS NEEDED, OR A SINGLE PIECE, just doing all to be sure
-        self._add_location_rule(["DD/AR: Inseparable Sword - kill D Twin at NEC if you killed D, or at end of Fia's quest", 
-        ], lambda state: ( 
-            (state.has("Twinned Helm", self.player) and state.has("Twinned Armor", self.player)
-            and state.has("Twinned Gauntlets", self.player) and state.has("Twinned Greaves", self.player))
-            and self._can_get(state, "DD/PDT: Mending Rune of the Death-Prince - on Fia after mainboss")))
-        
-        # MARK: Rogier
-        
-        self._add_location_rule(["RH: Rogier's Letter - after giving Black Knifeprint, talk to Ranni, talk to Rogier again", 
-        ], lambda state: ( self._can_go_to(state, "Stormveil Castle") and self._can_go_to(state, "Liurnia of The Lakes")
-                          and state.has("Black Knifeprint", self.player)))
-        
-        self._add_location_rule([
-            "RH: Spellblade's Pointed Hat - found on Rogier's body",
-            "RH: Spellblade's Traveling Attire - found on Rogier's body",
-            "RH: Spellblade's Gloves - found on Rogier's body",
-            "RH: Spellblade's Trousers - found on Rogier's body",
-            "RH: Rogier's Rapier - talk Rogier after beating SV mainboss or on his body after he dies"
-        ], lambda state: ( self._can_go_to(state, "Stormveil Castle") and state.has("Cursemark of Death", self.player)))
-        
-        # MARK: Fia
-        
-        self._add_location_rule(["RH: Knifeprint Clue - talk to Fia multiple times", 
-        ], lambda state: ( self._can_go_to(state, "Stormveil Castle")))
-        
-        self._add_location_rule(["RH: Sacrificial Twig - talk to Fia after giving Black Knifeprint to Rogier", 
-        ], lambda state: ( state.has("Black Knifeprint", self.player) and self._can_go_to(state, "Stormveil Castle")))
-        
-        self._add_location_rule(["RH: Weathered Dagger - talk to Fia after reaching altus", 
-        ], lambda state: ( self._can_go_to(state, "Altus Plateau")))
-        
-        self._add_location_rule([
-            "RH: Twinned Helm - on D's body after giving him Weather Dagger during Fia's quest",
-            "RH: Twinned Armor - on D's body after giving him Weather Dagger during Fia's quest",
-            "RH: Twinned Gauntlets - on D's body after giving him Weather Dagger during Fia's quest",
-            "RH: Twinned Greaves - on D's body after giving him Weather Dagger during Fia's quest"
-        ], lambda state: ( state.has("Weathered Dagger", self.player) and self._can_go_to(state, "Altus Plateau")))
-        
-        self._add_location_rule([
-            "DD/PDT: Remembrance of the Lichdragon - mainboss drop", 
-            "DD/PDT: Mending Rune of the Death-Prince - on Fia after mainboss",
-            "DD/PDT: Fia's Hood - kill Fia or after mainboss",
-            "DD/PDT: Fia's Robe - kill Fia or after mainboss",
-        ], lambda state: ( state.has("Cursemark of Death", self.player) and self._can_get(state, "RH: Weathered Dagger - talk to Fia after reaching altus")))
-        
-        # MARK: Dung Eater
-        
-        self._add_location_rule(["RH: Sewer-Gaol Key - talk to Dung Eater while having a Seedbed Curse", 
-        ], lambda state: ( state.has("Seedbed Curse", self.player) and self._can_go_to(state, "Altus Plateau")))
-        
-        self._add_location_rule([ # boggart seedbed here
-            "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO",
-            "CO/AHG: Seedbed Curse - on Boggart's body after becoming Dung Eater's victim",
-        ], lambda state: ( self._can_go_to(state, "Capital Outskirts") and state.has("Sewer-Gaol Key", self.player)
-            and self._can_get(state, "RH: Sewer-Gaol Key - talk to Dung Eater while having a Seedbed Curse")))
-        
-        self._add_location_rule(["SSG/UR: Mending Rune of the Fell Curse - give Dung Eater 5 seedbed curses", 
-        ], lambda state: ( self._can_get(state, "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO")
-            and state.has("Seedbed Curse", self.player, 5)))
-        
-        self._add_location_rule([
-            "SSG/UR: Omen Helm - kill Dung Eater or finish his quest",
-            "SSG/UR: Omen Armor - kill Dung Eater or finish his quest",
-            "SSG/UR: Omen Gauntlets - kill Dung Eater or finish his quest",
-            "SSG/UR: Omen Greaves - kill Dung Eater or finish his quest"
-        ], lambda state: ( self._can_get(state, "SSG/UR: Mending Rune of the Fell Curse - give Dung Eater 5 seedbed curses")))
-  
-        # MARK: Nepheli
-        
-        self._add_location_rule(["RH: Arsenal Charm - talk to Nepheli before and after defeating SV mainboss"
-        ], lambda state: ( self._can_get(state, "SV/SeC: Remembrance of the Grafted - mainboss drop")))
-        
-        self._add_location_rule([
-            "SV/GG: Ancient Dragon Smithing Stone - Gostoc shop after finishing Nepheli and Kenneth Haight's quests",
-            "SV/GG: Ancient Dragon Smithing Stone - talk to Nepheli in SV after her and Kenneth's questlines",
-            "SV/GG: Stormhawk Axe - kill Nepheli"
-        ], lambda state: ( self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop")
-                          and state.has("The Stormhawk King", self.player)))
-        
-        # MARK: Gideon
-        
-        self._add_location_rule([
-            "RH: Fevor's Cookbook [3] - talk to Gideon after reaching MP",
-            "RH: Law of Causality - talk to Gideon after beating MP mainboss"
-        ], lambda state: self._can_go_to(state, "Mohgwyn Palace"))
-        
-        self._add_location_rule([
-            "RH: Black Flame's Protection - talk to Gideon after reaching MH",
-            "RH: Lord's Divine Fortification - talk to Gideon after beating EBH mainboss"
-        ], lambda state: self._can_go_to(state, "Miquella's Haligtree"))
-        
-        # MARK: Gurraq
-        
-        self._add_location_rule([
-            "DB/(BS): Clawmark Seal - Gurranq, deathroot reward 1",
-            "DB/(BS): Beast Eye - Gurranq, deathroot reward 1 or kill Gurranq",
-        ], "Deathroot")
-        
-        self._add_location_rule(["DB/(BS): Bestial Sling - Gurranq, deathroot reward 2",
-        ], lambda state: ( state.has("Deathroot", self.player, 2)))
-        
-        self._add_location_rule(["DB/(BS): Bestial Vitality - Gurranq, deathroot reward 3",
-        ], lambda state: ( state.has("Deathroot", self.player, 3)))
-        
-        self._add_location_rule(["DB/(BS): Ash of War: Beast's Roar - Gurranq, deathroot reward 4",
-        ], lambda state: ( state.has("Deathroot", self.player, 4)))
-        
-        self._add_location_rule(["DB/(BS): Beast Claw - Gurranq, deathroot reward 5",
-        ], lambda state: ( state.has("Deathroot", self.player, 5)))
-        
-        self._add_location_rule(["DB/(BS): Stone of Gurranq - Gurranq, deathroot reward 6",
-        ], lambda state: ( state.has("Deathroot", self.player, 6)))
-        
-        self._add_location_rule(["DB/(BS): Beastclaw Greathammer - Gurranq, deathroot reward 7",
-        ], lambda state: ( state.has("Deathroot", self.player, 7)))
-        
-        self._add_location_rule(["DB/(BS): Gurranq's Beast Claw - Gurranq, deathroot reward 8",
-        ], lambda state: ( state.has("Deathroot", self.player, 8)))
-        
-        self._add_location_rule(["DB/(BS): Ancient Dragon Smithing Stone - Gurranq, deathroot reward 9 or kill Gurranq",
-        ], lambda state: ( state.has("Deathroot", self.player, 9)))
-        
-        # MARK: Gowry
-        
-        self._add_location_rule([ 
-            "CL/(GS): Sellia's Secret - talk to Gowry with needle",
-            "CL/(GS): Unalloyed Gold Needle (Fixed) - talk to Gowry after giving needle",
-        ], "Unalloyed Gold Needle (Broken)")
-        
-        self._add_location_rule([
-            "CL/(GS): Glintstone Stars - Gowry Shop",
-            "CL/(GS): Night Shard - Gowry Shop",
-            "CL/(GS): Night Maiden's Mist - Gowry Shop",
-        ], lambda state: ( self._can_get(state, "CL/(CP): Prosthesis-Wearer Heirloom - give Millicent fixed needle")))
-        
-        self._add_location_rule(["CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent",
-        ], lambda state: ( state.has("Valkyrie's Prosthesis", self.player) and self._can_go_to(state, "Altus Plateau")
-                          and self._can_get(state, "CL/(GS): Night Shard - Gowry Shop")))
-        
-        # self._add_location_rule(["CL/(GS): Desperate Prayer - buy 4th shop item", # gesture
-        # ], lambda state: ( self._can_get(state, "CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent")))
-        
-        self._add_location_rule(["CL/(GS): Flock's Canvas Talisman - kill Gowry or complete questline",
-        ], lambda state: ( self._can_get(state, "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area")))
-        
-        # MARK: Millicent
-        
-        self._add_location_rule(["CL/(CP): Prosthesis-Wearer Heirloom - give Millicent fixed needle",
-        ], "Unalloyed Gold Needle (Fixed)")
-        
-        self._add_location_rule([
-            "EBH/EIW: Rotten Winged Sword Insignia - help Millicent",
-            "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area",
-            "EBH/EIW: Millicent's Prosthesis - invade Millicent or kill in altus",
-        ], lambda state: ( self._can_get(state, "CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent")))
-        
-        self._add_location_rule([
-            "EBH/HR: Miquella's Needle - use needle on flower in boss arena after Millicent quest",
-            "EBH/HR: Somber Ancient Dragon Smithing Stone - use needle on flower in boss arena after Millicent quest",
-        ], lambda state: ( 
-            self._can_get(state, "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area")
-            and state.has("Unalloyed Gold Needle (Milicent)", self.player)
-        ))
-        
-        # MARK: Ranni
-        
-        self._add_location_rule([
-            "LG/(CE): Spirit Calling Bell - talk to Ranni",
-            "LG/(CE): Lone Wolf Ashes - talk to Ranni",
-        ], lambda state: ( self._can_go_to(state, "Liurnia of The Lakes")))
-        # you can get in LL if missed i think
-        
-        self._add_location_rule([
-            "NR/(NSG): Fingerslayer Blade - in chest lower area, talk to Ranni in LL",
-            "NR/(NSG): Great Ghost Glovewort - in chest lower area, talk to Ranni in LL"
-        ], lambda state: ( self._can_go_to(state, "Liurnia of The Lakes")))
-        
-        self._add_location_rule([
-            "LL/(ReR): Snow Witch Hat - in chest, after giving Fingerslayer Blade to Ranni",
-            "LL/(ReR): Snow Witch Robe - in chest, after giving Fingerslayer Blade to Ranni",
-            "LL/(ReR): Snow Witch Skirt - in chest, after giving Fingerslayer Blade to Ranni",
-            "LL/(RaR): Carian Inverted Statue - given by Ranni after giving Fingerslayer Blade",
-            "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade"
-        ], "Fingerslayer Blade")
-        
-        self._add_location_rule(["NS/NWB: Discarded Palace Key - invader drop to SE, need Miniature Ranni"
-        ], lambda state: ( state.has("Miniature Ranni", self.player) 
-            and self._can_get(state, "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade")))
-        
-        self._add_location_rule(["RLA/RLGL: Dark Moon Ring - in chest, requires Discarded Palace Key",
-        ], "Discarded Palace Key")
-        
-        # MARK: Seluvis
-        
-        self._add_location_rule(["LL/(SR): Seluvis's Introduction - talk to Seluvis after talking to Blaidd in SR", 
-        ], lambda state: (self._can_go_to(state, "Siofra River")))
-        
-        self._add_location_rule([
-            "LL/(SR): Nepheli Loux Puppet - on Seluvis's body", 
-            "LL/(SR): Dolores the Sleeping Arrow Puppet - Seluvis shop, after you give potion to Nepheli"
-        ], lambda state: ( state.has("Seluvis's Potion", self.player)
-            and self._can_get(state, "RH: Arsenal Charm - talk to Nepheli before and after defeating SV mainboss")))
-        
-        self._add_location_rule(["LL/(SR): Dung Eater Puppet - Seluvis shop, after you give potion to Dung Eater", 
-        ], lambda state: ( state.has("Seluvis's Potion", self.player)
-            and self._can_get(state, "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO")))
-        
-        self._add_location_rule([
-            "LL/(SR): Carian Phalanx - Seluvis shop after potion used",
-            "LL/(SR): Glintstone Icecrag - Seluvis shop after potion used",
-            "LL/(SR): Freezing Mist - Seluvis shop after potion used",
-            "LL/(SR): Carian Retaliation - Seluvis shop after potion used"
-        ], "Seluvis's Potion")
-        
-        # THIS BREAKS
-        self._add_location_rule([
-            "LL/(SR): Jarwight Puppet - Seluvis shop after finding puppet room",
-            "LL/(SR): Finger Maiden Therolina Puppet - Seluvis shop after finding puppet room"
-        ], lambda state: (state.has("Starlight Shards", self.player, 3)
-            and state.has("Seluvis's Potion", self.player)))
-        
-        self._add_location_rule([
-            "LL/(SR): Magic Scorpion Charm - given by Seluvis after giving Amber Starlight",
-            "LL/(SR): Amber Draught - given by Seluvis after giving Amber Starlight"
-        ], lambda state: (state.has("Amber Starlight", self.player) 
-            and self._can_get(state, "LL/(SR): Jarwight Puppet - Seluvis shop after finding puppet room")))
-        
-        # Pidia
-        
-        self._add_location_rule(["LL/(CM): Dolores the Sleeping Arrow Puppet - dropped by Pidia after Seluvis dies"
-        ], lambda state: (self._can_get(state, "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade")
-            or state.has("Amber Draught", self.player)))
-        
-        # MARK: Blaidd / Iji
-        
-        self._add_location_rule([
-            "LL/RaR: Royal Greatsword - kill angry Blaidd",
-            "LL/RaR: Blaidd's Armor - kill angry Blaidd",
-            "LL/RaR: Blaidd's Gauntlets - kill angry Blaidd",
-            "LL/RaR: Blaidd's Greaves - kill angry Blaidd",
-            "LL/RM: Iji's Mirrorhelm - kill Iji or after quest"
-        ], lambda state: (self._can_get(state, "MA/(CMC): Dark Moon Greatsword - give Ranni Darkmoon Ring under CMC")))
-        
-        # MARK: Alexander
-        
-        self._add_location_rule([
-            "LL/JB: Exalted Flesh x3 - given by Alexander after getting him unstuck with oil pots, just above JB"
-        ], lambda state: ( self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop")))
-        
-        self._add_location_rule([
-            "MtG/FL: Jar - talk to Alexander S of FL"
-        ], lambda state: ( self._can_get(state, "LL/JB: Exalted Flesh x3 - given by Alexander after getting him unstuck with oil pots, just above JB")))
-        
-        self._add_location_rule([ # also requires fire giant dead
-            "FA/DTL: Shard of Alexander - fight Alexander to SW",
-            "FA/DTL: Alexander's Innards - fight Alexander to SW"
-        ], lambda state: ( self._can_get(state, "MtG/FL: Jar - talk to Alexander S of FL")))
-        
-        # MARK: Jar-bairn
-        
-        self._add_location_rule([
-            "LL/JB: Companion Jar - give Alexander's Innards, left after Jar Bairn leaves"
-        ], lambda state: ( self._can_get(state, "FA/DTL: Alexander's Innards - fight Alexander to SW")
-                          and state.has("Alexander's Innards", self.player)))
-        
-        # MARK: Diallos
-        
-        self._add_location_rule([ # need to talk to in LL and VM stuff
-            "LL/JB: Hoslow's Petal Whip - on Diallos's body",
-            "LL/JB: Diallos's Mask - on Diallos's body",
-            "LL/JB: Numen's Rune - on Diallos's body"
-        ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")
-                          and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop")))
-        
-        # MARK: VOLCANO QUESTS
-        
-        # do you need the letters? 1 2 and red, probs not since ng+
-        
-        self._add_location_rule([ # request 1
-            "LG/LC: Scaled Helm - invade Istvan SE of colo",
-            "LG/LC: Scaled Armor - invade Istvan SE of colo",
-            "LG/LC: Scaled Gauntlets - invade Istvan SE of colo",
-            "LG/LC: Scaled Greaves - invade Istvan SE of colo",
-        ], lambda state: ( self._can_get(state, "VM/VM: Letter from Volcano Manor (Istvan) - on the table in the drawing room")))
-        
-        self._add_location_rule([ # reward 1 + patches & bernahl
-            "VM/VM: Magma Shot - Tanith reward request 1",
-            "VM/VM: Letter from Volcano Manor (Rileigh) - on the table in the drawing room after request 1",
-            "VM/VM: Letter to Patches - talk to Patches after request 1",
-            "VM/VM: Ash of War: Eruption - Bernahl shop after request 1",
-            "VM/VM: Ash of War: Assassin's Gambit - Bernahl shop after request 1"
-        ], lambda state: ( self._can_get(state, "LG/LC: Scaled Helm - invade Istvan SE of colo")))
-        
-        self._add_location_rule([ # request 2
-            "AP/OAT: Black-Key Bolt x20 - invade Rileigh",
-            "AP/OAT: Crepus's Vial - invade Rileigh"
-        ], lambda state: ( self._can_get(state, "VM/VM: Letter from Volcano Manor (Rileigh) - on the table in the drawing room after request 1")))
-        
-        self._add_location_rule([ # reward 2 + bernahl
-            "VM/VM: Serpentbone Blade - Tanith reward request 2",
-            "VM/VM: Letter to Bernahl - Bernahl after request 2",
-            "VM/VM: Red Letter - on the table in the drawing room after request 2"
-        ], lambda state: ( self._can_get(state, "AP/OAT: Crepus's Vial - invade Rileigh")))
+            self._add_location_rule([ "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus",
+            ], "Haligtree Secret Medallion (Right)") # might need the right medallion, having both kills her if not talked to
+            
+            self._add_location_rule([ "CS/(AD): Somber Ancient Dragon Smithing Stone - summon Latenna at her sister and talk to her",
+            ], lambda state: ( self._can_get(state, "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus"))
+                and self._can_go_to(state, "Mountaintops of the Giants")) # do you need the ashes? its a prompt summon so idk
+            
+            # MARK: D
+            
+            self._add_location_rule([
+                "RH: Litany of Proper Death - D shop, after talking to Gurraq",
+                "RH: Order's Blade - D shop, after talking to Gurraq",
+            ], lambda state: ( self._can_go_to(state, "Dragonbarrow")))
+            
+            # MARK: D, Twin
+            # IDK IF THE WHOLE SET IS NEEDED, OR A SINGLE PIECE, just doing all to be sure
+            self._add_location_rule(["DD/AR: Inseparable Sword - kill D Twin at NEC if you killed D, or at end of Fia's quest", 
+            ], lambda state: ( 
+                (state.has("Twinned Helm", self.player) and state.has("Twinned Armor", self.player)
+                and state.has("Twinned Gauntlets", self.player) and state.has("Twinned Greaves", self.player))
+                and self._can_get(state, "DD/PDT: Mending Rune of the Death-Prince - on Fia after mainboss")))
+            
+            # MARK: Rogier
+            
+            self._add_location_rule(["RH: Rogier's Letter - after giving Black Knifeprint, talk to Ranni, talk to Rogier again", 
+            ], lambda state: ( self._can_go_to(state, "Stormveil Castle") and self._can_go_to(state, "Liurnia of The Lakes")
+                            and state.has("Black Knifeprint", self.player)))
+            
+            self._add_location_rule([
+                "RH: Spellblade's Pointed Hat - found on Rogier's body",
+                "RH: Spellblade's Traveling Attire - found on Rogier's body",
+                "RH: Spellblade's Gloves - found on Rogier's body",
+                "RH: Spellblade's Trousers - found on Rogier's body",
+                "RH: Rogier's Rapier - talk Rogier after beating SV mainboss or on his body after he dies"
+            ], lambda state: ( self._can_go_to(state, "Stormveil Castle") and state.has("Cursemark of Death", self.player)))
+            
+            # MARK: Fia
+            
+            self._add_location_rule(["RH: Knifeprint Clue - talk to Fia multiple times", 
+            ], lambda state: ( self._can_go_to(state, "Stormveil Castle")))
+            
+            self._add_location_rule(["RH: Sacrificial Twig - talk to Fia after giving Black Knifeprint to Rogier", 
+            ], lambda state: ( state.has("Black Knifeprint", self.player) and self._can_go_to(state, "Stormveil Castle")))
+            
+            self._add_location_rule(["RH: Weathered Dagger - talk to Fia after reaching altus", 
+            ], lambda state: ( self._can_go_to(state, "Altus Plateau")))
+            
+            self._add_location_rule([
+                "RH: Twinned Helm - on D's body after giving him Weather Dagger during Fia's quest",
+                "RH: Twinned Armor - on D's body after giving him Weather Dagger during Fia's quest",
+                "RH: Twinned Gauntlets - on D's body after giving him Weather Dagger during Fia's quest",
+                "RH: Twinned Greaves - on D's body after giving him Weather Dagger during Fia's quest"
+            ], lambda state: ( state.has("Weathered Dagger", self.player) and self._can_go_to(state, "Altus Plateau")))
+            
+            self._add_location_rule([
+                "DD/PDT: Remembrance of the Lichdragon - mainboss drop", 
+                "DD/PDT: Mending Rune of the Death-Prince - on Fia after mainboss",
+                "DD/PDT: Fia's Hood - kill Fia or after mainboss",
+                "DD/PDT: Fia's Robe - kill Fia or after mainboss",
+            ], lambda state: ( state.has("Cursemark of Death", self.player) and self._can_get(state, "RH: Weathered Dagger - talk to Fia after reaching altus")))
+            
+            # MARK: Dung Eater
+            
+            self._add_location_rule(["RH: Sewer-Gaol Key - talk to Dung Eater while having a Seedbed Curse", 
+            ], lambda state: ( state.has("Seedbed Curse", self.player) and self._can_go_to(state, "Altus Plateau")))
+            
+            self._add_location_rule([ # boggart seedbed here
+                "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO",
+                "CO/AHG: Seedbed Curse - on Boggart's body after becoming Dung Eater's victim",
+            ], lambda state: ( self._can_go_to(state, "Capital Outskirts") and state.has("Sewer-Gaol Key", self.player)
+                and self._can_get(state, "RH: Sewer-Gaol Key - talk to Dung Eater while having a Seedbed Curse")))
+            
+            self._add_location_rule(["SSG/UR: Mending Rune of the Fell Curse - give Dung Eater 5 seedbed curses", 
+            ], lambda state: ( self._can_get(state, "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO")
+                and state.has("Seedbed Curse", self.player, 5)))
+            
+            self._add_location_rule([
+                "SSG/UR: Omen Helm - kill Dung Eater or finish his quest",
+                "SSG/UR: Omen Armor - kill Dung Eater or finish his quest",
+                "SSG/UR: Omen Gauntlets - kill Dung Eater or finish his quest",
+                "SSG/UR: Omen Greaves - kill Dung Eater or finish his quest"
+            ], lambda state: ( self._can_get(state, "SSG/UR: Mending Rune of the Fell Curse - give Dung Eater 5 seedbed curses")))
     
-        self._add_location_rule([ # request 3
-            "MotG/SL: Hoslow's Petal Whip - invade Juno Hoslow",
-            "MotG/SL: Hoslow's Helm - invade Juno Hoslow",
-            "MotG/SL: Hoslow's Armor - invade Juno Hoslow",
-            "MotG/SL: Hoslow's Gauntlets - invade Juno Hoslow",
-            "MotG/SL: Hoslow's Greaves - invade Juno Hoslow"
-        ], lambda state: ( self._can_get(state, "VM/VM: Red Letter - on the table in the drawing room after request 2")))
-  
-        self._add_location_rule([ # reward 3
-            "VM/VM: Taker's Cameo - Tanith reward request 3"
-        ], lambda state: ( self._can_get(state, "MotG/SL: Hoslow's Petal Whip - invade Juno Hoslow")))
+            # MARK: Nepheli
+            
+            self._add_location_rule(["RH: Arsenal Charm - talk to Nepheli before and after defeating SV mainboss"
+            ], lambda state: ( self._can_get(state, "SV/SeC: Remembrance of the Grafted - mainboss drop")))
+            
+            self._add_location_rule([
+                "SV/GG: Ancient Dragon Smithing Stone - Gostoc shop after finishing Nepheli and Kenneth Haight's quests",
+                "SV/GG: Ancient Dragon Smithing Stone - talk to Nepheli in SV after her and Kenneth's questlines",
+                "SV/GG: Stormhawk Axe - kill Nepheli"
+            ], lambda state: ( self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop")
+                            and state.has("The Stormhawk King", self.player)))
+            
+            # MARK: Gideon
+            
+            self._add_location_rule([
+                "RH: Fevor's Cookbook [3] - talk to Gideon after reaching MP",
+                "RH: Law of Causality - talk to Gideon after beating MP mainboss"
+            ], lambda state: self._can_go_to(state, "Mohgwyn Palace"))
+            
+            self._add_location_rule([
+                "RH: Black Flame's Protection - talk to Gideon after reaching MH",
+                "RH: Lord's Divine Fortification - talk to Gideon after beating EBH mainboss"
+            ], lambda state: self._can_go_to(state, "Miquella's Haligtree"))
+            
+            # MARK: Gurraq
+            
+            self._add_location_rule([
+                "DB/(BS): Clawmark Seal - Gurranq, deathroot reward 1",
+                "DB/(BS): Beast Eye - Gurranq, deathroot reward 1 or kill Gurranq",
+            ], "Deathroot")
+            
+            self._add_location_rule(["DB/(BS): Bestial Sling - Gurranq, deathroot reward 2",
+            ], lambda state: ( state.has("Deathroot", self.player, 2)))
+            
+            self._add_location_rule(["DB/(BS): Bestial Vitality - Gurranq, deathroot reward 3",
+            ], lambda state: ( state.has("Deathroot", self.player, 3)))
+            
+            self._add_location_rule(["DB/(BS): Ash of War: Beast's Roar - Gurranq, deathroot reward 4",
+            ], lambda state: ( state.has("Deathroot", self.player, 4)))
+            
+            self._add_location_rule(["DB/(BS): Beast Claw - Gurranq, deathroot reward 5",
+            ], lambda state: ( state.has("Deathroot", self.player, 5)))
+            
+            self._add_location_rule(["DB/(BS): Stone of Gurranq - Gurranq, deathroot reward 6",
+            ], lambda state: ( state.has("Deathroot", self.player, 6)))
+            
+            self._add_location_rule(["DB/(BS): Beastclaw Greathammer - Gurranq, deathroot reward 7",
+            ], lambda state: ( state.has("Deathroot", self.player, 7)))
+            
+            self._add_location_rule(["DB/(BS): Gurranq's Beast Claw - Gurranq, deathroot reward 8",
+            ], lambda state: ( state.has("Deathroot", self.player, 8)))
+            
+            self._add_location_rule(["DB/(BS): Ancient Dragon Smithing Stone - Gurranq, deathroot reward 9 or kill Gurranq",
+            ], lambda state: ( state.has("Deathroot", self.player, 9)))
+            
+            # MARK: Gowry
+            
+            self._add_location_rule([ 
+                "CL/(GS): Sellia's Secret - talk to Gowry with needle",
+                "CL/(GS): Unalloyed Gold Needle (Fixed) - talk to Gowry after giving needle",
+            ], "Unalloyed Gold Needle (Broken)")
+            
+            self._add_location_rule([
+                "CL/(GS): Glintstone Stars - Gowry Shop",
+                "CL/(GS): Night Shard - Gowry Shop",
+                "CL/(GS): Night Maiden's Mist - Gowry Shop",
+            ], lambda state: ( self._can_get(state, "CL/(CP): Prosthesis-Wearer Heirloom - give Millicent fixed needle")))
+            
+            self._add_location_rule(["CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent",
+            ], lambda state: ( state.has("Valkyrie's Prosthesis", self.player) and self._can_go_to(state, "Altus Plateau")
+                            and self._can_get(state, "CL/(GS): Night Shard - Gowry Shop")))
+            
+            # self._add_location_rule(["CL/(GS): Desperate Prayer - buy 4th shop item", # gesture
+            # ], lambda state: ( self._can_get(state, "CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent")))
+            
+            self._add_location_rule(["CL/(GS): Flock's Canvas Talisman - kill Gowry or complete questline",
+            ], lambda state: ( self._can_get(state, "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area")))
+            
+            # MARK: Millicent
+            
+            self._add_location_rule(["CL/(CP): Prosthesis-Wearer Heirloom - give Millicent fixed needle",
+            ], "Unalloyed Gold Needle (Fixed)")
+            
+            self._add_location_rule([
+                "EBH/EIW: Rotten Winged Sword Insignia - help Millicent",
+                "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area",
+                "EBH/EIW: Millicent's Prosthesis - invade Millicent or kill in altus",
+            ], lambda state: ( self._can_get(state, "CL/(GS): Pest Threads - Gowry Shop after giving Valkyrie's Prosthesis to Millicent")))
+            
+            self._add_location_rule([
+                "EBH/HR: Miquella's Needle - use needle on flower in boss arena after Millicent quest",
+                "EBH/HR: Somber Ancient Dragon Smithing Stone - use needle on flower in boss arena after Millicent quest",
+            ], lambda state: ( 
+                self._can_get(state, "EBH/EIW: Unalloyed Gold Needle (Milicent) - help Millicent talk then reload area")
+                and state.has("Unalloyed Gold Needle (Milicent)", self.player)
+            ))
+            
+            # MARK: Ranni
+            
+            self._add_location_rule([
+                "LG/(CE): Spirit Calling Bell - talk to Ranni",
+                "LG/(CE): Lone Wolf Ashes - talk to Ranni",
+            ], lambda state: ( self._can_go_to(state, "Liurnia of The Lakes")))
+            # you can get in LL if missed i think
+            
+            self._add_location_rule([
+                "NR/(NSG): Fingerslayer Blade - in chest lower area, talk to Ranni in LL",
+                "NR/(NSG): Great Ghost Glovewort - in chest lower area, talk to Ranni in LL"
+            ], lambda state: ( self._can_go_to(state, "Liurnia of The Lakes")))
+            
+            self._add_location_rule([
+                "LL/(ReR): Snow Witch Hat - in chest, after giving Fingerslayer Blade to Ranni",
+                "LL/(ReR): Snow Witch Robe - in chest, after giving Fingerslayer Blade to Ranni",
+                "LL/(ReR): Snow Witch Skirt - in chest, after giving Fingerslayer Blade to Ranni",
+                "LL/(RaR): Carian Inverted Statue - given by Ranni after giving Fingerslayer Blade",
+                "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade"
+            ], "Fingerslayer Blade")
+            
+            self._add_location_rule(["NS/NWB: Discarded Palace Key - invader drop to SE, need Miniature Ranni"
+            ], lambda state: ( state.has("Miniature Ranni", self.player) 
+                and self._can_get(state, "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade")))
+            
+            self._add_location_rule(["RLA/RLGL: Dark Moon Ring - in chest, requires Discarded Palace Key",
+            ], "Discarded Palace Key")
+            
+            # MARK: Seluvis
+            
+            self._add_location_rule(["LL/(SR): Seluvis's Introduction - talk to Seluvis after talking to Blaidd in SR", 
+            ], lambda state: (self._can_go_to(state, "Siofra River")))
+            
+            self._add_location_rule([
+                "LL/(SR): Nepheli Loux Puppet - on Seluvis's body", 
+                "LL/(SR): Dolores the Sleeping Arrow Puppet - Seluvis shop, after you give potion to Nepheli"
+            ], lambda state: ( state.has("Seluvis's Potion", self.player)
+                and self._can_get(state, "RH: Arsenal Charm - talk to Nepheli before and after defeating SV mainboss")))
+            
+            self._add_location_rule(["LL/(SR): Dung Eater Puppet - Seluvis shop, after you give potion to Dung Eater", 
+            ], lambda state: ( state.has("Seluvis's Potion", self.player)
+                and self._can_get(state, "SSG/UR: Sword of Milos - kill Dung Eater or kill him during his invasion in CO")))
+            
+            self._add_location_rule([
+                "LL/(SR): Carian Phalanx - Seluvis shop after potion used",
+                "LL/(SR): Glintstone Icecrag - Seluvis shop after potion used",
+                "LL/(SR): Freezing Mist - Seluvis shop after potion used",
+                "LL/(SR): Carian Retaliation - Seluvis shop after potion used"
+            ], "Seluvis's Potion")
+            
+            # THIS BREAKS
+            self._add_location_rule([
+                "LL/(SR): Jarwight Puppet - Seluvis shop after finding puppet room",
+                "LL/(SR): Finger Maiden Therolina Puppet - Seluvis shop after finding puppet room"
+            ], lambda state: (state.has("Starlight Shards", self.player, 3)
+                and state.has("Seluvis's Potion", self.player)))
+            
+            self._add_location_rule([
+                "LL/(SR): Magic Scorpion Charm - given by Seluvis after giving Amber Starlight",
+                "LL/(SR): Amber Draught - given by Seluvis after giving Amber Starlight"
+            ], lambda state: (state.has("Amber Starlight", self.player) 
+                and self._can_get(state, "LL/(SR): Jarwight Puppet - Seluvis shop after finding puppet room")))
+            
+            # Pidia
+            
+            self._add_location_rule(["LL/(CM): Dolores the Sleeping Arrow Puppet - dropped by Pidia after Seluvis dies"
+            ], lambda state: (self._can_get(state, "ARM/ARM: Miniature Ranni - to N after giving Ranni Fingerslayer Blade")
+                or state.has("Amber Draught", self.player)))
+            
+            # MARK: Blaidd / Iji
+            
+            self._add_location_rule([
+                "LL/RaR: Royal Greatsword - kill angry Blaidd",
+                "LL/RaR: Blaidd's Armor - kill angry Blaidd",
+                "LL/RaR: Blaidd's Gauntlets - kill angry Blaidd",
+                "LL/RaR: Blaidd's Greaves - kill angry Blaidd",
+                "LL/RM: Iji's Mirrorhelm - kill Iji or after quest"
+            ], lambda state: (self._can_get(state, "MA/(CMC): Dark Moon Greatsword - give Ranni Darkmoon Ring under CMC")))
+            
+            # MARK: Alexander
+            
+            self._add_location_rule([
+                "LL/JB: Exalted Flesh x3 - given by Alexander after getting him unstuck with oil pots, just above JB"
+            ], lambda state: ( self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop")))
+            
+            self._add_location_rule([
+                "MtG/FL: Jar - talk to Alexander S of FL"
+            ], lambda state: ( self._can_get(state, "LL/JB: Exalted Flesh x3 - given by Alexander after getting him unstuck with oil pots, just above JB")))
+            
+            self._add_location_rule([ # also requires fire giant dead
+                "FA/DTL: Shard of Alexander - fight Alexander to SW",
+                "FA/DTL: Alexander's Innards - fight Alexander to SW"
+            ], lambda state: ( self._can_get(state, "MtG/FL: Jar - talk to Alexander S of FL")))
+            
+            # MARK: Jar-bairn
+            
+            self._add_location_rule([
+                "LL/JB: Companion Jar - give Alexander's Innards, left after Jar Bairn leaves"
+            ], lambda state: ( self._can_get(state, "FA/DTL: Alexander's Innards - fight Alexander to SW")
+                            and state.has("Alexander's Innards", self.player)))
+            
+            # MARK: Diallos
+            
+            self._add_location_rule([ # need to talk to in LL and VM stuff
+                "LL/JB: Hoslow's Petal Whip - on Diallos's body",
+                "LL/JB: Diallos's Mask - on Diallos's body",
+                "LL/JB: Numen's Rune - on Diallos's body"
+            ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")
+                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop")))
+            
+            # MARK: VOLCANO QUESTS
+            
+            # do you need the letters? 1 2 and red, probs not since ng+
+            
+            self._add_location_rule([ # request 1
+                "LG/LC: Scaled Helm - invade Istvan SE of colo",
+                "LG/LC: Scaled Armor - invade Istvan SE of colo",
+                "LG/LC: Scaled Gauntlets - invade Istvan SE of colo",
+                "LG/LC: Scaled Greaves - invade Istvan SE of colo",
+            ], lambda state: ( self._can_get(state, "VM/VM: Letter from Volcano Manor (Istvan) - on the table in the drawing room")))
+            
+            self._add_location_rule([ # reward 1 + patches & bernahl
+                "VM/VM: Magma Shot - Tanith reward request 1",
+                "VM/VM: Letter from Volcano Manor (Rileigh) - on the table in the drawing room after request 1",
+                "VM/VM: Letter to Patches - talk to Patches after request 1",
+                "VM/VM: Ash of War: Eruption - Bernahl shop after request 1",
+                "VM/VM: Ash of War: Assassin's Gambit - Bernahl shop after request 1"
+            ], lambda state: ( self._can_get(state, "LG/LC: Scaled Helm - invade Istvan SE of colo")))
+            
+            self._add_location_rule([ # request 2
+                "AP/OAT: Black-Key Bolt x20 - invade Rileigh",
+                "AP/OAT: Crepus's Vial - invade Rileigh"
+            ], lambda state: ( self._can_get(state, "VM/VM: Letter from Volcano Manor (Rileigh) - on the table in the drawing room after request 1")))
+            
+            self._add_location_rule([ # reward 2 + bernahl
+                "VM/VM: Serpentbone Blade - Tanith reward request 2",
+                "VM/VM: Letter to Bernahl - Bernahl after request 2",
+                "VM/VM: Red Letter - on the table in the drawing room after request 2"
+            ], lambda state: ( self._can_get(state, "AP/OAT: Crepus's Vial - invade Rileigh")))
+        
+            self._add_location_rule([ # request 3
+                "MotG/SL: Hoslow's Petal Whip - invade Juno Hoslow",
+                "MotG/SL: Hoslow's Helm - invade Juno Hoslow",
+                "MotG/SL: Hoslow's Armor - invade Juno Hoslow",
+                "MotG/SL: Hoslow's Gauntlets - invade Juno Hoslow",
+                "MotG/SL: Hoslow's Greaves - invade Juno Hoslow"
+            ], lambda state: ( self._can_get(state, "VM/VM: Red Letter - on the table in the drawing room after request 2")))
     
-        # MARK: Bernahl
+            self._add_location_rule([ # reward 3
+                "VM/VM: Taker's Cameo - Tanith reward request 3"
+            ], lambda state: ( self._can_get(state, "MotG/SL: Hoslow's Petal Whip - invade Juno Hoslow")))
         
-        self._add_location_rule([ # bernahl request
-            "LRC/FMFF: Raging Wolf Helm - invade Vargram",
-            "LRC/FMFF: Raging Wolf Armor - invade Vargram",
-            "LRC/FMFF: Raging Wolf Gauntlets - invade Vargram",
-            "LRC/FMFF: Raging Wolf Greaves - invade Vargram"
-        ], lambda state: ( self._can_get(state, "VM/VM: Letter to Bernahl - Bernahl after request 2")))
-        
-        self._add_location_rule([ "VM/VM: Gelmir's Fury - Bernahl reward" # bernahl reward
-        ], lambda state: ( self._can_get(state, "LRC/FMFF: Raging Wolf Helm - invade Vargram")))
-        
-        self._add_location_rule([
-            "LG/(WS): Beast Champion Helm - kill Bernahl",
-            "LG/(WS): Beast Champion Gauntlets - kill Bernahl",
-            "LG/(WS): Beast Champion Greaves - kill Bernahl",
-            "LG/(WS): Beast Champion Armor (Altered) - kill Bernahl"
-        ], lambda state: self._can_get(state, "FA/BGB: Blasphemous Claw - kill invader Bernahl, to NE end of path"))
-        
-        # MARK: Rya 
-               
-        self._add_location_rule(["LL/SeI: Volcano Manor Invitation - give Rya her necklace, you will need to buy the item from Boggart or reach altus", 
-        ], lambda state: ( self._can_go_to(state, "Altus Plateau") or state.has("Rya's Necklace", self.player)))
-   
-        self._add_location_rule([
-            "VM/VM: Zorayas's Letter - end of Rya's quest, dont kill or give potion", 
-            "VM/VM: Daedicar's Woe - end of Rya's quest, any option"
-        ], lambda state: ( self._can_get(state, "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion")
-            and self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")))
-        
-        # MARK: Patches 
-        
-        self._add_location_rule([ # patches request
-            "RSP/RSPO: Bull-Goat Helm - invade Tragoth",
-            "RSP/RSPO: Bull-Goat Armor - invade Tragoth",
-            "RSP/RSPO: Bull-Goat Gauntlets - invade Tragoth",
-            "RSP/RSPO: Bull-Goat Greaves - invade Tragoth"
-        ], lambda state: ( self._can_get(state, "VM/VM: Letter to Patches - talk to Patches after request 1")))
-        
-        self._add_location_rule(["VM/VM: Magma Whip Candlestick - Patches reward", # patches reward
-        ], lambda state: ( self._can_get(state, "RSP/RSPO: Bull-Goat Helm - invade Tragoth")))
-        
-        self._add_location_rule(["TSC/CI: Dancer's Castanets - given by Patches just outside boss arena",
-        ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")
-            and self._can_get(state, "VM/VM: Magma Whip Candlestick - Patches reward")))
-        
-        self._add_location_rule(["LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith",
-        ], lambda state: ( self._can_get(state, "VM/RLB: Aspects of the Crucible: Breath - enemy drop, spawns after Tanith's death")))
-        
-        self._add_location_rule([
-            "LG/(MCV): Spear - kill Patches",
-            "LG/(MCV): Leather Armor - kill Patches",
-            "LG/(MCV): Leather Gloves - kill Patches",
-            "LG/(MCV): Leather Boots - kill Patches"
-        ], lambda state: ( self._can_get(state, "LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith")))
+            # MARK: Bernahl
+            
+            self._add_location_rule([ # bernahl request
+                "LRC/FMFF: Raging Wolf Helm - invade Vargram",
+                "LRC/FMFF: Raging Wolf Armor - invade Vargram",
+                "LRC/FMFF: Raging Wolf Gauntlets - invade Vargram",
+                "LRC/FMFF: Raging Wolf Greaves - invade Vargram"
+            ], lambda state: ( self._can_get(state, "VM/VM: Letter to Bernahl - Bernahl after request 2")))
+            
+            self._add_location_rule([ "VM/VM: Gelmir's Fury - Bernahl reward" # bernahl reward
+            ], lambda state: ( self._can_get(state, "LRC/FMFF: Raging Wolf Helm - invade Vargram")))
+            
+            self._add_location_rule([
+                "LG/(WS): Beast Champion Helm - kill Bernahl",
+                "LG/(WS): Beast Champion Gauntlets - kill Bernahl",
+                "LG/(WS): Beast Champion Greaves - kill Bernahl",
+                "LG/(WS): Beast Champion Armor (Altered) - kill Bernahl"
+            ], lambda state: self._can_get(state, "FA/BGB: Blasphemous Claw - kill invader Bernahl, to NE end of path"))
+            
+            # MARK: Rya 
+                
+            self._add_location_rule(["LL/SeI: Volcano Manor Invitation - give Rya her necklace, you will need to buy the item from Boggart or reach altus", 
+            ], lambda state: ( self._can_go_to(state, "Altus Plateau") or state.has("Rya's Necklace", self.player)))
+    
+            self._add_location_rule([
+                "VM/VM: Zorayas's Letter - end of Rya's quest, dont kill or give potion", 
+                "VM/VM: Daedicar's Woe - end of Rya's quest, any option"
+            ], lambda state: ( self._can_get(state, "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion")
+                and self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")))
+            
+            # MARK: Patches 
+            
+            self._add_location_rule([ # patches request
+                "RSP/RSPO: Bull-Goat Helm - invade Tragoth",
+                "RSP/RSPO: Bull-Goat Armor - invade Tragoth",
+                "RSP/RSPO: Bull-Goat Gauntlets - invade Tragoth",
+                "RSP/RSPO: Bull-Goat Greaves - invade Tragoth"
+            ], lambda state: ( self._can_get(state, "VM/VM: Letter to Patches - talk to Patches after request 1")))
+            
+            self._add_location_rule(["VM/VM: Magma Whip Candlestick - Patches reward", # patches reward
+            ], lambda state: ( self._can_get(state, "RSP/RSPO: Bull-Goat Helm - invade Tragoth")))
+            
+            self._add_location_rule(["TSC/CI: Dancer's Castanets - given by Patches just outside boss arena",
+            ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop")
+                and self._can_get(state, "VM/VM: Magma Whip Candlestick - Patches reward")))
+            
+            self._add_location_rule(["LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith",
+            ], lambda state: ( self._can_get(state, "VM/RLB: Aspects of the Crucible: Breath - enemy drop, spawns after Tanith's death")))
+            
+            self._add_location_rule([
+                "LG/(MCV): Spear - kill Patches",
+                "LG/(MCV): Leather Armor - kill Patches",
+                "LG/(MCV): Leather Gloves - kill Patches",
+                "LG/(MCV): Leather Boots - kill Patches"
+            ], lambda state: ( self._can_get(state, "LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith")))
 
-        # MARK: Tanith
-        
-        self._add_location_rule([ # or after rykard is dead
-            "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion",
-        ], lambda state: ( state.has("Serpent's Amnion", self.player) 
-            and self._can_get(state, "LG/LC: Scaled Helm - invade Istvan SE of colo")))
-   
-        self._add_location_rule([
-            "VM/RLB: Consort's Mask - kill Tanith",
-            "VM/RLB: Consort's Robe - kill Tanith",
-            "VM/RLB: Consort's Trousers - kill Tanith",
-            "VM/RLB: Aspects of the Crucible: Breath - enemy drop, spawns after Tanith's death"
-        ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop") and state.has("Dancer's Castanets", self.player)))
-        
-        # MARK: DLC NPC
-        
-        if self.options.enable_dlc: 
+            # MARK: Tanith
+            
+            self._add_location_rule([ # or after rykard is dead
+                "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion",
+            ], lambda state: ( state.has("Serpent's Amnion", self.player) 
+                and self._can_get(state, "LG/LC: Scaled Helm - invade Istvan SE of colo")))
+    
+            self._add_location_rule([
+                "VM/RLB: Consort's Mask - kill Tanith",
+                "VM/RLB: Consort's Robe - kill Tanith",
+                "VM/RLB: Consort's Trousers - kill Tanith",
+                "VM/RLB: Aspects of the Crucible: Breath - enemy drop, spawns after Tanith's death"
+            ], lambda state: ( self._can_get(state, "VM/AP: Rykard's Great Rune - mainboss drop") and state.has("Dancer's Castanets", self.player)))
+            
+        if self.options.enable_dlc:
+            # MARK: DLC NPC
             
             # MARK: Grandam
             
@@ -2204,13 +2230,16 @@ class EldenRing(World):
             ),
         ]
             
-        if self.options.enable_dlc:
+        if self.options.dlc_start != 1 and self.options.enable_dlc:
             remembrances += dlc_remembrances
+        elif self.options.enable_dlc: remembrances = dlc_remembrances
+            
+        if self.options.enable_dlc:
             self._add_location_rule("JP/GADC: Bayle's Flame Lightning - Dragon Communion, Heart of Bayle",
                 lambda state: (state.has("Heart of Bayle", self.player) and self._can_go_to(state, "Jagged Peak Foot")))
             self._add_location_rule("JP/GADC: Bayle's Tyranny - Dragon Communion, Heart of Bayle", 
                 lambda state: (state.has("Heart of Bayle", self.player) and self._can_go_to(state, "Jagged Peak Foot")))
-
+                
         for (remembrance, rem_items) in remembrances:
             self._add_location_rule([
                 f"RH: {item} - Enia for {remembrance}" for item in rem_items
@@ -2354,8 +2383,9 @@ class EldenRing(World):
             ),
         ]
             
-        if self.options.enable_dlc:
+        if self.options.dlc_start != 1 and self.options.enable_dlc:
             equipments += dlc_equipments
+        elif self.options.enable_dlc: equipments = dlc_equipments
 
         for (boss, boss_location, eq_items) in equipments:
             self._add_location_rule([
@@ -2668,6 +2698,7 @@ class EldenRing(World):
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
                 "royal_access": self.options.royal_access.value,
                 "enable_dlc": self.options.enable_dlc.value,
+                "dlc_start": self.options.dlc_start.value,
                 "dlc_randomization": self.options.dlc_randomization.value,
                 "messmer_kindle": self.options.messmer_kindle.value,
                 "messmer_kindle_required": self.options.messmer_kindle_required.value,

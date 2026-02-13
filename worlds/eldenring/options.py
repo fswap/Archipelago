@@ -76,6 +76,19 @@ class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
     
+class DLCStart(Choice):
+    """Where the run starts.
+    
+    - **Normal:** Start in Limgrave.
+    - **DLC Start:** Start in Gravesite Plain, with no access to base game.
+    - **DLC Start With Base:** Start in Gravesite Plain with access to base game.
+    """
+    display_name = "DLC Start"
+    option_normal = 0
+    option_dlc_start = 1
+    option_dlc_start_with_base = 2
+    default = 0
+    
 class DLCRandomization(Choice):
     """How to randomize dlc items.
     
@@ -293,6 +306,7 @@ class EROptions(PerGameCommonOptions):
     royal_access: RoyalAccess
     
     enable_dlc: EnableDLC
+    dlc_start: DLCStart
     dlc_randomization: DLCRandomization
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
@@ -338,6 +352,7 @@ option_groups = [
     ]),
     OptionGroup("DLC", [
         EnableDLC,
+        DLCStart,
         DLCRandomization,
         MessmerKindle,
         MessmerKindleRequired,
