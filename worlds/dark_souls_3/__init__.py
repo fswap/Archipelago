@@ -199,8 +199,9 @@ class DarkSouls3World(World):
             ]})
 
         # Connect Regions
-        def create_connection(from_region: str, to_region: str):
-            connection = Entrance(self.player, f"Go To {to_region}", regions[from_region])
+        def create_connection(from_region: str, to_region: str, explicit_from: bool = False):
+            from_str = f"{from_region} =>" if explicit_from else "Go To"
+            connection = Entrance(self.player, f"{from_str} {to_region}", regions[from_region])
             regions[from_region].exits.append(connection)
             connection.connect(regions[to_region])
 
@@ -246,11 +247,15 @@ class DarkSouls3World(World):
             create_connection("Cathedral of the Deep", "Painted World of Ariandel (Before Contraption)")
             create_connection("Painted World of Ariandel (Before Contraption)",
                               "Painted World of Ariandel (After Contraption)")
-            create_connection("Painted World of Ariandel (After Contraption)", "Dreg Heap")
+            create_connection(
+                "Painted World of Ariandel (After Contraption)",
+                "Dreg Heap",
+                explicit_from=True,
+            )
             create_connection("Dreg Heap", "Ringed City")
 
             if self.options.goal != {"Kiln of the First Flame Boss"}:
-                create_connection("Kiln of the First Flame", "Dreg Heap")
+                create_connection("Kiln of the First Flame", "Dreg Heap", explicit_from=True)
 
     # For each region, add the associated locations retrieved from the corresponding location_table
     def create_region(self, region_name, location_table) -> Region:
@@ -626,7 +631,8 @@ class DarkSouls3World(World):
                         self.options.goal != {"Kiln of the First Flame Boss"}
                         and self._can_reach_location("Kiln of the First Flame")
                     )
-                )
+                ),
+                from_region="Painted World of Ariandel (After Contraption)",
             )
             self._add_entrance_rule("Ringed City", lambda state: (
                 state.has("Small Envoy Banner", self.player)
@@ -1342,7 +1348,12 @@ class DarkSouls3World(World):
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
 
-    def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str]) -> None:
+    def _add_entrance_rule(
+        self,
+        region: str,
+        rule: Union[CollectionRule, str],
+        from_region: Optional[str] = None,
+    ) -> None:
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
@@ -1350,7 +1361,11 @@ class DarkSouls3World(World):
             if " -> " not in rule:
                 assert item_dictionary[rule].classification == ItemClassification.progression
             rule = lambda state, item=rule: state.has(item, self.player)
-        add_rule(self.multiworld.get_entrance("Go To " + region, self.player), rule)
+        entrance = (
+            f"{from_region} => {region}" if from_region
+            else "Go To " + region
+        )
+        add_rule(self.multiworld.get_entrance(entrance, self.player), rule)
 
     def _add_item_rule(self, location: str, rule: ItemRule) -> None:
         """Sets a rule for what items are allowed in a given location."""
