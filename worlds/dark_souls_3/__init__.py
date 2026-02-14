@@ -6,6 +6,7 @@ from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
 
 from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, Tutorial, ItemClassification
+from Fill import remaining_fill
 
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
@@ -181,7 +182,8 @@ class DarkSouls3World(World):
             "Consumed King's Garden",
             "Grand Archives",
             "Untended Graves",
-            "Archdragon Peak",
+            "Archdragon Peak (Through Fort)",
+            "Archdragon Peak (After Fort)",
             "Kiln of the First Flame",
             "Greirat's Shop",
             "Karla's Shop",
@@ -197,8 +199,9 @@ class DarkSouls3World(World):
             ]})
 
         # Connect Regions
-        def create_connection(from_region: str, to_region: str):
-            connection = Entrance(self.player, f"Go To {to_region}", regions[from_region])
+        def create_connection(from_region: str, to_region: str, explicit_from: bool = False):
+            from_str = f"{from_region} =>" if explicit_from else "Go To"
+            connection = Entrance(self.player, f"{from_str} {to_region}", regions[from_region])
             regions[from_region].exits.append(connection)
             connection.connect(regions[to_region])
 
@@ -228,9 +231,11 @@ class DarkSouls3World(World):
         create_connection("Irithyll of the Boreal Valley", "Irithyll Dungeon")
         create_connection("Irithyll of the Boreal Valley", "Anor Londo")
 
-        create_connection("Irithyll Dungeon", "Archdragon Peak")
+        create_connection("Irithyll Dungeon", "Archdragon Peak (Through Fort)")
         create_connection("Irithyll Dungeon", "Profaned Capital")
         create_connection("Irithyll Dungeon", "Karla's Shop")
+
+        create_connection("Archdragon Peak (Through Fort)", "Archdragon Peak (After Fort)")
 
         create_connection("Lothric Castle", "Consumed King's Garden")
         create_connection("Lothric Castle", "Grand Archives")
@@ -242,8 +247,15 @@ class DarkSouls3World(World):
             create_connection("Cathedral of the Deep", "Painted World of Ariandel (Before Contraption)")
             create_connection("Painted World of Ariandel (Before Contraption)",
                               "Painted World of Ariandel (After Contraption)")
-            create_connection("Painted World of Ariandel (After Contraption)", "Dreg Heap")
+            create_connection(
+                "Painted World of Ariandel (After Contraption)",
+                "Dreg Heap",
+                explicit_from=True,
+            )
             create_connection("Dreg Heap", "Ringed City")
+
+            if self.options.goal != {"Kiln of the First Flame Boss"}:
+                create_connection("Kiln of the First Flame", "Dreg Heap", explicit_from=True)
 
     # For each region, add the associated locations retrieved from the corresponding location_table
     def create_region(self, region_name, location_table) -> Region:
@@ -574,7 +586,7 @@ class DarkSouls3World(World):
             "Anor Londo",
             lambda state: self._can_get(state, "IBV: Soul of Pontiff Sulyvahn")
         )
-        self._add_entrance_rule("Archdragon Peak", "Path of the Dragon")
+        self._add_entrance_rule("Archdragon Peak (Through Fort)", "Path of the Dragon")
         self._add_entrance_rule("Grand Archives", lambda state: (
             state.has("Grand Archives Key", self.player)
             and self._can_get(state, "LC: Soul of Dragonslayer Armour")
@@ -613,7 +625,14 @@ class DarkSouls3World(World):
             self._add_entrance_rule("Painted World of Ariandel (After Contraption)", "Contraption Key")
             self._add_entrance_rule(
                 "Dreg Heap",
-                lambda state: self._can_get(state, "PW2: Soul of Sister Friede")
+                lambda state: (
+                    self._can_get(state, "PW2: Soul of Sister Friede")
+                    or (
+                        self.options.goal != {"Kiln of the First Flame Boss"}
+                        and self._can_reach_location("Kiln of the First Flame")
+                    )
+                ),
+                from_region="Painted World of Ariandel (After Contraption)",
             )
             self._add_entrance_rule("Ringed City", lambda state: (
                 state.has("Small Envoy Banner", self.player)
@@ -690,19 +709,26 @@ class DarkSouls3World(World):
             self._can_get(state, "FK: Soul of the Blood of the Wolf")
         ))
 
+        #Yoel dies spawning the Hollow's Ashes after entering the Catacombs, so require Abyss Watchers
+        self._add_location_rule([
+            "FS: Ring of Sacrifice - Yuria shop"
+        ], lambda state: (
+            self._can_get(state, "FK: Soul of the Blood of the Wolf")
+        ))
+        
         self._add_location_rule([
             "CKG: Drakeblood Helm - tomb, after killing AP mausoleum NPC",
             "CKG: Drakeblood Armor - tomb, after killing AP mausoleum NPC",
             "CKG: Drakeblood Gauntlets - tomb, after killing AP mausoleum NPC",
             "CKG: Drakeblood Leggings - tomb, after killing AP mausoleum NPC",
-        ], lambda state: self._can_go_to(state, "Archdragon Peak"))
+        ], lambda state: self._can_go_to(state, "Archdragon Peak (After Fort)"))
 
         self._add_location_rule([
             "FK: Havel's Helm - upper keep, after killing AP belfry roof NPC",
             "FK: Havel's Armor - upper keep, after killing AP belfry roof NPC",
             "FK: Havel's Gauntlets - upper keep, after killing AP belfry roof NPC",
             "FK: Havel's Leggings - upper keep, after killing AP belfry roof NPC",
-        ], lambda state: self._can_go_to(state, "Archdragon Peak"))
+        ], lambda state: self._can_go_to(state, "Archdragon Peak (After Fort)"))
 
         self._add_location_rule([
             "RC: Dragonhead Shield - streets monument, across bridge",
@@ -735,11 +761,6 @@ class DarkSouls3World(World):
             )
         
         # Make sure the Storm Ruler is available BEFORE Yhorm the Giant
-        if self.yhorm_location.name == "Ancient Wyvern":
-            # This is a white lie, you can get to a bunch of items in AP before you beat the Wyvern,
-            # but this saves us from having to split the entire region in two just to mark which
-            # specific items are before and after.
-            self._add_entrance_rule("Archdragon Peak", "Storm Ruler")
         for location in self.yhorm_location.locations:
             self._add_location_rule(location, "Storm Ruler")
 
@@ -1293,6 +1314,13 @@ class DarkSouls3World(World):
             elif self.options.early_banner == "early_local":
                 self.multiworld.local_early_items[self.player]["Small Lothric Banner"] = 1
 
+    def _is_complete(self, state: CollectionState) -> bool:
+        """Whether the given state has achieved the victory condition."""
+        all(
+            state.can_reach_location(next(boss.locations), self.player)
+            for boss in self._goal_bosses()
+        )
+
     def _has_any_scroll(self, state: CollectionState) -> bool:
         """Returns whether the given state has any scroll item."""
         return (
@@ -1320,7 +1348,12 @@ class DarkSouls3World(World):
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
 
-    def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str]) -> None:
+    def _add_entrance_rule(
+        self,
+        region: str,
+        rule: Union[CollectionRule, str],
+        from_region: Optional[str] = None,
+    ) -> None:
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
@@ -1328,7 +1361,11 @@ class DarkSouls3World(World):
             if " -> " not in rule:
                 assert item_dictionary[rule].classification == ItemClassification.progression
             rule = lambda state, item=rule: state.has(item, self.player)
-        add_rule(self.multiworld.get_entrance("Go To " + region, self.player), rule)
+        entrance = (
+            f"{from_region} => {region}" if from_region
+            else "Go To " + region
+        )
+        add_rule(self.multiworld.get_entrance(entrance, self.player), rule)
 
     def _add_item_rule(self, location: str, rule: ItemRule) -> None:
         """Sets a rule for what items are allowed in a given location."""
@@ -1368,6 +1405,18 @@ class DarkSouls3World(World):
                 and data.missable
             )
         )
+
+    def _goal_bosses(self) -> [DS3BossInfo]:
+        """Returns all the bosses that are goals for this run."""
+        result = []
+        for name in self.options.goal:
+            assert name.endswith(" Boss")
+            region = name[:-len(" Boss")]
+            boss = next(boss for boss in reversed(all_bosses) if boss.region == region)
+            assert boss
+            assert boss.flag
+            result.append(boss)
+        return result
 
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
@@ -1473,6 +1522,7 @@ class DarkSouls3World(World):
                         f"contain smoothed items, but only {len(converted_item_order)} items to smooth."
                     )
 
+                sorted_spheres = []
                 for sphere in locations_by_sphere:
                     locations = [loc for loc in sphere if loc.item.name in names]
 
@@ -1480,12 +1530,12 @@ class DarkSouls3World(World):
                     offworld = ds3_world._shuffle([loc for loc in locations if loc.game != "Dark Souls III"])
                     onworld = sorted((loc for loc in locations if loc.game == "Dark Souls III"),
                                      key=lambda loc: loc.data.region_value)
-
                     # Give offworld regions the last (best) items within a given sphere
-                    for location in onworld + offworld:
-                        new_item = ds3_world._pop_item(location, converted_item_order)
-                        location.item = new_item
-                        new_item.location = location
+                    sorted_spheres.extend(onworld)
+                    sorted_spheres.extend(offworld)
+
+                converted_item_order.reverse()
+                remaining_fill(multiworld, sorted_spheres, converted_item_order, name="DS3 Smoothing", check_location_can_fill=True)
 
             if ds3_world.options.smooth_upgrade_items:
                 base_names = {
@@ -1517,19 +1567,6 @@ class DarkSouls3World(World):
         copy = list(seq)
         self.random.shuffle(copy)
         return copy
-
-    def _pop_item(
-        self,
-        location: Location,
-        items: List[DarkSouls3Item]
-    ) -> DarkSouls3Item:
-        """Returns the next item in items that can be assigned to location."""
-        for i, item in enumerate(items):
-            if location.can_fill(self.multiworld.state, item, False):
-                return items.pop(i)
-
-        # If we can't find a suitable item, give up and assign an unsuitable one.
-        return items.pop(0)
 
     def _get_our_locations(self) -> List[DarkSouls3Location]:
         return cast(List[DarkSouls3Location], self.multiworld.get_locations(self.player))
@@ -1573,10 +1610,9 @@ class DarkSouls3World(World):
             "options": {
                 "random_starting_loadout": self.options.random_starting_loadout.value,
                 "require_one_handed_starting_weapons": self.options.require_one_handed_starting_weapons.value,
-                "auto_equip": self.options.auto_equip.value,
-                "lock_equip": self.options.lock_equip.value,
                 "no_weapon_requirements": self.options.no_weapon_requirements.value,
                 "death_link": self.options.death_link.value,
+                "death_link_amnesty": self.options.death_link_amnesty.value,
                 "no_spell_requirements": self.options.no_spell_requirements.value,
                 "no_equip_load": self.options.no_equip_load.value,
                 "enable_dlc": self.options.enable_dlc.value,
@@ -1594,13 +1630,10 @@ class DarkSouls3World(World):
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
+            "goal": [boss.flag for boss in self._goal_bosses()],
             # Reserializing here is silly, but it's easier for the static randomizer.
             "random_enemy_preset": json.dumps(self.options.random_enemy_preset.value),
-            "yhorm": (
-                f"{self.yhorm_location.name} {self.yhorm_location.id}"
-                if self.yhorm_location != default_yhorm_location
-                else None
-            ),
+            "yhorm": f"{self.yhorm_location.name} {self.yhorm_location.id}",
             "apIdsToItemIds": ap_ids_to_ds3_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,
@@ -1613,7 +1646,7 @@ class DarkSouls3World(World):
             # This is checked by the static randomizer, which will surface an
             # error to the user if its version doesn't fall into the allowed
             # range.
-            "versions": ">=3.0.0-beta.24 <3.1.0",
+            "versions": ">=4.0.0-alpha.9 <5.0.0",
         }
 
         return slot_data
