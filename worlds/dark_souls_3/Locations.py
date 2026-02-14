@@ -365,7 +365,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         conditional=True),
         # Only if you say where the ashes were found
         DS3LocationData("FS: Hidden Blessing - Dreamchaser's Ashes", "Hidden Blessing",
-                        static='99,0:-1:110000,70000117:', missable=True, shop=True),
+                        static='99,0:-1:110000,70000117:', missable=missable_quest, shop=True),
         DS3LocationData("FS: Lloyd's Shield Ring - Paladin's Ashes", "Lloyd's Shield Ring",
                         shop=True, conditional=True),
         DS3LocationData("FS: Ember - Grave Warden's Ashes", "Ember",
