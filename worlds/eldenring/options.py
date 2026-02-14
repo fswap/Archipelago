@@ -75,22 +75,7 @@ class RoyalAccess(Toggle):
 class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
-    
-class DLCStart(Choice):
-    """Where the run starts.
-    
-    - **Normal:** Start in Limgrave.
-    - **DLC Start:** Start in Gravesite Plain, with no access to base game.
-    - **DLC Start With Base:** Start in Gravesite Plain with access to base game.
-    """
-    display_name = "DLC Start"
-    option_normal = 0
-    option_dlc_start = 1
-    option_dlc_start_with_base = 2
-    default = 0
-    
-# class DLCStartingItems():
-#     "idk"
+
     
 class DLCRandomization(Choice):
     """How to randomize dlc items.
@@ -134,6 +119,44 @@ class DLCTimingOption(Choice):
     option_late = 2
     default = 1
     
+# MARK: DLC Start
+
+class DLCStart(Choice):
+    """Where the run starts.
+    
+    - **Normal:** Start in Limgrave.
+    - **DLC Start:** Start in Gravesite Plain, with no access to base game.
+    - **DLC Start With Base:** Start in Gravesite Plain with access to base game.
+    """
+    display_name = "DLC Start"
+    option_normal = 0
+    option_dlc_start = 1
+    option_dlc_start_with_base = 2
+    default = 0
+    
+# class DLCStartingItems():
+#     "idk"
+
+class DLCStartingShop(Toggle): # just the static rando option
+    """Add a shop at grace with all base game equipment for free."""
+    display_name = "DLC Starting Shop"
+    
+class DLCCarePackage(Toggle): # just the static rando option
+    """Start with 80 extra base game items."""
+    display_name = "DLC Care Package"
+    
+class DLCInitialRuneLevel(Choice): # just the static rando option
+    """Runes are given to level up at start."""
+    display_name = "DLC Initial Rune Level"
+    option_0 = 0
+    option_30 = 30
+    option_60 = 60
+    option_90 = 90
+    option_120 = 120
+    option_150 = 150
+    option_200 = 200
+    default = 0
+    
 # MARK: Other Rando
     
 class EnemyRando(Toggle):
@@ -176,7 +199,7 @@ class MapOption(Choice):
 
     - **Randomize:** Can be anywhere.
     - **Give:** Add to starting inventory.
-    - **Do Not Randomize:** Leave it at its normal spot.
+    - **Do Not Randomize:** Leave them at their normal spots.
     """
     display_name = "Map Behavior"
     option_randomize = 0
@@ -310,6 +333,9 @@ class EROptions(PerGameCommonOptions):
     
     enable_dlc: EnableDLC
     dlc_start: DLCStart
+    dlc_starting_shop: DLCStartingShop
+    dlc_care_package: DLCCarePackage
+    dlc_initial_rune_level: DLCInitialRuneLevel
     dlc_randomization: DLCRandomization
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
@@ -355,12 +381,17 @@ option_groups = [
     ]),
     OptionGroup("DLC", [
         EnableDLC,
-        DLCStart,
         DLCRandomization,
         MessmerKindle,
         MessmerKindleRequired,
         MessmerKindleMax,
         DLCTimingOption
+    ]),
+    OptionGroup("DLC Start", [
+        DLCStart,
+        DLCStartingShop,
+        DLCCarePackage,
+        DLCInitialRuneLevel,
     ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,
