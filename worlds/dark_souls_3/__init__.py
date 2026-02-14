@@ -629,7 +629,7 @@ class DarkSouls3World(World):
                     self._can_get(state, "PW2: Soul of Sister Friede")
                     or (
                         self.options.goal != {"Kiln of the First Flame Boss"}
-                        and self._can_reach_location("Kiln of the First Flame")
+                        and self._can_go_to(state, "Kiln of the First Flame")
                     )
                 ),
                 from_region="Painted World of Ariandel (After Contraption)",
