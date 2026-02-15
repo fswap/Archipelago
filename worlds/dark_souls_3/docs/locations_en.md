@@ -183,6 +183,12 @@ adds a new covenant item called "Phantom Hunters". Invasions will only trigger
 when you have this covenant equipped, and they will _always_ trigger until you
 defeat them, regardless of whether or not you've beaten the area boss.
 
+**Londor Pale Shade** will invade as long as you have the Phantom Hunters
+covenant equipped and have spoken to Yuria of Londor, even if she's not hostile.
+
+The invasions in Ringed City don't require an ember in vanilla, so they don't
+require the Phantom Hunters covenant to be equipped in unmissable mode.
+
 ### `unmissable_transpositions`
 
 This option makes Ludleth sell any boss souls you've received. This means that

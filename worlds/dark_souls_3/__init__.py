@@ -662,8 +662,29 @@ class DarkSouls3World(World):
 
         if self.options.unmissable_invasions:
             self._add_location_rule([
-                "US: Vertebra Shackle - Hodrick drop"
+                "US: Vertebra Shackle - Hodrick drop",
+                "RS: Heysel Pick - Heysel drop",
+                "RS: Xanthous Crown - Heysel drop",
+                "CD: Barbed Straight Sword - Kirk drop",
+                "CD: Spiked Shield - Kirk drop",
+                "CD: Helm of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Armor of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Gauntlets of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Leggings of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "FK: Manikin Claws - Londor Pale Shade drop",
+                "FS: Sneering Mask - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Robe - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Gloves - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Trousers - Yoel's room, kill Londor Pale Shade twice",
+                "PW2: Floating Chaos - NPC drop",
+                "IBV: Creighton's Steel Mask - bridge after Creighton invades",
+                "IBV: Mirrah Chain Mail - bridge after Creighton invades",
+                "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
+                "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
             ], "Phantom Hunters")
+
+            # Note: Ringed City invasions don't require ember in vanilla, so they don't require
+            # Phantom Hunters in unmissable mode.
 
         # DLC Access Rules Below
         if self.options.enable_dlc:
@@ -1059,10 +1080,10 @@ class DarkSouls3World(World):
         self._add_location_rule([
             "FS: Mail Breaker - Sirris for killing Creighton",
             "FS: Silvercat Ring - Sirris for killing Creighton",
-            "IBV: Creighton's Steel Mask - bridge after killing Creighton",
-            "IBV: Mirrah Chain Gloves - bridge after killing Creighton",
-            "IBV: Mirrah Chain Leggings - bridge after killing Creighton",
-            "IBV: Mirrah Chain Mail - bridge after killing Creighton",
+            "IBV: Creighton's Steel Mask - bridge after Creighton invades",
+            "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
+            "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
+            "IBV: Mirrah Chain Mail - bridge after Creighton invades",
             "IBV: Dragonslayer's Axe - Creighton drop",
             # Killing Pontiff without progressing Sirris's quest will break it.
             "IBV: Soul of Pontiff Sulyvahn"
