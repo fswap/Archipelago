@@ -915,10 +915,10 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         hostile_npc=True),  # Exile Knight #2 drop
         DS3LocationData("RS: Great Club - NPC drop by Farron Keep", "Great Club",
                         hostile_npc=True),  # Exile Knight #1 drop
-        DS3LocationData("RS: Heysel Pick - Heysel drop", "Heysel Pick", missable=True,
+        DS3LocationData("RS: Heysel Pick - Heysel drop", "Heysel Pick", missable=missable_invasion,
                         hostile_npc=True),
-        DS3LocationData("RS: Xanthous Crown - Heysel drop", "Xanthous Crown", missable=True,
-                        hostile_npc=True),
+        DS3LocationData("RS: Xanthous Crown - Heysel drop", "Xanthous Crown",
+                        missable=missable_invasion, hostile_npc=True),
         DS3LocationData("RS: Butcher Knife - NPC drop beneath road", "Butcher Knife",
                         hostile_npc=True),  # Madwoman
         DS3LocationData("RS: Titanite Shard - water by Halfway Fortress", "Titanite Shard"),
@@ -1218,18 +1218,22 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Longfinger Kirk drops
         DS3LocationData("CD: Barbed Straight Sword - Kirk drop", "Barbed Straight Sword",
-                        missable=True, hostile_npc=True),
-        DS3LocationData("CD: Spiked Shield - Kirk drop", "Spiked Shield", missable=True,
-                        hostile_npc=True),
+                        missable=missable_invasion, hostile_npc=True),
+        DS3LocationData("CD: Spiked Shield - Kirk drop", "Spiked Shield",
+                        missable=missable_invasion, hostile_npc=True),
         # In Rosaria's Bed Chamber
         DS3LocationData("CD: Helm of Thorns - Rosaria's Bed Chamber after killing Kirk",
-                        "Helm of Thorns", missable=True, hostile_npc=True),
+                        "Helm of Thorns", missable=missable_invasion, hidden=True,
+                        hostile_npc=True),
         DS3LocationData("CD: Armor of Thorns - Rosaria's Bed Chamber after killing Kirk",
-                        "Armor of Thorns", missable=True, hostile_npc=True),
+                        "Armor of Thorns", missable=missable_invasion, hidden=True,
+                        hostile_npc=True),
         DS3LocationData("CD: Gauntlets of Thorns - Rosaria's Bed Chamber after killing Kirk",
-                        "Gauntlets of Thorns", missable=True, hostile_npc=True),
+                        "Gauntlets of Thorns", missable=missable_invasion, hidden=True,
+                        hostile_npc=True),
         DS3LocationData("CD: Leggings of Thorns - Rosaria's Bed Chamber after killing Kirk",
-                        "Leggings of Thorns", missable=True, hostile_npc=True),
+                        "Leggings of Thorns", missable=missable_invasion, hidden=True,
+                        hostile_npc=True),
 
         # Unbreakable Patches
         DS3LocationData("CD: Catarina Helm - Patches", "Catarina Helm", missable=missable_quest,
@@ -1269,7 +1273,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         static="03,0:50002100::", prominent=True, progression=True,
                         boss=True),
         DS3LocationData("FK: Manikin Claws - Londor Pale Shade drop", "Manikin Claws",
-                        missable=True, hostile_npc=True,
+                        missable=missable_invasion, hostile_npc=True,
                         npc=True),  # Londor Pale Shade (if Yoel/Yuria hostile)
         DS3LocationData("FK: Purple Moss Clump - keep ruins, ritual island",
                         "Purple Moss Clump x2"),
@@ -1475,9 +1479,11 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("SL: Soul of the Old Demon King", "Soul of the Old Demon King",
                         prominent=True, boss=True),
         DS3LocationData("SL: Fume Ultra Greatsword - ruins basement, NPC drop",
-                        "Fume Ultra Greatsword", hostile_npc=True),  # Knight Slayer Tsorig drop
+                        "Fume Ultra Greatsword", missable=missable_invasion,
+                        hostile_npc=True),  # Knight Slayer Tsorig drop
         DS3LocationData("SL: Black Iron Greatshield - ruins basement, NPC drop",
-                        "Black Iron Greatshield", hostile_npc=True),  # Knight Slayer Tsorig drop
+                        "Black Iron Greatshield", missable=missable_invasion,
+                        hostile_npc=True),  # Knight Slayer Tsorig drop
         DS3LocationData("SL: Large Titanite Shard - ledge by Demon Ruins bonfire",
                         "Large Titanite Shard"),
         DS3LocationData("SL: Large Titanite Shard - lake, by entrance", "Large Titanite Shard"),
@@ -1703,13 +1709,13 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # After winning both Londor Pale Shade invasions
         DS3LocationData("FS: Sneering Mask - Yoel's room, kill Londor Pale Shade twice",
-                        "Sneering Mask", missable=True, hostile_npc=True),
+                        "Sneering Mask", missable=missable_invasion, hostile_npc=True),
         DS3LocationData("FS: Pale Shade Robe - Yoel's room, kill Londor Pale Shade twice",
-                        "Pale Shade Robe", missable=True, hostile_npc=True),
+                        "Pale Shade Robe", missable=missable_invasion, hostile_npc=True),
         DS3LocationData("FS: Pale Shade Gloves - Yoel's room, kill Londor Pale Shade twice",
-                        "Pale Shade Gloves", missable=True, hostile_npc=True),
+                        "Pale Shade Gloves", missable=missable_invasion, hostile_npc=True),
         DS3LocationData("FS: Pale Shade Trousers - Yoel's room, kill Londor Pale Shade twice",
-                        "Pale Shade Trousers", missable=True, hostile_npc=True),
+                        "Pale Shade Trousers", missable=missable_invasion, hostile_npc=True),
 
         # Anri of Astora
         DS3LocationData("IBV: Ring of the Evil Eye - Anri", "Ring of the Evil Eye",
@@ -1723,19 +1729,22 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         missable=True, hostile_npc=True, npc=True),
         DS3LocationData("IBV: Dragonslayer's Axe - Creighton drop", "Dragonslayer's Axe",
                         missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("IBV: Creighton's Steel Mask - bridge after killing Creighton",
+        # TODO: These items require both killing Creighton as part of Sirris's quest *and* killing
+        # him when he invades you in Irithyll after that. Currently the invasion is unmissable in
+        # unmissable_invasions mode, but the quest half is not yet unmissable.
+        DS3LocationData("IBV: Creighton's Steel Mask - bridge after Creighton invades",
                         "Creighton's Steel Mask", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("IBV: Mirrah Chain Mail - bridge after killing Creighton",
+        DS3LocationData("IBV: Mirrah Chain Mail - bridge after Creighton invades",
                         "Mirrah Chain Mail", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("IBV: Mirrah Chain Gloves - bridge after killing Creighton",
+        DS3LocationData("IBV: Mirrah Chain Gloves - bridge after Creighton invades",
                         "Mirrah Chain Gloves", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("IBV: Mirrah Chain Leggings - bridge after killing Creighton",
+        DS3LocationData("IBV: Mirrah Chain Leggings - bridge after Creighton invades",
                         "Mirrah Chain Leggings", missable=True, hostile_npc=True, npc=True),
     ],
     "Irithyll Dungeon": [
         DS3LocationData("ID: Titanite Slab - Siegward", "Titanite Slab", missable=missable_quest,
                         conditional=True, npc=True),
-        DS3LocationData("ID: Murakumo - Alva drop", "Murakumo", missable=True,
+        DS3LocationData("ID: Murakumo - Alva drop", "Murakumo", missable=missable_invasion,
                         hostile_npc=True),
         DS3LocationData("ID: Large Titanite Shard - after bonfire, second cell on left",
                         "Large Titanite Shard"),
@@ -1815,13 +1824,13 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Alva (requires ember)
         DS3LocationData("ID: Alva Helm - B3 near, by Karla's cell, after killing Alva", "Alva Helm",
-                        missable=True, npc=True),
+                        missable=missable_invasion, hidden=True, npc=True),
         DS3LocationData("ID: Alva Armor - B3 near, by Karla's cell, after killing Alva",
-                        "Alva Armor", missable=True, npc=True),
+                        "Alva Armor", missable=missable_invasion, hidden=True, npc=True),
         DS3LocationData("ID: Alva Gauntlets - B3 near, by Karla's cell, after killing Alva",
-                        "Alva Gauntlets", missable=True, npc=True),
+                        "Alva Gauntlets", missable=missable_invasion, hidden=True, npc=True),
         DS3LocationData("ID: Alva Leggings - B3 near, by Karla's cell, after killing Alva",
-                        "Alva Leggings", missable=True, npc=True),
+                        "Alva Leggings", missable=missable_invasion, hidden=True, npc=True),
     ],
     "Profaned Capital": [
         DS3LocationData("PC: Soul of Yhorm the Giant", "Soul of Yhorm the Giant", boss=True),
@@ -2729,7 +2738,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("PW2: Titanite Slab - boss drop", "Titanite Slab",
                         static='11,0:50004700::',
                         boss=True),  # One-time drop after Friede Phase 2
-        DS3LocationData("PW2: Floating Chaos - NPC drop", "Floating Chaos", hostile_npc=True,
+        DS3LocationData("PW2: Floating Chaos - NPC drop", "Floating Chaos",
+                        missable=missable_invasion, hostile_npc=True,
                         hidden=True),  # Livid Pyromancer Dunnel drop (requires ember)
         DS3LocationData("PW2: Prism Stone - pass, tree by beginning", "Prism Stone x10"),
         DS3LocationData("PW2: Titanite Chunk - pass, cliff overlooking bonfire", "Titanite Chunk"),
@@ -2879,14 +2889,15 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("RC: Crucifix of the Mad King - ashes, NPC drop",
                         "Crucifix of the Mad King", hostile_npc=True),  # Shira drop
         DS3LocationData("RC: Ledo's Great Hammer - streets high, opposite building, NPC drop",
-                        "Ledo's Great Hammer", hostile_npc=True,
-                        missable=True),  # Silver Knight Ledo drop, doesn't invade once Halflight
-        # is defeated
+                        "Ledo's Great Hammer", missable=missable_invasion,
+                        hostile_npc=True,),  # Ledo drop, doesn't invade once Halflight is defeated
         DS3LocationData("RC: Wolf Ring+3 - street gardens, NPC drop", "Wolf Ring+3",
-                        hostile_npc=True,
-                        missable=True),  # Alva drop, doesn't invade once Halflight is defeated
+                        missable=missable_invasion,
+                        hostile_npc=True),  # Alva drop, doesn't invade once Halflight is defeated
         DS3LocationData("RC: Blindfold Mask - grave, NPC drop", "Blindfold Mask",
-                        hostile_npc=True),  # Moaning Knight drop
+                        missable=missable_invasion,
+                        hostile_npc=True),  # Moaning Knight drop, doesn't invade once Halflight is
+                                            # defeated
         DS3LocationData("RC: Titanite Scale - wall top, behind spawn", "Titanite Scale"),  # wrong
         DS3LocationData("RC: Ruin Helm - wall top, under stairs to bonfire", "Ruin Helm"),
         DS3LocationData("RC: Ruin Armor - wall top, under stairs to bonfire", "Ruin Armor"),
