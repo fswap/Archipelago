@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+import json
+from typing import Any, Dict
 
-from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, \
+from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, OptionDict, \
     OptionGroup, PerGameCommonOptions, Range, Toggle
 
 # MARK: Game Options
@@ -76,7 +78,6 @@ class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
 
-    
 class DLCRandomization(Choice):
     """How to randomize dlc items.
     
@@ -105,6 +106,14 @@ class MessmerKindleMax(Range):
     range_start = 2
     range_end = 20
     default = 10
+    
+class DLCMessmerKindle(Toggle):
+    """Randomize Messmer's Kindling and Shards to DLC or other worlds."""
+    display_name = "DLC Messmer's Kindling"
+    
+class DLCScadutreeFragments(Toggle):
+    """Randomize Scadutree Fragments to DLC or other worlds."""
+    display_name = "DLC Scadutree Fragments"
 
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
@@ -118,6 +127,16 @@ class DLCTimingOption(Choice):
     option_off = 1
     option_late = 2
     default = 1
+    
+class DLCMaxLevelWeapons(Toggle):
+    """Upgrade all weapons to max level in the DLC."""
+    display_name = "DLC Max Level Weapons"
+    
+class DLCAbyssalTorrent(Toggle):
+    """Prevent Torrent from getting frightened."""
+    display_name = "DLC Abyssal Torrent"
+    
+# randomizing spiritspring seals would mean making a location for the seals
     
 # MARK: DLC Start
 
@@ -134,8 +153,26 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
-# class DLCStartingItems():
-#     "idk"
+class DLCStartingItems(OptionDict): # TODO when client started, items dont get randomized to dlc yet
+    """Choose what base game items to start with in DLC Only.
+    If not started with they will be randomized into the DLC.
+    
+    - **Sacred Flasks**
+    - **Golden Seeds**
+    - **Talisman Pouches**
+    - **Memory Stones**
+    - **Whetblades**
+    - **Upgrade Bell Bearings**"""
+    display_name = "DLC Starting Items"
+    supports_weighting = False
+    default = {}
+
+    valid_keys = ["Sacred Flasks", "Golden Seeds", "Talisman Pouches", 
+                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings"]
+
+    @classmethod
+    def get_option_name(cls, value: Dict[str, Any]) -> str:
+        return json.dumps(value)
 
 class DLCStartingShop(Toggle): # just the static rando option
     """Add a shop at grace with all base game equipment for free."""
@@ -333,6 +370,7 @@ class EROptions(PerGameCommonOptions):
     
     enable_dlc: EnableDLC
     dlc_start: DLCStart
+    dlc_starting_items: DLCStartingItems
     dlc_starting_shop: DLCStartingShop
     dlc_care_package: DLCCarePackage
     dlc_initial_rune_level: DLCInitialRuneLevel
@@ -340,7 +378,11 @@ class EROptions(PerGameCommonOptions):
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
     messmer_kindle_max: MessmerKindleMax
+    dlc_messmer_kindle: DLCMessmerKindle
+    dlc_scadutree_fragments: DLCScadutreeFragments
     dlc_timing: DLCTimingOption
+    dlc_max_level_weapons: DLCMaxLevelWeapons
+    dlc_abyssal_torrent: DLCAbyssalTorrent
     
     enemy_rando: EnemyRando
     material_rando: MaterialRando
@@ -385,10 +427,15 @@ option_groups = [
         MessmerKindle,
         MessmerKindleRequired,
         MessmerKindleMax,
-        DLCTimingOption
+        DLCMessmerKindle,
+        DLCScadutreeFragments,
+        DLCTimingOption,
+        DLCMaxLevelWeapons,
+        DLCAbyssalTorrent,
     ]),
     OptionGroup("DLC Start", [
         DLCStart,
+        DLCStartingItems,
         DLCStartingShop,
         DLCCarePackage,
         DLCInitialRuneLevel,

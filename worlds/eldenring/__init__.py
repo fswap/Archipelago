@@ -759,7 +759,7 @@ class EldenRing(World):
         if self.options.world_logic < 3:
             self._region_lock()
         
-        # Base Game Rules
+        # MARK: Base Game Rules
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
             self._key_rules() # make option to choose master or normal rules
             #self._master_key_rules()
@@ -903,23 +903,11 @@ class EldenRing(World):
                 self._add_entrance_rule("Caelid", "Rusty Key")
                 self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
-        # DLC Rules
+        # MARK: DLC Rules
         if self.options.enable_dlc:
+            
+            # only when normal start
             if self.options.dlc_start == 0:
-                if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
-                    for region in location_tables:
-                        for location in location_tables[region]:
-                            if region in region_order:
-                                self._add_item_rule(location.name,
-                                    lambda item: (item.player != self.player)
-                                        or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
-                                    )
-                            elif region in region_order_dlc:
-                                self._add_item_rule(location.name,
-                                    lambda item: (item.player != self.player) 
-                                        or item.data.is_dlc or item.data.found_in_dlc
-                                    )
-                
                 if self.options.dlc_timing == 2:
                     self._add_entrance_rule("Gravesite Plain",
                         lambda state: state.has("Rold Medallion", self.player)
@@ -933,15 +921,44 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
                         and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                    if self.options.dlc_timing == 0:
+                    if self.options.dlc_timing == 0: # Early medal
                         self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
                         self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 
-            # dlc imbued
+            # dlc only else do
             if self.options.dlc_start == 1:
                 self._add_entrance_rule("Rauh Ruins Limited", 
                     lambda state: state.has("Imbued Sword Key", self.player, 1) or self._can_go_to(state, "Ancient Ruins of Rauh"))
             else:
+                if (self.options.dlc_randomization.value == 1 
+                    or self.options.dlc_scadutree_fragments.value 
+                    or self.options.dlc_messmer_kindle.value): # only do loop if one of these are on
+                    for region in location_tables:
+                        for location in location_tables[region]:
+                            if region in region_order:
+                                if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
+                                    if region in region_order:
+                                        self._add_item_rule(location.name,
+                                            lambda item: (item.player != self.player)
+                                                or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
+                                            )
+                                    elif region in region_order_dlc:
+                                        self._add_item_rule(location.name,
+                                            lambda item: (item.player != self.player) 
+                                                or item.data.is_dlc or item.data.found_in_dlc
+                                            )
+                                else: # else make certain items dlc only
+                                    if self.options.dlc_scadutree_fragments.value:
+                                        self._add_item_rule(location.name,
+                                            lambda item: (item.player != self.player)
+                                                or (item.data.name != "Scadutree Fragment" and item.data.name != "Scadutree Fragment x2")
+                                            )
+                                    if self.options.dlc_messmer_kindle.value:
+                                        self._add_item_rule(location.name,
+                                            lambda item: (item.player != self.player)
+                                                or (item.data.name != "Messmer's Kindling" and item.data.name != "Messmer's Kindling Shard")
+                                            )
+                                    
                 self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 4))
@@ -955,8 +972,6 @@ class EldenRing(World):
             
             self.multiworld.register_indirect_condition(self.get_region("Ancient Ruins of Rauh"), self.get_entrance("Go To Rauh Ruins Limited"))
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
-            
-            # MARK: DLC Rules
             
             # dlc paintings
             self._add_location_rule("GP/BG: Serpent Crest Shield - painting reward SE of BG", "\"Incursion\" Painting")
@@ -2739,6 +2754,7 @@ class EldenRing(World):
                 "royal_access": self.options.royal_access.value,
                 "enable_dlc": self.options.enable_dlc.value,
                 "dlc_start": self.options.dlc_start.value,
+                "dlc_starting_items": self.options.dlc_starting_items.value,
                 "dlc_starting_shop": self.options.dlc_starting_shop.value,
                 "dlc_care_package": self.options.dlc_care_package.value,
                 "dlc_initial_rune_level": self.options.dlc_initial_rune_level.value,
@@ -2746,7 +2762,11 @@ class EldenRing(World):
                 "messmer_kindle": self.options.messmer_kindle.value,
                 "messmer_kindle_required": self.options.messmer_kindle_required.value,
                 "messmer_kindle_max": self.options.messmer_kindle_max.value,
+                "dlc_messmer_kindle": self.options.dlc_messmer_kindle.value,
+                "dlc_scadutree_fragments": self.options.dlc_scadutree_fragments.value,
                 "dlc_timing": self.options.dlc_timing.value,
+                "dlc_max_level_weapons": self.options.dlc_max_level_weapons.value,
+                "dlc_abyssal_torrent": self.options.dlc_abyssal_torrent.value,
                 "enemy_rando": self.options.enemy_rando.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
