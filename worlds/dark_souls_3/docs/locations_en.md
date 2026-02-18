@@ -122,6 +122,9 @@ This option makes quest-related NPCs immortal and updates their quests to
 remove places where they can be missed or failed entirely. Currently the
 following NPCs' quests are supported:
 
+* You can no longer refuse to tell **The Shrine Handmaid** where you found
+  Dreamchaser's Ashes.
+
 * **Greirat** will always survive pillaging Irithyll. He will return once
   Patches leaves to rescue him; Siegward cannot save him. In addition to
   returning from his trips after you beat a boss, he'll return immediately from
