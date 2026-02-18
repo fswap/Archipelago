@@ -275,7 +275,7 @@ all_bosses = [
         },
     ),
     DS3BossInfo(
-        "Blackflame Friede", "Painted World of Ariandel End", 4500800, 4500800,
+        "Blackflame Friede", "Painted World of Ariandel End", 4500800, 14500800,
         dlc = True, locations = {
             "PW2: Soul of Sister Friede",
             "PW1: Titanite Slab - Corvian",
