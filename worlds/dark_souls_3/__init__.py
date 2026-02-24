@@ -1507,20 +1507,20 @@ class DarkSouls3World(World):
                     location = item.location
                     converted_item_order.append(item)
                     locations_to_smooth.append(location)
-                    # Un-place the item in preparation of placing all the items in a smoothed-out order.
+                    # Un-place the item in preparation for placing all the items in a smoothed-out order.
                     location.item = None
                     item.location = None
                     if not items_list:
                         # The list is now empty, so remove it to prevent being able to get and pop an empty list.
                         del full_items_by_name[ordered_item_name]
 
-                # First sort locations by earliest sphere first,
-                # Then sort by non-DS3 locations last, so that non-DS3 locations get the best items within a sphere,
+                # First sort locations by sphere (earliest first). Next sort non-DS3 locations after
+                # DS3 locations, so that non-DS3 locations get the best items within a sphere.
                 # Finally sort DS3 locations amongst themselves using their region values.
                 def location_sort_func(location: Location):
                     sphere_number = ds3_smoothing_location_to_sphere[location]
                     if location.game == cls.game:
-                        # The location is from a DS3 world, so will be sorted before non-DS3 locations, within the same
+                        # The location is from a DS3 world, so will be sorted before non-DS3 locations within the same
                         # sphere, and sorted additionally by the location's .region_value.
                         ds3_location = cast(DarkSouls3Location, location)
                         return sphere_number, 0, ds3_location.data.region_value
