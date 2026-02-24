@@ -1498,11 +1498,10 @@ class DarkSouls3World(World):
                 converted_item_order: List[DarkSouls3Item] = []
                 locations_to_smooth: List[Location] = []
                 for ordered_item in item_order:
-                    ordered_item_name = ordered_item.name
                     # full_items_by_name won't contain DLC items if the DLC is disabled.
-                    if ordered_item_name not in full_items_by_name:
+                    if ordered_item.name not in full_items_by_name:
                         continue
-                    items_list = full_items_by_name[ordered_item_name]
+                    items_list = full_items_by_name[ordered_item.name]
                     item = items_list.pop(0)
                     location = item.location
                     converted_item_order.append(item)
@@ -1512,7 +1511,7 @@ class DarkSouls3World(World):
                     item.location = None
                     if not items_list:
                         # The list is now empty, so remove it to prevent being able to get and pop an empty list.
-                        del full_items_by_name[ordered_item_name]
+                        del full_items_by_name[ordered_item.name]
 
                 # First sort locations by sphere (earliest first). Next sort non-DS3 locations after
                 # DS3 locations, so that non-DS3 locations get the best items within a sphere.
