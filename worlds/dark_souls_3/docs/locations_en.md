@@ -146,7 +146,7 @@ following NPCs' quests are supported:
   three Pyromancy Tomes that he accepts.
 
 * **Hodrick** won't die until you've received the replacement for the
-  Mount-makers covenant from him.
+  Mound-makers covenant from him.
 
 * **Siegward** won't leave the upper undead settlement or the Irithyll kitchen
   until he's given you a Siegbräu. He can be rescued from the well by giving him
