@@ -365,7 +365,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         conditional=True),
         # Only if you say where the ashes were found
         DS3LocationData("FS: Hidden Blessing - Dreamchaser's Ashes", "Hidden Blessing",
-                        static='99,0:-1:110000,70000117:', missable=True, shop=True),
+                        static='99,0:-1:110000,70000117:', missable=missable_quest, shop=True),
         DS3LocationData("FS: Lloyd's Shield Ring - Paladin's Ashes", "Lloyd's Shield Ring",
                         shop=True, conditional=True),
         DS3LocationData("FS: Ember - Grave Warden's Ashes", "Ember",
@@ -822,7 +822,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("US: Fire Gem - tower village, miniboss drop", "Fire Gem", miniboss=True),
         DS3LocationData("US: Warrior of Sunlight - hanging corpse room, drop through hole",
                         "Warrior of Sunlight", hidden=True),  # hidden fall
-        DS3LocationData("US: Mound-makers - Hodrick", "Mound-makers", missable=True),
+        DS3LocationData("US: Mound-makers - Hodrick", "Mound-makers", missable=missable_quest),
         DS3LocationData("US: Sharp Gem - lizard by Dilapidated Bridge", "Sharp Gem", lizard=True),
         DS3LocationData("US: Heavy Gem - chasm, lizard", "Heavy Gem", lizard=True),
         DS3LocationData("US: Siegbräu - Siegward", "Siegbräu", missable=missable_quest, npc=True),
@@ -1723,23 +1723,29 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Sirris quest after killing Creighton
         DS3LocationData("FS: Mail Breaker - Sirris for killing Creighton", "Mail Breaker",
-                        static='99,0:50006080::', missable=True, hostile_npc=True,
+                        static='99,0:50006080::', missable=missable_quest, hostile_npc=True,
                         npc=True),
         DS3LocationData("FS: Silvercat Ring - Sirris for killing Creighton", "Silvercat Ring",
-                        missable=True, hostile_npc=True, npc=True),
+                        missable=missable_quest, hostile_npc=True, npc=True),
         DS3LocationData("IBV: Dragonslayer's Axe - Creighton drop", "Dragonslayer's Axe",
-                        missable=True, hostile_npc=True, npc=True),
+                        missable=lambda self: not (
+                            self.options.unmissable_quests and self.options.unmissable_invasions
+                        ), hostile_npc=True, npc=True),
         # TODO: These items require both killing Creighton as part of Sirris's quest *and* killing
         # him when he invades you in Irithyll after that. Currently the invasion is unmissable in
         # unmissable_invasions mode, but the quest half is not yet unmissable.
         DS3LocationData("IBV: Creighton's Steel Mask - bridge after Creighton invades",
-                        "Creighton's Steel Mask", missable=True, hostile_npc=True, npc=True),
+                        "Creighton's Steel Mask", missable=missable_quest, hostile_npc=True,
+                        npc=True),
         DS3LocationData("IBV: Mirrah Chain Mail - bridge after Creighton invades",
-                        "Mirrah Chain Mail", missable=True, hostile_npc=True, npc=True),
+                        "Mirrah Chain Mail", missable=missable_quest, hidden=True, hostile_npc=True,
+                        npc=True),
         DS3LocationData("IBV: Mirrah Chain Gloves - bridge after Creighton invades",
-                        "Mirrah Chain Gloves", missable=True, hostile_npc=True, npc=True),
+                        "Mirrah Chain Gloves", missable=missable_quest, hidden=True,
+                        hostile_npc=True, npc=True),
         DS3LocationData("IBV: Mirrah Chain Leggings - bridge after Creighton invades",
-                        "Mirrah Chain Leggings", missable=True, hostile_npc=True, npc=True),
+                        "Mirrah Chain Leggings", missable=missable_quest, hidden=True,
+                        hostile_npc=True, npc=True),
     ],
     "Irithyll Dungeon": [
         DS3LocationData("ID: Titanite Slab - Siegward", "Titanite Slab", missable=missable_quest,
@@ -1990,22 +1996,26 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         DS3LocationData("FS: Budding Green Blossom - shop after killing Creighton and AL boss",
                         "Budding Green Blossom", static='99,0:-1:110000,70000118:',
-                        missable=True, npc=True,
+                        missable=missable_quest, npc=True,
                         shop=True),  # sold by Shrine Maiden after killing Aldrich and helping
-        # Sirris defeat Creighton
+                                     # Sirris defeat Creighton
 
         # Sirris (quest completion)
         DS3LocationData("FS: Sunset Shield - by grave after killing Hodrick w/Sirris",
-                        "Sunset Shield", missable=True, hostile_npc=True, npc=True),
+                        "Sunset Shield", missable=missable_quest, hostile_npc=True, npc=True),
         # In Pit of Hollows after killing Hodrick
         DS3LocationData("US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris",
-                        "Sunset Helm", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris",
-                        "Sunset Armor", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris",
-                        "Sunset Gauntlets", missable=True, hostile_npc=True, npc=True),
-        DS3LocationData("US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris",
-                        "Sunset Leggings", missable=True, hostile_npc=True, npc=True),
+                        "Sunset Helm", missable=missable_quest, hidden=True, hostile_npc=True,
+                        npc=True),
+        DS3LocationData("US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris",
+                        "Sunset Armor", missable=missable_quest, hidden=True, hostile_npc=True,
+                        npc=True),
+        DS3LocationData("US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris",
+                        "Sunset Gauntlets", missable=missable_quest, hidden=True, hostile_npc=True,
+                        npc=True),
+        DS3LocationData("US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris",
+                        "Sunset Leggings", missable=missable_quest, hidden=True, hostile_npc=True,
+                        npc=True),
 
         # Shrine Handmaid after killing Sulyvahn's Beast Duo
         DS3LocationData("FS: Helm of Favor - shop after killing water reserve minibosses",
@@ -2386,15 +2396,15 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Sirris quest completion + beat Twin Princes
         DS3LocationData("FS: Sunless Talisman - Sirris, kill GA boss", "Sunless Talisman",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
         DS3LocationData("FS: Sunless Veil - shop, Sirris quest, kill GA boss", "Sunless Veil",
-                        missable=True, npc=True, shop=True),
+                        missable=missable_quest, npc=True, shop=True),
         DS3LocationData("FS: Sunless Armor - shop, Sirris quest, kill GA boss", "Sunless Armor",
-                        missable=True, npc=True, shop=True),
+                        missable=missable_quest, npc=True, shop=True),
         DS3LocationData("FS: Sunless Gauntlets - shop, Sirris quest, kill GA boss",
-                        "Sunless Gauntlets", missable=True, npc=True, shop=True),
+                        "Sunless Gauntlets", missable=missable_quest, npc=True, shop=True),
         DS3LocationData("FS: Sunless Leggings - shop, Sirris quest, kill GA boss",
-                        "Sunless Leggings", missable=True, npc=True, shop=True),
+                        "Sunless Leggings", missable=missable_quest, npc=True, shop=True),
 
         # Unbreakable Patches
         DS3LocationData("FS: Hidden Blessing - Patches after searching GA", "Hidden Blessing",
