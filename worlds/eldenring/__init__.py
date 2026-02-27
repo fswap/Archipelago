@@ -552,7 +552,7 @@ class EldenRing(World):
                     dlc_item.data.found_in_dlc = True
                     self.local_itempool.append(dlc_item)
 
-        injectables = self._create_injectable_items(num_required_extra_items)
+        injectables, self.local_itempool = self._create_injectable_items(num_required_extra_items, self.local_itempool)
         num_required_extra_items -= len(injectables)
         self.local_itempool.extend(injectables)
 
@@ -565,7 +565,7 @@ class EldenRing(World):
         # Add items to itempool
         self.multiworld.itempool += self.local_itempool
 
-    def _create_injectable_items(self, num_required_extra_items: int) -> List[ERItem]:
+    def _create_injectable_items(self, num_required_extra_items: int, local_itempool: List) -> List[ERItem]:
         """Returns a list of items to inject into the multiworld instead of skipped items.
 
         If there isn't enough room to inject all the necessary progression items
@@ -615,7 +615,7 @@ class EldenRing(World):
         inj_items = (
             self.random.sample(
                 injectable_mandatory,
-                k=min(len(injectable_mandatory), number_to_inject)
+                k=max(len(injectable_mandatory), number_to_inject)
             )
             + self.random.sample(
                 injectable_optional,
@@ -624,19 +624,25 @@ class EldenRing(World):
         )
 
         if number_to_inject < len(injectable_mandatory):
-            # It's worth considering the possibility of _removing_ unimportant
-            # items from the pool to inject these instead rather than just
-            # making them part of the starting health pack
-            for item in injectable_mandatory:
-                if item in inj_items: continue
-                self.multiworld.push_precollected(self.create_item(item))
-                warning(
-                    f"Couldn't add \"{item.name}\" to the item pool for " + 
-                    f"{self.player_name}. Adding it to the starting " +
-                    f"inventory instead."
-                )
+            # find random item in list, check to see if its needed, remove
+            # continue till enough room to inject all
+            req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
+            while req > 0:
+                item = self.random.choice(local_itempool)
+                if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful: continue
+                local_itempool.remove(item)
+                req -= 1
+            # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
+            # for item in injectable_mandatory:
+            #     if item in inj_items: continue
+            #     self.multiworld.push_precollected(self.create_item(item))
+            #     warning(
+            #         f"Couldn't add \"{item.name}\" to the item pool for " + 
+            #         f"{self.player_name}. Adding it to the starting " +
+            #         f"inventory instead."
+            #     )
 
-        return [self.create_item(item) for item in inj_items]
+        return [self.create_item(item) for item in inj_items], local_itempool
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -1208,7 +1214,7 @@ class EldenRing(World):
                     self._add_location_rule("Ensis Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ensis Bosses"] & self.location_name_groups["Overworld Bosses"]))
                     self._add_location_rule("Ellac Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ellac Bosses"] & self.location_name_groups["Overworld Bosses"]))
                     self._add_location_rule("Cerulean Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Cerulean Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses" & self.location_name_groups["Overworld Bosses"]]))
+                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses"] & self.location_name_groups["Overworld Bosses"]))
                     self._add_location_rule("Jagged Peak Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Jagged Peak Bosses"] & self.location_name_groups["Overworld Bosses"]))
                     self._add_location_rule("Charo's Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Charo's Bosses"] & self.location_name_groups["Overworld Bosses"]))
                     self._add_location_rule("Scadu Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Scadu Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))

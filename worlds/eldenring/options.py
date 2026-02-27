@@ -153,7 +153,7 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
-class DLCStartingItems(OptionDict): # TODO when client started, items are added to itempool, need to be started with **and removed from itempool if dlc start with base is on**
+class DLCStartingItems(OptionDict): # TODO when client started, items are added and removed from the itempool, *need to be started with*
     """Choose what base game items to start with in DLC Start.
     If there is no access to base game, items not started with will be randomized into the DLC.
     
