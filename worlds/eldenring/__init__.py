@@ -576,6 +576,20 @@ class EldenRing(World):
             if self.options.dlc_start == 1:
                 all_injectable_items += [item_table["Dragon Heart x3"]] # ghostflame breath cannot be gotten without, idk what matt did
                 
+                # if not started with add to injection
+                if "Sacred Tears" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
+                if "Golden Seeds" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Golden Seed"] for i in range(43)]
+                if "Talisman Pouches" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Talisman Pouch"] for i in range(3)]
+                if "Memory Stones" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Memory Stone"] for i in range(8)]
+                if "Whetblades" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Iron Whetblade"],
+                    item_table["Red-Hot Whetblade"], item_table["Sanctified Whetblade"], item_table["Glintstone Whetblade"], item_table["Black Whetblade"]]
+                if "Upgrade Bell Bearings" not in self.options.dlc_starting_items.value: all_injectable_items += [
+                    item_table["Smithing-Stone Miner's Bell Bearing [1]"],
+                    item_table["Smithing-Stone Miner's Bell Bearing [2]"],item_table["Smithing-Stone Miner's Bell Bearing [3]"],
+                    item_table["Smithing-Stone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [1]"],
+                    item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
+                    item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
+                
             if self.options.messmer_kindle:
                 all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             else:
@@ -935,19 +949,19 @@ class EldenRing(World):
                     or self.options.dlc_messmer_kindle.value): # only do loop if one of these are on
                     for region in location_tables:
                         for location in location_tables[region]:
-                            if region in region_order:
-                                if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
-                                    if region in region_order:
-                                        self._add_item_rule(location.name,
-                                            lambda item: (item.player != self.player)
-                                                or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
-                                            )
-                                    elif region in region_order_dlc:
-                                        self._add_item_rule(location.name,
-                                            lambda item: (item.player != self.player) 
-                                                or item.data.is_dlc or item.data.found_in_dlc
-                                            )
-                                else: # else make certain items dlc only
+                            if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
+                                if region in region_order:
+                                    self._add_item_rule(location.name,
+                                        lambda item: (item.player != self.player)
+                                            or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
+                                        )
+                                elif region in region_order_dlc:
+                                    self._add_item_rule(location.name,
+                                        lambda item: (item.player != self.player) 
+                                            or item.data.is_dlc or item.data.found_in_dlc
+                                        )
+                            else: # else make certain items dlc only
+                                if region in region_order:
                                     if self.options.dlc_scadutree_fragments.value:
                                         self._add_item_rule(location.name,
                                             lambda item: (item.player != self.player)

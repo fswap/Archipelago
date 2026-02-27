@@ -3,7 +3,7 @@ er mod tools Smithbox, and Dark Script 3
 
 Run python generate.py   need yaml in players
 Or python launcher.py    so you can gen template options
-fuzzer python fuzz.py -r 50 -j 8 -g eldenring -n 1    keep low till no fails
+fuzzer python fuzz.py -r 10 -j 8 -g eldenring -n 1    keep low till no fails
 
 
 
@@ -89,4 +89,6 @@ people who want to be pinged for playtesting
 @gearfiveluffy01 @yasumikamino @bananaxd2000 @itsvax
 @windwafernow @tenrys @dobrari @senbeller
 @lethblak @lisaleinvt @nuzzerlovesyou @boblerrr
-@adub37 @sutakos
+@adub37 @sutakos @megaknight05 @carrsh
+@ubernugget @.aznova @reignycs @kiewie
+@bokyubi @journair @dezinator

@@ -79,10 +79,10 @@ class EnableDLC(Toggle):
     display_name = "Enable DLC"
 
 class DLCRandomization(Choice):
-    """How to randomize dlc items.
+    """How to randomize DLC items.
     
-    - **Together:** Randomize base and dlc together.
-    - **Separately:** Randomize dlc items to dlc locations.
+    - **Together:** Randomize base and DLC together.
+    - **Separately:** Randomize DLC items to DLC locations or other worlds.
     """
     display_name = "DLC Randomization"
     option_together = 0
@@ -153,11 +153,11 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
-class DLCStartingItems(OptionDict): # TODO when client started, items dont get randomized to dlc yet
-    """Choose what base game items to start with in DLC Only.
-    If not started with they will be randomized into the DLC.
+class DLCStartingItems(OptionDict): # TODO when client started, items are added to itempool, need to be started with
+    """Choose what base game items to start with in DLC Start.
+    If there is no access to base game, items not started with will be randomized into the DLC.
     
-    - **Sacred Flasks**
+    - **Sacred Tears**
     - **Golden Seeds**
     - **Talisman Pouches**
     - **Memory Stones**
@@ -167,12 +167,8 @@ class DLCStartingItems(OptionDict): # TODO when client started, items dont get r
     supports_weighting = False
     default = {}
 
-    valid_keys = ["Sacred Flasks", "Golden Seeds", "Talisman Pouches", 
+    valid_keys = ["Sacred Tears", "Golden Seeds", "Talisman Pouches", 
                   "Memory Stones", "Whetblades", "Upgrade Bell Bearings"]
-
-    @classmethod
-    def get_option_name(cls, value: Dict[str, Any]) -> str:
-        return json.dumps(value)
 
 class DLCStartingShop(Toggle): # just the static rando option
     """Add a shop at grace with all base game equipment for free."""
