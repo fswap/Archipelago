@@ -1728,8 +1728,8 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("FS: Silvercat Ring - Sirris for killing Creighton", "Silvercat Ring",
                         missable=missable_quest, hostile_npc=True, npc=True),
         DS3LocationData("IBV: Dragonslayer's Axe - Creighton drop", "Dragonslayer's Axe",
-                        missable=lambda self: not (
-                            self.options.unmissable_quests and self.options.unmissable_invasions
+                        missable=lambda self, options: not (
+                            options.unmissable_quests and options.unmissable_invasions
                         ), hostile_npc=True, npc=True),
         # TODO: These items require both killing Creighton as part of Sirris's quest *and* killing
         # him when he invades you in Irithyll after that. Currently the invasion is unmissable in
