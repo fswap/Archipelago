@@ -936,7 +936,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
     "Limgrave":[ # limgrave                                               done
         # events
-        ERLocationData("Victory", None),
+        #ERLocationData("Victory", None),
         ERLocationData("Limgrave Bosses", None),
         ERLocationData("Weeping Bosses", None),
         ERLocationData("Stormveil Bosses", None),
@@ -3595,6 +3595,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
     
     # MARK: Elden Beast
     "Erdtree":[ #erdtree                                                  done
+        ERLocationData("Victory", None),
         ERLocationData("ET: Elden Remembrance - mainboss drop", "Elden Remembrance", key="190000,0:0000510230::", boss=True, end=True, remembrance=True, ashen_boss=True),
     ],
     
@@ -3721,6 +3722,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("BTS/BTS: Horned Warrior's Sword - enemy drop in NW swamp area", "Horned Warrior's Sword", key="200000,0:0020007993::"),
     ],
     "Enir Ilim":[ # enirilim                                              done
+        ERLocationData("DLC Victory", None),
         ERLocationData("EI/CCA: Leda's Armor - on Leda's body after npc boss", "Leda's Armor", key="200100,0:0000400598::"),
         ERLocationData("EI/CCA: Freyja's Greatsword - on Freyja's body", "Freyja's Greatsword", key="200100,0:0000400602::", missable=True),
         ERLocationData("EI/CCA: Freyja's Helm - on Freyja's body", "Freyja's Helm", key="200100,0:0000400602::", missable=True),
@@ -3859,7 +3861,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
         # events
-        ERLocationData("DLC Victory", None),
+        #ERLocationData("DLC Victory", None),
         ERLocationData("Gravesite Bosses", None),
         ERLocationData("Belurat Bosses", None),
         ERLocationData("Ensis Bosses", None),

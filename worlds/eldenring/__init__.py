@@ -705,8 +705,6 @@ class EldenRing(World):
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
             elif self.options.crafting_kit_option.value == 2:
                 self.multiworld.get_location("RH/DLC: Dagger - Twin maiden shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
-        
-
 
     def _fill_local_item(
         self, name: str,
@@ -1046,33 +1044,32 @@ class EldenRing(World):
                 # make this the mend the elden ring event, idk how todo that rn
         elif self.options.ending_condition == 2:
             if self.options.enable_dlc and self.options.dlc_start == 1:
-                self._add_location_rule("DLC Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Remembrance DLC"])))
+                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Remembrance DLC"])))
                 self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
             elif self.options.enable_dlc:
-                self._add_location_rule("Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Remembrance"] | self.location_name_groups["Remembrance DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Remembrance"] | self.location_name_groups["Remembrance DLC"])))
+                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
             else:
-                self._add_location_rule("Victory", lambda state: self._can_get_all(state, self.location_name_groups["Remembrance"]))
+                self._add_location_rule("Victory", lambda state: self._is_complete(state, self.location_name_groups["Remembrance"]))
                 self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
         else:
             if self.options.enable_dlc and self.options.dlc_start == 1:
-                self._add_location_rule("DLC Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Boss Reward DLC"])))
+                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Boss Reward DLC"])))
                 self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
             elif self.options.enable_dlc:
-                self._add_location_rule("Victory", lambda state: self._can_get_all(state, (self.location_name_groups["Boss Reward"] | self.location_name_groups["Boss Reward DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "Victory")
+                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Boss Reward"] | self.location_name_groups["Boss Reward DLC"])))
+                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
             else:
-                self._add_location_rule("Victory", lambda state: self._can_get_all(state, self.location_name_groups["Boss Reward"]))
-                self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "Victory")
+                self._add_location_rule("Victory", lambda state: self._is_complete(state, self.location_name_groups["Boss Reward"]))
+                self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
         
         # self.visualize_world()
         
-    def _can_get_all(self, state: CollectionState, locations: Set) -> bool:
-        """Can get all locations."""
-        for location in locations:
-            if not self._can_get(state, location):
-                return False
-        return True
+    def _is_complete(self, state: CollectionState, locations: Set) -> bool:
+        """wether the given state has achieved victory."""
+        all(
+            self._can_get(state, location) for location in locations
+        )
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
