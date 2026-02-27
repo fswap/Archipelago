@@ -145,13 +145,6 @@ class EldenRing(World):
                     if item == "Gravesite Lock" and self.options.dlc_start != 0 and self.options.enable_dlc:
                         item_table[item].inject = False # dont need gravesite lock if starting in dlc
         
-        if self.options.map_option.value == 0: # inject maps
-            for item in item_table:
-                if (self.options.dlc_start != 1 and self.options.enable_dlc and item_table[item].map
-                    or not self.options.enable_dlc and item_table[item].map
-                    or self.options.enable_dlc and item_table[item].map and item_table[item].is_dlc):
-                    item_table[item].inject = True
-        
         if self.options.enable_dlc:
             # warming stone craft
             # item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
@@ -532,7 +525,23 @@ class EldenRing(World):
 
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
-            if item.skip:
+            skip_item = False
+            
+            if not item.skip: # if not skipped these need to be skipped, since they get manually placed or added to start inventory
+                if self.options.map_option != 0 and item.map: skip_item = True
+                if self.options.crafting_kit_option.value == 2 and default_item_name == "Crafting Kit": skip_item = True
+                if self.options.smithing_bell_bearing_option.value == 2 and item.upgrade_bell_bearing and (not self.options.enable_dlc or self.options.dlc_start != 1): skip_item = True
+                
+                if self.options.enable_dlc:
+                    if self.options.dlc_start == 2: # dlc starting items
+                        if default_item_name == "Sacred Tear" and "Sacred Tears" in self.options.dlc_starting_items.value: skip_item = True
+                        if default_item_name == "Golden Seed" and "Golden Seeds" in self.options.dlc_starting_items.value: skip_item = True
+                        if default_item_name == "Talisman Pouch" and "Talisman Pouches" in self.options.dlc_starting_items.value: skip_item = True
+                        if default_item_name == "Memory Stone" and "Memory Stones" in self.options.dlc_starting_items.value: skip_item = True
+                        if item.whetblade and "Whetblades" in self.options.dlc_starting_items.value: skip_item = True
+                        if item.upgrade_bell_bearing and "Upgrade Bell Bearings" in self.options.dlc_starting_items.value: skip_item = True
+            
+            if item.skip or skip_item:
                 num_required_extra_items += 1
             else:
                 if not location.data.dlc:
@@ -569,14 +578,12 @@ class EldenRing(World):
             if item.inject and (not item.is_dlc or self.options.enable_dlc)
         ]
         
-        # if self.options.crafting_kit_option != 2:
-        all_injectable_items += [item_table["Crafting Kit"]]
-        
         if self.options.enable_dlc:
             if self.options.dlc_start == 1:
                 all_injectable_items += [item_table["Dragon Heart x3"]] # ghostflame breath cannot be gotten without, idk what matt did
+                if self.options.crafting_kit_option != 2: all_injectable_items += [item_table["Crafting Kit"]]
                 
-                # if not started with add to injection
+                # if not started with add to injection since base game items dont exist
                 if "Sacred Tears" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
                 if "Golden Seeds" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Golden Seed"] for i in range(43)]
                 if "Talisman Pouches" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Talisman Pouch"] for i in range(3)]
@@ -657,7 +664,6 @@ class EldenRing(World):
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
             elif self.options.crafting_kit_option.value == 2:
                 self.multiworld.get_location("RH/DLC: Dagger - Twin maiden shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
-                # self.multiworld.push_precollected(self.create_item("Crafting Kit"))
         
         if self.options.map_option.value == 1:
             using_table = item_table_vanilla
@@ -2585,7 +2591,7 @@ class EldenRing(World):
             spoiler_handle.write(text)
 
     @classmethod
-    def stage_post_fill(cls, multiworld: MultiWorld):
+    def stage_post_fill(cls, multiworld: MultiWorld): # Using old version of item smoothing from ds3, need to update that at some point
         """If item smoothing is enabled, rearrange items so they scale up smoothly through the run.
 
         This determines the approximate order a given silo of items (say, soul items) show up in the

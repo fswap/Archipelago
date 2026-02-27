@@ -153,7 +153,7 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
-class DLCStartingItems(OptionDict): # TODO when client started, items are added to itempool, need to be started with
+class DLCStartingItems(OptionDict): # TODO when client started, items are added to itempool, need to be started with **and removed from itempool if dlc start with base is on**
     """Choose what base game items to start with in DLC Start.
     If there is no access to base game, items not started with will be randomized into the DLC.
     
@@ -242,6 +242,7 @@ class MapOption(Choice):
     
 class SmithingBellBearingOption(Choice):
     """Choose how smithing stone bell bearings are handled.
+    This doesn't work with dlc only, add them to starting inventory or they get randomized.
 
     - **Randomize:** Can be anywhere.
     - **Progression Randomize:** Make them a progression item, and be required for the area after they would normally be in.
@@ -253,7 +254,7 @@ class SmithingBellBearingOption(Choice):
     option_do_not_randomize = 2
     default = 1
     
-class SmoothUpgradeItems(Toggle): # these fail, Exception: ER bug: there are 518 locations that can contain smoothed items, but only 491 items to smooth.
+class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
     
