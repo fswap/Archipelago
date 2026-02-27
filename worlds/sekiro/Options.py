@@ -4,7 +4,6 @@ from typing import Any
 
 from Options import (
     Choice,
-    DeathLink,
     DefaultOnToggle,
     ExcludeLocations,
     OptionDict,
@@ -33,6 +32,25 @@ class VeryEarlyHirata(Choice):
     option_early_global = 1
     option_early_local = 2
     default = option_off
+
+class DeathLink(Choice):
+    """When you die, everyone who enabled death link dies. Of course, the reverse is true too.
+
+    - **Off:** Death link is disabled. (The default.)
+    - **Full Death:** Death link triggers only for full deaths. (No resurrection available or falling death).
+    - **Any Death:** Death link triggers anytime you hit 0 HP. (Usage can lead to angry cooperators.)
+    """
+    display_name = "Death Link"
+    option_off = 0
+    alias_false = 0
+    option_full_death = 1
+    alias_true = 1
+    option_any_death = 2
+    default = 0
+
+class RemoveHeadlessSlowWalk(Toggle):
+    """Remove the Headless-induced slow walk."""
+    display_name = "Remove Headless slow walk"
 
 ## Skills
 
@@ -183,6 +201,7 @@ class SekiroOptions(PerGameCommonOptions):
     quick_hirata: QuickHirata
     very_early_hirata: VeryEarlyHirata
     death_link: DeathLink
+    remove_headless_slow_walk: RemoveHeadlessSlowWalk
 
     # Skills
     shuffle_skills: ShuffleSkills

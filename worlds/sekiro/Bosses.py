@@ -1,8 +1,8 @@
 # In almost all cases, we leave boss and enemy randomization up to the static randomizer.
 # Edge cases may be necessary for Shichimen or similar, so keep this for now.
+# If no edge cases, remove this file and all references from init as it is not needed.
 
 from dataclasses import dataclass, field
-from typing import Set
 
 
 @dataclass
@@ -15,7 +15,7 @@ class SekiroBossInfo:
     id: int
     """The game's ID for this particular boss."""
 
-    locations: Set[str] = field(default_factory=set)
+    locations: set[str] = field(default_factory=set)
     """Additional individual locations that can't be accessed until the boss is dead."""
 
 

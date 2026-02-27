@@ -4,11 +4,10 @@
 # This script downloads the static randomizer's descriptions for each location and adds them to
 # the location documentation.
 
+from collections import defaultdict
 import html
 import os
 import re
-from collections import defaultdict
-
 import requests
 import yaml
 
@@ -18,7 +17,7 @@ location_re = re.compile(r"^([A-Z0-9]+): (.*?)(?:$| - )")
 
 if __name__ == "__main__":
     # TODO: update this to the main branch of the main randomizer once Archipelago support is merged
-    url = "https://raw.githubusercontent.com/yenix/SoulsRandomizers/archipelago-server/dists/Base/annotations.txt"
+    url = "https://raw.githubusercontent.com/yenix4/SoulsRandomizers/archipelago-server/dists/Base/annotations.txt"
     response = requests.get(url)
     if response.status_code != 200:
         raise Exception(f"Got {response.status_code} when downloading static randomizer locations")

@@ -634,9 +634,9 @@ class SekiroWorld(World):
                         (item.data.count == 1)
                     )
                 )
-
-        self.multiworld.completion_condition[self.player] = lambda state: (
-            self._can_get(state, "AR3: Memory: Saint Isshin - final boss drop"))
+        # Create event for multiworld completion to trigger only upon being sent by the client.
+        # That way, you only complete the game after the credits and doing the actual ending.
+        self.multiworld.completion_condition[self.player] = lambda state: state.has("Goal reached", self.player)
 
     def _add_prosthetic_rules(self) -> None:
         """Adds rules for items that need the prosthetic in case of early Hirata setting.
@@ -904,7 +904,7 @@ class SekiroWorld(World):
         # Add Carp locations for Carpsanity setting
         if self.options.carpsanity:
             diving.update({
-            "AC1: Treasure Carp Scale - underwater, below Ashina Castle idol, Carp drop",
+            "AC2: Treasure Carp Scale - underwater, below Ashina Castle idol, Carp drop",
             "HE1: Treasure Carp Scale - underwater, in Dragonspring Lake, Carp drop #1",
             "HE1: Treasure Carp Scale - underwater, in Dragonspring Lake, Carp drop #2",
             "HE1: Treasure Carp Scale - underwater, under Bamboo Thicket Slope bridge, Carp drop",
@@ -1099,6 +1099,7 @@ class SekiroWorld(World):
         slot_data = {
             "options": {
                 "death_link": self.options.death_link.value,
+                "remove_headless_slow_walk": self.options.remove_headless_slow_walk.value,
                 "shuffle_skills": self.options.shuffle_skills.value,
                 "randomize_enemies": self.options.randomize_enemies.value,
                 "randomize_headless": self.options.randomize_headless.value,
