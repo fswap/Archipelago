@@ -484,8 +484,6 @@ class EldenRing(World):
                         location.name in self.all_excluded_locations
                         and self.options.missable_location_behavior < self.options.excluded_location_behavior
                     )
-                    # always disable randomizing progression into missable if host disables
-                    or self.settings.disable_extreme_options and location.missable
                 ):
                     new_location.progress_type = LocationProgressType.EXCLUDED
             else:
@@ -552,7 +550,7 @@ class EldenRing(World):
                     dlc_item.data.found_in_dlc = True
                     self.local_itempool.append(dlc_item)
 
-        injectables, self.local_itempool = self._create_injectable_items(num_required_extra_items, self.local_itempool)
+        injectables = self._create_injectable_items(num_required_extra_items)
         num_required_extra_items -= len(injectables)
         self.local_itempool.extend(injectables)
 
@@ -565,7 +563,7 @@ class EldenRing(World):
         # Add items to itempool
         self.multiworld.itempool += self.local_itempool
 
-    def _create_injectable_items(self, num_required_extra_items: int, local_itempool: List) -> List[ERItem]:
+    def _create_injectable_items(self, num_required_extra_items: int) -> List[ERItem]:
         """Returns a list of items to inject into the multiworld instead of skipped items.
 
         If there isn't enough room to inject all the necessary progression items
@@ -628,9 +626,9 @@ class EldenRing(World):
             # continue till enough room to inject all
             req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
             while req > 0:
-                item = self.random.choice(local_itempool)
+                item = self.random.choice(self.local_itempool)
                 if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful: continue
-                local_itempool.remove(item)
+                self.local_itempool.remove(item)
                 req -= 1
             # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
             # for item in injectable_mandatory:
@@ -642,35 +640,14 @@ class EldenRing(World):
             #         f"inventory instead."
             #     )
 
-        return [self.create_item(item) for item in inj_items], local_itempool
+        return [self.create_item(item) for item in inj_items]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
 
         We can't do this in pre_fill because the itempool may not be modified after create_items.
         """
-        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
-            if self.options.crafting_kit_option.value == 1:
-                self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"])
-            elif self.options.crafting_kit_option.value == 2:
-                self.multiworld.get_location("LG/(CE): Crafting Kit - Kalé Shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
-                
-            if self.options.smithing_bell_bearing_option.value == 2:
-                self.multiworld.get_location("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [1]"))
-                self.multiworld.get_location("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [2]"))
-                self.multiworld.get_location("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [3]"))
-                self.multiworld.get_location("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [4]"))
-                self.multiworld.get_location("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [1]"))
-                self.multiworld.get_location("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [2]"))
-                self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
-                self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
-                self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
-        else:
-            if self.options.crafting_kit_option.value == 1:
-                self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
-            elif self.options.crafting_kit_option.value == 2:
-                self.multiworld.get_location("RH/DLC: Dagger - Twin maiden shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
-        
+        # place locked before _fill_local_item or it can place on one of them and error
         if self.options.map_option.value == 1:
             using_table = item_table_vanilla
             if self.options.enable_dlc: using_table = item_table
@@ -706,6 +683,30 @@ class EldenRing(World):
                 self.multiworld.get_location("CC/CCC: Map: Southern Shore - to N on path", self.player).place_locked_item(self.create_item("Map: Southern Shore"))
                 self.multiworld.get_location("RB/TTR: Map: Rauh Ruins - map pillar to E behind wall", self.player).place_locked_item(self.create_item("Map: Rauh Ruins"))
                 self.multiworld.get_location("AW/AC: Map: Abyss - map pillar NW of AC", self.player).place_locked_item(self.create_item("Map: Abyss"))
+                
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            if self.options.smithing_bell_bearing_option.value == 2:
+                self.multiworld.get_location("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [1]"))
+                self.multiworld.get_location("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [2]"))
+                self.multiworld.get_location("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [3]"))
+                self.multiworld.get_location("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [4]"))
+                self.multiworld.get_location("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [1]"))
+                self.multiworld.get_location("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [2]"))
+                self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
+                self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
+                self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
+            
+            if self.options.crafting_kit_option.value == 1:
+                self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"])
+            elif self.options.crafting_kit_option.value == 2:
+                self.multiworld.get_location("LG/(CE): Crafting Kit - Kalé Shop", self.player).place_locked_item(self.create_item("Crafting Kit"))    
+        else:
+            if self.options.crafting_kit_option.value == 1:
+                self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
+            elif self.options.crafting_kit_option.value == 2:
+                self.multiworld.get_location("RH/DLC: Dagger - Twin maiden shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
+        
+
 
     def _fill_local_item(
         self, name: str,
