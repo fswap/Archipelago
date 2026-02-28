@@ -622,14 +622,14 @@ class EldenRing(World):
         )
 
         if number_to_inject < len(injectable_mandatory):
-            # find random item in list, check to see if its needed, remove
+            # find random item in list, check to see if its a replacable, then remove
             # continue till enough room to inject all
             req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
             while req > 0:
                 item = self.random.choice(self.local_itempool)
-                if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful: continue
-                self.local_itempool.remove(item)
-                req -= 1
+                if item.replacable:
+                    self.local_itempool.remove(item)
+                    req -= 1
             # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
             # for item in injectable_mandatory:
             #     if item in inj_items: continue
