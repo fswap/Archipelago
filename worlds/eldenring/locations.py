@@ -5956,7 +5956,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/FR: Battlefield Priest's Cookbook [2] - in chest to S inside, very top of tower", "Battlefield Priest's Cookbook [2]", key="614943,0:0000068820::", cookbook=True, chest=True),
         ERLocationData("SA/MR: Dragon Heart - boss drop to S", "Dragon Heart", key="614943,0:0000530945::", altboss=True, dragonboss=True, nocrawl=True, overworldboss=True, scadualtus_boss=True),
         ERLocationData("SA/MR: Somber Ancient Dragon Smithing Stone - boss drop to S", "Somber Ancient Dragon Smithing Stone", key="614943,0:0000530945::", altboss=True, dragonboss=True, nocrawl=True, overworldboss=True, scadualtus_boss=True),
-        ERLocationData("SA?FR: Ash of War: Aspects of the Crucible: Wings - boss drop to S inside", "Ash of War: Aspects of the Crucible: Wings", key="614943,0:0000530965::", altboss=True, nocrawl=True, overworldboss=True, scadualtus_boss=True),
+        ERLocationData("SA/FR: Ash of War: Aspects of the Crucible: Wings - boss drop to S inside", "Ash of War: Aspects of the Crucible: Wings", key="614943,0:0000530965::", altboss=True, nocrawl=True, overworldboss=True, scadualtus_boss=True),
         ERLocationData("SA/MR: Repeating Crossbow - to S back right of burnt camp", "Repeating Crossbow", key="614943,0:2049437000::"),
         ERLocationData("SA/MHS: Rune Arc - to SW along cliff", "Rune Arc", key="614943,0:2049437200::"),
         ERLocationData("SA/FR: Blessed Bone Shard - to NW, hanging off scaffolding", "Blessed Bone Shard", key="614943,0:2049437210::"),

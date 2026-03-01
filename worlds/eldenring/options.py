@@ -313,6 +313,7 @@ class ERImportantLocationGroups(OptionList):
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
+    display_name = "Important at Priority Only"
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
