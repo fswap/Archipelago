@@ -69,48 +69,40 @@ class EldenRing(World):
     def generate_early(self) -> None:
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
-        # self.all_priority_locations.update(self.options.priority_locations.value)
+        self.all_priority_locations.update(self.options.priority_locations.value)
 
-        for locations in location_tables.values(): # this didn't work :(
+        for locations in location_tables.values():
             for loc in locations:
-                for loc_type in self.options.important_locations.value:
-                    match loc_type.lower():
-                        case "remembrance":
-                            if loc.remembrance:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "seedtree":
-                            if loc.seedtree:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "basin":
-                            if loc.basin:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "church":
-                            if loc.church:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "map":
-                            if loc.map:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "fragment":
-                            if loc.fragment and self.options.enable_dlc:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "cross":
-                            if loc.cross and self.options.enable_dlc:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "revered":
-                            if loc.revered and self.options.enable_dlc:
-                                self.all_priority_locations.update({loc.name})
-                            break
-                        case "keyitem":
-                            if loc.keyitem:
-                                self.all_priority_locations.update({loc.name})
-                            break
+                for loc_type in self.options.important_location_groups.value:
+                    if (self.options.dlc_start == 1 and self.options.enable_dlc and loc.dlc # dlc items only
+                        or self.options.dlc_start != 1 and self.options.enable_dlc # all items
+                        or not self.options.enable_dlc and not loc.dlc): # base items only
+                        if loc_type.lower() == "remembrance" and loc.remembrance:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "seedtree" and loc.seedtree:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "basin" and loc.basin:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "church" and loc.church:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "map" and loc.map:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "keyitem" and loc.keyitem:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "fragment" and loc.fragment:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "cross" and loc.cross:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "revered" and loc.revered:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "bosses" and (
+                            loc.name in self.location_name_groups["Boss Reward"]
+                            or loc.name in self.location_name_groups["Boss Reward DLC"] and self.options.enable_dlc
+                            ): self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "overworld bosses" and (
+                            loc.name in self.location_name_groups["Boss Reward"] & self.location_name_groups["Overworld Bosses"]
+                            or loc.name in self.location_name_groups["Boss Reward DLC"] & self.location_name_groups["Overworld Bosses"] and self.options.enable_dlc
+                            ): self.all_priority_locations.add(loc.name)
         
         if self.settings.disable_extreme_options:
             if not self.options.local_item_option:
@@ -464,18 +456,8 @@ class EldenRing(World):
                 
                 # set priority before excluded so that progression items dont go into excluded locations
                 if location.name in self.all_priority_locations:
-                    new_location.progress_type = LocationProgressType.PRIORITY
-                    
-                    # dupe priority location, need to figure out how to add to location_tables so no key error
-                    # location.name = f"Dupe: {location.name}"
-                    # dupe_location = ERLocation(
-                    #     self.player,
-                    #     location,
-                    #     parent = new_region,
-                    #     event = True,
-                    # )
-                    # new_region.locations.append(dupe_location)
-                    
+                    new_location.progress_type = LocationProgressType.PRIORITY  
+                
                 if (
                     # Exclude missable locations that don't allow useful items
                     location.missable and self.options.missable_location_behavior == "forbid_useful"
@@ -517,6 +499,7 @@ class EldenRing(World):
         # Gather all default items on randomized locations
         self.local_itempool = []
         num_required_extra_items = 0
+        total_important_items = 0
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
             if not self._is_location_available(location.name):
                 raise Exception("ER generation bug: Added an unavailable location.")
@@ -542,6 +525,10 @@ class EldenRing(World):
             if item.skip or skip_item:
                 num_required_extra_items += 1
             else:
+                if self.options.important_at_priority_only:
+                    if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful:
+                        total_important_items += 1
+                
                 if not location.data.dlc:
                     self.local_itempool.append(self.create_item(default_item_name))
                 elif location.data.dlc:
@@ -549,6 +536,9 @@ class EldenRing(World):
                     dlc_item = self.create_item(default_item_name)
                     dlc_item.data.found_in_dlc = True
                     self.local_itempool.append(dlc_item)
+                    
+        if self.options.important_at_priority_only:
+            num_required_extra_items += self._create_dupe_locations(total_important_items)
 
         injectables = self._create_injectable_items(num_required_extra_items)
         num_required_extra_items -= len(injectables)
@@ -562,6 +552,51 @@ class EldenRing(World):
 
         # Add items to itempool
         self.multiworld.itempool += self.local_itempool
+        
+    def _create_dupe_locations(self, total_important_items: int) -> int: 
+        #WIP, if a location has a rule on it the dupe doesn't have it, dont know solution yet
+        
+        """Create duplicate locations for priority locations."""
+        
+        # WIP, if a item gets manually placed it should be removed from total_important_items, need to do the rest of manually placed items
+        if self.options.crafting_kit_option != 0: total_important_items -= 1
+        if (self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc
+            ) and self.options.smithing_bell_bearing_option.value == 2: total_important_items -= 9
+        
+        if len(self.all_priority_locations) < int(total_important_items/8):
+            warning(f"There are to little priority locations to dupe, {int(total_important_items/8)} minimum.")
+        elif len(self.all_priority_locations) < total_important_items: # do we need to dupe
+            times_duped = {}
+            new_locations = []
+            new_code = len(location_dictionary)
+            for _ in range(total_important_items - len(self.all_priority_locations)): # how many dupes
+                location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
+                
+                for region in self.multiworld.get_regions(self.player):
+                    for loc in region.locations:
+                        if location == loc.name:
+                            if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
+                            else: times_duped[location] = 1 # add to dict
+                            new_loc = location_dictionary[location]
+                            new_loc.name = f"Dupe {times_duped[location]}: {location}"
+                            new_loc.default_item_name = "Dummy item"
+                            new_code += 1
+                            new_loc.ap_code = 7000000 + new_code
+                            dupe_location = ERLocation(
+                                self.player,
+                                new_loc,
+                                parent = region,
+                            )
+                            dupe_location.progress_type = LocationProgressType.PRIORITY
+                            region.locations.append(dupe_location)
+                            new_locations.append(dupe_location)
+            
+            self.location_name_to_id.update({ # add new locations
+                location.name: 7000000 + len(location_dictionary) + num
+                for num, location in enumerate(new_locations, start=1)
+            })
+            return len(new_locations)
+        return 0
 
     def _create_injectable_items(self, num_required_extra_items: int) -> List[ERItem]:
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -627,7 +662,7 @@ class EldenRing(World):
             req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
             while req > 0:
                 item = self.random.choice(self.local_itempool)
-                if item.replacable:
+                if item.data.replacable:
                     self.local_itempool.remove(item)
                     req -= 1
             # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
@@ -2806,7 +2841,8 @@ class EldenRing(World):
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
                 "local_item_option": self.options.local_item_option.value,
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
-                "important_locations": self.options.important_locations.value,
+                "important_location_groups": self.options.important_location_groups.value,
+                "important_at_priority_only": self.options.important_at_priority_only.value,
                 "exclude_locations": self.options.exclude_locations.value,
                 "excluded_location_behavior": self.options.excluded_location_behavior.value,
                 "missable_location_behavior": self.options.missable_location_behavior.value,

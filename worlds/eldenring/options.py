@@ -290,26 +290,29 @@ class ExcludeLocalItemOnly(OptionList):
     default = ["Weapon", "Armor", "Accessory", "AshofWar"]
     valid_keys_casefold = ["Weapon", "Armor", "Accessory", "AshofWar", "Goods"]
     
-class ERImportantLocations(OptionList):
+class ERImportantLocationGroups(OptionList):
     """Prevent these location types from having an unimportant items.
-    - [Checks] **Locations**
-    - [25] *Remembrance*: Main boss Remembrances.
-    - [33] *Seedtree*: Golden Seed trees.
-    - [13] *Basin*: Basins that contain tears.
-    - [12] *Church*: Sacred Tears.
-    - [24] *Map*: Map pillars.
-    - [52] *Fragment*: Scadu Fragments.
-    - [13] *Cross*: All cross items.
-    - [26] *Revered*: Revered Spirit Ashes.
-    - [21] *KeyItem*: Key items.
     
-    The *total* amount of priority checks should be below:
-    - **Vanilla**: [90] 
-    - **DLC**: [120]
+    - *Remembrance*: Main boss Remembrances.
+    - *Seedtree*: Golden Seed trees.
+    - *Basin*: Basins that contain tears.
+    - *Church*: Sacred Tears.
+    - *Map*: Map pillars.
+    - *Fragment*: Scadu Fragments.
+    - *Cross*: All cross items.
+    - *Revered*: Revered Spirit Ashes.
+    - *KeyItem*: Key items.
+    - *Bosses*: All bosses.
+    - *Overworld Bosses*: All overworld bosses.
     """
-    display_name = "Important Locations"
-    default = ["Remembrance", "Seedtree", "Map"]
-    valid_keys_casefold = ["Remembrance", "Seedtree", "Basin", "Church", "Map", "Fragment", "Cross", "Revered", "KeyItem"]
+    display_name = "Important Location Groups"
+    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross"]
+    valid_keys_casefold = ["Remembrance", "Seedtree", "Basin", "Church", "Map", 
+                           "Fragment", "Cross", "Revered", "KeyItem", "Bosses", "Overworld Bosses"]
+    
+class ERImportantAtPriorityOnly(Toggle):
+    """Should important items be only at priority locations.
+    If the total amount of priority checks are low there will be like 20 items on each location."""
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
@@ -398,7 +401,8 @@ class EROptions(PerGameCommonOptions):
     early_legacy_dungeons:EarlyLegacyDungeonsEarly
     local_item_option: LocalItemOnly
     exclude_local_item_only: ExcludeLocalItemOnly
-    important_locations: ERImportantLocations
+    important_location_groups: ERImportantLocationGroups
+    important_at_priority_only: ERImportantAtPriorityOnly
     exclude_locations: ERExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
@@ -447,7 +451,8 @@ option_groups = [
         EarlyLegacyDungeonsEarly,
         LocalItemOnly,
         ExcludeLocalItemOnly,
-        ERImportantLocations,
+        ERImportantLocationGroups,
+        ERImportantAtPriorityOnly,
         ERExcludeLocations,
         ExcludedLocationBehaviorOption,
         MissableLocationBehaviorOption,

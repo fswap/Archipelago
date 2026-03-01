@@ -2147,6 +2147,7 @@ _vanilla_items = [
     ERItemData("Dolores the Sleeping Arrow Puppet", 262000, ERItemCategory.GOODS),
     ERItemData("Jarwight Puppet", 263000, ERItemCategory.GOODS),
     
+    ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable, and dupe priority locations
     
     #MARK: Region Lock Items
     ERItemData("Weeping Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
@@ -2816,8 +2817,6 @@ _dlc_items = [
     ERItemData("Fire Knight Queelign", 2218000, ERItemCategory.GOODS),
     ERItemData("Swordhand of Night Jolán", 2219000, ERItemCategory.GOODS),
     ERItemData("Jolán and Anna", 2220000, ERItemCategory.GOODS),
-    
-    ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable
     
     #MARK: DLC Region Lock Items
     ERItemData("Gravesite Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
