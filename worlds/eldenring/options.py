@@ -153,7 +153,7 @@ class DLCStart(Choice):
     option_dlc_start_with_base = 2
     default = 0
     
-class DLCStartingItems(OptionDict): # TODO when client started, items are added and removed from the itempool, *need to be started with*
+class DLCStartingItems(OptionList):
     """Choose what base game items to start with in DLC Start.
     If there is no access to base game, items not started with will be randomized into the DLC.
     
@@ -165,10 +165,11 @@ class DLCStartingItems(OptionDict): # TODO when client started, items are added 
     - **Upgrade Bell Bearings**"""
     display_name = "DLC Starting Items"
     supports_weighting = False
-    default = {}
+    default = ["Talisman Pouches", "Whetblades"]
 
-    valid_keys = ["Sacred Tears", "Golden Seeds", "Talisman Pouches", 
-                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings"]
+    valid_keys = ["sacred tears", "golden seeds", "talisman pouches", 
+                  "memory stones", "whetblades", "upgrade bell bearings"]
+    valid_keys_casefold = True
 
 class DLCStartingShop(Toggle): # just the static rando option
     """Add a shop at grace with all base game equipment for free."""
@@ -245,7 +246,7 @@ class SmithingBellBearingOption(Choice):
     This doesn't work with dlc only, add them to starting inventory or they get randomized.
 
     - **Randomize:** Can be anywhere.
-    - **Progression Randomize:** Make them a progression item, and be required for the area after they would normally be in.
+    - **Progression Randomize:** Make them a progression item, and be required for the area after they would normally be in and for DLC.
     - **Do Not Randomize:** Leave them at their normal spots.
     """
     display_name = "Smithing Bell Bearing Behavior"
@@ -288,7 +289,8 @@ class ExcludeLocalItemOnly(OptionList):
     """
     display_name = "Exclude Local Item Only"
     default = ["Weapon", "Armor", "Accessory", "AshofWar"]
-    valid_keys_casefold = ["Weapon", "Armor", "Accessory", "AshofWar", "Goods"]
+    valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
+    valid_keys_casefold = True
     
 class ERImportantLocationGroups(OptionList):
     """Prevent these location types from having an unimportant items.
@@ -307,8 +309,9 @@ class ERImportantLocationGroups(OptionList):
     """
     display_name = "Important Location Groups"
     default = ["Remembrance", "Seedtree", "Map", "Church", "Cross"]
-    valid_keys_casefold = ["Remembrance", "Seedtree", "Basin", "Church", "Map", 
-                           "Fragment", "Cross", "Revered", "KeyItem", "Bosses", "Overworld Bosses"]
+    valid_keys = ["remembrance", "seedtree", "basin", "church", "map", 
+                           "fragment", "cross", "revered", "keyitem", "bosses", "overworld bosses"]
+    valid_keys_casefold = True
     
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
@@ -322,7 +325,8 @@ class ERExcludeLocations(ExcludeLocations):
     - **blizzard**: The hard to see area of snowfield."""
     default = frozenset({}) # still errors
     # Exception: Location 'hidden' from option 'ERExcludeLocations(hidden)' is not a valid location name from 'EldenRing'. Did you mean 'RH: Mace - Twin maiden shop' (18% sure)
-    valid_keys_casefold = ["dlc", "hidden", "blizzard"]
+    valid_keys = ["dlc", "hidden", "blizzard"]
+    valid_keys_casefold = True
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
