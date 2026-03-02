@@ -292,7 +292,7 @@ class ExcludeLocalItemOnly(OptionList):
     valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
     valid_keys_casefold = True
     
-class ERImportantLocationGroups(OptionList):
+class ERPriorityLocationGroups(OptionList):
     """Prevent these location types from having an unimportant items.
     
     - *Remembrance*: Main boss Remembrances.
@@ -307,8 +307,8 @@ class ERImportantLocationGroups(OptionList):
     - *Bosses*: All bosses.
     - *Overworld Bosses*: All overworld bosses.
     """
-    display_name = "Important Location Groups"
-    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross"]
+    display_name = "Priority Location Groups"
+    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Bosses"]
     valid_keys = ["remembrance", "seedtree", "basin", "church", "map", 
                            "fragment", "cross", "revered", "keyitem", "bosses", "overworld bosses"]
     valid_keys_casefold = True
@@ -317,6 +317,14 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
     display_name = "Important at Priority Only"
+    
+class FlaskUpgradesAtPriority(Toggle):
+    "Should flask upgrades be randomized to important locations."
+    display_name = "Flask Upgrades at Priority"
+    
+class ScaduAtPriority(Toggle):
+    "Should scadu fragments be randomized to important locations."
+    display_name = "Scadutree Fragments at Priority"
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
@@ -406,8 +414,10 @@ class EROptions(PerGameCommonOptions):
     early_legacy_dungeons:EarlyLegacyDungeonsEarly
     local_item_option: LocalItemOnly
     exclude_local_item_only: ExcludeLocalItemOnly
-    important_location_groups: ERImportantLocationGroups
+    priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
+    flask_at_priority: FlaskUpgradesAtPriority
+    scadu_at_priority: ScaduAtPriority
     exclude_locations: ERExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
@@ -456,10 +466,14 @@ option_groups = [
         EarlyLegacyDungeonsEarly,
         LocalItemOnly,
         ExcludeLocalItemOnly,
-        ERImportantLocationGroups,
-        ERImportantAtPriorityOnly,
         ERExcludeLocations,
         ExcludedLocationBehaviorOption,
         MissableLocationBehaviorOption,
+    ]),
+    OptionGroup("Priority Location Rules", [
+        ERPriorityLocationGroups,
+        ERImportantAtPriorityOnly,
+        FlaskUpgradesAtPriority,
+        ScaduAtPriority,
     ])
 ]

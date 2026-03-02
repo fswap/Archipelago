@@ -77,7 +77,7 @@ class EldenRing(World):
 
         for locations in location_tables.values():
             for loc in locations:
-                for loc_type in self.options.important_location_groups.value:
+                for loc_type in self.options.priority_location_groups.value:
                     if (self.options.dlc_start == 1 and self.options.enable_dlc and loc.dlc # dlc items only
                         or self.options.dlc_start != 1 and self.options.enable_dlc # all items
                         or not self.options.enable_dlc and not loc.dlc): # base items only
@@ -141,9 +141,16 @@ class EldenRing(World):
                     if item == "Gravesite Lock" and self.options.dlc_start != 0 and self.options.enable_dlc:
                         item_table[item].inject = False # dont need gravesite lock if starting in dlc
         
+        if not self.options.flask_at_priority:
+            item_table["Golden Seed"].classification = ItemClassification.deprioritized
+            item_table["Sacred Tear"].classification = ItemClassification.deprioritized
+        
         if self.options.enable_dlc:
             # warming stone craft
             # item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
+            
+            if not self.options.scadu_at_priority:
+                item_table["Scadutree Fragment"].classification = ItemClassification.deprioritized
             
             if self.options.dlc_timing != 2 and self.options.dlc_start != 1:
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
@@ -574,7 +581,7 @@ class EldenRing(World):
         
         if len(self.all_priority_locations) < int(len(total_important_items)/8):
             warning(f"There are to little priority locations {len(self.all_priority_locations)}, there will be a lot of items at each spot.")
-        if len(self.all_priority_locations) > len(total_important_items): # do we need to dupe
+        if len(self.all_priority_locations) < len(total_important_items): # do we need to dupe
             base_priority_loc = []
             dlc_priority_loc = []
             for loc in self.all_priority_locations:
@@ -693,7 +700,7 @@ class EldenRing(World):
         inj_items = (
             self.random.sample(
                 injectable_mandatory,
-                k=max(len(injectable_mandatory), number_to_inject)
+                k=min(len(injectable_mandatory), number_to_inject)
             )
             + self.random.sample(
                 injectable_optional,
@@ -1134,9 +1141,9 @@ class EldenRing(World):
                                 lambda item: # other worlds progression should not be placed out of priority
                                     # not item.data.classification == ItemClassification.useful # not enough location error
                                     not item.data.classification == ItemClassification.progression
-                                    and not item.data.classification == ItemClassification.progression_deprioritized_skip_balancing
+                                    # and not item.data.classification == ItemClassification.progression_deprioritized_skip_balancing
                                     and not item.data.classification == ItemClassification.progression_skip_balancing
-                                    and not item.data.classification == ItemClassification.progression_deprioritized
+                                    # and not item.data.classification == ItemClassification.progression_deprioritized
                                 )
             
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations                              V removes "Dupe #: "
@@ -2913,7 +2920,7 @@ class EldenRing(World):
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
                 "local_item_option": self.options.local_item_option.value,
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
-                "important_location_groups": self.options.important_location_groups.value,
+                "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
                 "exclude_locations": self.options.exclude_locations.value,
                 "excluded_location_behavior": self.options.excluded_location_behavior.value,
