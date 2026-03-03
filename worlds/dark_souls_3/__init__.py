@@ -681,6 +681,7 @@ class DarkSouls3World(World):
                 "IBV: Mirrah Chain Mail - bridge after Creighton invades",
                 "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
                 "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
+                "IBV: Dragonslayer's Axe - Creighton drop",
             ], "Phantom Hunters")
 
             # Note: Ringed City invasions don't require ember in vanilla, so they don't require
@@ -1082,7 +1083,10 @@ class DarkSouls3World(World):
 
         ## Sirris
 
-        # Kill Greatwood and turn in Dreamchaser's Ashes to trigger this opportunity for invasion
+        # Kill Greatwood, turn in Dreamchaser's Ashes, and pass the Irithyll
+        # gateway to trigger this opportunity for invasion. (These locations are
+        # in the IBV region so we don't need to explicitly mark Small Doll as a
+        # requirement).
         self._add_location_rule([
             "FS: Mail Breaker - Sirris for killing Creighton",
             "FS: Silvercat Ring - Sirris for killing Creighton",
@@ -1091,44 +1095,34 @@ class DarkSouls3World(World):
             "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
             "IBV: Mirrah Chain Mail - bridge after Creighton invades",
             "IBV: Dragonslayer's Axe - Creighton drop",
-            # Killing Pontiff without progressing Sirris's quest will break it.
-            "IBV: Soul of Pontiff Sulyvahn"
         ], lambda state: (
             self._can_get(state, "US: Soul of the Rotted Greatwood")
             and state.has("Dreamchaser's Ashes", self.player)
         ))
-        # Add indirect condition since reaching AL requires defeating Pontiff which requires defeating Greatwood in US
-        self.multiworld.register_indirect_condition(
-            self.get_region("Undead Settlement"),
-            self.get_entrance("Go To Anor Londo")
-        )
 
         # Kill Creighton and Aldrich to trigger this opportunity for invasion
         self._add_location_rule([
             "FS: Budding Green Blossom - shop after killing Creighton and AL boss",
             "FS: Sunset Shield - by grave after killing Hodrick w/Sirris",
             "US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris",
-            "US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris",
+            "US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris",
         ], lambda state: (
             self._can_get(state, "FS: Mail Breaker - Sirris for killing Creighton")
             and self._can_get(state, "AL: Soul of Aldrich")
         ))
 
-        # Kill Hodrick and Twin Princes to trigger the end of the quest
+        # Kill Hodrick then kill Twin Princes to trigger the end of the quest
         self._add_location_rule([
             "FS: Sunless Talisman - Sirris, kill GA boss",
             "FS: Sunless Veil - shop, Sirris quest, kill GA boss",
             "FS: Sunless Armor - shop, Sirris quest, kill GA boss",
             "FS: Sunless Gauntlets - shop, Sirris quest, kill GA boss",
             "FS: Sunless Leggings - shop, Sirris quest, kill GA boss",
-            # Killing Yorshka will anger Sirris and stop her quest, so don't expect it until the
-            # quest is done
-            "AL: Yorshka's Chime - kill Yorshka",
         ], lambda state: (
-            self._can_get(state, "US: Soul of the Rotted Greatwood")
-            and state.has("Dreamchaser's Ashes", self.player)
+            self._can_get(state, "FS: Sunset Shield - by grave after killing Hodrick w/Sirris")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         ## Cornyx
