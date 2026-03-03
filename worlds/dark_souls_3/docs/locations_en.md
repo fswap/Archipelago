@@ -171,6 +171,11 @@ following NPCs' quests are supported:
   you beat a boss, Patches will return from Irithyll if you've already beaten
   the Grand Archives boss.
 
+* **Rosaria** won't let you join her covenant until you've shown Ringfinger
+  Leonhard a Pale Tongue, to make sure you don't use them all on her before
+  starting his quest. Her Black Eye Orb drop isn't randomized so you can't
+  invade Leonhard until his quest is otherwise complete.
+
 * **Karla** can't be killed for her drops until you've given her all four tomes
   that she accepts.
 
