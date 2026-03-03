@@ -1324,10 +1324,7 @@ class DarkSouls3World(World):
 
     def _is_complete(self, state: CollectionState) -> bool:
         """Whether the given state has achieved the victory condition."""
-        all(
-            state.can_reach_location(next(iter(boss.locations)), self.player)
-            for boss in self._goal_bosses()
-        )
+        return all(self._can_get(state, next(iter(boss.locations))) for boss in self._goal_bosses())
 
     def _has_any_scroll(self, state: CollectionState) -> bool:
         """Returns whether the given state has any scroll item."""
