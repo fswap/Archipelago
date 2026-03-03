@@ -697,6 +697,7 @@ class DarkSouls3World(World):
                 "IBV: Mirrah Chain Mail - bridge after Creighton invades",
                 "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
                 "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
+                "IBV: Dragonslayer's Axe - Creighton drop",
             ], "Phantom Hunters")
 
             # Note: Ringed City invasions don't require ember in vanilla, so they don't require
@@ -1026,26 +1027,32 @@ class DarkSouls3World(World):
 
         ## Leonhard
 
-        self._add_location_rule([
-            # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or
-            # killing Greatwood. This doesn't consume the Pale Tongue, it just has to be in
-            # inventory
-            "FS: Lift Chamber Key - Leonhard",
-            # Progress Leonhard's quest and then return to Rosaria after lighting Profaned Capital
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
-        ], "Pale Tongue")
+        # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or killing
+        # Greatwood. This doesn't consume the Pale Tongue, it just has to be in inventory
+        self._add_location_rule(["FS: Lift Chamber Key - Leonhard"], "Pale Tongue")
 
+        # In unmissable quests mode, we block entry into Rosaria's covenant until Leonhard has given
+        # the Lift Chamber Key lot to avoid the possibility of the player giving Rosaria all the
+        # Pale Tongues they have access to before progressing Leonhard's quest.
+        if self.options.unmissable_quests:
+            self._add_location_rule(
+                ["CD: Rosaria's Fingers - Rosaria"],
+                lambda state: self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            )
+
+        # The Black Eye Orb location won't spawn until you progress Leonhard's quest, kill the
+        # HWL miniboss, and rest at the Profaned Capital bonfire.
         self._add_location_rule([
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
+            "CD: Black Eye Orb - Rosaria from Leonhard's quest"
         ], lambda state: (
-            # The Black Eye Orb location won't spawn until you kill the HWL miniboss and resting at
-            # the Profaned Capital bonfire.
-            self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
+            self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            and self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
             and self._can_go_to(state, "Profaned Capital")
         ))
 
-        # Perhaps counterintuitively, you CAN fight Leonhard before you access the location that
-        # would normally give you the Black Eye Orb.
+        # Perhaps counterintuitively, in missable-quests mode you CAN fight Leonhard before you
+        # access the location that would normally give you the Black Eye Orb. In unmissbale quests
+        # mode, we prevent this by not randomizing the Black Eye Orb at all.
         self._add_location_rule([
             "AL: Crescent Moon Sword - Leonhard drop",
             "AL: Silver Mask - Leonhard drop",
@@ -1099,7 +1106,10 @@ class DarkSouls3World(World):
 
         ## Sirris
 
-        # Kill Greatwood and turn in Dreamchaser's Ashes to trigger this opportunity for invasion
+        # Kill Greatwood, turn in Dreamchaser's Ashes, and pass the Irithyll
+        # gateway to trigger this opportunity for invasion. (These locations are
+        # in the IBV region so we don't need to explicitly mark Small Doll as a
+        # requirement).
         self._add_location_rule([
             "FS: Mail Breaker - Sirris for killing Creighton",
             "FS: Silvercat Ring - Sirris for killing Creighton",
@@ -1108,44 +1118,34 @@ class DarkSouls3World(World):
             "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
             "IBV: Mirrah Chain Mail - bridge after Creighton invades",
             "IBV: Dragonslayer's Axe - Creighton drop",
-            # Killing Pontiff without progressing Sirris's quest will break it.
-            "IBV: Soul of Pontiff Sulyvahn"
         ], lambda state: (
             self._can_get(state, "US: Soul of the Rotted Greatwood")
             and state.has("Dreamchaser's Ashes", self.player)
         ))
-        # Add indirect condition since reaching AL requires defeating Pontiff which requires defeating Greatwood in US
-        self.multiworld.register_indirect_condition(
-            self.get_region("Undead Settlement"),
-            self.get_entrance("Go To Anor Londo")
-        )
 
         # Kill Creighton and Aldrich to trigger this opportunity for invasion
         self._add_location_rule([
             "FS: Budding Green Blossom - shop after killing Creighton and AL boss",
             "FS: Sunset Shield - by grave after killing Hodrick w/Sirris",
             "US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris",
-            "US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris",
+            "US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris",
         ], lambda state: (
             self._can_get(state, "FS: Mail Breaker - Sirris for killing Creighton")
             and self._can_get(state, "AL: Soul of Aldrich")
         ))
 
-        # Kill Hodrick and Twin Princes to trigger the end of the quest
+        # Kill Hodrick then kill Twin Princes to trigger the end of the quest
         self._add_location_rule([
             "FS: Sunless Talisman - Sirris, kill GA boss",
             "FS: Sunless Veil - shop, Sirris quest, kill GA boss",
             "FS: Sunless Armor - shop, Sirris quest, kill GA boss",
             "FS: Sunless Gauntlets - shop, Sirris quest, kill GA boss",
             "FS: Sunless Leggings - shop, Sirris quest, kill GA boss",
-            # Killing Yorshka will anger Sirris and stop her quest, so don't expect it until the
-            # quest is done
-            "AL: Yorshka's Chime - kill Yorshka",
         ], lambda state: (
-            self._can_get(state, "US: Soul of the Rotted Greatwood")
-            and state.has("Dreamchaser's Ashes", self.player)
+            self._can_get(state, "FS: Sunset Shield - by grave after killing Hodrick w/Sirris")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         ## Cornyx
@@ -1511,25 +1511,16 @@ class DarkSouls3World(World):
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
 
         missable = data.is_missable(self.options)
-        if (
-            self.options.missable_location_behavior == "do_not_randomize"
-            and missable
-        ):
-            return _LocationStatus.UNRANDOMIZED_MISSABLE
-        elif (
-            self.options.excluded_location_behavior == "do_not_randomize"
-            and data.name in self.all_excluded_locations
-        ):
-            return (
-                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
-                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
-            )
-        else:
+        if data.should_randomize(self.options):
             return (
                 _LocationStatus.RANDOMIZED_MISSABLE if missable
                 else _LocationStatus.RANDOMIZED_UNMISSABLE
             )
-
+        else:
+            return (
+                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
+                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
+            )
 
     def _goal_bosses(self) -> [DS3BossInfo]:
         """Returns all the bosses that are goals for this run."""

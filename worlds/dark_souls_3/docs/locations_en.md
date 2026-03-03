@@ -122,6 +122,9 @@ This option makes quest-related NPCs immortal and updates their quests to
 remove places where they can be missed or failed entirely. Currently the
 following NPCs' quests are supported:
 
+* **Shrine Handmaid**: You can't refuse to tell her where you found
+  Dreamchaser's Ashes.
+
 * **Greirat** will always survive pillaging Irithyll. He will return once
   Patches leaves to rescue him; Siegward cannot save him. In addition to
   returning from his trips after you beat a boss, he'll return immediately from
@@ -142,6 +145,9 @@ following NPCs' quests are supported:
   starting class. He can't be killed for his drops until you've given him all
   three Pyromancy Tomes that he accepts.
 
+* **Hodrick** won't die until you've received the replacement for the
+  Mound-makers covenant from him.
+
 * **Siegward** won't leave the upper undead settlement or the Irithyll kitchen
   until he's given you a Siegbräu. He can be rescued from the well by giving him
   all four pieces of his armor set, which are now progression items. If you kill
@@ -159,6 +165,9 @@ following NPCs' quests are supported:
 
 * **Horace** can't be killed until he goes hollow.
 
+* **Sirris** won't abandon you if you join Rosaria's Fingers. You can't skip her
+  invasion of Creighton by invading Hodrick first.
+
 * **Patches** will only appear in the cathedral after you get your first
   Siegbräu from Siegward. He will appear even if the Rosaria's Bed Chamber
   bonfire is already lit. You cannot claim not to know him, and he won't leave
@@ -170,6 +179,11 @@ following NPCs' quests are supported:
   In addition to returning from his trips to Irithyll and Grand Archives after
   you beat a boss, Patches will return from Irithyll if you've already beaten
   the Grand Archives boss.
+
+* **Rosaria** won't let you join her covenant until you've shown Ringfinger
+  Leonhard a Pale Tongue, to make sure you don't use them all on her before
+  starting his quest. Her Black Eye Orb drop isn't randomized so you can't
+  invade Leonhard until his quest is otherwise complete.
 
 * **Karla** can't be killed for her drops until you've given her all four tomes
   that she accepts.
@@ -2376,10 +2390,10 @@ static _Dark Souls III_ randomizer].
 <tr><td>US: Soul of an Unknown Traveler - portcullis by burning tree</td><td>Behind a grate to the left of the burning tree and Cathedral Evangelist</td></tr>
 <tr><td>US: Soul of the Rotted Greatwood</td><td>Dropped by Curse Rotted Greatwood</td></tr>
 <tr><td>US: Spotted Whip - by Cornyx&#x27;s cage after Cuculus quest</td><td>Appears next to Cornyx&#x27;s cage after defeating Old Demon King with Cuculus surviving</td></tr>
-<tr><td>US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
-<tr><td>US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
 <tr><td>US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
-<tr><td>US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
 <tr><td>US: Titanite Shard - back alley, side path</td><td>On a side path to the right of the Cathedral Evangelist before the Dilapidated Bridge bonfire</td></tr>
 <tr><td>US: Titanite Shard - back alley, up ladder</td><td>Next to the Cathedral Evangelist close to the Dilapidated Bridge bonfire</td></tr>
 <tr><td>US: Titanite Shard - chasm #1</td><td>In the ravine accessible from Grave Key or dropping down from near Eygon</td></tr>
