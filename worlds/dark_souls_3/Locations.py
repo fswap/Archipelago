@@ -849,8 +849,9 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("US: Siegbräu - Siegward", "Siegbräu", missable=missable_quest, npc=True),
         DS3LocationData("US: Vertebra Shackle - Hodrick drop", "Vertebra Shackle",
                         conditional=True, missable=missable_invasion, hostile_npc=True),
-        DS3LocationData("US: Heavy Gem - Hawkwood", "Heavy Gem", static='00,0:50006070::',
-                        missable=True, npc=True),  # Hawkwood (quest, after Greatwood or Sage)
+        DS3LocationData("FS: Heavy Gem - Hawkwood", "Heavy Gem", static='00,0:50006070::',
+                        missable=missable_quest,
+                        npc=True),  # Hawkwood (quest, after Greatwood or Sage)
         DS3LocationData("US -> RS", None),
 
         # Yoel/Yuria of Londor
@@ -1409,15 +1410,23 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Soul of a Stray Demon", miniboss=True),
         DS3LocationData("FK: Watchdogs of Farron - Old Wolf", "Watchdogs of Farron"),
         DS3LocationData("FS: Hawkwood's Shield - gravestone after Hawkwood leaves",
-                        "Hawkwood's Shield", missable=True,
-                        npc=True),  # Hawkwood (quest, after Greatwood, Sage, Watchers, and Deacons)
+                        "Hawkwood's Shield", missable=missable_quest,
+                        npc=True),  # Hawkwood (quest, after Greatwood, Sage, and Watchers)
         DS3LocationData("US: Hawk Ring - Giant Archer", "Hawk Ring", drop=True,
                         npc=True),  # Giant archer (kill or quest), here because you need to
         # collect all seven White Branch locations to get it peacefully
 
         # Hawkwood after killing Abyss Watchers
         DS3LocationData("FS: Farron Ring - Hawkwood", "Farron Ring",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
+
+        # Andre once Hawkwood leaves and the player has Twinkling Dragon Torso Stone
+        DS3LocationData("FS: Hawkwood's Swordgrass - Andre", "Hawkwood's Swordgrass",
+                        missable=missable_quest, conditional=True, hidden=True),
+
+        DS3LocationData("FK: Twinkling Dragon Head Stone - Hawkwood drop",
+                        "Twinkling Dragon Head Stone", missable=missable_quest,
+                        hostile_npc=True),  # Hawkwood (quest)
 
         # Shrine Handmaid after killing Abyss Watchers
         DS3LocationData("FS: Undead Legion Helm - shop after killing FK boss", "Undead Legion Helm",
@@ -2618,8 +2627,6 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         static='10,1:3200300::', miniboss=True),  # Wyvern miniboss drop
         DS3LocationData("AP: Twinkling Titanite - walkway, miniboss drop", "Twinkling Titanite x3",
                         static='10,1:3200300::', miniboss=True),  # Wyvern miniboss drop
-        DS3LocationData("FS: Hawkwood's Swordgrass - Andre after gesture in AP summit",
-                        "Hawkwood's Swordgrass", conditional=True, hidden=True),
 
         # Shrine Handmaid after killing Nameless King
         DS3LocationData("FS: Golden Crown - shop after killing AP boss", "Golden Crown",
@@ -2630,9 +2637,6 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         boss=True, shop=True),
         DS3LocationData("FS: Dragonscale Waistcloth - shop after killing AP boss",
                         "Dragonscale Waistcloth", boss=True, shop=True),
-        DS3LocationData("FK: Twinkling Dragon Head Stone - Hawkwood drop",
-                        "Twinkling Dragon Head Stone", missable=True,
-                        npc=True),  # Hawkwood (quest)
     ],
     "Kiln of the First Flame": [
         DS3LocationData("KFF: Soul of the Lords", "Soul of the Lords", boss=True),
