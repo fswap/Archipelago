@@ -139,10 +139,13 @@ class EnableDLCOption(Toggle):
     To use this option, you must own both the "Ashes of Ariandel" and the "Ringed City" DLCs.
     """
     display_name = "Enable DLC"
+    default = True
 
 
 class EnableNGPOption(Toggle):
-    """Include items and locations exclusive to NG+ cycles."""
+    """Include items and locations exclusive to NG+ cycles.
+
+    These locations appear in normal NG runs. You don't have to enter NG+ to reach them."""
     display_name = "Enable NG+"
 
 

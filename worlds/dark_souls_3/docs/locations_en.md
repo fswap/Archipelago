@@ -122,7 +122,7 @@ This option makes quest-related NPCs immortal and updates their quests to
 remove places where they can be missed or failed entirely. Currently the
 following NPCs' quests are supported:
 
-* You can no longer refuse to tell **The Shrine Handmaid** where you found
+* **Shrine Handmaid**: You can't refuse to tell her where you found
   Dreamchaser's Ashes.
 
 * **Greirat** will always survive pillaging Irithyll. He will return once
@@ -145,6 +145,9 @@ following NPCs' quests are supported:
   starting class. He can't be killed for his drops until you've given him all
   three Pyromancy Tomes that he accepts.
 
+* **Hodrick** won't die until you've received the replacement for the
+  Mound-makers covenant from him.
+
 * **Siegward** won't leave the upper undead settlement or the Irithyll kitchen
   until he's given you a Siegbräu. He can be rescued from the well by giving him
   all four pieces of his armor set, which are now progression items. If you kill
@@ -162,6 +165,9 @@ following NPCs' quests are supported:
 
 * **Horace** can't be killed until he goes hollow.
 
+* **Sirris** won't abandon you if you join Rosaria's Fingers. You can't skip her
+  invasion of Creighton by invading Hodrick first.
+
 * **Patches** will only appear in the cathedral after you get your first
   Siegbräu from Siegward. He will appear even if the Rosaria's Bed Chamber
   bonfire is already lit. You cannot claim not to know him, and he won't leave
@@ -174,6 +180,11 @@ following NPCs' quests are supported:
   you beat a boss, Patches will return from Irithyll if you've already beaten
   the Grand Archives boss.
 
+* **Rosaria** won't let you join her covenant until you've shown Ringfinger
+  Leonhard a Pale Tongue, to make sure you don't use them all on her before
+  starting his quest. Her Black Eye Orb drop isn't randomized so you can't
+  invade Leonhard until his quest is otherwise complete.
+
 * **Karla** can't be killed for her drops until you've given her all four tomes
   that she accepts.
 
@@ -185,6 +196,12 @@ if you don't find enough Embers at the right time or if you use them up, the mod
 adds a new covenant item called "Phantom Hunters". Invasions will only trigger
 when you have this covenant equipped, and they will _always_ trigger until you
 defeat them, regardless of whether or not you've beaten the area boss.
+
+**Londor Pale Shade** will invade as long as you have the Phantom Hunters
+covenant equipped and have spoken to Yuria of Londor, even if she's not hostile.
+
+The invasions in Ringed City don't require an ember in vanilla, so they don't
+require the Phantom Hunters covenant to be equipped in unmissable mode.
 
 ### `unmissable_transpositions`
 
@@ -1398,11 +1415,11 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Fire Surge - Cornyx</td><td>Sold by Cornyx after recruiting him, or in his ashes</td></tr>
 <tr><td>FS: Fire Whip - Karla for Quelana Tome</td><td>Sold by Karla after giving her the Quelana Pyromancy Tome</td></tr>
 <tr><td>FS: Fireball - Cornyx</td><td>Sold by Cornyx after recruiting him, or in his ashes</td></tr>
-<tr><td>FS: Firelink Armor - shop after placing all Cinders</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
-<tr><td>FS: Firelink Gauntlets - shop after placing all Cinders</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
+<tr><td>FS: Firelink Armor - shop after beating KFF boss</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
+<tr><td>FS: Firelink Gauntlets - shop after beating KFF boss</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
 <tr><td>FS: Firelink Greatsword - Ludleth for Cinder</td><td>Boss weapon for Soul of Cinder</td></tr>
-<tr><td>FS: Firelink Helm - shop after placing all Cinders</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
-<tr><td>FS: Firelink Leggings - shop after placing all Cinders</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
+<tr><td>FS: Firelink Helm - shop after beating KFF boss</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
+<tr><td>FS: Firelink Leggings - shop after beating KFF boss</td><td>Sold by Handmaid after defeating Soul of Cinder</td></tr>
 <tr><td>FS: Firestorm - Karla for Quelana Tome</td><td>Sold by Karla after giving her the Quelana Pyromancy Tome</td></tr>
 <tr><td>FS: Flash Sweat - Cornyx</td><td>Sold by Cornyx after recruiting him, or in his ashes</td></tr>
 <tr><td>FS: Force - Irina for Tome of Carim</td><td>Sold by Irina after giving her the Braille Divine Tome of Carim</td></tr>
@@ -1427,9 +1444,10 @@ static _Dark Souls III_ randomizer].
 <tr><td>FS: Gundyr&#x27;s Leggings - shop after killing UG boss</td><td>Sold by Handmaid after defeating Champion Gundyr</td></tr>
 <tr><td>FS: Havel&#x27;s Ring - Ludleth for Stray Demon</td><td>Boss weapon for Stray Demon</td></tr>
 <tr><td>FS: Hawkwood&#x27;s Shield - gravestone after Hawkwood leaves</td><td>Left by Hawkwood after defeating Abyss Watchers, Curse-Rotted Greatwood, Deacons of the Deep, and Crystal Sage</td></tr>
-<tr><td>FS: Hawkwood&#x27;s Swordgrass - Andre after gesture in AP summit</td><td>Given by Andre after praying at the Dragon Altar in Archdragon Peak, after acquiring Twinkling Dragon Torso Stone.</td></tr>
+<tr><td>FS: Hawkwood&#x27;s Swordgrass - Andre</td><td>Given by Andre after praying at the Dragon Altar in Archdragon Peak, after acquiring Twinkling Dragon Torso Stone.</td></tr>
 <tr><td>FS: Heal - Irina</td><td>Sold by Irina after recruiting her, or in her ashes</td></tr>
 <tr><td>FS: Heal Aid - shop</td><td>Sold by Handmaid</td></tr>
+<tr><td>FS: Heavy Gem - Hawkwood</td><td>Given or dropped by Hawkwood after defeating Curse-Rotted Greatwood or Crystal Sage</td></tr>
 <tr><td>FS: Heavy Soul Arrow - Orbeck</td><td>Sold by Orbeck</td></tr>
 <tr><td>FS: Heavy Soul Arrow - Yoel/Yuria shop</td><td>Sold by Yoel/Yuria</td></tr>
 <tr><td>FS: Helm of Favor - shop after killing water reserve minibosses</td><td>Sold by Handmaid after killing Sulyvahn&#x27;s Beasts in Water Reserve</td></tr>
@@ -1731,7 +1749,7 @@ static _Dark Souls III_ randomizer].
 <tr><td>IBV: Budding Green Blossom - central, by second fountain</td><td>Next to the fountain up the stairs from the Central Irithyll bonfire</td></tr>
 <tr><td>IBV: Chloranthy Ring+1 - plaza, behind altar</td><td>In the area before and below Pontiff&#x27;s cathedral, behind the central structure</td></tr>
 <tr><td>IBV: Covetous Gold Serpent Ring+1 - descent, drop after dark room</td><td>After the dark area with the Irithyllian slaves, drop down to the right</td></tr>
-<tr><td>IBV: Creighton&#x27;s Steel Mask - bridge after killing Creighton</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
+<tr><td>IBV: Creighton&#x27;s Steel Mask - bridge after Creighton invades</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
 <tr><td>IBV: Divine Blessing - great hall, chest</td><td>In a chest up the stairs in the room with the Silver Knight staring at the painting</td></tr>
 <tr><td>IBV: Divine Blessing - great hall, mob drop</td><td>One-time drop from the Silver Knight staring at the painting in Irithyll</td></tr>
 <tr><td>IBV: Dorhys&#x27; Gnawing - Dorhys drop</td><td>Dropped by Cathedral Evangelist Dorhys, past an illusory railing past the Central Irithyll Fire Witches and to the left</td></tr>
@@ -1768,9 +1786,9 @@ static _Dark Souls III_ randomizer].
 <tr><td>IBV: Leo Ring - great hall, chest</td><td>In a chest up the stairs in the room with the Silver Knight staring at the painting</td></tr>
 <tr><td>IBV: Lightning Gem - plaza center</td><td>In the area before and below Pontiff&#x27;s cathedral, in the center guarded by the enemies</td></tr>
 <tr><td>IBV: Magic Clutch Ring - plaza, illusory wall</td><td>In the area before and below Pontiff&#x27;s cathedral, behind an illusory wall to the right</td></tr>
-<tr><td>IBV: Mirrah Chain Gloves - bridge after killing Creighton</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
-<tr><td>IBV: Mirrah Chain Leggings - bridge after killing Creighton</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
-<tr><td>IBV: Mirrah Chain Mail - bridge after killing Creighton</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
+<tr><td>IBV: Mirrah Chain Gloves - bridge after Creighton invades</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
+<tr><td>IBV: Mirrah Chain Leggings - bridge after Creighton invades</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
+<tr><td>IBV: Mirrah Chain Mail - bridge after Creighton invades</td><td>Following Sirris&#x27; questline, found on the bridge to Irithyll after being invaded by Creighton the Wanderer in the graveyard after the Church of Yorshka.</td></tr>
 <tr><td>IBV: Proof of a Concord Kept - Church of Yorshka altar</td><td>At the altar in the Church of Yorshka</td></tr>
 <tr><td>IBV: Rime-blue Moss Clump - central, by bonfire</td><td>By the Central Irithyll bonfire</td></tr>
 <tr><td>IBV: Rime-blue Moss Clump - central, past second fountain</td><td>From the Central Irithyll bonfire, to the left before the first Fire Witch.</td></tr>
@@ -2322,7 +2340,6 @@ static _Dark Souls III_ randomizer].
 <tr><td>US: Great Scythe - building by white tree, balcony</td><td>On the balcony of the building before Curse-Rotted Greatwood, coming from Dilapidated Bridge bonfire</td></tr>
 <tr><td>US: Hand Axe - by Cornyx</td><td>Next to Cornyx&#x27;s cell</td></tr>
 <tr><td>US: Hawk Ring - Giant Archer</td><td>Dropped by Giant, either by killing him or collecting all of the birch tree items locations in the base game.</td></tr>
-<tr><td>US: Heavy Gem - Hawkwood</td><td>Given or dropped by Hawkwood after defeating Curse-Rotted Greatwood or Crystal Sage</td></tr>
 <tr><td>US: Heavy Gem - chasm, lizard</td><td>Drop by Crystal Lizard in ravine accessible by Grave Key or dropping down near Eygon.</td></tr>
 <tr><td>US: Homeward Bone - foot, drop overlook</td><td>At the start of Fire Demon area, to the right shortly after dropping down.</td></tr>
 <tr><td>US: Homeward Bone - stable roof</td><td>In the thrall area across the bridge from the first Undead Settlement building, on a roof overlooking the ravine bridge.</td></tr>
@@ -2373,10 +2390,10 @@ static _Dark Souls III_ randomizer].
 <tr><td>US: Soul of an Unknown Traveler - portcullis by burning tree</td><td>Behind a grate to the left of the burning tree and Cathedral Evangelist</td></tr>
 <tr><td>US: Soul of the Rotted Greatwood</td><td>Dropped by Curse Rotted Greatwood</td></tr>
 <tr><td>US: Spotted Whip - by Cornyx&#x27;s cage after Cuculus quest</td><td>Appears next to Cornyx&#x27;s cage after defeating Old Demon King with Cuculus surviving</td></tr>
-<tr><td>US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
-<tr><td>US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
 <tr><td>US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
-<tr><td>US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
+<tr><td>US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris</td><td>Found in Pit of Hollows after completing Sirris&#x27; questline.</td></tr>
 <tr><td>US: Titanite Shard - back alley, side path</td><td>On a side path to the right of the Cathedral Evangelist before the Dilapidated Bridge bonfire</td></tr>
 <tr><td>US: Titanite Shard - back alley, up ladder</td><td>Next to the Cathedral Evangelist close to the Dilapidated Bridge bonfire</td></tr>
 <tr><td>US: Titanite Shard - chasm #1</td><td>In the ravine accessible from Grave Key or dropping down from near Eygon</td></tr>

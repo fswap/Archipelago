@@ -130,6 +130,14 @@ class DarkSouls3World(World):
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
 
+        if not self.options.enable_dlc:
+            dlc_bosses = [boss.region for boss in self._goal_bosses() if boss.dlc]
+            if dlc_bosses:
+                raise Exception(
+                    "DS3 options error: you chose to disable DLC but require the player to beat " +
+                    ",".join(dlc_bosses)
+                )
+
         # This code doesn't work because tests don't verify options
         # Don't consider disabled locations to be AP-excluded
         # if not self.options.enable_dlc:
@@ -238,8 +246,9 @@ class DarkSouls3World(World):
             ]})
 
         # Connect Regions
-        def create_connection(from_region: str, to_region: str):
-            connection = Entrance(self.player, f"Go To {to_region}", regions[from_region])
+        def create_connection(from_region: str, to_region: str, explicit_from: bool = False):
+            from_str = f"{from_region} =>" if explicit_from else "Go To"
+            connection = Entrance(self.player, f"{from_str} {to_region}", regions[from_region])
             regions[from_region].exits.append(connection)
             connection.connect(regions[to_region])
 
@@ -285,8 +294,15 @@ class DarkSouls3World(World):
             create_connection("Cathedral of the Deep", "Painted World of Ariandel (Before Contraption)")
             create_connection("Painted World of Ariandel (Before Contraption)",
                               "Painted World of Ariandel (After Contraption)")
-            create_connection("Painted World of Ariandel (After Contraption)", "Dreg Heap")
+            create_connection(
+                "Painted World of Ariandel (After Contraption)",
+                "Dreg Heap",
+                explicit_from=True,
+            )
             create_connection("Dreg Heap", "Ringed City")
+
+            if self.options.goal != {"Kiln of the First Flame Boss"}:
+                create_connection("Kiln of the First Flame", "Dreg Heap", explicit_from=True)
 
     # For each region, add the associated locations retrieved from the corresponding location_table
     def create_region(self, region_name, location_table) -> Region:
@@ -662,8 +678,30 @@ class DarkSouls3World(World):
 
         if self.options.unmissable_invasions:
             self._add_location_rule([
-                "US: Vertebra Shackle - Hodrick drop"
+                "US: Vertebra Shackle - Hodrick drop",
+                "RS: Heysel Pick - Heysel drop",
+                "RS: Xanthous Crown - Heysel drop",
+                "CD: Barbed Straight Sword - Kirk drop",
+                "CD: Spiked Shield - Kirk drop",
+                "CD: Helm of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Armor of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Gauntlets of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "CD: Leggings of Thorns - Rosaria's Bed Chamber after killing Kirk",
+                "FK: Manikin Claws - Londor Pale Shade drop",
+                "FS: Sneering Mask - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Robe - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Gloves - Yoel's room, kill Londor Pale Shade twice",
+                "FS: Pale Shade Trousers - Yoel's room, kill Londor Pale Shade twice",
+                "PW2: Floating Chaos - NPC drop",
+                "IBV: Creighton's Steel Mask - bridge after Creighton invades",
+                "IBV: Mirrah Chain Mail - bridge after Creighton invades",
+                "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
+                "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
+                "IBV: Dragonslayer's Axe - Creighton drop",
             ], "Phantom Hunters")
+
+            # Note: Ringed City invasions don't require ember in vanilla, so they don't require
+            # Phantom Hunters in unmissable mode.
 
         # DLC Access Rules Below
         if self.options.enable_dlc:
@@ -671,7 +709,14 @@ class DarkSouls3World(World):
             self._add_entrance_rule("Painted World of Ariandel (After Contraption)", "Contraption Key")
             self._add_entrance_rule(
                 "Dreg Heap",
-                lambda state: self._can_get(state, "PW2: Soul of Sister Friede")
+                lambda state: (
+                    self._can_get(state, "PW2: Soul of Sister Friede")
+                    or (
+                        self.options.goal != {"Kiln of the First Flame Boss"}
+                        and self._can_go_to(state, "Kiln of the First Flame")
+                    )
+                ),
+                from_region="Painted World of Ariandel (After Contraption)",
             )
             self._add_entrance_rule("Ringed City", lambda state: (
                 state.has("Small Envoy Banner", self.player)
@@ -802,7 +847,7 @@ class DarkSouls3World(World):
         for location in self.yhorm_location.locations:
             self._add_location_rule(location, "Storm Ruler")
 
-        self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "KFF: Soul of the Lords")
+        self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
 
     def _add_shop_rules(self) -> None:
         """Adds rules for items unlocked in shops."""
@@ -982,26 +1027,32 @@ class DarkSouls3World(World):
 
         ## Leonhard
 
-        self._add_location_rule([
-            # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or
-            # killing Greatwood. This doesn't consume the Pale Tongue, it just has to be in
-            # inventory
-            "FS: Lift Chamber Key - Leonhard",
-            # Progress Leonhard's quest and then return to Rosaria after lighting Profaned Capital
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
-        ], "Pale Tongue")
+        # Talk to Leonhard in Firelink with a Pale Tongue after lighting Cliff Underside or killing
+        # Greatwood. This doesn't consume the Pale Tongue, it just has to be in inventory
+        self._add_location_rule(["FS: Lift Chamber Key - Leonhard"], "Pale Tongue")
 
+        # In unmissable quests mode, we block entry into Rosaria's covenant until Leonhard has given
+        # the Lift Chamber Key lot to avoid the possibility of the player giving Rosaria all the
+        # Pale Tongues they have access to before progressing Leonhard's quest.
+        if self.options.unmissable_quests:
+            self._add_location_rule(
+                ["CD: Rosaria's Fingers - Rosaria"],
+                lambda state: self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            )
+
+        # The Black Eye Orb location won't spawn until you progress Leonhard's quest, kill the
+        # HWL miniboss, and rest at the Profaned Capital bonfire.
         self._add_location_rule([
-            "CD: Black Eye Orb - Rosaria from Leonhard's quest",
+            "CD: Black Eye Orb - Rosaria from Leonhard's quest"
         ], lambda state: (
-            # The Black Eye Orb location won't spawn until you kill the HWL miniboss and resting at
-            # the Profaned Capital bonfire.
-            self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
+            self._can_get(state, "FS: Lift Chamber Key - Leonhard")
+            and self._can_get(state, "HWL: Red Eye Orb - wall tower, miniboss")
             and self._can_go_to(state, "Profaned Capital")
         ))
 
-        # Perhaps counterintuitively, you CAN fight Leonhard before you access the location that
-        # would normally give you the Black Eye Orb.
+        # Perhaps counterintuitively, in missable-quests mode you CAN fight Leonhard before you
+        # access the location that would normally give you the Black Eye Orb. In unmissbale quests
+        # mode, we prevent this by not randomizing the Black Eye Orb at all.
         self._add_location_rule([
             "AL: Crescent Moon Sword - Leonhard drop",
             "AL: Silver Mask - Leonhard drop",
@@ -1014,10 +1065,10 @@ class DarkSouls3World(World):
         ## Hawkwood
         
         # After Hawkwood leaves and once you have the Torso Stone, you can fight him for dragon
-        # stones. Andre will give Swordgrass as a hint as well
+        # stones. Andre will give Swordgrass as a hint as well.
         self._add_location_rule([
             "FK: Twinkling Dragon Head Stone - Hawkwood drop",
-            "FS: Hawkwood's Swordgrass - Andre after gesture in AP summit"
+            "FS: Hawkwood's Swordgrass - Andre"
         ], lambda state: (
             self._can_get(state, "FS: Hawkwood's Shield - gravestone after Hawkwood leaves")
             and state.has("Twinkling Dragon Torso Stone", self.player)
@@ -1055,53 +1106,46 @@ class DarkSouls3World(World):
 
         ## Sirris
 
-        # Kill Greatwood and turn in Dreamchaser's Ashes to trigger this opportunity for invasion
+        # Kill Greatwood, turn in Dreamchaser's Ashes, and pass the Irithyll
+        # gateway to trigger this opportunity for invasion. (These locations are
+        # in the IBV region so we don't need to explicitly mark Small Doll as a
+        # requirement).
         self._add_location_rule([
             "FS: Mail Breaker - Sirris for killing Creighton",
             "FS: Silvercat Ring - Sirris for killing Creighton",
-            "IBV: Creighton's Steel Mask - bridge after killing Creighton",
-            "IBV: Mirrah Chain Gloves - bridge after killing Creighton",
-            "IBV: Mirrah Chain Leggings - bridge after killing Creighton",
-            "IBV: Mirrah Chain Mail - bridge after killing Creighton",
+            "IBV: Creighton's Steel Mask - bridge after Creighton invades",
+            "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
+            "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
+            "IBV: Mirrah Chain Mail - bridge after Creighton invades",
             "IBV: Dragonslayer's Axe - Creighton drop",
-            # Killing Pontiff without progressing Sirris's quest will break it.
-            "IBV: Soul of Pontiff Sulyvahn"
         ], lambda state: (
             self._can_get(state, "US: Soul of the Rotted Greatwood")
             and state.has("Dreamchaser's Ashes", self.player)
         ))
-        # Add indirect condition since reaching AL requires defeating Pontiff which requires defeating Greatwood in US
-        self.multiworld.register_indirect_condition(
-            self.get_region("Undead Settlement"),
-            self.get_entrance("Go To Anor Londo")
-        )
 
         # Kill Creighton and Aldrich to trigger this opportunity for invasion
         self._add_location_rule([
             "FS: Budding Green Blossom - shop after killing Creighton and AL boss",
             "FS: Sunset Shield - by grave after killing Hodrick w/Sirris",
             "US: Sunset Helm - Pit of Hollows after killing Hodrick w/Sirris",
-            "US: Sunset Armor - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Gauntlets - pit of hollows after killing Hodrick w/Sirris",
-            "US: Sunset Leggings - pit of hollows after killing Hodrick w/Sirris",
+            "US: Sunset Armor - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Gauntlets - Pit of Hollows after killing Hodrick w/Sirris",
+            "US: Sunset Leggings - Pit of Hollows after killing Hodrick w/Sirris",
         ], lambda state: (
             self._can_get(state, "FS: Mail Breaker - Sirris for killing Creighton")
             and self._can_get(state, "AL: Soul of Aldrich")
         ))
 
-        # Kill Hodrick and Twin Princes to trigger the end of the quest
+        # Kill Hodrick then kill Twin Princes to trigger the end of the quest
         self._add_location_rule([
             "FS: Sunless Talisman - Sirris, kill GA boss",
             "FS: Sunless Veil - shop, Sirris quest, kill GA boss",
             "FS: Sunless Armor - shop, Sirris quest, kill GA boss",
             "FS: Sunless Gauntlets - shop, Sirris quest, kill GA boss",
             "FS: Sunless Leggings - shop, Sirris quest, kill GA boss",
-            # Killing Yorshka will anger Sirris and stop her quest, so don't expect it until the
-            # quest is done
-            "AL: Yorshka's Chime - kill Yorshka",
         ], lambda state: (
-            self._can_get(state, "US: Soul of the Rotted Greatwood")
-            and state.has("Dreamchaser's Ashes", self.player)
+            self._can_get(state, "FS: Sunset Shield - by grave after killing Hodrick w/Sirris")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         ## Cornyx
@@ -1394,10 +1438,7 @@ class DarkSouls3World(World):
 
     def _is_complete(self, state: CollectionState) -> bool:
         """Whether the given state has achieved the victory condition."""
-        all(
-            state.can_reach_location(next(boss.locations), self.player)
-            for boss in self._goal_bosses()
-        )
+        return all(self._can_get(state, next(iter(boss.locations))) for boss in self._goal_bosses())
 
     def _has_any_scroll(self, state: CollectionState) -> bool:
         """Returns whether the given state has any scroll item."""
@@ -1422,7 +1463,12 @@ class DarkSouls3World(World):
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
 
-    def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str]) -> None:
+    def _add_entrance_rule(
+        self,
+        region: str,
+        rule: Union[CollectionRule, str],
+        from_region: Optional[str] = None,
+    ) -> None:
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
@@ -1430,7 +1476,11 @@ class DarkSouls3World(World):
             if " -> " not in rule:
                 assert item_dictionary[rule].classification == ItemClassification.progression
             rule = lambda state, item=rule: state.has(item, self.player)
-        add_rule(self.multiworld.get_entrance("Go To " + region, self.player), rule)
+        entrance = (
+            f"{from_region} => {region}" if from_region
+            else "Go To " + region
+        )
+        add_rule(self.multiworld.get_entrance(entrance, self.player), rule)
 
     def _add_item_rule(self, location: str, rule: ItemRule) -> None:
         """Sets a rule for what items are allowed in a given location."""
@@ -1461,25 +1511,16 @@ class DarkSouls3World(World):
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
 
         missable = data.is_missable(self.options)
-        if (
-            self.options.missable_location_behavior == "do_not_randomize"
-            and missable
-        ):
-            return _LocationStatus.UNRANDOMIZED_MISSABLE
-        elif (
-            self.options.excluded_location_behavior == "do_not_randomize"
-            and data.name in self.all_excluded_locations
-        ):
-            return (
-                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
-                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
-            )
-        else:
+        if data.should_randomize(self.options):
             return (
                 _LocationStatus.RANDOMIZED_MISSABLE if missable
                 else _LocationStatus.RANDOMIZED_UNMISSABLE
             )
-
+        else:
+            return (
+                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
+                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
+            )
 
     def _goal_bosses(self) -> [DS3BossInfo]:
         """Returns all the bosses that are goals for this run."""
@@ -1524,23 +1565,37 @@ class DarkSouls3World(World):
             # No worlds need item smoothing.
             return
 
-        spheres_per_player: Dict[int, List[List[Location]]] = {world.player: [] for world in ds3_worlds}
-        for sphere in multiworld.get_spheres():
-            locations_per_item_player: Dict[int, List[Location]] = {player: [] for player in spheres_per_player.keys()}
-            for location in sphere:
+        ds3_player_to_world = {world.player: world for world in ds3_worlds}
+        ds3_smoothing_location_to_sphere: dict[Location, int] = {}
+        ds3_player_full_items_by_name = {world.player: defaultdict(list) for world in ds3_worlds}
+        for sphere_number, sphere in enumerate(multiworld.get_spheres(), start=1):
+            # Sort for deterministic results in `ds3_player_full_items_by_name`.
+            for location in sorted(sphere):
                 if location.locked:
+                    # Locked locations should not have their items moved.
                     continue
-                item_player = location.item.player
-                if item_player in locations_per_item_player:
-                    locations_per_item_player[item_player].append(location)
-            for player, locations in locations_per_item_player.items():
-                # Sort for deterministic results.
-                locations.sort()
-                spheres_per_player[player].append(locations)
+                item = location.item
+                if item.player not in ds3_player_to_world:
+                    # The item does not belong to a DS3 player with smoothing enabled, so can be ignored.
+                    continue
+                if item.code is None:
+                    # Never re-order event items, because they weren't randomized in the first place. The locations
+                    # of event items should be locked anyway, so this is only for safety.
+                    continue
+                if (
+                    location.player in ds3_player_to_world
+                    and not ds3_player_to_world[location.player]
+                        ._location_status(location)
+                        .is_randomized
+                ):
+                    # The location belongs to a DS3 player with smoothing enabled, but the location is not considered
+                    # available. This should mean that the location is not randomized, so the locations should be locked
+                    # anyway, so this is only for safety.
+                    continue
+                ds3_smoothing_location_to_sphere[location] = sphere_number
+                ds3_player_full_items_by_name[item.player][item.name].append(location.item)
 
         for ds3_world in ds3_worlds:
-            locations_by_sphere = spheres_per_player[ds3_world.player]
-
             # All items in the base game in approximately the order they appear
             all_item_order: List[DS3ItemData] = [
                 item_dictionary[location.default_item_name]
@@ -1551,13 +1606,7 @@ class DarkSouls3World(World):
             ]
 
             # All DarkSouls3Items for this world that have been assigned anywhere, grouped by name
-            full_items_by_name: Dict[str, List[DarkSouls3Item]] = defaultdict(list)
-            for location in multiworld.get_filled_locations():
-                if location.item.player == ds3_world.player and (
-                    location.player != ds3_world.player
-                    or ds3_world._location_status(location).is_randomized
-                ):
-                    full_items_by_name[location.item.name].append(location.item)
+            full_items_by_name: defaultdict[str, List[DarkSouls3Item]] = ds3_player_full_items_by_name[ds3_world.player]
 
             def smooth_items(item_order: List[Union[DS3ItemData, DarkSouls3Item]]) -> None:
                 """Rearrange all items in item_order to match that order.
@@ -1566,52 +1615,49 @@ class DarkSouls3World(World):
                 world matching the given names.
                 """
 
-                # Convert items to full DarkSouls3Items.
-                converted_item_order: List[DarkSouls3Item] = [
-                    item for item in (
-                        (
-                            # full_items_by_name won't contain DLC items if the DLC is disabled.
-                            (full_items_by_name[item.name] or [None]).pop(0)
-                            if isinstance(item, DS3ItemData) else item
-                        )
-                        for item in item_order
-                    )
-                    # Never re-order event items, because they weren't randomized in the first place.
-                    if item and item.code is not None
-                ]
+                # Convert items to full DarkSouls3Items and get their locations.
+                converted_item_order: List[DarkSouls3Item] = []
+                locations_to_smooth: List[Location] = []
+                for ordered_item in item_order:
+                    # full_items_by_name won't contain DLC items if the DLC is disabled.
+                    if ordered_item.name not in full_items_by_name:
+                        continue
+                    items_list = full_items_by_name[ordered_item.name]
+                    item = items_list.pop(0)
+                    location = item.location
+                    converted_item_order.append(item)
+                    locations_to_smooth.append(location)
+                    # Un-place the item in preparation for placing all the items in a smoothed-out order.
+                    location.item = None
+                    item.location = None
+                    if not items_list:
+                        # The list is now empty, so remove it to prevent being able to get and pop an empty list.
+                        del full_items_by_name[ordered_item.name]
 
-                names = {item.name for item in converted_item_order}
+                # First sort locations by sphere (earliest first). Next sort non-DS3 locations after
+                # DS3 locations, so that non-DS3 locations get the best items within a sphere.
+                # Finally sort DS3 locations amongst themselves using their region values.
+                def location_sort_func(location: Location):
+                    sphere_number = ds3_smoothing_location_to_sphere[location]
+                    if location.game == cls.game:
+                        # The location is from a DS3 world, so will be sorted before non-DS3 locations within the same
+                        # sphere, and sorted additionally by the location's .region_value.
+                        ds3_location = cast(DarkSouls3Location, location)
+                        return sphere_number, 0, ds3_location.data.region_value
+                    else:
+                        # Within the same sphere, all non-DS3 locations will be sorted after DS3 locations.
+                        return sphere_number, 1
 
-                all_matching_locations = [
-                    loc
-                    for sphere in locations_by_sphere
-                    for loc in sphere
-                    if loc.item.name in names
-                ]
+                # Initially shuffle for varied results when there are ties in the sorting.
+                ds3_world.random.shuffle(locations_to_smooth)
+                locations_to_smooth.sort(key=location_sort_func)
 
-                # It's expected that there may be more total items than there are matching locations if
-                # the player has chosen a more limited accessibility option, since the matching
-                # locations *only* include items in the spheres of accessibility.
-                if len(converted_item_order) < len(all_matching_locations):
-                    raise Exception(
-                        f"DS3 bug: there are {len(all_matching_locations)} locations that can " +
-                        f"contain smoothed items, but only {len(converted_item_order)} items to smooth."
-                    )
-
-                sorted_spheres = []
-                for sphere in locations_by_sphere:
-                    locations = [loc for loc in sphere if loc.item.name in names]
-
-                    # Check the game, not the player, because we know how to sort within regions for DS3
-                    offworld = ds3_world._shuffle([loc for loc in locations if loc.game != "Dark Souls III"])
-                    onworld = sorted((loc for loc in locations if loc.game == "Dark Souls III"),
-                                     key=lambda loc: loc.data.region_value)
-                    # Give offworld regions the last (best) items within a given sphere
-                    sorted_spheres.extend(onworld)
-                    sorted_spheres.extend(offworld)
-
+                # Place the items so that earlier items in `converted_item_order` get placed into logically earlier
+                # locations.
+                # Locations are filled from the start, but items are placed starting from the end, so reverse the order
+                # of the items list.
                 converted_item_order.reverse()
-                remaining_fill(multiworld, sorted_spheres, converted_item_order, name="DS3 Smoothing", check_location_can_fill=True)
+                remaining_fill(multiworld, locations_to_smooth, converted_item_order, name="DS3 Smoothing", check_location_can_fill=True)
 
             if ds3_world.options.smooth_upgrade_items:
                 base_names = {
@@ -1713,11 +1759,7 @@ class DarkSouls3World(World):
             "goal": [boss.flag for boss in self._goal_bosses()],
             # Reserializing here is silly, but it's easier for the static randomizer.
             "random_enemy_preset": json.dumps(self.options.random_enemy_preset.value),
-            "yhorm": (
-                f"{self.yhorm_location.name} {self.yhorm_location.id}"
-                if self.yhorm_location != default_yhorm_location
-                else None
-            ),
+            "yhorm": f"{self.yhorm_location.name} {self.yhorm_location.id}",
             "apIdsToItemIds": ap_ids_to_ds3_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,
