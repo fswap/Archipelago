@@ -975,8 +975,13 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Great Swamp Pyromancy Tome"),
         DS3LocationData("RS: Homeward Bone - balcony by Farron Keep", "Homeward Bone x2"),
         DS3LocationData("RS: Titanite Shard - woods, surrounded by enemies", "Titanite Shard"),
+
+        # This is in ceremony layer 63 at the map level, which means it disappears when the eclipse
+        # arrives after beating three lords of cinders. To fix this, we'll need better map editing
+        # infrastructure, which is a 4.2 concern.
         DS3LocationData("RS: Twin Dragon Greatshield - woods by Crucifixion Woods bonfire",
-                        "Twin Dragon Greatshield", missable=True), # After Eclipse
+                        "Twin Dragon Greatshield", missable=True),
+
         DS3LocationData("RS: Sorcerer Hood - water beneath stronghold", "Sorcerer Hood",
                         hidden=True),  # Hidden fall
         DS3LocationData("RS: Sorcerer Robe - water beneath stronghold", "Sorcerer Robe",
@@ -1108,7 +1113,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Yuria of Londor for Orbeck's Ashes
         DS3LocationData("FS: Morion Blade - Yuria for Orbeck's Ashes", "Morion Blade",
-                        missable=True, npc=True),
+                        missable=missable_quest, npc=True),
     ],
     "Cathedral of the Deep": [
         DS3LocationData("CD: Herald Helm - path, by fire", "Herald Helm"),
