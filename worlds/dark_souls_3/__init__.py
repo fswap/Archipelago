@@ -1065,10 +1065,10 @@ class DarkSouls3World(World):
         ## Hawkwood
         
         # After Hawkwood leaves and once you have the Torso Stone, you can fight him for dragon
-        # stones. Andre will give Swordgrass as a hint as well
+        # stones. Andre will give Swordgrass as a hint as well.
         self._add_location_rule([
             "FK: Twinkling Dragon Head Stone - Hawkwood drop",
-            "FS: Hawkwood's Swordgrass - Andre after gesture in AP summit"
+            "FS: Hawkwood's Swordgrass - Andre"
         ], lambda state: (
             self._can_get(state, "FS: Hawkwood's Shield - gravestone after Hawkwood leaves")
             and state.has("Twinkling Dragon Torso Stone", self.player)
