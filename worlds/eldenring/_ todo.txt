@@ -8,14 +8,7 @@ fuzzer python fuzz.py -r 10 -j 8 -g eldenring -n 1    keep low till no fails
 
 
 
-Need to make multiple item fillers like (smithing stone [1] x3, filler=True)
-
-
-for priority location option had how many checks each location adds and how many progression items there are
-each type split by base / dlc, ex: remembrances
-
-
-BIG TODO
+TODO
 
 static rando options
 
@@ -92,4 +85,5 @@ people who want to be pinged for playtesting
 @adub37 @sutakos @megaknight05 @carrsh
 @ubernugget @.aznova @reignycs @kiewie
 @bokyubi @journair @dezinator @animubot
-@stressoexpresso
+@stressoexpresso @jasler7 @garfunkelton @syrknightnight
+@moroccan7755 @markrk
