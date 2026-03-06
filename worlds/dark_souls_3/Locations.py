@@ -1229,11 +1229,10 @@ location_tables: Dict[str, List[DS3LocationData]] = {
                         "Archdeacon Holy Garb", boss=True, hidden=True),
         DS3LocationData("CD: Archdeacon Skirt - boss room after killing boss", "Archdeacon Skirt",
                         boss=True, hidden=True),
-        # Heysel items may not be missable, but it's not clear what causes them to trigger
         DS3LocationData("CD: Heysel Pick - Heysel Corpse-Grub in Rosaria's Bed Chamber",
-                        "Heysel Pick", missable=True),
+                        "Heysel Pick", hidden=True),
         DS3LocationData("CD: Xanthous Crown - Heysel Corpse-Grub in Rosaria's Bed Chamber",
-                        "Xanthous Crown", missable=True),
+                        "Xanthous Crown", hidden=True),
         DS3LocationData("CD: Deep Ring - upper roofs, passive mob drop in first tower", "Deep Ring",
                         drop=True, hidden=True),
         DS3LocationData("CD: Deep Braille Divine Tome - mimic by side chapel",

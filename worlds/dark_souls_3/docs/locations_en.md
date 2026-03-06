@@ -195,10 +195,17 @@ impossible to miss. Instead of invading you when you're embered, which can fail
 if you don't find enough Embers at the right time or if you use them up, the mod
 adds a new covenant item called "Phantom Hunters". Invasions will only trigger
 when you have this covenant equipped, and they will _always_ trigger until you
-defeat them, regardless of whether or not you've beaten the area boss.
+defeat them, regardless of whether or not you've beaten the area boss. This adds
+a few other changes to the vanilla game logic as well:
 
-**Londor Pale Shade** will invade as long as you have the Phantom Hunters
-covenant equipped and have spoken to Yuria of Londor, even if she's not hostile.
+* **Londor Pale Shade** will invade as long as you have the Phantom Hunters
+  covenant equipped and have spoken to Yuria of Londor, even if she's not
+  hostile.
+
+* **Yellowfinger Heysel**'s corpse-grub won't appear in Rosaria's bed chamber
+  until you've defeated both of her invasions, one in Road of Sacrifices and one
+  in Farron Keep. As in vanilla, it also requires you to beat the Anror Londo
+  and Profaned Capital bosses.
 
 The invasions in Ringed City don't require an ember in vanilla, so they don't
 require the Phantom Hunters covenant to be equipped in unmissable mode.
