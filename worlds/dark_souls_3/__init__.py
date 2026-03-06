@@ -698,6 +698,10 @@ class DarkSouls3World(World):
                 "IBV: Mirrah Chain Gloves - bridge after Creighton invades",
                 "IBV: Mirrah Chain Leggings - bridge after Creighton invades",
                 "IBV: Dragonslayer's Axe - Creighton drop",
+                # These aren't behind the covenant in vanilla logic, but in phantom hunters mode we
+                # lock the corpse-grub behind Heysel's defeat to avoid a narrative inconsistency.
+                "CD: Heysel Pick - Heysel Corpse-Grub in Rosaria's Bed Chamber",
+                "CD: Xanthous Crown - Heysel Corpse-Grub in Rosaria's Bed Chamber",
             ], "Phantom Hunters")
 
             # Note: Ringed City invasions don't require ember in vanilla, so they don't require
@@ -779,7 +783,11 @@ class DarkSouls3World(World):
 
         self._add_location_rule([
             "LC: Grand Archives Key - by Grand Archives door, after PC and AL bosses",
-            "LC: Gotthard Twinswords - by Grand Archives door, after PC and AL bosses"
+            "LC: Gotthard Twinswords - by Grand Archives door, after PC and AL bosses",
+            # The Heysel corpse-grub appears at the same time as the Grand
+            # Archives Key warp.
+            "CD: Heysel Pick - Heysel Corpse-Grub in Rosaria's Bed Chamber",
+            "CD: Xanthous Crown - Heysel Corpse-Grub in Rosaria's Bed Chamber",
         ], lambda state: (
             self._can_get(state, "AL: Cinders of a Lord - Aldrich") and
             self._can_get(state, "PC: Cinders of a Lord - Yhorm the Giant")
