@@ -3,9 +3,30 @@ import json
 from typing import Any, Dict
 
 from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, OptionDict, \
-    OptionGroup, PerGameCommonOptions, Range, Toggle
+    OptionGroup, OptionSet, PerGameCommonOptions, Range, Toggle, OptionError
+    
+from .bosses import all_bosses
 
 # MARK: Game Options
+
+class GoalOption(OptionSet):
+    """Which bosses must be defeated in order to win the game, of the form "<Region> Boss".
+
+    If multiple bosses are selected, all of them must be defeated in order to
+    achieve your goal. By default, only "Erdtree Boss" is
+    selected.
+    """
+    display_name = "Goal"
+    valid_keys = {boss.region + " Boss" for boss in all_bosses if boss.flag}
+    default = frozenset({"Erdtree Boss"})
+
+    def verify_keys(self) -> None:
+        super().verify_keys()
+        if not set(self.value): raise OptionError("You must set at least one Goal.")
+        
+class ExcludeDungeonBosses(DefaultOnToggle):
+    "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
+    display_name = "Exclude Dungeon Bosses"
 
 class EndingCondition(Choice):
     """Ending Condition options
@@ -331,8 +352,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **dlc**: If you want DLC items but dont wanna do DLC.
     - **hidden**: Hard to find items.
     - **blizzard**: The hard to see area of snowfield."""
-    default = frozenset({}) # still errors
-    # Exception: Location 'hidden' from option 'ERExcludeLocations(hidden)' is not a valid location name from 'EldenRing'. Did you mean 'RH: Mace - Twin maiden shop' (18% sure)
+    default = frozenset({"hidden"})
     valid_keys = ["dlc", "hidden", "blizzard"]
     valid_keys_casefold = True
 
@@ -372,6 +392,8 @@ class MissableLocationBehaviorOption(Choice):
 
 @dataclass
 class EROptions(PerGameCommonOptions):
+    goal: GoalOption
+    exclude_dungeon: ExcludeDungeonBosses
     ending_condition: EndingCondition
     world_logic: WorldLogic
     region_boss_percent: RegionBossPercent
@@ -424,6 +446,8 @@ class EROptions(PerGameCommonOptions):
 
 option_groups = [
     OptionGroup("Logic", [
+        GoalOption,
+        ExcludeDungeonBosses,
         EndingCondition,
         WorldLogic,
         RegionBossPercent,

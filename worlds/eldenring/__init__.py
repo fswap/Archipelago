@@ -8,6 +8,7 @@ from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationP
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
+from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_name_groups
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
@@ -16,7 +17,7 @@ from Options import OptionError
 # Settings
 class EldenRingSettings(settings.Group):
     class DisableExtremeOptions(str):
-        """Disables extreme options, like progression items being in missable locations."""
+        """Disables extreme options."""
     disable_extreme_options: typing.Union[DisableExtremeOptions, bool] = False
 
 # Web stuff
@@ -154,6 +155,23 @@ class EldenRing(World):
             
             if self.options.dlc_timing != 2 and self.options.dlc_start != 1:
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
+        else:
+            # dlc_bosses = [boss.region for boss in self._goal_bosses() if boss.dlc] # dlc disabled
+            bosses = list(set(dlc_bosses) & set(self._goal_bosses()))
+            if bosses:
+                raise Exception(
+                    "ER options error: you chose to disable DLC but require the player to beat " +
+                    ",".join(bosses)
+                )
+                
+        if self.options.dlc_start == 1 and self.options.enable_dlc:
+            # base_bosses = [boss.region for boss in self._goal_bosses() if boss.dlc] # base game disabled
+            bosses = list(set(base_bosses) & set(self._goal_bosses()))
+            if bosses:
+                raise Exception(
+                    "ER options error: you chose to disable Base game but require the player to beat " +
+                    ",".join(bosses)
+                )
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
@@ -1150,6 +1168,8 @@ class EldenRing(World):
                 self._add_location_rule(dupe_location.data.name, lambda state: self._can_get(state, dupe_location.data.name[dupe_location.data.name.find(":")+2:]))
                    
         # Ending Rules 
+        self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
+        return
         if self.options.ending_condition <= 1:
             if self.options.enable_dlc and self.options.ending_condition == 0 or self.options.enable_dlc and self.options.dlc_start == 1:
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "EI/GD: Circlet of Light - interact with memory after mainboss")
@@ -1238,7 +1258,7 @@ class EldenRing(World):
                 self._add_entrance_rule("Ancient Ruins of Rauh", "Ancient Ruins Lock")
                 self._add_entrance_rule("Enir Ilim", "Enir Ilim Lock")
         
-        if self.options.world_logic != "region_lock" and False: # unfinished always skip
+        if self.options.world_logic != "region_lock" and False: # redo whole thing to use bosses.py
             if self.options.dlc_start == 0 and self.options.enable_dlc or not self.options.enable_dlc:
                 if self.options.region_boss_type: # only bosses in both sets are used
                     self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"] & self.location_name_groups["Overworld Bosses"]))
@@ -2698,6 +2718,23 @@ class EldenRing(World):
             )
         )
     
+    def _goal_bosses(self) -> list[ERBossInfo]:
+        """Returns all the bosses that are goals for this run."""
+        result = []
+        for name in self.options.goal:
+            assert name.endswith(" Boss")
+            region = name[:-len(" Boss")]
+            boss = next(boss for boss in reversed(all_bosses) if boss.region == region 
+                and (not self.options.exclude_dungeon or self.options.exclude_dungeon and not boss.dungeon)) # exclude dungeon bosses
+            assert boss
+            assert boss.flag
+            result.append(boss)
+        return result
+    
+    def _is_complete(self, state: CollectionState) -> bool:
+        """Whether the given state has achieved the victory condition."""
+        return all(self._can_get(state, next(iter(boss.locations))) for boss in self._goal_bosses())
+    
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
 
@@ -2882,6 +2919,7 @@ class EldenRing(World):
 
         slot_data = {
             "options": {
+                "exclude_dungeon": self.options.exclude_dungeon.value,
                 "ending_condition": self.options.ending_condition.value,
                 "world_logic": self.options.world_logic.value,
                 "region_boss_percent": self.options.region_boss_percent.value,
@@ -2928,6 +2966,7 @@ class EldenRing(World):
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
+            "goal": [boss.flag for boss in self._goal_bosses()],
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,

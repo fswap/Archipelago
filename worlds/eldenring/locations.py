@@ -6287,11 +6287,8 @@ for i, region in enumerate(region_order + region_order_dlc):
     for location in location_tables[region]: location.region_value = i
 
 for region in region_order_dlc:
-    for location in location_tables[region]:
+    for location in location_tables[region] + location_tables["Roundtable Hold DLC Only"]:
         location.dlc = True
-        
-for location in location_tables["Roundtable Hold DLC Only"]:
-    location.dlc = True
 
 for region in [# conditional locations
     # need keys
@@ -6326,6 +6323,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Breakable": set(),
     "Hidden": set(),
     "Missable": set(),
+    "Blizzard": set(),
     
     "Goods": set(),
     "Weapons": set(),
@@ -6393,6 +6391,7 @@ location_descriptions = {
     "Hidden": "Locations that are particularly difficult to find, such as behind illusory " + \
               "walls, down hidden drops, and so on. Does not include large locations.",
     "Missable": "Locations that can be missed in vanilla.",
+    "Blizzard": "Locations in the hard to see blizzard area of snowfield.",
 }
 
 location_dictionary: Dict[str, ERLocationData] = {}
