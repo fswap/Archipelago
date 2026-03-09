@@ -425,7 +425,7 @@ _vanilla_items = [
     ERItemData("St. Trina's Torch", 24040000, ERItemCategory.WEAPON),
     ERItemData("Ghostflame Torch", 24050000, ERItemCategory.WEAPON),
     ERItemData("Beast-Repellent Torch", 24060000, ERItemCategory.WEAPON),
-    ERItemData("Sentry's Torch", 24070000, ERItemCategory.WEAPON),
+    ERItemData("Sentry's Torch", 24070000, ERItemCategory.WEAPON, classification=ItemClassification.useful),
     #shield
     ERItemData("Buckler", 30000000, ERItemCategory.WEAPON),
     ERItemData("Perfumer's Shield", 30010000, ERItemCategory.WEAPON),
@@ -1389,8 +1389,8 @@ _vanilla_items = [
     *ERItemData("Soap", 2120, ERItemCategory.GOODS, replacable=True).counts([3, 4]),
     ERItemData("Celestial Dew", 2130, ERItemCategory.GOODS),
 
-    ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, classification=ItemClassification.useful),
+    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS), # is modified in init
 
     ERItemData("Prattling Pate \"Hello\"", 2200, ERItemCategory.GOODS, skip=True),
@@ -2022,7 +2022,7 @@ _vanilla_items = [
     ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS),
     ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS),
     ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS),
-    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS),
+    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS),
     ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS),
     ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS),
@@ -2653,7 +2653,7 @@ _dlc_items = [
     ERItemData("Messmer's Orb", 2007820, ERItemCategory.GOODS),
 
     # Key and Quest
-    ERItemData("Miquella's Great Rune", 2008000, ERItemCategory.GOODS),
+    ERItemData("Miquella's Great Rune", 2008000, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Igon's Furled Finger", 2008003, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Well Depths Key", 2008004, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Gaol Upper Level Key", 2008005, ERItemCategory.GOODS, classification=ItemClassification.progression),

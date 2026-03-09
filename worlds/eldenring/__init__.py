@@ -57,6 +57,7 @@ class EldenRing(World):
     all_priority_locations: Set[str] = set()
     all_duplicate_locations: list[ERLocation] = []
     all_starting_items: list[ERItem] = []
+    goal_bosses: list[ERBossInfo] = []
     
     def visualize_world(self): # puml gets put in root folder
         Utils.visualize_regions(self.multiworld.get_region(self.multiworld.worlds[1].origin_region_name, 1), f"{self.multiworld.player_name[1]}.puml")
@@ -69,6 +70,7 @@ class EldenRing(World):
         self.all_priority_locations = set()
         self.all_duplicate_locations = []
         self.all_starting_items = []
+        self.goal_bosses = []
         self.explicit_indirect_conditions = False
 
     def generate_early(self) -> None:
@@ -122,6 +124,11 @@ class EldenRing(World):
                 raise OptionError(f"EldenRing disable_extreme_options Error:"
                                   f"Player {self.player_name} has ending_condition set to all bosses.")      
      
+        if not self.options.enemy_rando:
+            item_table["Purifying Crystal Tear"].classification = ItemClassification.progression
+            item_table["Margit's Shackle"].classification = ItemClassification.progression
+            item_table["Mohg's Shackle"].classification = ItemClassification.progression
+        
         if self.options.smithing_bell_bearing_option.value == 1:
             item_table["Smithing-Stone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
             item_table["Smithing-Stone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
@@ -155,23 +162,11 @@ class EldenRing(World):
             
             if self.options.dlc_timing != 2 and self.options.dlc_start != 1:
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
-        else:
-            # dlc_bosses = [boss.region for boss in self._goal_bosses() if boss.dlc] # dlc disabled
-            bosses = list(set(dlc_bosses) & set(self._goal_bosses()))
-            if bosses:
-                raise Exception(
-                    "ER options error: you chose to disable DLC but require the player to beat " +
-                    ",".join(bosses)
-                )
+       
+            self.goal_bosses += list(set(dlc_bosses) & set(self._goal_bosses()))
                 
-        if self.options.dlc_start == 1 and self.options.enable_dlc:
-            # base_bosses = [boss.region for boss in self._goal_bosses() if boss.dlc] # base game disabled
-            bosses = list(set(base_bosses) & set(self._goal_bosses()))
-            if bosses:
-                raise Exception(
-                    "ER options error: you chose to disable Base game but require the player to beat " +
-                    ",".join(bosses)
-                )
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            self.goal_bosses += list(set(base_bosses) & set(self._goal_bosses()))
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
@@ -933,9 +928,9 @@ class EldenRing(World):
 
             # Custom Rules
             
-            if not self.options.enemy_rando: # funny shackle rule
-                self._add_entrance_rule("Stormveil Castle", "Margit's Shackle")
-                self._add_entrance_rule("Mohgwyn Palace", "Mohg's Shackle")
+            if not self.options.enemy_rando: # boss rules
+                self._add_entrance_rule("Stormveil Castle Start", "Margit's Shackle")
+                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
 
             # Item Rules
                 
@@ -1199,11 +1194,11 @@ class EldenRing(World):
         
         # self.visualize_world()
         
-    def _is_complete(self, state: CollectionState, locations: Set) -> bool:
-        """wether the given state has achieved victory."""
-        all(
-            self._can_get(state, location) for location in locations
-        )
+    # def _is_complete(self, state: CollectionState, locations: Set) -> bool:
+    #     """wether the given state has achieved victory."""
+    #     all(
+    #         self._can_get(state, location) for location in locations
+    #     )
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
@@ -2733,7 +2728,7 @@ class EldenRing(World):
     
     def _is_complete(self, state: CollectionState) -> bool:
         """Whether the given state has achieved the victory condition."""
-        return all(self._can_get(state, next(iter(boss.locations))) for boss in self._goal_bosses())
+        return all(self._can_get(state, next(iter(boss.locations))) for boss in self.goal_bosses)
     
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
@@ -2966,7 +2961,7 @@ class EldenRing(World):
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
-            "goal": [boss.flag for boss in self._goal_bosses()],
+            "goal": [boss.flag for boss in self.goal_bosses],
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,
