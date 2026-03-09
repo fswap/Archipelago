@@ -13,12 +13,12 @@ class GoalOption(OptionSet):
     """Which bosses must be defeated in order to win the game, of the form "<Region> Boss".
 
     If multiple bosses are selected, all of them must be defeated in order to
-    achieve your goal. By default, only "Erdtree Boss" is
+    achieve your goal. By default, only "Final Boss" is
     selected.
     """
     display_name = "Goal"
-    valid_keys = {boss.region + " Boss" for boss in all_bosses if boss.flag}
-    default = frozenset({"Erdtree Boss"})
+    valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
+    default = frozenset({"Final Boss"})
 
     def verify_keys(self) -> None:
         super().verify_keys()

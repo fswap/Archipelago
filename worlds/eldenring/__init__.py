@@ -2723,8 +2723,8 @@ class EldenRing(World):
         result = []
         for name in self.options.goal:
             assert name.endswith(" Boss")
-            region = name[:-len(" Boss")]
-            boss = next(boss for boss in reversed(all_bosses) if boss.region == region 
+            goal_type = name[:-len(" Boss")]
+            boss = next(boss for boss in reversed(all_bosses) for type in boss.type if type == goal_type 
                 and (not self.options.exclude_dungeon or self.options.exclude_dungeon and not boss.dungeon)) # exclude dungeon bosses
             assert boss
             assert boss.flag
