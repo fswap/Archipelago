@@ -551,17 +551,17 @@ base_bosses = [
         ]
     ),
     # dragonbarrow dungeons
-    ERBossInfo("Beastman of Farum Azula (DB/DC)", ["Dragonbarrow", "Dungeon", "Cave"], 0, 0, dungeon=True,
+    ERBossInfo("Beastman of Farum Azula (DB/DC)", ["Dragonbarrow", "Dungeon", "Cave"], 0, 31100800, dungeon=True,
         locations=[
             "DB/(DC): Flamedrake Talisman +2 - boss drop"
         ]
     ),
-    ERBossInfo("Crystalians - Trio (DB/SH)", ["Dragonbarrow", "Dungeon", "Cave"], 0, 0, dungeon=True,
+    ERBossInfo("Crystalians - Trio (DB/SH)", ["Dragonbarrow", "Dungeon", "Cave"], 0, 31110800, dungeon=True,
         locations=[
             "DB/(SH): Crystal Torrent - boss drop"
         ]
     ),
-    ERBossInfo("Godskin Apostle (DB/DT)", ["Dragonbarrow", "Dungeon", "Tunnel"], 0, 0, dungeon=True,
+    ERBossInfo("Godskin Apostle (DB/DT)", ["Dragonbarrow", "Dungeon", "Tunnel"], 0, 34130800, dungeon=True,
         locations=[
             "DB/(DT): Godskin Apostle Hood - boss drop",
             "DB/(DT): Godskin Apostle Robe - boss drop",
@@ -570,6 +570,210 @@ base_bosses = [
         ]
     ),
 
+    # MARK: Altus Plateau
+    ERBossInfo("Ancient Dragon Lansseax (AP)", ["Altus Plateau", "Overworld"], 0, 1041520800, # early altus 1037510800   late altus 1041520800
+        locations=[
+            "AP/RP: Lansseax's Glaive - boss drop up hill to SW or NE of AC grace"
+        ]
+    ),
+    ERBossInfo("Tibia Mariner (AP)", ["Altus Plateau", "Overworld"], 0, 1038520800,
+        locations=[
+            "AP/WhR: Deathroot - boss drop",
+            "AP/WhR: Tibia's Summons - boss drop"
+        ]
+    ),
+    ERBossInfo("Godefroy the Grafted (AP)", ["Altus Plateau", "Overworld", "Evergaol"], 0, 1039500800,
+        locations=[
+            "AP/GLE: Godfrey Icon - boss drop Evergaol"
+        ]
+    ),
+    ERBossInfo("Night's Cavalry (AP)", ["Altus Plateau", "Overworld"], 0, 0, # cant find
+        locations=[
+            "AP/AHJ: Ash of War: Shared Order - night boss drop to SW"
+        ]
+    ),
+    ERBossInfo("Elemer of the Briar (AP)", ["Altus Plateau", "The Shaded Castle"], 0, 1039540800,
+        locations=[
+            "TSC/SCIG: Marais Executioner's Sword - boss drop",
+            "TSC/SCIG: Briar Greatshield - boss drop"
+        ]
+    ),
+    ERBossInfo("Black Knife Assassin (AP)", ["Altus Plateau", "Overworld"], 0, 1040520800,
+        locations=[
+            "AP/SHG: Black Knife - boss drop guarding SHG"
+        ]
+    ),
+    ERBossInfo("Sanguine Noble (AP/WbR)", ["Altus Plateau", "Overworld", "Ruin"], 0, 1040530800,
+        locations=[
+            "AP/(WbR): Bloody Helice - in chest after boss underground"
+        ]
+    ),
+    ERBossInfo("Fallingstar Beast (AP)", ["Altus Plateau", "Overworld"], 0, 1041500800,
+        locations=[
+            "AP/AHJ: Gravity Stone Chunk x10 - boss drop S of great stairs in meteor crater",
+            "AP/AHJ: Smithing Stone [6] x5 - boss drop S of great stairs in meteor crater",
+            "AP/AHJ: Somber Smithing Stone [5] - boss drop S of great stairs in meteor crater"
+        ]
+    ),
+    ERBossInfo("Tree Sentinels (AP)", ["Altus Plateau", "Overworld"], 0, 1041510800,
+        locations=[
+            "AP/AHJ: Erdtree Greatshield - boss drop duo to E top of great stairs",
+            "AP/AHJ: Hero's Rune [1] - boss drop duo to E top of great stairs",
+        ]
+    ),
+    ERBossInfo("Wormface (AP)", ["Altus Plateau", "Overworld"], 0, 1041530800,
+        locations=[
+            "AP/ME: Crimsonspill Crystal Tear - boss drop, Minor Erdtree",
+            "AP/ME: Speckled Hardtear - boss drop, Minor Erdtree"
+        ]
+    ),
+    ERBossInfo("Godskin Apostle (AP)", ["Altus Plateau", "Overworld"], 0, 0, # cant find
+        locations=[
+            "AP/(DWV): Godskin Peeler - boss drop",
+            "AP/(DWV): Scouring Black Flame - boss drop"
+        ]
+    ),
+    # altus dungeons
+    ERBossInfo("Ancient Hero of Zamor (AP/SHG)", ["Altus Plateau", "Dungeon", "Grave"], 0, 30080800, dungeon=True,
+        locations=[
+            "AP/(SHG): Ancient Dragon Knight Kristoff - boss drop"
+        ]
+    ),
+    ERBossInfo("Perfumer Tricia & Misbegotten Warrior (AP/UC)", ["Altus Plateau", "Dungeon", "Catacomb"], 0, 30120800, dungeon=True,
+        locations=[
+            "AP/(UC): Perfumer Tricia - boss drop"
+        ]
+    ),
+    ERBossInfo("Omenkiller & Miranda the Blighted Bloom (AP/PG)", ["Altus Plateau", "Dungeon", "Cave"], 0, 31180800, dungeon=True,
+        locations=[
+            "AP/(PG): Great Omenkiller Cleaver - boss drop"
+        ]
+    ),
+    ERBossInfo("Black Knife Assassin (AP/SC)", ["Altus Plateau", "Dungeon", "Cave"], 0, 31190800, dungeon=True,
+        locations=[
+            "AP/(SC): Concealing Veil - boss drop"
+        ]
+    ),
+    ERBossInfo("Necromancer Garris (AP/SC)", ["Altus Plateau", "Dungeon", "Cave"], 0, 31190850, dungeon=True,
+        locations=[
+            "AP/(SC): Family Heads - hidden boss drop"
+        ]
+    ),
+    ERBossInfo("Stonedigger Troll (AP/OAT)", ["Altus Plateau", "Dungeon", "Tunnel"], 0, 32040800, dungeon=True,
+        locations=[
+            "AP/(OAT): Great Club - boss drop"
+        ]
+    ),
+    ERBossInfo("Crystalians - Ringblade/Spear (AP/AT)", ["Altus Plateau", "Dungeon", "Tunnel"], 0, 32050800, dungeon=True,
+        locations=[
+            "AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop"
+        ]
+    ),
+   
+    # MARK: Capital Outskirts
+    ERBossInfo("Deathbird (CO)", ["Capital Outskirts", "Overworld"], 0, 0, # cant find
+        locations=[
+            "CO/HMS: Twinbird Kite Shield - night boss drop to NE in block flower field"
+        ]
+    ),
+    ERBossInfo("Bell Bearing Hunter (CO)", ["Capital Outskirts", "Overworld"], 0, 1043530800,
+        locations=[
+            "CO/(HMS): Medicine Peddler's Bell Bearing - night boss drop"
+        ]
+    ),
+    ERBossInfo("Draconic Tree Sentinel (CO)", ["Capital Outskirts", "Overworld"], 0, 1045520800,
+        locations=[
+            "CO: Dragon Greatclaw - capital great rune gate boss drop",
+            "CO: Dragonclaw Shield - capital great rune gate boss drop"
+        ]
+    ),
+    # capital outskirts dungeons
+    ERBossInfo("Crucible Knight & Crucible Knight Ordovis (CO/AHG)", ["Capital Outskirts", "Dungeon", "Grave"], 0, 30100800, dungeon=True,
+        locations=[
+            "CO/(AHG): Ordovis's Greatsword - boss drop",
+            "CO/(AHG): Crucible Axe Helm - boss drop",
+            "CO/(AHG): Crucible Axe Armor - boss drop",
+            "CO/(AHG): Crucible Gauntlets - boss drop",
+            "CO/(AHG): Crucible Greaves - boss drop"
+        ]
+    ),
+    ERBossInfo("Grave Warden Duelist (CO/AST)", ["Capital Outskirts", "Dungeon", "Catacomb"], 0, 30130800, dungeon=True,
+        locations=[
+            "CO/(AST): Soldjars of Fortune Ashes - boss drop"
+        ]
+    ),
+    ERBossInfo("Onyx Lord (CO/ST)", ["Capital Outskirts", "Dungeon", "Tunnel"], 0, 34120800, dungeon=True,
+        locations=[
+            "CO/(ST): Onyx Lord's Greatsword - boss drop"
+        ]
+    ),
+    
+    # MARK: Mt. Gelmir
+    ERBossInfo("Magma Wyrm (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1035530800,
+        locations=[
+            "MtG/FL: Dragon Heart - boss drop S of FL in magma lake"
+        ]
+    ),
+    ERBossInfo("Full-Grown Fallingstar Beast (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1036540800,
+        locations=[
+            "MtG/NMGC: Fallingstar Beast Jaw - boss drop",
+            "MtG/NMGC: Smithing Stone [6] x5 - boss drop",
+            "MtG/NMGC: Somber Smithing Stone [6] - boss drop"
+        ]
+    ),
+    ERBossInfo("Demi-Human Queen Maggie (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037530800,
+        locations=[
+            "MtG/PSA: Memory Stone - boss drop to S"
+        ]
+    ),
+    ERBossInfo("Ulcerated Tree Spirit (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037540810,
+        locations=[
+            "MtG/ME: Leaden Hardtear - boss drop, Minor Erdtree",
+            "MtG/ME: Cerulean Hidden Tear - boss drop, Minor Erdtree"
+        ]
+    ),
+    # gelmir dungeons
+    ERBossInfo("Erdtree Burial Watchdog (MtG/WC)", ["Mt. Gelmir", "Dungeon", "Catacomb"], 0, 30070800, dungeon=True,
+        locations=[
+            "MtG/(WC): Glovewort Picker's Bell Bearing [1] - boss drop"
+        ]
+    ),
+    ERBossInfo("Red Wolf of the Champion (MtG/GHG)", ["Mt. Gelmir", "Dungeon", "Grave"], 0, 30090800, dungeon=True,
+        locations=[
+            "MtG/(GHG): Bloodhound Knight Floh - boss drop"
+        ]
+    ),
+    ERBossInfo("Kindred of Rot (MtG/SC)", ["Mt. Gelmir", "Dungeon", "Cave"], 0, 31070800, dungeon=True,
+        locations=[
+            "MtG/(SC): Kindred of Rot's Exultation - boss drop"
+        ]
+    ),
+    ERBossInfo("Demi-Human Queen Margot (MtG/VC)", ["Mt. Gelmir", "Dungeon", "Cave"], 0, 31090800, dungeon=True,
+        locations=[
+            "MtG/(VC): Jar Cannon - boss drop"
+        ]
+    ),
+    
+    # MARK: Volcano Manor
+    ERBossInfo("Rykard, Lord of Blasphemy (VM)", ["Volcano Manor", "Remembrance", "Great Rune"], 0, 16000800,
+        locations=[
+            "VM/AP: Rykard's Great Rune - mainboss drop",
+            "VM/AP: Remembrance of the Blasphemous - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Abductor Virgins (VM)", ["Volcano Manor", "Dungeon"], 0, 16000860, dungeon=True,
+        locations=[
+            "(VM)/SIC: Inquisitor's Girandole - boss drop, from RLA warp"
+        ]
+    ),
+    ERBossInfo("Godskin Noble (VM)", ["Volcano Manor"], 0, 16000850,
+        locations=[
+            "VM/GH: Godskin Stitcher - boss drop",
+            "VM/GH: Noble Presence - boss drop"
+        ]
+    ),
+    
+    
     ERBossInfo("", [""], 0, 0,
         locations=[
         ]
