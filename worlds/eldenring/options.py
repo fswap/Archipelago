@@ -342,7 +342,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **dlc**: If you want DLC items but dont wanna do DLC.
     - **hidden**: Hard to find items.
     - **blizzard**: The hard to see area of snowfield."""
-    default = frozenset({"hidden"})
+    default = frozenset({}) # idk how ds3 does this, it just errors
     # valid_keys = ["dlc", "hidden", "blizzard"]
     # valid_keys_casefold = True
 

@@ -103,12 +103,10 @@ class EldenRing(World):
                         elif loc_type.lower() == "revered" and loc.revered:
                             self.all_priority_locations.add(loc.name)
                         elif loc_type.lower() == "bosses" and (
-                            loc.name in self.location_name_groups["Boss Reward"]
-                            or loc.name in self.location_name_groups["Boss Reward DLC"]
+                            loc.name in boss.locations for boss in all_bosses
                             ): self.all_priority_locations.add(loc.name)
                         elif loc_type.lower() == "overworld bosses" and (
-                            loc.name in self.location_name_groups["Boss Reward"] & self.location_name_groups["Overworld Bosses"]
-                            or loc.name in self.location_name_groups["Boss Reward DLC"] & self.location_name_groups["Overworld Bosses"]
+                            loc.name in boss.locations and "Overworld" in boss.type for boss in all_bosses
                             ): self.all_priority_locations.add(loc.name)
         
         if self.settings.disable_extreme_options:
@@ -153,6 +151,10 @@ class EldenRing(World):
             item_table["Golden Seed"].classification = ItemClassification.deprioritized
             item_table["Sacred Tear"].classification = ItemClassification.deprioritized
         
+        m_goal_bosses = self._goal_bosses()
+        if self.options.exclude_dungeon.value: # exclude dungeon bosses
+            m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
+        
         if self.options.enable_dlc:
             # warming stone craft
             # item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
@@ -164,15 +166,15 @@ class EldenRing(World):
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
             
             if "dlc" not in self.options.exclude_locations.value: # if dlc is excluded, exclude bosses too
-                self.goal_bosses += list(set(dlc_bosses) & set(self._goal_bosses()))
-        elif len(set(base_bosses) & set(self._goal_bosses())) == 0: # dlc disabled, is there a base game boss?
+                self.goal_bosses += [boss for boss in m_goal_bosses if boss in dlc_bosses]
+        elif len([boss for boss in m_goal_bosses if boss in base_bosses]) == 0: # dlc disabled, is there a base game boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in Base Game but has DLC disabled.")
                 
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc: # base game enabled
-            self.goal_bosses += list(set(base_bosses) & set(self._goal_bosses()))
+            self.goal_bosses += [boss for boss in m_goal_bosses if boss in base_bosses]
         elif "dlc" in self.options.exclude_locations.value: # dlc only, is dlc excluded?
             raise OptionError(f"Player {self.player_name} has DLC excluded but DLC only is on.")
-        elif len(set(dlc_bosses) & set(self._goal_bosses())) == 0: # dlc only, is there a dlc boss?
+        elif len([boss for boss in m_goal_bosses if boss in dlc_bosses]) == 0: # dlc only, is there a dlc boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
@@ -202,7 +204,7 @@ class EldenRing(World):
                             if 'ashofwar' not in exclude_local_item_only_lowercase:
                                 self.options.local_items.value.add(item.name)
                             break
-
+                
         if not self.options.royal_access:
             for location in location_tables["Leyndell, Royal Capital"]:
                 location.missable = True
@@ -529,12 +531,14 @@ class EldenRing(World):
     def create_items(self) -> None:
         # Gather all default items on randomized locations
         self.local_itempool = []
+        total_locations = 0
         num_required_extra_items = 0
         total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
             if not self._is_location_available(location.name):
                 raise Exception("ER generation bug: Added an unavailable location.")
-
+            
+            total_locations += 1
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
             skip_item = False
@@ -593,6 +597,16 @@ class EldenRing(World):
 
         # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
+        
+        if len(self.local_itempool) > total_locations + len(self.all_duplicate_locations):
+            warning(f"itempool:{len(self.local_itempool)} and locations:{total_locations + len(self.all_duplicate_locations)} don't match, fixing")
+            # remove replacables here so they match, or fix why the mismatch happens
+            req = len(self.local_itempool) - (total_locations + len(self.all_duplicate_locations))
+            while req > 0:
+                item = self.random.choice(self.local_itempool)
+                if item.data.replacable:
+                    self.local_itempool.remove(item)
+                    req -= 1
 
         # Add items to itempool
         self.multiworld.itempool += self.local_itempool
@@ -709,7 +723,7 @@ class EldenRing(World):
                 all_injectable_items += [item_table["Messmer's Kindling"]]
         
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
-            if self.options.use_master_key.value: all_injectable_items += [item for item in item_table if item_table[item].master_key]
+            if self.options.use_master_key.value: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
         
         injectable_mandatory = [
             item for item in all_injectable_items
@@ -938,7 +952,7 @@ class EldenRing(World):
             # Custom Rules
             
             if not self.options.enemy_rando: # boss rules
-                self._add_entrance_rule("Stormveil Castle Start", "Margit's Shackle")
+                self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
 
             # Item Rules
@@ -2580,8 +2594,7 @@ class EldenRing(World):
         for name in self.options.goal:
             assert name.endswith(" Boss")
             goal_type = name[:-len(" Boss")]
-            boss = next(boss for boss in reversed(all_bosses) for type in boss.type if type == goal_type 
-                and (not self.options.exclude_dungeon or self.options.exclude_dungeon and not boss.dungeon)) # exclude dungeon bosses
+            boss = next(boss for boss in iter(all_bosses) if goal_type in boss.type)
             assert boss
             assert boss.flag
             result.append(boss)

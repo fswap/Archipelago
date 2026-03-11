@@ -40,8 +40,7 @@ base_bosses = [
     ),
     ERBossInfo("Flying Dragon Agheel (LG)", ["Limgrave", "Overworld"], 0, 1043360800,
         locations=[
-            "LG/DBR: Dragon Heart - boss drop N of DBR",
-            "CL/(CDC): Agheel's Flame - Dragon Communion, kill boss in LG, NW of DBR"
+            "LG/DBR: Dragon Heart - boss drop N of DBR"
         ]
     ),
     ERBossInfo("Night's Cavalry (LG)", ["Limgrave", "Overworld"], 0, 1043370800,
