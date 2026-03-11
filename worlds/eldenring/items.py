@@ -61,6 +61,9 @@ class ERItemData:
     lock: bool = False
     """Region lock items"""
     
+    master_key: bool = False
+    """Master Keys"""
+    
     map: bool = False
     """Maps"""
     
@@ -2163,7 +2166,27 @@ _vanilla_items = [
     
     ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable, and dupe priority locations
     
-    #MARK: Region Lock Items
+    # MARK: Master Keys
+    ERItemData("Limgrave Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Roundtable Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Weeping Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Stormveil Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Siofra Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Liurnia Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Altus Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Caelid Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Nokron Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Mt. Gelmir Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Volcano Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Capital Outskirts Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Nokstella Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Moonlight Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Mountaintops Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Farum Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Snowfield Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Haligtree Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    
+    # MARK: Region Lock Items
     ERItemData("Weeping Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Stormveil Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Liurnia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),

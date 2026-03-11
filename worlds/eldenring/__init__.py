@@ -165,14 +165,14 @@ class EldenRing(World):
             
             if "dlc" not in self.options.exclude_locations.value: # if dlc is excluded, exclude bosses too
                 self.goal_bosses += list(set(dlc_bosses) & set(self._goal_bosses()))
-        elif list(set(base_bosses) & set(self._goal_bosses())): # dlc disabled, is there a base game boss?
+        elif len(set(base_bosses) & set(self._goal_bosses())) == 0: # dlc disabled, is there a base game boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in Base Game but has DLC disabled.")
                 
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc: # base game enabled
             self.goal_bosses += list(set(base_bosses) & set(self._goal_bosses()))
         elif "dlc" in self.options.exclude_locations.value: # dlc only, is dlc excluded?
             raise OptionError(f"Player {self.player_name} has DLC excluded but DLC only is on.")
-        elif list(set(dlc_bosses) & set(self._goal_bosses())): # dlc only, is there a dlc boss?
+        elif len(set(dlc_bosses) & set(self._goal_bosses())) == 0: # dlc only, is there a dlc boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
@@ -540,6 +540,7 @@ class EldenRing(World):
             skip_item = False
             
             if not item.skip: # if not skipped these need to be skipped, since they get manually placed or added to start inventory
+                if self.options.use_master_key.value and item.name in ["Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"]: skip_item = True
                 if self.options.map_option != 0 and item.map: 
                     skip_item = True
                     if self.options.map_option == 1: self._add_to_inventory(self.create_item(item))
@@ -706,6 +707,9 @@ class EldenRing(World):
                 all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             else:
                 all_injectable_items += [item_table["Messmer's Kindling"]]
+        
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+            if self.options.use_master_key.value: all_injectable_items += [item for item in item_table if item_table[item].master_key]
         
         injectable_mandatory = [
             item for item in all_injectable_items
@@ -897,9 +901,7 @@ class EldenRing(World):
         
         # MARK: Base Game Rules
         if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
-            self._key_rules() # make option to choose master or normal rules
-            #self._master_key_rules()
-            
+            self._key_rules()
             self._add_shop_rules()
             
             # indirect connections
@@ -1233,22 +1235,22 @@ class EldenRing(World):
         # in order from early game to late game each rule needs to include the last count for an area
         
         # limgrave
-        self._add_entrance_rule("Fringefolk Hero's Grave", lambda state: self._has_enough_keys(state, 3)) # 2
-        self._add_location_rule("LG/(SWV): Green Turtle Talisman - behind imp statue", lambda state: self._has_enough_keys(state, 3)) # 1
+        self._add_entrance_rule("Fringefolk Hero's Grave", lambda state: self._choose_key_rules(state, 3, "Limgrave Master Key")) # 2
+        self._add_location_rule("LG/(SWV): Green Turtle Talisman - behind imp statue", lambda state: self._choose_key_rules(state, 3, "Limgrave Master Key")) # 1
         
         #self._add_entrance_rule("Roundtable Hold", lambda state: self._has_enough_keys(state, 3))
         # roundtable
         self._add_location_rule([
             "RH: Crepus's Black-Key Crossbow - behind imp statue in chest", "RH: Black-Key Bolt x20 - behind imp statue in chest", # 1
             "RH: Assassin's Prayerbook - behind second imp statue in chest", # 2
-            ], lambda state: self._has_enough_keys(state, 6))
+            ], lambda state: self._choose_key_rules(state, 6, "Roundtable Master Key"))
         
         #self._add_entrance_rule("Weeping Peninsula", lambda state: self._has_enough_keys(state, 6))
         # weeping
         self._add_location_rule([
             "WP/(TCC): Nomadic Warrior's Cookbook [9] - behind imp statue", # 1
             "WP/(WE): Radagon's Scarseal - boss drop Evergaol", # 1
-            ], lambda state: self._has_enough_keys(state, 8))
+            ], lambda state: self._choose_key_rules(state, 8, "Weeping Master Key"))
         
         #self._add_entrance_rule("Stormveil Castle", lambda state: self._has_enough_keys(state, 8))
         # stormveil
@@ -1258,7 +1260,7 @@ class EldenRing(World):
             "SV/RT: Iron Whetblade - shortcut elevator to SE, to N through door, behind imp statue", # 1b
             "SV/RT: Hawk Crest Wooden Shield - shortcut elevator to SE, to N through door, behind imp statue", # 1b
             "SV/RT: Miséricorde - shortcut elevator to SE, to N through door, behind imp statue", # 1b
-            ], lambda state: self._has_enough_keys(state, 10))
+            ], lambda state: self._choose_key_rules(state, 10, "Stormveil Master Key"))
         
         #self._add_entrance_rule("Siofra River", lambda state: self._has_enough_keys(state, 10))
         # siofra
@@ -1267,7 +1269,7 @@ class EldenRing(World):
             "CL/DSW: Spiked Palisade Shield - to W follow ravine",
             "CL/DSW: Stonesword Key - to S",
             "CL/CCO: Great-Jar's Arsenal - beat Great Jar's knights",
-            ], lambda state: self._has_enough_keys(state, 12) and 
+            ], lambda state: self._choose_key_rules(state, 12, "Siofra Master Key") and 
             self._can_go_to(state, "Siofra River")) # 2
         
         #self._add_entrance_rule("Liurnia of The Lakes", lambda state: self._has_enough_keys(state, 12))
@@ -1275,8 +1277,8 @@ class EldenRing(World):
         self._add_location_rule([
             "LL/(BKC): Rosus' Axe - behind imp statue near boss door", # 1a
             "LL/(CC): Nox Mirrorhelm - behind imp statue, in SW corner", # 1b
-            ], lambda state: self._has_enough_keys(state, 16))
-        self._add_entrance_rule("Academy Crystal Cave", lambda state: self._has_enough_keys(state, 16)) # 2
+            ], lambda state: self._choose_key_rules(state, 16, "Liurnia Master Key"))
+        self._add_entrance_rule("Academy Crystal Cave", lambda state: self._choose_key_rules(state, 16, "Liurnia Master Key")) # 2
         
         #self._add_entrance_rule("Altus Plateau", lambda state: self._has_enough_keys(state, 16))
         # altus
@@ -1285,28 +1287,28 @@ class EldenRing(World):
             "AP/(SHG): Dragoncrest Shield Talisman +1 - ride up first cleaver, behind imp statue", # 1b
             "AP/WhR: Pearldrake Talisman +1 - in chest underground behind a imp statue", # 1c
             "AP/GLE: Godfrey Icon - boss drop Evergaol", # 1d
-            ], lambda state: self._has_enough_keys(state, 22))
-        self._add_entrance_rule("Old Altus Tunnel", lambda state: self._has_enough_keys(state, 22)) # 2
+            ], lambda state: self._choose_key_rules(state, 22, "Altus Master Key"))
+        self._add_entrance_rule("Old Altus Tunnel", lambda state: self._choose_key_rules(state, 22, "Altus Master Key")) # 2
         
         #self._add_entrance_rule("Caelid", lambda state: self._has_enough_keys(state, 22))
         # caelid
-        self._add_entrance_rule("Gaol Cave", lambda state: self._has_enough_keys(state, 25)) # 2
+        self._add_entrance_rule("Gaol Cave", lambda state: self._choose_key_rules(state, 25, "Caelid Master Key")) # 2
         self._add_location_rule("CL/(FR): Sword of St. Trina - in chest underground behind imp statue", 
-                                lambda state: self._has_enough_keys(state, 25)) # 1
+                                lambda state: self._choose_key_rules(state, 25, "Caelid Master Key")) # 1
         
         #self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._has_enough_keys(state, 25))
         # nokron
         self._add_location_rule([
             "NR/(NSG): Mimic Tear Ashes - in chest behind imp statue upper interior", # 1a
             "NR/(NSG): Smithing Stone [3] - behind imp statue upper interior", # 1a
-            ], lambda state: self._has_enough_keys(state, 26))
+            ], lambda state: self._choose_key_rules(state, 26, "Nokron Master Key"))
         
         #self._add_entrance_rule("Mt. Gelmir", lambda state: self._has_enough_keys(state, 26))
         # mt gelmir
         self._add_location_rule([
             "MtG/(WC): Lightning Scorpion Charm - behind imp statue", # 1
-            ], lambda state: self._has_enough_keys(state, 29))
-        self._add_entrance_rule("Seethewater Cave", lambda state: self._has_enough_keys(state, 29)) # 2
+            ], lambda state: self._choose_key_rules(state, 29, "Mt. Gelmir Master Key"))
+        self._add_entrance_rule("Seethewater Cave", lambda state: self._choose_key_rules(state, 29, "Mt. Gelmir Master Key")) # 2
         
         #self._add_entrance_rule("Volcano Manor Entrance", lambda state: self._has_enough_keys(state, 29))
         # volcano
@@ -1317,33 +1319,33 @@ class EldenRing(World):
             "VM/TE: Somber Smithing Stone [7] - NW of shortcut elevator, after imp statue, lower part of big cage room outside to SW", # 2a
             "VM/TE: Dagger Talisman - NW of shortcut elevator, after imp statue, drop to hidden path top item", # 2a
             "VM/TE: Rune Arc - NW of shortcut elevator, after imp statue, drop to hidden path lower item", # 2a
-            ], lambda state: self._has_enough_keys(state, 32))
+            ], lambda state: self._choose_key_rules(state, 32, "Volcano Master Key"))
         
         #self._add_entrance_rule("Capital Outskirts", lambda state: self._has_enough_keys(state, 32))
         # capital outskirts
         self._add_location_rule([
             "CO/(AHG): Golden Epitaph - behind imp statue", # 1
-            ], lambda state: self._has_enough_keys(state, 33))
+            ], lambda state: self._choose_key_rules(state, 33, "Capital Outskirts Master Key"))
         
         #self._add_entrance_rule("Ainsel River Main", lambda state: self._has_enough_keys(state, 33))
         # nokstella
         self._add_location_rule([
             "NS/NEC: Nightmaiden & Swordstress Puppets - in chest behind imp statue to W up stairs, left before bridge", # 1
-            ], lambda state: self._has_enough_keys(state, 34))
+            ], lambda state: self._choose_key_rules(state, 34, "Nokstella Master Key"))
         
         #self._add_entrance_rule("Moonlight Altar", lambda state: self._has_enough_keys(state, 34))
         # moonlight altar
         self._add_location_rule([
             "MA/(LER): Cerulean Amber Medallion +2 - in chest under illusory floor behind imp statue", # 1
-            ], lambda state: self._has_enough_keys(state, 35))
+            ], lambda state: self._choose_key_rules(state, 35, "Moonlight Master Key"))
         
         #self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_keys(state, 35))
         # mountaintops
         self._add_location_rule([
             "FP/(GCHG): Flame, Protect Me - behind imp statue", # 1a
             "FP/(GCHG): Cranial Vessel Candlestand - upper room after fire spitter, behind imp statue", # 1b
-            ], lambda state: self._has_enough_keys(state, 39))
-        self._add_entrance_rule("Spiritcaller Cave", lambda state: self._has_enough_keys(state, 39)) # 2
+            ], lambda state: self._choose_key_rules(state, 39, "Mountaintops Master Key"))
+        self._add_entrance_rule("Spiritcaller Cave", lambda state: self._choose_key_rules(state, 39, "Mountaintops Master Key")) # 2
         
         #self._add_entrance_rule("Farum Azula", lambda state: self._has_enough_keys(state, 39))
         # farum
@@ -1365,18 +1367,23 @@ class EldenRing(World):
             "FA/DTL: Dragonwound Grease x2 - to S under fallen building", # 2
             "FA/DTL: Shard of Alexander - fight Alexander to SW", # 2
             "FA/DTL: Alexander's Innards - fight Alexander to SW", # 2
-            ], lambda state: self._has_enough_keys(state, 41))
+            ], lambda state: self._choose_key_rules(state, 41, "Farum Master Key"))
         
         #self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_keys(state, 41))
         # snowfield
-        self._add_entrance_rule("Cave of the Forlorn", lambda state: self._has_enough_keys(state, 43)) # 2
+        self._add_entrance_rule("Cave of the Forlorn", lambda state: self._choose_key_rules(state, 43, "Snowfield Master Key")) # 2
         
         #self._add_entrance_rule("Miquella's Haligtree", lambda state: self._has_enough_keys(state, 43))
         # haligtree +3
         self._add_location_rule([
             "EBH/PR: Triple Rings of Light - drop down to E, in chest behind imp statue", # 1
             "EBH/EIW: Marika's Soreseal - to SE past the imp statue in lower section", # 2
-            ], lambda state: self._has_enough_keys(state, 46))
+            ], lambda state: self._choose_key_rules(state, 46, "Haligtree Master Key"))
+        
+    def _choose_key_rules(self, state: CollectionState, keys_required: int, master_key: str) -> bool:
+        "choose key rules"
+        if self.options.use_master_key.value: return state.has(master_key, self.player)
+        else: return self._has_enough_keys(state, keys_required)
         
     def _dragon_communion_rules(self) -> None: # MARK: Dragon Rules
         """Rules for dragon communion"""
@@ -2776,6 +2783,7 @@ class EldenRing(World):
                 "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
                 "royal_access": self.options.royal_access.value,
+                "use_master_key": self.options.use_master_key.value,
                 "enable_dlc": self.options.enable_dlc.value,
                 "dlc_start": self.options.dlc_start.value,
                 "dlc_starting_items": self.options.dlc_starting_items.value,

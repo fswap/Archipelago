@@ -79,6 +79,10 @@ class RoyalAccess(Toggle):
     """Keep Royal Capital graces accessable after it becomes ashen."""
     display_name = "Royal Capital Accessable"
 
+class StoneswordMasterKey(Toggle):
+    "Replace Stonesword Keys with a Master Key for each region"
+    display_name = "Stonesword Master Key"
+
 # MARK: DLC
 
 class EnableDLC(Toggle):
@@ -387,6 +391,7 @@ class EROptions(PerGameCommonOptions):
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
     great_runes_required_mountain: GreatRunesRequiredMountain
     royal_access: RoyalAccess
+    use_master_key: StoneswordMasterKey
     
     enable_dlc: EnableDLC
     dlc_start: DLCStart
@@ -440,6 +445,7 @@ option_groups = [
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,
         RoyalAccess,
+        StoneswordMasterKey,
     ]),
     OptionGroup("Equipment", [
         RandomizeStartingLoadout,

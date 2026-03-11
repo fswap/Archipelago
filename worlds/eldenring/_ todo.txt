@@ -12,10 +12,7 @@ TODO
 
 static rando options
 
-
-
-todo later dlc region lock boss rules
-
+boss region lock using bosses.py
 
 
 Ideas
