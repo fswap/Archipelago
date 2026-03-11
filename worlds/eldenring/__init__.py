@@ -120,9 +120,9 @@ class EldenRing(World):
                 raise OptionError(f"EldenRing disable_extreme_options Error:"
                                   f"Player {self.player_name} has goods enabled in exclude_local_item_only."
                                   f"This being here means over 3.5k checks come from this world and it bypasses local_item_option.")
-            elif self.options.ending_condition == 3:
-                raise OptionError(f"EldenRing disable_extreme_options Error:"
-                                  f"Player {self.player_name} has ending_condition set to all bosses.")      
+            elif all(boss in self._goal_bosses() for boss in all_bosses): # idk if this is needed but I feel like it should be here
+                warning(f"EldenRing disable_extreme_options waring:"
+                        f"Player {self.player_name} has goal option set to all bosses.")
      
         if not self.options.enemy_rando:
             item_table["Purifying Crystal Tear"].classification = ItemClassification.progression
@@ -162,11 +162,18 @@ class EldenRing(World):
             
             if self.options.dlc_timing != 2 and self.options.dlc_start != 1:
                 item_table["Pureblood Knight's Medal"].classification = ItemClassification.progression
-       
-            self.goal_bosses += list(set(dlc_bosses) & set(self._goal_bosses()))
+            
+            if "dlc" not in self.options.exclude_locations.value: # if dlc is excluded, exclude bosses too
+                self.goal_bosses += list(set(dlc_bosses) & set(self._goal_bosses()))
+        elif list(set(base_bosses) & set(self._goal_bosses())): # dlc disabled, is there a base game boss?
+            raise OptionError(f"Player {self.player_name} has no boss goals in Base Game but has DLC disabled.")
                 
-        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc:
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc: # base game enabled
             self.goal_bosses += list(set(base_bosses) & set(self._goal_bosses()))
+        elif "dlc" in self.options.exclude_locations.value: # dlc only, is dlc excluded?
+            raise OptionError(f"Player {self.player_name} has DLC excluded but DLC only is on.")
+        elif list(set(dlc_bosses) & set(self._goal_bosses())): # dlc only, is there a dlc boss?
+            raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
         
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
@@ -1162,43 +1169,9 @@ class EldenRing(World):
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations                              V removes "Dupe #: "
                 self._add_location_rule(dupe_location.data.name, lambda state: self._can_get(state, dupe_location.data.name[dupe_location.data.name.find(":")+2:]))
                    
-        # Ending Rules 
+        # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
-        return
-        if self.options.ending_condition <= 1:
-            if self.options.enable_dlc and self.options.ending_condition == 0 or self.options.enable_dlc and self.options.dlc_start == 1:
-                self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "EI/GD: Circlet of Light - interact with memory after mainboss")
-            else:
-                self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "ET: Elden Remembrance - mainboss drop")
-                # make this the mend the elden ring event, idk how todo that rn
-        elif self.options.ending_condition == 2:
-            if self.options.enable_dlc and self.options.dlc_start == 1:
-                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Remembrance DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
-            elif self.options.enable_dlc:
-                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Remembrance"] | self.location_name_groups["Remembrance DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
-            else:
-                self._add_location_rule("Victory", lambda state: self._is_complete(state, self.location_name_groups["Remembrance"]))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
-        else:
-            if self.options.enable_dlc and self.options.dlc_start == 1:
-                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Boss Reward DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
-            elif self.options.enable_dlc:
-                self._add_location_rule("DLC Victory", lambda state: self._is_complete(state, (self.location_name_groups["Boss Reward"] | self.location_name_groups["Boss Reward DLC"])))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("DLC Victory", self.player)
-            else:
-                self._add_location_rule("Victory", lambda state: self._is_complete(state, self.location_name_groups["Boss Reward"]))
-                self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
-        
         # self.visualize_world()
-        
-    # def _is_complete(self, state: CollectionState, locations: Set) -> bool:
-    #     """wether the given state has achieved victory."""
-    #     all(
-    #         self._can_get(state, location) for location in locations
-    #     )
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
@@ -1254,127 +1227,8 @@ class EldenRing(World):
                 self._add_entrance_rule("Enir Ilim", "Enir Ilim Lock")
         
         if self.options.world_logic != "region_lock" and False: # redo whole thing to use bosses.py
-            if self.options.dlc_start == 0 and self.options.enable_dlc or not self.options.enable_dlc:
-                if self.options.region_boss_type: # only bosses in both sets are used
-                    self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                else:
-                    self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"]))
-                    self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"]))
-                    self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"]))
-                    self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"]))
-                    self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"]))
-                    self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"]))
-                    self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"]))
-                    self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"]))
-                    self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"]))
-                    self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"]))
-                    self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"]))
-                    self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"]))
-                    self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"]))
-                    self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"]))
-                    self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"]))
-                    self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"]))
-                    self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"]))
-                    self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"]))
-                
-                self._add_entrance_rule("Weeping Peninsula", lambda state: state.has("Limgrave Bosses", self.player))
-                
-                self._add_entrance_rule("Stormveil Start", lambda state: state.has("Weeping Bosses", self.player))
-                self._add_entrance_rule("Liurnia of The Lakes", lambda state: state.has("Stormveil Bosses", self.player))
-                
-                self._add_entrance_rule("Raya Lucaria Academy", lambda state: state.has("Liurnia Bosses", self.player))
-                
-                self._add_entrance_rule("Altus Plateau", lambda state: state.has("Raya Lucaria Bosses", self.player))
-                self._add_entrance_rule("Volcano Manor Dungeon", lambda state: state.has("Raya Lucaria Bosses", self.player))
-                
-                self._add_entrance_rule("Caelid", lambda state: state.has("Altus Bosses", self.player))
-                self._add_entrance_rule("Mt. Gelmir", lambda state: state.has("Altus Bosses", self.player))
-                self._add_entrance_rule("Leyndell, Royal Capital", lambda state: state.has("Altus Bosses", self.player) 
-                        and state.has("Caelid Bosses", self.player) and state.has("Mt. Gelmir Bosses", self.player))
-                
-                self._add_entrance_rule("Nokron, Eternal City Start", lambda state: state.has("Caelid Bosses", self.player))
-                self._add_entrance_rule("Siofra River", lambda state: state.has("Caelid Bosses", self.player))
-                
-                self._add_entrance_rule("Deeproot Depths", lambda state: state.has("South East Underground Bosses", self.player))
-                self._add_entrance_rule("Ainsel River Main", lambda state: state.has("South East Underground Bosses", self.player))
-                self._add_entrance_rule("Ainsel River", lambda state: state.has("South East Underground Bosses", self.player))
-                
-                self._add_entrance_rule("Lake of Rot", lambda state: state.has("North Underground Bosses", self.player))
-                
-                self._add_entrance_rule("Moonlight Altar", lambda state: state.has("South West Underground Bosses", self.player))
-                
-                self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Leyndell Bosses", self.player))
-                self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: state.has("Leyndell Bosses", self.player))
-                
-                self._add_entrance_rule("Miquella's Haligtree", lambda state: state.has("Snowfield Bosses", self.player))
-                if self.options.dlc_timing != 2:
-                    self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Liurnia Bosses", self.player))
-                else:
-                    self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Snowfield Bosses", self.player))
-                
-                self._add_entrance_rule("Farum Azula", lambda state: state.has("Mountaintops Bosses", self.player))
-                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: state.has("Farum Bosses", self.player) 
-                                        and state.has("Haligtree Bosses", self.player) and state.has("Mohgwyn Bosses", self.player))
+            "todo"
             
-            if self.options.enable_dlc:
-                if self.options.region_boss_type: # only bosses in both sets are used
-                    self._add_location_rule("Ashen Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ashen Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Gravesite Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Gravesite Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Belurat Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Belurat Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ensis Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ensis Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ellac Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ellac Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Cerulean Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Cerulean Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Jagged Peak Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Jagged Peak Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Charo's Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Charo's Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Scadu Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Scadu Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Rauh Base Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Rauh Base Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Shadow Keep Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Shadow Keep Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Hinterland Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Hinterland Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Finger Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Finger Ruins Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Recluses' Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Recluses' Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Abyssal Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Abyssal Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ancient Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ancient Ruins Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Enir Ilim Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Enir Ilim Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                else:
-                    self._add_location_rule("Ashen Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ashen Bosses"]))
-                    self._add_location_rule("Gravesite Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Gravesite Bosses"]))
-                    self._add_location_rule("Belurat Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Belurat Bosses"]))
-                    self._add_location_rule("Ensis Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ensis Bosses"]))
-                    self._add_location_rule("Ellac Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ellac Bosses"]))
-                    self._add_location_rule("Cerulean Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Cerulean Bosses"]))
-                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses"]))
-                    self._add_location_rule("Jagged Peak Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Jagged Peak Bosses"]))
-                    self._add_location_rule("Charo's Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Charo's Bosses"]))
-                    self._add_location_rule("Scadu Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Scadu Altus Bosses"]))
-                    self._add_location_rule("Rauh Base Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Rauh Base Bosses"]))
-                    self._add_location_rule("Shadow Keep Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Shadow Keep Bosses"]))
-                    self._add_location_rule("Hinterland Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Hinterland Bosses"]))
-                    self._add_location_rule("Finger Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Finger Ruins Bosses"]))
-                    self._add_location_rule("Recluses' Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Recluses' Bosses"]))
-                    self._add_location_rule("Abyssal Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Abyssal Bosses"]))
-                    self._add_location_rule("Ancient Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ancient Ruins Bosses"]))
-                    self._add_location_rule("Enir Ilim Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Enir Ilim Bosses"]))
-                
-                # TODO entrance rules          
-    
     def _key_rules(self) -> None: # MARK: SSK Rules
         # in order from early game to late game each rule needs to include the last count for an area
         
@@ -2915,7 +2769,6 @@ class EldenRing(World):
         slot_data = {
             "options": {
                 "exclude_dungeon": self.options.exclude_dungeon.value,
-                "ending_condition": self.options.ending_condition.value,
                 "world_logic": self.options.world_logic.value,
                 "region_boss_percent": self.options.region_boss_percent.value,
                 "region_boss_type": self.options.region_boss_type.value,

@@ -28,20 +28,6 @@ class ExcludeDungeonBosses(DefaultOnToggle):
     "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
     display_name = "Exclude Dungeon Bosses"
 
-class EndingCondition(Choice):
-    """Ending Condition options
-    
-    **Final Boss:** Will be Elden Beast, or Consort if DLC is enabled.
-    **Elden Beast:** Kill Elden Beast, for short runs with DLC on.
-    **All Remembrances:** All remembrance bosses, missable ones excluded.
-    **All Bosses:** All bosses, missable ones excluded.
-    If DLC is on those bosses / remembrances are included."""
-    display_name = "Ending Condition"  # this is the option name as it's displayed to the user on the webhost and in the spoiler log
-    option_final_boss = 0
-    option_elden_beast = 1
-    option_all_remembrances = 2
-    option_all_bosses = 3
-
 class WorldLogic(Choice):
     """World Logic options
     
@@ -353,8 +339,8 @@ class ERExcludeLocations(ExcludeLocations):
     - **hidden**: Hard to find items.
     - **blizzard**: The hard to see area of snowfield."""
     default = frozenset({"hidden"})
-    valid_keys = ["dlc", "hidden", "blizzard"]
-    valid_keys_casefold = True
+    # valid_keys = ["dlc", "hidden", "blizzard"]
+    # valid_keys_casefold = True
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
@@ -394,7 +380,6 @@ class MissableLocationBehaviorOption(Choice):
 class EROptions(PerGameCommonOptions):
     goal: GoalOption
     exclude_dungeon: ExcludeDungeonBosses
-    ending_condition: EndingCondition
     world_logic: WorldLogic
     region_boss_percent: RegionBossPercent
     region_boss_type: RegionBossType
@@ -448,7 +433,6 @@ option_groups = [
     OptionGroup("Logic", [
         GoalOption,
         ExcludeDungeonBosses,
-        EndingCondition,
         WorldLogic,
         RegionBossPercent,
         RegionBossType,

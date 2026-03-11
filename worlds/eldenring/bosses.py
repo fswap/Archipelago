@@ -237,11 +237,11 @@ base_bosses = [
             "DD/AR: Fia's Mist - boss drop"
         ]
     ),
-    ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850,
-        locations=[
-            "DD/PDT: Remembrance of the Lichdragon - mainboss drop"
-        ]
-    ),
+    # ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850,
+    #     locations=[
+    #         "DD/PDT: Remembrance of the Lichdragon - mainboss drop"
+    #     ]
+    # ), # uncomment once made unmissable
     
     # MARK: Liurnia of The Lakes
     ERBossInfo("Erdtree Avatar (LL/MEW)", ["Liurnia of The Lakes", "Overworld"], 0, 1033430800,
@@ -987,20 +987,280 @@ base_bosses = [
 ]
 
 dlc_bosses = [
-    ERBossInfo("", [""], 0, 0,
+    # MARK: Gravesite Plain
+    ERBossInfo("Ghostflame Dragon (GP)", ["Gravesite Plain", "Overworld"], 0, 2045440800,
         locations=[
+            "GP/BG: Dragon Heart - boss drop E of BG",
+        ]
+    ),
+    ERBossInfo("Knight of the Solitary Gaol (GP)", ["Gravesite Plain", "Overworld", "Mausoleum"], 0, 2046410800,
+        locations=[
+            "GP/(WNM): Greatsword of Solitude - boss drop",
+            "GP/(WNM): Helm of Solitude - boss drop",
+            "GP/(WNM): Armor of Solitude - boss drop",
+            "GP/(WNM): Gauntlets of Solitude - boss drop",
+            "GP/(WNM): Greaves of Solitude - boss drop"
+        ]
+    ),
+    ERBossInfo("Death Knight (GP/FRC)", ["Gravesite Plain", "Dungeon", "Catacomb"], 0, 40000800, dungeon=True,
+        locations=[
+            "GP/(FRC): Death Knight's Twin Axes - boss drop",
+            "GP/(FRC): Crimson Amber Medallion +3 - boss drop"
+        ]
+    ),
+    ERBossInfo("Demi-Human Swordmaster Onze (GP/BG)", ["Gravesite Plain", "Dungeon", "Gaol"], 0, 41000800, dungeon=True,
+        locations=[
+            "GP/(BG): Demi-Human Swordsman Yosh - boss drop"
+        ]
+    ),
+    ERBossInfo("Ancient Dragon-Man (GP/DP)", ["Gravesite Plain", "Dungeon", "Cave"], 0, 43010800, dungeon=True,
+        locations=[
+            "GP/(DP): Dragon-Hunter's Great Katana - boss drop"
+        ]
+    ),
+    
+    # MARK: Belurat
+    ERBossInfo("Divine Beast Dancing Lion (BTS)", ["Belurat", "DLC Remembrance"], 0, 20000800,
+        locations=[
+            "BTS/SF: Remembrance of the Dancing Lion - mainboss drop",
+            "BTS/BTS: Divine Beast Head - boss drop"
+        ]
+    ),
+    
+    # MARK: Castle Ensis
+    ERBossInfo("Rellana, Twin Moon Knight (CE)", ["Castle Ensis", "DLC Remembrance", "DLC Main"], 0, 2048440800,
+        locations=[
+            "CE/CLC: Remembrance of the Twin Moon Knight - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Black Knight Garrew (CE)", ["Castle Ensis", "Fort"], 0, 2047450800, # requires scadu altus access
+        locations=[
+            "CE/(FRF): Black Steel Greatshield - boss drop"
+        ]
+    ),
+    
+    # MARK: Ellac River
+    ERBossInfo("Chief Bloodfiend (ER)", ["Ellac River", "Dungeon", "Cave"], 0, 43000800, dungeon=True,
+        locations=[
+            "ER/(RC): Bloodfiend Hexer's Ashes - boss drop"
+        ]
+    ),
+    
+    # MARK: Cerulean Coast
+    ERBossInfo("Dancer of Ranah (CC)", ["Cerulean Coast", "Overworld", "Mausoleum"], 0, 2046380800,
+        locations=[
+            "CC/CCW: Dancing Blade of Ranah - boss drop",
+            "CC/CCW: Dancer's Hood - boss drop",
+            "CC/CCW: Dancer's Dress - boss drop",
+            "CC/CCW: Dancer's Bracer - boss drop",
+            "CC/CCW: Dancer's Trousers - boss drop"
+        ]
+    ),
+    ERBossInfo("Demi-Human Queen Marigga (CC)", ["Cerulean Coast", "Overworld"], 0, 2046400800,
+        locations=[
+            "CC/CCW: Star-Lined Sword - boss drop"
+        ]
+    ),
+    ERBossInfo("Ghostflame Dragon (CC)", ["Cerulean Coast", "Overworld"], 0, 2048380850,
+        locations=[
+            "CC/CC: Dragon Heart - boss drop",
+            "CC/CC: Somber Ancient Dragon Smithing Stone - boss drop"
+        ]
+    ),
+    
+    # Stone Coffin Fissure
+    ERBossInfo("Putrescent Knight (SCF)", ["Stone Coffin Fissure", "DLC Remembrance"], 0, 22000800,
+        locations=[
+            "SCF/FD: Remembrance of Putrescence - mainboss drop"
+        ]
+    ),
+    
+    # MARK: Jagged Peak
+    ERBossInfo("Jagged Peak Drake (JP/DPT)", ["Jagged Peak", "Overworld"], 0, 2049410800,
+        locations=[
+            "JP/DPT: Dragon Heart - boss drop to E",
+            "JP/DPT: Dragonscale Flesh - boss drop to E"
+        ]
+    ),
+    ERBossInfo("Jagged Peak Drake (JP/FJP)", ["Jagged Peak", "Overworld"], 0, 2052400800, # the fighting one
+        locations=[
+            "JP/FJP: Dragon Heart - boss drop to SE",
+            "JP/FJP: Dragonscale Flesh - boss drop to SE"
+        ]
+    ),
+    ERBossInfo("Bayle the Dread (JP)", ["Jagged Peak", "Overworld", "DLC Remembrance"], 0, 2054390800,
+        locations=[
+            "JP/JPS: Heart of Bayle - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Ancient Dragon Senessax (JP)", ["Jagged Peak", "Overworld"], 0, 2054390850,
+        locations=[
+            "JP/JPM: Ancient Dragon Smithing Stone - boss drop to S",
+            "JP/JPM: Somber Ancient Dragon Smithing Stone - boss drop to S"
+        ]
+    ),
+    
+    # MARK: Charo's Hidden Grave
+    ERBossInfo("Death Rite Bird (CHG)", ["Charo's Hidden Grave", "Overworld"], 0, 2047390800,
+        locations=[
+            "CHG/CHG: Ash of War: Ghostflame Call - boss drop to NW in lake"
+        ]
+    ),
+    ERBossInfo("Lamenter (CHG/LG)", ["Charo's Hidden Grave", "Dungeon", "Gaol"], 0, 41020800, dungeon=True,
+        locations=[
+            "CHG/(LG): Lamenter's Mask - boss drop"
+        ]
+    ),
+    
+    # MARK: Scadu Altus
+    ERBossInfo("Ghostflame Dragon (SA)", ["Scadu Altus", "Overworld"], 0, 2049430800,
+        locations=[
+            "SA/MR: Dragon Heart - boss drop to S",
+            "SA/MR: Somber Ancient Dragon Smithing Stone - boss drop to S"
+        ]
+    ),
+    ERBossInfo("Black Knight Edreed (SA)", ["Scadu Altus", "Overworld", "Fort"], 0, 2049430850,
+        locations=[
+            "SA/FR: Ash of War: Aspects of the Crucible: Wings - boss drop to S inside"
+        ]
+    ),
+    ERBossInfo("Ralva the Great Red Bear (SA)", ["Scadu Altus", "Overworld"], 0, 2049450800,
+        locations=[
+            "SA/HC: Pelt of Ralva - boss drop to N, E before camp, deep woods"
+        ]
+    ),
+    ERBossInfo("Curseblade Labirith (SA/BG)", ["Scadu Altus", "Dungeon", "Gaol"], 0, 41010800, dungeon=True,
+        locations=[
+            "SA/(BG): Curseblade Meera - boss drop"
+        ]
+    ),
+    
+    # MARK: Rauh Base
+    ERBossInfo("Rugalea the Great Red Bear (RB)", ["Rauh Base", "Overworld"], 0, 2044470800,
+        locations=[
+            "RB/RN: Roar of Rugalea - boss drop to NW"
+        ]
+    ),
+    ERBossInfo("Red Bear (RB)", ["Rauh Base", "Overworld", "Mausoleum"], 0, 2046450800,
+        locations=[
+            "RB/(NNM): Red Bear's Claw - boss drop",
+            "RB/(NNM): Iron Rivet Armor - boss drop",
+            "RB/(NNM): Iron Rivet Gauntlets - boss drop",
+            "RB/(NNM): Iron Rivet Greaves - boss drop",
+            "RB/(NNM): Fang Helm - boss drop"
+        ]
+    ),
+    ERBossInfo("Death Knight (RB/SRC)", ["Rauh Base", "Dungeon", "Catacomb"], 0, 40010800, dungeon=True,
+        locations=[
+            "RB/(SRC): Death Knight's Longhaft Axe - boss drop",
+            "RB/(SRC): Cerulean Amber Medallion +3 - boss drop"
+        ]
+    ),
+    
+    # MARK: Shadow Keep
+    ERBossInfo("Messmer the Impaler (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 21010800,
+        locations=[
+            "SK/DCE: Remembrance of the Impaler - mainboss drop",
+            "SK/DCE: Messmer's Kindling - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Golden Hippopotamus (SK)", ["Shadow Keep"], 0, 21000850,
+        locations=[
+            "SK/SKMG: Aspects of the Crucible: Thorns - boss drop",
+            "SK/SKMG: Scadutree Fragment x2 - boss drop"
+        ]
+    ),
+    ERBossInfo("Commander Gaius (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2049480800,
+        locations=[
+            "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Scadutree Avatar (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2050480800,
+        locations=[
+            "SK/TWS: Remembrance of the Shadow Sunflower - mainboss drop",
+            "SK/TWS: Miquella's Great Rune - mainboss drop"
+        ]
+    ),
+    
+    # MARK: Hinterland
+    ERBossInfo("Tree Sentinel (HL hill)", ["Hinterland", "Overworld"], 0, 2050470800, # these could be wrong but doesn't matter
+        locations=[
+            "HL/HL: Blessing of Marika - boss drop on hill"
+        ]
+    ),
+    ERBossInfo("Tree Sentinel (HL bridge)", ["Hinterland", "Overworld"], 0, 2050480860, #
+        locations=[
+            "HL/HL: Blessing of Marika - boss drop by bridge"
+        ]
+    ),
+    ERBossInfo("Fallingstar Beast (HL)", ["Hinterland", "Overworld"], 0, 2052480800,
+        locations=[
+            "HL/FH: Gravitational Missile - boss drop to NE"
+        ]
+    ),
+    
+    # MARK: Finger Ruins
+    ERBossInfo("Metyr, Mother of Fingers (FRM)", ["Finger Ruins", "DLC Remembrance"], 0, 25000800,
+        locations=[
+            "FRM: Remembrance of the Mother of Fingers - mainboss drop"
+        ]
+    ),
+    # ERBossInfo("Count Ymir, Mother of Fingers (CMM)", ["Finger Ruins"], 0, 0,
+    #     locations=[
+    #         "SA/(CMM): Maternal Staff - kill invader Ymir",
+    #         "SA/(CMM): High Priest Hat - kill invader Ymir",
+    #         "SA/(CMM): High Priest Robe - kill invader Ymir",
+    #         "SA/(CMM): High Priest Gloves - kill invader Ymir",
+    #         "SA/(CMM): High Priest Undergarments - kill invader Ymir"
+    #     ]
+    # ),
+    
+    # MARK: Recluses' River
+    ERBossInfo("Rakshasa (RR)", ["Recluses' River", "Overworld", "Mausoleum"], 0, 2051440800,
+        locations=[
+            "RR/(ENM): Rakshasa's Great Katana - boss drop",
+            "RR/(ENM): Rakshasa Helm - boss drop",
+            "RR/(ENM): Rakshasa Armor - boss drop",
+            "RR/(ENM): Rakshasa Gauntlets - boss drop",
+            "RR/(ENM): Rakshasa Greaves - boss drop"
+        ]
+    ),
+    ERBossInfo("Jori, Elder Inquisitor (RR/DC)", ["Recluses' River", "Dungeon", "Catacomb"], 0, 2052430800, dungeon=True,
+        locations=[
+            "RR/(DC): Barbed Staff-Spear - boss drop"
+        ]
+    ),
+    
+    # MARK: Midra's Manse
+    ERBossInfo("Midra, Lord of Frenzied Flame (MM)", ["Midra's Manse", "DLC Remembrance"], 0, 28000800,
+        locations=[
+            "MM/SFC: Remembrance of the Lord of Frenzied Flame - mainboss drop"
+        ]
+    ),
+    
+    # MARK: Ancient Ruins of Rauh
+    ERBossInfo("Romina, Saint of the Bud (ARR)", ["Ancient Ruins of Rauh", "Overworld", "DLC Remembrance", "DLC Main"], 0, 2044450800,
+        locations=[
+            "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Divine Beast Dancing Lion (ARR)", ["Ancient Ruins of Rauh", "Overworld"], 0, 2046460800,
+        locations=[
+            "ARR/ARGS: Divine Beast Tornado - boss drop to NE"
         ]
     ),
     
     # MARK: Enir Ilim
-    ERBossInfo("Promised Consort Radahn (EI)", ["Enir Ilim", "Remembrance", "DLC Final", "Main"], 0, 20010800,
+    ERBossInfo("Promised Consort Radahn (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800,
         locations=[
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
         ]
     ),
 ]
 
-for boss in dlc_bosses:
+for boss in base_bosses: boss.type.append("All Base")
+for boss in dlc_bosses: 
     boss.dlc = True
+    boss.type.append("All DLC")
     
 all_bosses = base_bosses + dlc_bosses

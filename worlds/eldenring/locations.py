@@ -567,57 +567,14 @@ class ERLocationData:
         if self.exclusive: # makes sure exclusive is marked missable
             self.missable = True
 
-    def find_boss_region(self) -> str:
-        if not self.dlc:
-            if self.limgrave_boss: return "Limgrave Bosses"
-            if self.weeping_boss: return "Weeping Bosses"
-            if self.stormveil_boss: return "Stormveil Bosses"
-            if self.liurnia_boss: return "Liurnia Bosses"
-            if self.raya_boss: return "Raya Lucaria Bosses"
-            if self.se_underground_boss: return "South East Underground Bosses"
-            if self.n_underground_boss: return "North Underground Bosses"
-            if self.sw_underground_boss: return "South West Underground Bosses"
-            if self.moonlight_boss: return "Moonlight Bosses"
-            if self.altus_boss: return "Altus Bosses"
-            if self.mtgelmir_boss: return "Mt. Gelmir Bosses"
-            if self.caelid_boss: return "Caelid Bosses"
-            if self.leyndell_boss: return "Leyndell Bosses"
-            if self.mountaintops_boss: return "Mountaintops Bosses"
-            if self.snowfield_boss: return "Snowfield Bosses"
-            if self.mohgwyn_boss: return "Mohgwyn Bosses"
-            if self.farum_boss: return "Farum Bosses"
-            if self.haligtree_boss: return "Haligtree Bosses"
-            if self.ashen_boss: return "Ashen Bosses"
-        else:
-            if self.gravesite_boss: return "Gravesite Bosses"
-            if self.belurat_boss: return "Belurat Bosses"
-            if self.ensis_boss: return "Ensis Bosses"
-            if self.ellac_boss: return "Ellac Bosses"
-            if self.cerulean_boss: return "Cerulean Bosses"
-            if self.stonecoffin_boss: return "Stone Coffin Bosses"
-            if self.jaggedpeak_boss: return "Jagged Peak Bosses"
-            if self.charos_boss: return "Charo's Bosses"
-            if self.scadualtus_boss:  return "Scadu Altus Bosses"
-            if self.rauhbase_boss:  return "Rauh Base Bosses"
-            if self.shadowkeep_boss: return "Shadow Keep Bosses"
-            if self.hinterland_boss: return "Hinterland Bosses"
-            if self.fingerruins_boss: return "Finger Ruins Bosses"
-            if self.recluses_boss: return "Recluses' Bosses"
-            if self.abyssal_boss:return "Abyssal Bosses"
-            if self.ancientruins_boss: return "Ancient Ruins Bosses"
-            if self.enirilim_boss: return "Enir Ilim Bosses"
-        
     def location_groups(self) -> List[str]:
         """The names of location groups this location should appear in.
 
         This is computed from the properties assigned to this location."""
         names = []
         if (self.boss or self.altboss or self.catacombboss or self.miscboss or self.minidungeonboss or self.graveboss
-        or self.caveboss or self.tunnelboss or self.overworldboss or self.dragonboss or self.gaolboss): # any boss should be a prominent place
+        or self.caveboss or self.tunnelboss or self.overworldboss or self.dragonboss or self.gaolboss):
             if not self.missable:
-                names.append(self.find_boss_region())
-                if self.boss or self.overworldboss or self.dragonboss or self.miscboss or self.evergaol:
-                    names.append("Overworld Bosses")
                 if not self.dlc:
                     names.append("Boss Reward")
                 else:
@@ -935,28 +892,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/StC: Golden Rune [2] - on dropdown platform middle of big long room", "Golden Rune [2]", key="100000,0:0010007240::"),
     ],
     "Limgrave":[ # limgrave                                               done
-        # events
-        #ERLocationData("Victory", None),
-        ERLocationData("Limgrave Bosses", None),
-        ERLocationData("Weeping Bosses", None),
-        ERLocationData("Stormveil Bosses", None),
-        ERLocationData("Liurnia Bosses", None),
-        ERLocationData("Raya Lucaria Bosses", None),
-        ERLocationData("South East Underground Bosses", None),
-        ERLocationData("North Underground Bosses", None),
-        ERLocationData("South West Underground Bosses", None),
-        ERLocationData("Moonlight Bosses", None),
-        ERLocationData("Altus Bosses", None),
-        ERLocationData("Mt. Gelmir Bosses", None),
-        ERLocationData("Caelid Bosses", None),
-        ERLocationData("Leyndell Bosses", None),
-        ERLocationData("Mountaintops Bosses", None),
-        ERLocationData("Snowfield Bosses", None),
-        ERLocationData("Farum Bosses", None),
-        ERLocationData("Mohgwyn Bosses", None),
-        ERLocationData("Haligtree Bosses", None),
-        ERLocationData("Ashen Bosses", None),
-       
         ERLocationData("LG/(SG): Tarnished's Furled Finger - beside grace", "Tarnished's Furled Finger", key="180000,0:0000060220::"),
         ERLocationData("LG/(SG): Finger Severer - beside grace", "Finger Severer", key="180000,0:0000060310::"),
 
@@ -3595,7 +3530,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
     
     # MARK: Elden Beast
     "Erdtree":[ #erdtree                                                  done
-        ERLocationData("Victory", None),
         ERLocationData("ET: Elden Remembrance - mainboss drop", "Elden Remembrance", key="190000,0:0000510230::", boss=True, end=True, remembrance=True, ashen_boss=True),
     ],
     
@@ -3722,7 +3656,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("BTS/BTS: Horned Warrior's Sword - enemy drop in NW swamp area", "Horned Warrior's Sword", key="200000,0:0020007993::"),
     ],
     "Enir Ilim":[ # enirilim                                              done
-        ERLocationData("DLC Victory", None),
         ERLocationData("EI/CCA: Leda's Armor - on Leda's body after npc boss", "Leda's Armor", key="200100,0:0000400598::"),
         ERLocationData("EI/CCA: Freyja's Greatsword - on Freyja's body", "Freyja's Greatsword", key="200100,0:0000400602::", missable=True),
         ERLocationData("EI/CCA: Freyja's Helm - on Freyja's body", "Freyja's Helm", key="200100,0:0000400602::", missable=True),
@@ -3860,26 +3793,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/CDE: Crab Eggs x2 - down right on first roof", "Crab Eggs x2", key="210000,0:0021007420::"),
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
-        # events
-        #ERLocationData("DLC Victory", None),
-        ERLocationData("Gravesite Bosses", None),
-        ERLocationData("Belurat Bosses", None),
-        ERLocationData("Ensis Bosses", None),
-        ERLocationData("Ellac Bosses", None),
-        ERLocationData("Cerulean Bosses", None),
-        ERLocationData("Stone Coffin Bosses", None),
-        ERLocationData("Jagged Peak Bosses", None),
-        ERLocationData("Charo's Bosses", None),
-        ERLocationData("Scadu Altus Bosses", None),
-        ERLocationData("Rauh Base Bosses", None),
-        ERLocationData("Shadow Keep Bosses", None),
-        ERLocationData("Hinterland Bosses", None),
-        ERLocationData("Finger Ruins Bosses", None),
-        ERLocationData("Recluses' Bosses", None),
-        ERLocationData("Abyssal Bosses", None),
-        ERLocationData("Ancient Ruins Bosses", None),
-        ERLocationData("Enir Ilim Bosses", None),
-        
         ERLocationData("GP/TPC: Cross Map - given by Hornsent at TPC or HC", "Cross Map", key="210100,0:0000400610::", missable=True), #Hornsent
         ERLocationData("GP/TPC: Furnace Visage x3 - given by Hornsent after giving Scorpion Stew", "Furnace Visage x3", key="210100,0:0000400612::", missable=True), #Hornsent
         ERLocationData("GP/PT: Ghost Glovewort [4] - W of PT, in front of gravestone", "Ghost Glovewort [4]", key="614441,0:2044417000::"),
@@ -6331,48 +6244,6 @@ location_name_groups: Dict[str, Set[str]] = {
     "Accessory": set(),
     "Ash of war": set(),
     #"Upgraded Weapons": set(),
-    
-    
-    "Overworld Bosses": set(),
-    
-    # boss event groups
-    "Limgrave Bosses": set(),
-    "Weeping Bosses": set(),
-    "Stormveil Bosses": set(),
-    "Liurnia Bosses": set(),
-    "Raya Lucaria Bosses": set(),
-    "South East Underground Bosses": set(),
-    "North Underground Bosses": set(),
-    "South West Underground Bosses": set(),
-    "Moonlight Bosses": set(),
-    "Altus Bosses": set(),
-    "Mt. Gelmir Bosses": set(),
-    "Caelid Bosses": set(),
-    "Leyndell Bosses": set(),
-    "Mountaintops Bosses": set(),
-    "Snowfield Bosses": set(),
-    "Farum Bosses": set(),
-    "Mohgwyn Bosses": set(),
-    "Haligtree Bosses": set(),
-    "Ashen Bosses": set(),
-    
-    "Gravesite Bosses": set(),
-    "Belurat Bosses": set(),
-    "Ensis Bosses": set(),
-    "Ellac Bosses": set(),
-    "Cerulean Bosses": set(),
-    "Stone Coffin Bosses": set(),
-    "Jagged Peak Bosses": set(),
-    "Charo's Bosses": set(),
-    "Scadu Altus Bosses": set(),
-    "Rauh Base Bosses": set(),
-    "Shadow Keep Bosses": set(),
-    "Hinterland Bosses": set(),
-    "Finger Ruins Bosses": set(),
-    "Recluses' Bosses": set(),
-    "Abyssal Bosses": set(),
-    "Ancient Ruins Bosses": set(),
-    "Enir Ilim Bosses": set(),
 }
 
 location_descriptions = {
