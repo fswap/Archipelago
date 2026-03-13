@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import dataclasses
 from enum import IntEnum
-from typing import Any, cast, ClassVar, Dict, Generator, List, Optional, Set
+from typing import Any, cast, Callable, ClassVar, Dict, Generator, List, Optional, Set, Union
 
 from BaseClasses import Item, ItemClassification
+from Options import PerGameCommonOptions
 
 class ERItemCategory(IntEnum):
     GOODS = 1 # Misc, Key, Spell, most stuff that goes into your inventory
@@ -49,11 +50,11 @@ class ERItemData:
     filler: bool = False
     """Whether this is a candidate for a filler item to be added to fill out extra locations."""
 
-    skip: bool = False
+    skip: Union[bool, Callable[[PerGameCommonOptions], bool]] = False
     """Whether to omit this item from randomization and replace it with filler or unique items."""
     
-    inject: bool = False
-    """Items to be injected manually"""
+    inject: Union[bool, Callable[[PerGameCommonOptions], bool]] = False
+    """If this is set, the randomizer will try to inject this item into the game."""
     
     replacable: bool = False
     """Items that can be replaced by injectables"""
@@ -109,7 +110,7 @@ class ERItemData:
                 base_name = self.base_name,
                 count = count,
                 filler = False, # Don't count multiples as filler by default
-                replacable = False, # dont replace items with multiple counts
+                replacable = True,
             )
             
     def counts_filler(self, counts: List[int]) -> Generator["ERItemData", None, None]:
@@ -126,6 +127,13 @@ class ERItemData:
                 replacable = False, # dont replace items with multiple counts
             )
 
+    def should_inject(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be injected given a set of options."""
+        return self.inject if isinstance(self.inject, bool) else self.inject(options)
+
+    def should_skip(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be skipped given a set of options."""
+        return self.skip if isinstance(self.skip, bool) else self.skip(options)
 
 class ERItem(Item):
     game: str = "EldenRing"

@@ -1,8 +1,9 @@
-from typing import cast, ClassVar, Optional, Dict, List, Set
+from typing import cast, Callable, ClassVar, Optional, Dict, List, Set, Union
 from dataclasses import dataclass
 from logging import warning
 
 from BaseClasses import ItemClassification, Location, Region
+from Options import PerGameCommonOptions
 from .items import ERItemCategory, item_table
 
 # Regions in approximate order of progression
@@ -269,8 +270,8 @@ class ERLocationData:
     key: Optional[str] = None
     """The key used by the static randomizer"""
 
-    missable: bool = False
-    """Whether this item is possible to permanently lose access to.
+    missable: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = False
+    """Whether this location is possible to permanently lose access to.
 
     This is also used for items that are *technically* possible to get at any time, but are
     prohibitively difficult without blocking off other checks (items dropped by NPCs on death
@@ -279,6 +280,15 @@ class ERLocationData:
     Missable locations are always marked as excluded, so they will never contain
     progression or useful items.
     """
+    
+    omit: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = False
+    """Whether to not include this location in the multiworld at all."""
+    
+    randomize: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = True
+    """Whether to allow this location to be randomized.
+
+    Even if this is True, the location may still be unrandomized based on to the player's options.
+    If it's False, though, the location will never be randomized."""
     
     exclusive: bool = False
     """Whether this location is an exclusive item, other items are missed."""
@@ -567,6 +577,29 @@ class ERLocationData:
         if self.exclusive: # makes sure exclusive is marked missable
             self.missable = True
 
+    def is_missable(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location is missable given a set of options."""
+        return self.missable if isinstance(self.missable, bool) else self.missable(self, options)
+
+    def should_omit(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be omitted given a set of options."""
+        return self.omit if isinstance(self.omit, bool) else self.omit(self, options)
+
+    def should_randomize(self, options: PerGameCommonOptions) -> bool:
+        """Whether this location should be forced to contain its default item."""
+        if not (
+            self.randomize if isinstance(self.randomize, bool)
+            else self.randomize(self, options)
+        ): return False
+
+        return (
+            options.missable_location_behavior == "do_not_randomize"
+            and self.is_missable(options)
+        ) or (
+            options.excluded_location_behavior == "do_not_randomize"
+            and self.name in options.exclude_locations.value
+        )
+
     def location_groups(self) -> List[str]:
         """The names of location groups this location should appear in.
 
@@ -620,6 +653,14 @@ class ERLocation(Location):
             event: bool = False):
         super().__init__(player, data.name, None if event else data.ap_code, parent)
         self.data = data
+
+def disable_base(self: ERLocationData, options: PerGameCommonOptions) -> bool:
+    """A utility function for locations that are omitted when Base is disabled."""
+    return options.enable_dlc and options.dlc_start == 1
+
+def disable_dlc(self: ERLocationData, options: PerGameCommonOptions) -> bool:
+    """A utility function for locations that are omitted when DLC is disabled."""
+    return not options.enable_dlc
 
 # from ds3 locations.py
 
@@ -6199,9 +6240,14 @@ location_tables: Dict[str, List[ERLocationData]] = {
 for i, region in enumerate(region_order + region_order_dlc):
     for location in location_tables[region]: location.region_value = i
 
+for region in region_order:
+    for location in location_tables[region]:
+        location.omit = disable_base
+
 for region in region_order_dlc:
     for location in location_tables[region] + location_tables["Roundtable Hold DLC Only"]:
         location.dlc = True
+        location.omit = disable_dlc
 
 for region in [# conditional locations
     # need keys

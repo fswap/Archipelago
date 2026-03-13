@@ -1,10 +1,13 @@
 from collections.abc import Sequence
 from collections import defaultdict
+from enum import Enum
 import settings, typing, Utils
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
 
 from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, ItemClassification
+from Fill import remaining_fill
+
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
@@ -26,6 +29,50 @@ class EldenRingWeb(WebWorld):
     theme = "stone"
     option_groups = option_groups
     item_descriptions = item_descriptions
+    
+class _LocationStatus(Enum):
+    """An enum representing different possible states a location may be in given a player's options.
+    """
+
+    ABSENT = 0b000
+    """The location is totally inaccessible from the game.
+
+    For example: DLC locations with `enable_dlc: false`.
+    """
+
+    UNRANDOMIZED_UNMISSABLE = 0b001
+    """The location is unrandomized but not missable.
+
+    For example, an unmissable but explicitly excluded location with
+    `excluded_location_behavior: do_not_randomize`.
+    """
+
+    UNRANDOMIZED_MISSABLE = 0b011
+    """The location is unrandomized as well as missable.
+
+    For example, any missable location with `missable_location_behavior: do_not_randomize`.
+    """
+
+    RANDOMIZED_UNMISSABLE = 0b101
+    """The location is accessible from the game, randomized, and can't be missed."""
+
+    RANDOMIZED_MISSABLE = 0b111
+    """The location is accessible from the game, randomized, but can be missed."""
+
+    @property
+    def is_absent(self) -> bool:
+        """Returns whether this location is totally inaccessible from the game."""
+        return self == _LocationStatus.ABSENT
+
+    @property
+    def is_randomized(self) -> bool:
+        """Returns whether this location is accessible and can contain a random item."""
+        return self.value & 0b101 == 0b101
+
+    @property
+    def is_missable(self) -> bool:
+        """Returns whether this location is accessible but also missable."""
+        return self.value & 0b011 == 0b011
 
 # Main World
 class EldenRing(World):
@@ -65,8 +112,6 @@ class EldenRing(World):
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
         self.local_itempool = None
-        self.base_itempool = None
-        self.dlc_itempool = None
         self.created_regions = None
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
@@ -79,6 +124,7 @@ class EldenRing(World):
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         self.all_priority_locations.update(self.options.priority_locations.value)
+        exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         
         m_goal_bosses = self._goal_bosses()
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
@@ -148,7 +194,6 @@ class EldenRing(World):
         elif len([boss for boss in m_goal_bosses if boss in dlc_bosses]) == 0: # dlc only, is there a dlc boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
         
-        exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
         if self.options.enable_dlc: using_table = item_table
         for item in using_table.values(): # loop of whole item table
@@ -490,17 +535,21 @@ class EldenRing(World):
         excluded = self.options.exclude_locations.value
 
         for location in location_table:
-            if self._is_location_available(location):
+            status = self._location_status(location)
+            if status.is_absent:
+                continue
+            elif status.is_randomized:
                 new_location = ERLocation(self.player, location, new_region)
                 
-                if location.name in self.all_priority_locations and location.missable:
+                if location.name in self.all_priority_locations and location.is_missable(self.options):
                     self.all_priority_locations.remove(location.name) # if its missable remove it from priority
                 elif location.name in self.all_priority_locations:
                     new_location.progress_type = LocationProgressType.PRIORITY
                 
                 if (
                     # Exclude missable locations that don't allow useful items
-                    location.missable and self.options.missable_location_behavior == "forbid_useful"
+                    location.is_missable(self.options)
+                    and self.options.missable_location_behavior == "forbid_useful"
                     and not (
                         # Unless they are excluded to a higher degree already
                         location.name in self.all_excluded_locations
@@ -508,6 +557,13 @@ class EldenRing(World):
                     )
                 ): new_location.progress_type = LocationProgressType.EXCLUDED
             else:
+                # Don't consider non-randomized locations to be AP-excluded
+                if location.name in excluded:
+                    excluded.remove(location.name)
+                    # Only remove from all_excluded if excluded does not have priority over missable
+                    if not (self.options.missable_location_behavior < self.options.excluded_location_behavior):
+                        self.all_excluded_locations.remove(location.name)
+                
                 # Replace non-randomized items with events that give the default item
                 event_item = (
                     self.create_item(location.default_item_name) if location.default_item_name
@@ -518,15 +574,8 @@ class EldenRing(World):
                     self.player,
                     location,
                     parent = new_region,
-                    event = True,
                 )
-                event_item.code = None
                 new_location.place_locked_item(event_item)
-                if location.name in excluded:
-                    excluded.remove(location.name)
-                    # Only remove from all_excluded if excluded does not have priority over missable
-                    if not (self.options.missable_location_behavior < self.options.excluded_location_behavior):
-                        self.all_excluded_locations.remove(location.name)
 
             new_region.locations.append(new_location)
 
@@ -537,19 +586,17 @@ class EldenRing(World):
     def create_items(self) -> None:
         # Gather all default items on randomized locations
         self.local_itempool = []
-        self.base_itempool = []
-        self.dlc_itempool = []
         num_required_extra_items = 0
         total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
-            if not self._is_location_available(location.name):
+            if not self._location_status(location.name).is_randomized:
                 raise Exception("ER generation bug: Added an unavailable location.")
             
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
             skip_item = False
             
-            if not item.skip: # if not skipped these need to be skipped, since they get manually placed or added to start inventory
+            if not item.should_skip(self.options): # if not skipped these need to be skipped, since they get manually placed or added to start inventory
                 if self.options.use_master_key.value and item.name in ["Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"]: skip_item = True
                 if self.options.map_option != 0 and item.map: 
                     skip_item = True
@@ -574,7 +621,7 @@ class EldenRing(World):
                             elif item.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
                                 skip_item = True; self._add_to_inventory(self.create_item(item)); break
             
-            if item.skip or skip_item:
+            if item.should_skip(self.options) or skip_item:
                 num_required_extra_items += 1
             else:
                 # if self.options.important_at_priority_only.value:
@@ -582,40 +629,31 @@ class EldenRing(World):
                     total_important_items.append(item)
                 
                 if not location.data.dlc:
-                    self.base_itempool.append(self.create_item(default_item_name))
+                    self.local_itempool.append(self.create_item(default_item_name))
                 elif location.data.dlc:
                     # make base items dlc if in dlc
                     dlc_item = self.create_item(default_item_name)
                     dlc_item.data.found_in_dlc = True
-                    self.dlc_itempool.append(dlc_item)
-
-        total_important_inj, dlc_injectables, base_injectables = self._create_injectable_items(num_required_extra_items)
+                    self.local_itempool.append(dlc_item)
+        
+        total_important_inj, injectables = self._create_injectable_items(num_required_extra_items)
         total_important_items += total_important_inj
-        num_required_extra_items -= len(dlc_injectables + base_injectables)
-        self.base_itempool.extend(base_injectables)
-        self.dlc_itempool.extend(dlc_injectables)
+        num_required_extra_items -= len(injectables)
+        self.local_itempool.extend(injectables)
         
         if self.options.important_at_priority_only.value: 
             # could also add to this and if there are negative num_required_extra_items dupe random locations
-            self._create_dupe_locations(total_important_items)
+            num_required_extra_items += self._create_dupe_locations(total_important_items)
 
         # Potentially fill some items locally and remove them from the itempool
-        self.local_itempool = self.base_itempool + self.dlc_itempool
         self._fill_local_items()
         
-        base_unfilled = [loc for loc in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)) if not loc.data.dlc]
-        dlc_unfilled = [loc for loc in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)) if loc.data.dlc]
-        
-        # Extra filler items for locations containing skip items
-        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(
-            (len(base_unfilled) - len(self.base_itempool)) + len([d for d in self.all_duplicate_locations if not d.data.dlc])))
-        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(
-            (len(dlc_unfilled) - len(self.dlc_itempool)) + len([d for d in self.all_duplicate_locations if d.data.dlc])))
-        
+        self.local_itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(num_required_extra_items))
+       
         # Add items to itempool
-        self.multiworld.itempool += self.base_itempool + self.dlc_itempool
+        self.multiworld.itempool += self.local_itempool
         
-    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
+    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> int: 
         """Create duplicate locations for priority locations."""
         
         if len(self.all_priority_locations) < int(len(total_important_items)/8):
@@ -672,6 +710,7 @@ class EldenRing(World):
                             )
                             dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
+                            location_tables[region.name].append(dupe_location.data)
                             self.all_duplicate_locations.append(dupe_location)
                             found = True
                             break
@@ -685,6 +724,8 @@ class EldenRing(World):
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
             location_dictionary.update({location.data.name: location.data for location in self.all_duplicate_locations})
+            return len(self.all_duplicate_locations)
+        return 0
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -696,7 +737,8 @@ class EldenRing(World):
         all_injectable_items = [
             item for item
             in item_table.values()
-            if item.inject and (not item.is_dlc or self.options.enable_dlc)
+            if item.should_inject(self.options)
+            and (not item.is_dlc or self.options.enable_dlc)
         ]
         
         if self.options.enable_dlc:
@@ -747,15 +789,15 @@ class EldenRing(World):
             )
         )
 
-        # if len(inj_items) < len(injectable_mandatory) and not self.options.important_at_priority_only.value: # this option will add tons of extra locations so its a non issue
-        #     # find random item in list, check to see if its a replacable, then remove
-        #     # continue till enough room to inject all
-        #     req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
-        #     while req > 0:
-        #         item = self.random.choice(self.local_itempool)
-        #         if item.data.replacable:
-        #             self.local_itempool.remove(item)
-        #             req -= 1
+        if number_to_inject < len(injectable_mandatory):
+            # find random item in list, check to see if its a replacable, then remove
+            # continue till enough room to inject all
+            req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
+            while req > 0:
+                item = self.random.choice(self.local_itempool)
+                if item.data.replacable:
+                    self.local_itempool.remove(item)
+                    req -= 1
             
             # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
             # for item in injectable_mandatory:
@@ -767,7 +809,7 @@ class EldenRing(World):
             #         f"inventory instead."
             #     )
 
-        return injectable_mandatory, [self.create_item(item) for item in inj_items if item.is_dlc or item.found_in_dlc], [self.create_item(item) for item in inj_items if not item.is_dlc and not item.found_in_dlc]
+        return injectable_mandatory, [self.create_item(item) for item in inj_items]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -845,8 +887,7 @@ class EldenRing(World):
                 self.multiworld.get_location(location.name, self.player)
                 for region in regions
                 for location in location_tables[region]
-                if self._is_location_available(location)
-                and not location.missable
+                if self._location_status(location) == _LocationStatus.RANDOMIZED_UNMISSABLE
                 and not location.conditional
                 and (not additional_condition or additional_condition(location))
             )
@@ -863,10 +904,6 @@ class EldenRing(World):
         ]
         
         self.local_itempool.remove(item)
-        if item.data.is_dlc or item.data.found_in_dlc:
-            self.dlc_itempool.remove(item)
-        else:
-            self.base_itempool.remove(item)
 
         if not candidate_locations:
             warning(f"Couldn't place \"{name}\" in a valid location for {self.player_name}. Adding it to starting inventory instead.")
@@ -885,7 +922,7 @@ class EldenRing(World):
         "Add item to starting inventory."
         self.all_starting_items.append(item)
         # idk how its being handled so everything added to starting inventory will be called here
-        # self.multiworld.push_precollected(item)
+        self.multiworld.push_precollected(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
         data = item if isinstance(item, ERItemData) else item_table[item]
@@ -902,11 +939,11 @@ class EldenRing(World):
                 location.item = candidate
                 return
 
-    def get_filler_item_name(self, dlc: bool) -> str:
-        if dlc:
-            return self.random.choice(filler_item_names_dlc)
-        else:
-            return self.random.choice(filler_item_names_vanilla)
+    def get_filler_item_name(self) -> str:
+        candidate_filler = []
+        if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
+        if self.options.dlc_start != 1 and self.options.enable_dlc or not self.options.enable_dlc: candidate_filler.extend(filler_item_names_vanilla)
+        return self.random.choice(candidate_filler)
 
     def set_rules(self) -> None: #MARK: Rules
         
@@ -1172,7 +1209,7 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Create duplicate location rules
-        if self.options.important_at_priority_only.value and len(self.all_duplicate_locations) != 0:
+        if self.options.important_at_priority_only.value and len(self.all_duplicate_locations) > 0:
             for region in location_tables:
                 for location in location_tables[region]:
                     if location.name not in self.all_priority_locations:
@@ -2498,7 +2535,7 @@ class EldenRing(World):
                     location.name
                     for location in all_locations
                     if location.name in self.all_excluded_locations
-                    and not location.data.missable
+                    and not location.data.is_missable(self.options)
                 }
                 if self.options.excluded_location_behavior < self.options.missable_location_behavior
                 else self.all_excluded_locations
@@ -2509,7 +2546,7 @@ class EldenRing(World):
             {
                 location.name
                 for location in all_locations
-                if location.data.missable
+                if location.data.is_missable(self.options)
                 and not (
                     location.name in self.all_excluded_locations
                     and self.options.missable_location_behavior <
@@ -2538,16 +2575,14 @@ class EldenRing(World):
         """
         locations = location if isinstance(location, list) else [location]
         for location in locations:
-            data = location_dictionary[location]
-            if data.dlc and not self.options.enable_dlc: continue
-
-            if not self._is_location_available(location): continue
+            if self._location_status(location).is_absent: continue
+            
             if isinstance(rule, str):
                 assert item_table[rule].classification == ItemClassification.progression
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
     
-    def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str]) -> None:
+    def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str], from_region: Optional[str] = None) -> None:
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
@@ -2555,11 +2590,15 @@ class EldenRing(World):
             if " -> " not in rule:
                 assert item_table[rule].classification == ItemClassification.progression
             rule = lambda state, item=rule: state.has(item, self.player)
-        add_rule(self.multiworld.get_entrance("Go To " + region, self.player), rule)
+        entrance = (
+            f"{from_region} => {region}" if from_region
+            else "Go To " + region
+        )
+        add_rule(self.multiworld.get_entrance(entrance, self.player), rule)
 
     def _add_item_rule(self, location: str, rule: ItemRule) -> None:
         """Sets a rule for what items are allowed in a given location."""
-        if not self._is_location_available(location): return
+        if not self._location_status(location).is_randomized: return
         add_item_rule(self.multiworld.get_location(location, self.player), rule)
 
     def _can_go_to(self, state: CollectionState, region) -> bool:
@@ -2621,8 +2660,35 @@ class EldenRing(World):
             text = "\n" + text + "\n"
             spoiler_handle.write(text)
 
+    def _location_status(
+        self,
+        location: Union[str, ERLocationData, ERLocation],
+    ) -> _LocationStatus:
+        """Returns the status of the given location given the player's options."""
+        if isinstance(location, ERLocationData):
+            data = location
+        elif isinstance(location, ERLocation):
+            data = location.data
+        else:
+            data = location_dictionary[location]
+
+        if data.should_omit(self.options): return _LocationStatus.ABSENT
+        if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
+
+        missable = data.is_missable(self.options)
+        if data.should_randomize(self.options):
+            return (
+                _LocationStatus.RANDOMIZED_MISSABLE if missable
+                else _LocationStatus.RANDOMIZED_UNMISSABLE
+            )
+        else:
+            return (
+                _LocationStatus.UNRANDOMIZED_MISSABLE if missable
+                else _LocationStatus.UNRANDOMIZED_UNMISSABLE
+            )
+
     @classmethod
-    def stage_post_fill(cls, multiworld: MultiWorld): # Using old version of item smoothing from ds3, need to update that at some point
+    def stage_post_fill(cls, multiworld: MultiWorld):
         """If item smoothing is enabled, rearrange items so they scale up smoothly through the run.
 
         This determines the approximate order a given silo of items (say, soul items) show up in the
@@ -2638,39 +2704,48 @@ class EldenRing(World):
             # No worlds need item smoothing.
             return
 
-        spheres_per_player: Dict[int, List[List[Location]]] = {world.player: [] for world in er_worlds}
-        for sphere in multiworld.get_spheres():
-            locations_per_item_player: Dict[int, List[Location]] = {player: [] for player in spheres_per_player.keys()}
-            for location in sphere:
+        er_player_to_world = {world.player: world for world in er_worlds}
+        er_smoothing_location_to_sphere: dict[Location, int] = {}
+        er_player_full_items_by_name = {world.player: defaultdict(list) for world in er_worlds}
+        for sphere_number, sphere in enumerate(multiworld.get_spheres(), start=1):
+            # Sort for deterministic results in `er_player_full_items_by_name`.
+            for location in sorted(sphere):
                 if location.locked:
+                    # Locked locations should not have their items moved.
                     continue
-                item_player = location.item.player
-                if item_player in locations_per_item_player:
-                    locations_per_item_player[item_player].append(location)
-            for player, locations in locations_per_item_player.items():
-                # Sort for deterministic results.
-                locations.sort()
-                spheres_per_player[player].append(locations)
+                item = location.item
+                if item.player not in er_player_to_world:
+                    # The item does not belong to a ER player with smoothing enabled, so can be ignored.
+                    continue
+                if item.code is None:
+                    # Never re-order event items, because they weren't randomized in the first place. The locations
+                    # of event items should be locked anyway, so this is only for safety.
+                    continue
+                if (
+                    location.player in er_player_to_world
+                    and not er_player_to_world[location.player]
+                        ._location_status(location)
+                        .is_randomized
+                ):
+                    # The location belongs to a ER player with smoothing enabled, but the location is not considered
+                    # available. This should mean that the location is not randomized, so the locations should be locked
+                    # anyway, so this is only for safety.
+                    continue
+                er_smoothing_location_to_sphere[location] = sphere_number
+                er_player_full_items_by_name[item.player][item.name].append(location.item)
 
         for er_world in er_worlds:
-            locations_by_sphere = spheres_per_player[er_world.player]
-
             # All items in the base game in approximately the order they appear
             all_item_order: List[ERItemData] = [
                 item_table[location.default_item_name]
-                for region in (region_order + region_order_dlc)
+                for region in region_order
                 # Shuffle locations within each region.
                 for location in er_world._shuffle(location_tables[region])
-                if er_world._is_location_available(location)
+                if er_world._location_status(location).is_randomized
             ]
 
-            # All EldenRingItems for this world that have been assigned anywhere, grouped by name
-            full_items_by_name: Dict[str, List[ERItem]] = defaultdict(list)
-            for location in multiworld.get_filled_locations():
-                if location.item.player == er_world.player and (
-                    location.player != er_world.player or er_world._is_location_available(location)
-                ):
-                    full_items_by_name[location.item.name].append(location.item)
+            # All ERItems for this world that have been assigned anywhere, grouped by name
+            full_items_by_name: defaultdict[str, List[ERItem]] = er_player_full_items_by_name[er_world.player]
 
             def smooth_items(item_order: List[Union[ERItemData, ERItem]]) -> None:
                 """Rearrange all items in item_order to match that order.
@@ -2679,52 +2754,50 @@ class EldenRing(World):
                 world matching the given names.
                 """
 
-                # Convert items to full EldenRingItems.
-                converted_item_order: List[ERItem] = [
-                    item for item in (
-                        (
-                            # full_items_by_name won't contain DLC items if the DLC is disabled.
-                            (full_items_by_name[item.name] or [None]).pop(0)
-                            if isinstance(item, ERItemData) else item
-                        )
-                        for item in item_order
-                    )
-                    # Never re-order event items, because they weren't randomized in the first place.
-                    if item and item.code is not None
-                ]
+                # Convert items to full ERItems and get their locations.
+                converted_item_order: List[ERItem] = []
+                locations_to_smooth: List[Location] = []
+                for ordered_item in item_order:
+                    # full_items_by_name won't contain DLC items if the DLC is disabled.
+                    if ordered_item.name not in full_items_by_name:
+                        continue
+                    items_list = full_items_by_name[ordered_item.name]
+                    item = items_list.pop(0)
+                    location = item.location
+                    converted_item_order.append(item)
+                    locations_to_smooth.append(location)
+                    # Un-place the item in preparation for placing all the items in a smoothed-out order.
+                    location.item = None
+                    item.location = None
+                    if not items_list:
+                        # The list is now empty, so remove it to prevent being able to get and pop an empty list.
+                        del full_items_by_name[ordered_item.name]
 
-                names = {item.name for item in converted_item_order}
+                # First sort locations by sphere (earliest first). Next sort non-ER locations after
+                # ER locations, so that non-ER locations get the best items within a sphere.
+                # Finally sort ER locations amongst themselves using their region values.
+                def location_sort_func(location: Location):
+                    sphere_number = er_smoothing_location_to_sphere[location]
+                    if location.game == cls.game:
+                        # The location is from a ER world, so will be sorted before non-ER locations within the same
+                        # sphere, and sorted additionally by the location's .region_value.
+                        ER_location = cast(ERLocation, location)
+                        return sphere_number, 0, ER_location.data.region_value
+                    else:
+                        # Within the same sphere, all non-ER locations will be sorted after ER locations.
+                        return sphere_number, 1
 
-                all_matching_locations = [
-                    loc
-                    for sphere in locations_by_sphere
-                    for loc in sphere
-                    if loc.item.name in names
-                ]
+                # Initially shuffle for varied results when there are ties in the sorting.
+                er_world.random.shuffle(locations_to_smooth)
+                locations_to_smooth.sort(key=location_sort_func)
 
-                # It's expected that there may be more total items than there are matching locations if
-                # the player has chosen a more limited accessibility option, since the matching
-                # locations *only* include items in the spheres of accessibility.
-                if len(converted_item_order) < len(all_matching_locations):
-                    raise Exception(
-                        f"ER bug: there are {len(all_matching_locations)} locations that can " +
-                        f"contain smoothed items, but only {len(converted_item_order)} items to smooth."
-                    )
-
-                for sphere in locations_by_sphere:
-                    locations = [loc for loc in sphere if loc.item.name in names]
-
-                    # Check the game, not the player, because we know how to sort within regions for ER
-                    offworld = er_world._shuffle([loc for loc in locations if loc.game != "EldenRing"])
-                    onworld = sorted((loc for loc in locations if loc.game == "EldenRing"),
-                                     key=lambda loc: loc.data.region_value)
-
-                    # Give offworld regions the last (best) items within a given sphere
-                    for location in onworld + offworld:
-                        new_item = er_world._pop_item(location, converted_item_order)
-                        location.item = new_item
-                        new_item.location = location
-
+                # Place the items so that earlier items in `converted_item_order` get placed into logically earlier
+                # locations.
+                # Locations are filled from the start, but items are placed starting from the end, so reverse the order
+                # of the items list.
+                converted_item_order.reverse()
+                remaining_fill(multiworld, locations_to_smooth, converted_item_order, name="ER Smoothing", check_location_can_fill=True)
+                
             if er_world.options.smooth_upgrade_items: # smoothed items cant be filler items
                 smooth_items([
                     item for item in all_item_order 
@@ -2742,19 +2815,6 @@ class EldenRing(World):
         copy = list(seq)
         self.random.shuffle(copy)
         return copy
-
-    def _pop_item(
-        self,
-        location: Location,
-        items: List[ERItem]
-    ) -> ERItem:
-        """Returns the next item in items that can be assigned to location."""
-        for i, item in enumerate(items):
-            if location.can_fill(self.multiworld.state, item, False):
-                return items.pop(i)
-
-        # If we can't find a suitable item, give up and assign an unsuitable one.
-        return items.pop(0)
 
     def _get_our_locations(self) -> List[ERLocation]:
         return cast(List[ERLocation], self.multiworld.get_locations(self.player))

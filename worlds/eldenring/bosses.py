@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Set, Optional
+from typing import Optional
 
 
 @dataclass
@@ -26,7 +26,7 @@ class ERBossInfo:
     dungeon: bool = False
     """This boss appears in a underground dungeon."""
 
-    locations: Set[str] = field(default_factory=set)
+    locations: list[str] = field(default_factory=list)
     """Locations the boss blocks so we can do can_get location."""
 
 # https://github.com/vawser/Smithbox/blob/main/src/Smithbox.Data/Assets/Aliases/ER/EventFlags.json for flag id
