@@ -657,7 +657,7 @@ class EldenRing(World):
         """Create duplicate locations for priority locations."""
         
         if len(self.all_priority_locations) < int(len(total_important_items)/8):
-            warning(f"There are to little priority locations {len(self.all_priority_locations)}, there will be a lot of items at each spot.")
+            raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(total_important_items)/8)}")
         if len(self.all_priority_locations) < len(total_important_items): # do we need to dupe
             base_priority_loc = []
             dlc_priority_loc = []
