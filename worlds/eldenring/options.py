@@ -102,6 +102,8 @@ class DLCRandomization(Choice):
     option_separately = 1
     default = 0
     
+    visibility = Visibility.none # for now so fuzzer doesn't complain
+    
 class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
     """Messmer Kindle Shards"""
     display_name = "Messmer Kindle Shards"

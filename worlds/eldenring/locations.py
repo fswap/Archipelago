@@ -587,12 +587,12 @@ class ERLocationData:
 
     def should_randomize(self, options: PerGameCommonOptions) -> bool:
         """Whether this location should be forced to contain its default item."""
-        if not (
+        if (
             self.randomize if isinstance(self.randomize, bool)
             else self.randomize(self, options)
-        ): return False
+        ): return True
 
-        return (
+        return not (
             options.missable_location_behavior == "do_not_randomize"
             and self.is_missable(options)
         ) or (
