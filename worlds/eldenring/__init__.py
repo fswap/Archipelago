@@ -9,7 +9,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_name_groups
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_name_groups
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
 from Options import OptionError
@@ -65,6 +65,8 @@ class EldenRing(World):
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
         self.local_itempool = None
+        self.base_itempool = None
+        self.dlc_itempool = None
         self.created_regions = None
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
@@ -77,37 +79,10 @@ class EldenRing(World):
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         self.all_priority_locations.update(self.options.priority_locations.value)
-
-        for locations in location_tables.values():
-            for loc in locations:
-                for loc_type in self.options.priority_location_groups.value:
-                    if (self.options.dlc_start == 1 and self.options.enable_dlc and loc.dlc # dlc items only
-                        or self.options.dlc_start != 1 and self.options.enable_dlc # all items
-                        or not self.options.enable_dlc and not loc.dlc): # base items only
-                        if loc_type.lower() == "remembrance" and loc.remembrance:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "seedtree" and loc.seedtree:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "basin" and loc.basin:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "church" and loc.church:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "map" and loc.map:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "keyitem" and loc.keyitem:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "fragment" and loc.fragment:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "cross" and loc.cross:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "revered" and loc.revered:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "bosses" and (
-                            loc.name in boss.locations for boss in all_bosses
-                            ): self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "overworld bosses" and (
-                            loc.name in boss.locations and "Overworld" in boss.type for boss in all_bosses
-                            ): self.all_priority_locations.add(loc.name)
+        
+        m_goal_bosses = self._goal_bosses()
+        if self.options.exclude_dungeon.value: # exclude dungeon bosses
+            m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
         if self.settings.disable_extreme_options:
             if not self.options.local_item_option:
@@ -150,10 +125,6 @@ class EldenRing(World):
         if not self.options.flask_at_priority:
             item_table["Golden Seed"].classification = ItemClassification.deprioritized
             item_table["Sacred Tear"].classification = ItemClassification.deprioritized
-        
-        m_goal_bosses = self._goal_bosses()
-        if self.options.exclude_dungeon.value: # exclude dungeon bosses
-            m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
         if self.options.enable_dlc:
             # warming stone craft
@@ -208,6 +179,41 @@ class EldenRing(World):
         if not self.options.royal_access:
             for location in location_tables["Leyndell, Royal Capital"]:
                 location.missable = True
+
+        for locations in location_tables.values():
+            for loc in locations:
+                for loc_type in self.options.priority_location_groups.value:
+                    if (self.options.dlc_start == 1 and self.options.enable_dlc and loc.dlc # dlc items only
+                        or self.options.dlc_start != 1 and self.options.enable_dlc # all items
+                        or not self.options.enable_dlc and not loc.dlc): # base items only
+                        if loc_type.lower() == "remembrance" and loc.remembrance:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "seedtree" and loc.seedtree:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "basin" and loc.basin:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "church" and loc.church:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "map" and loc.map:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "keyitem" and loc.keyitem:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "fragment" and loc.fragment:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "cross" and loc.cross:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "revered" and loc.revered:
+                            self.all_priority_locations.add(loc.name)
+                        elif loc_type.lower() == "bosses" or loc_type.lower() == "overworld bosses":
+                            for boss in self.goal_bosses:
+                                if loc_type.lower() == "bosses":
+                                    if loc.name in boss.locations:
+                                        self.all_priority_locations.add(loc.name)
+                                        break
+                                else:
+                                    if loc.name in boss.locations and "Overworld" in boss.type:
+                                        self.all_priority_locations.add(loc.name)
+                                        break
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -531,14 +537,14 @@ class EldenRing(World):
     def create_items(self) -> None:
         # Gather all default items on randomized locations
         self.local_itempool = []
-        total_locations = 0
+        self.base_itempool = []
+        self.dlc_itempool = []
         num_required_extra_items = 0
         total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
             if not self._is_location_available(location.name):
                 raise Exception("ER generation bug: Added an unavailable location.")
             
-            total_locations += 1
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
             skip_item = False
@@ -548,8 +554,8 @@ class EldenRing(World):
                 if self.options.map_option != 0 and item.map: 
                     skip_item = True
                     if self.options.map_option == 1: self._add_to_inventory(self.create_item(item))
-                if self.options.crafting_kit_option.value == 2 and default_item_name == "Crafting Kit":  skip_item = True
-                if self.options.smithing_bell_bearing_option.value == 2 and item.upgrade_bell_bearing and (not self.options.enable_dlc or self.options.dlc_start != 1): 
+                if self.options.crafting_kit_option.value == 2 and default_item_name == "Crafting Kit": skip_item = True
+                if self.options.smithing_bell_bearing_option.value == 2 and item.upgrade_bell_bearing and (not self.options.enable_dlc or self.options.dlc_start != 1 and self.options.enable_dlc): 
                     skip_item = True; total_important_items.append(item) # just dupe these even if manually placed since they can get placed on a priority location
                 
                 if self.options.enable_dlc:
@@ -571,47 +577,45 @@ class EldenRing(World):
             if item.skip or skip_item:
                 num_required_extra_items += 1
             else:
-                if self.options.important_at_priority_only:
-                    if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful:
-                        total_important_items.append(item)
+                # if self.options.important_at_priority_only.value:
+                if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful:
+                    total_important_items.append(item)
                 
                 if not location.data.dlc:
-                    self.local_itempool.append(self.create_item(default_item_name))
+                    self.base_itempool.append(self.create_item(default_item_name))
                 elif location.data.dlc:
                     # make base items dlc if in dlc
                     dlc_item = self.create_item(default_item_name)
                     dlc_item.data.found_in_dlc = True
-                    self.local_itempool.append(dlc_item)
+                    self.dlc_itempool.append(dlc_item)
 
-        total_important_inj, injectables = self._create_injectable_items(num_required_extra_items)
+        total_important_inj, dlc_injectables, base_injectables = self._create_injectable_items(num_required_extra_items)
         total_important_items += total_important_inj
-        num_required_extra_items -= len(injectables)
-        self.local_itempool.extend(injectables)
+        num_required_extra_items -= len(dlc_injectables + base_injectables)
+        self.base_itempool.extend(base_injectables)
+        self.dlc_itempool.extend(dlc_injectables)
         
-        if self.options.important_at_priority_only: 
+        if self.options.important_at_priority_only.value: 
             # could also add to this and if there are negative num_required_extra_items dupe random locations
-            num_required_extra_items += self._create_dupe_locations(total_important_items)
-
-        # Extra filler items for locations containing skip items
-        self.local_itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(num_required_extra_items))
+            self._create_dupe_locations(total_important_items)
 
         # Potentially fill some items locally and remove them from the itempool
+        self.local_itempool = self.base_itempool + self.dlc_itempool
         self._fill_local_items()
         
-        if len(self.local_itempool) > total_locations + len(self.all_duplicate_locations):
-            warning(f"itempool:{len(self.local_itempool)} and locations:{total_locations + len(self.all_duplicate_locations)} don't match, fixing")
-            # remove replacables here so they match, or fix why the mismatch happens
-            req = len(self.local_itempool) - (total_locations + len(self.all_duplicate_locations))
-            while req > 0:
-                item = self.random.choice(self.local_itempool)
-                if item.data.replacable:
-                    self.local_itempool.remove(item)
-                    req -= 1
-
-        # Add items to itempool
-        self.multiworld.itempool += self.local_itempool
+        base_unfilled = [loc for loc in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)) if not loc.data.dlc]
+        dlc_unfilled = [loc for loc in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)) if loc.data.dlc]
         
-    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> int: 
+        # Extra filler items for locations containing skip items
+        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(
+            (len(base_unfilled) - len(self.base_itempool)) + len([d for d in self.all_duplicate_locations if not d.data.dlc])))
+        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(
+            (len(dlc_unfilled) - len(self.dlc_itempool)) + len([d for d in self.all_duplicate_locations if d.data.dlc])))
+        
+        # Add items to itempool
+        self.multiworld.itempool += self.base_itempool + self.dlc_itempool
+        
+    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
         """Create duplicate locations for priority locations."""
         
         if len(self.all_priority_locations) < int(len(total_important_items)/8):
@@ -625,7 +629,7 @@ class EldenRing(World):
             if (not self.options.enable_dlc or self.options.dlc_start != 1 and self.options.enable_dlc
                 ) and len(base_priority_loc) == 0: # make sure there is a location in base game
                 raise OptionError(f"There are no base game priority locations")
-            if self.options.dlc_start == 1 and len(dlc_priority_loc) == 0: # make sure there is a location in dlc
+            if self.options.dlc_start == 1 and self.options.enable_dlc and len(dlc_priority_loc) == 0: # make sure there is a location in dlc
                 raise OptionError(f"There are no dlc priority locations")
             
             base_items = []
@@ -642,9 +646,9 @@ class EldenRing(World):
             # _ = len(total_important_items) - len(self.all_priority_locations)
             while base_loc_needed + dlc_loc_needed > 0: # how many dupes
                 location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
-                if not location_dictionary[location].dlc and base_loc_needed <= 0:
+                if not location_dictionary[location].dlc and base_loc_needed == 0:
                     continue # we dont need any more of these locations
-                elif dlc_loc_needed <= 0: continue
+                elif dlc_loc_needed == 0: continue
                 
                 # places that shouldn't be duped
                 if (location_dictionary[location].shop
@@ -672,7 +676,7 @@ class EldenRing(World):
                             found = True
                             break
                     if found: break
-                if found: # make sure a duplication location was made
+                if found: # make sure a dupe location was made
                     if not location_dictionary[location].dlc: base_loc_needed -= 1
                     else: dlc_loc_needed -= 1
             
@@ -681,9 +685,6 @@ class EldenRing(World):
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
             location_dictionary.update({location.data.name: location.data for location in self.all_duplicate_locations})
-            
-            return len(self.all_duplicate_locations)
-        return 0
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -746,15 +747,16 @@ class EldenRing(World):
             )
         )
 
-        if number_to_inject < len(injectable_mandatory) and not self.options.important_at_priority_only: # this option will add tons of extra locations so its a non issue
-            # find random item in list, check to see if its a replacable, then remove
-            # continue till enough room to inject all
-            req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
-            while req > 0:
-                item = self.random.choice(self.local_itempool)
-                if item.data.replacable:
-                    self.local_itempool.remove(item)
-                    req -= 1
+        # if len(inj_items) < len(injectable_mandatory) and not self.options.important_at_priority_only.value: # this option will add tons of extra locations so its a non issue
+        #     # find random item in list, check to see if its a replacable, then remove
+        #     # continue till enough room to inject all
+        #     req = len(injectable_mandatory) - number_to_inject # how many need to be removed to make space
+        #     while req > 0:
+        #         item = self.random.choice(self.local_itempool)
+        #         if item.data.replacable:
+        #             self.local_itempool.remove(item)
+        #             req -= 1
+            
             # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
             # for item in injectable_mandatory:
             #     if item in inj_items: continue
@@ -765,7 +767,7 @@ class EldenRing(World):
             #         f"inventory instead."
             #     )
 
-        return injectable_mandatory, [self.create_item(item) for item in inj_items]
+        return injectable_mandatory, [self.create_item(item) for item in inj_items if item.is_dlc or item.found_in_dlc], [self.create_item(item) for item in inj_items if not item.is_dlc and not item.found_in_dlc]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -859,8 +861,12 @@ class EldenRing(World):
             or location.name in dupe_location.data.name[dupe_location.data.name.find(":")+2:] for dupe_location in self.all_duplicate_locations) # location is duped priority
             and self.options.important_at_priority_only # option is on
         ]
-
+        
         self.local_itempool.remove(item)
+        if item.data.is_dlc or item.data.found_in_dlc:
+            self.dlc_itempool.remove(item)
+        else:
+            self.base_itempool.remove(item)
 
         if not candidate_locations:
             warning(f"Couldn't place \"{name}\" in a valid location for {self.player_name}. Adding it to starting inventory instead.")
@@ -896,9 +902,9 @@ class EldenRing(World):
                 location.item = candidate
                 return
 
-    def get_filler_item_name(self) -> str:
-        if self.options.enable_dlc:
-            return self.random.choice(filler_item_names)
+    def get_filler_item_name(self, dlc: bool) -> str:
+        if dlc:
+            return self.random.choice(filler_item_names_dlc)
         else:
             return self.random.choice(filler_item_names_vanilla)
 
@@ -1166,7 +1172,7 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Create duplicate location rules
-        if self.options.important_at_priority_only and len(self.all_duplicate_locations) != 0:
+        if self.options.important_at_priority_only.value and len(self.all_duplicate_locations) != 0:
             for region in location_tables:
                 for location in location_tables[region]:
                     if location.name not in self.all_priority_locations:
@@ -1182,8 +1188,9 @@ class EldenRing(World):
                                     # and not item.data.classification == ItemClassification.progression_deprioritized
                                 )
             
-            for dupe_location in self.all_duplicate_locations: # dupe locations require og locations                              V removes "Dupe #: "
-                self._add_location_rule(dupe_location.data.name, lambda state: self._can_get(state, dupe_location.data.name[dupe_location.data.name.find(":")+2:]))
+            for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
+                dupe_name = dupe_location.data.name
+                self._add_location_rule(dupe_name, lambda state: self._can_get(state, dupe_name[dupe_name.find(":")+2:]))
                    
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)

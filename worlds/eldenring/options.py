@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict
 
 from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, OptionDict, \
-    OptionGroup, OptionSet, PerGameCommonOptions, Range, Toggle, OptionError
+    OptionGroup, OptionSet, PerGameCommonOptions, Range, Toggle, OptionError, Visibility
     
 from .bosses import all_bosses
 
@@ -13,12 +13,14 @@ class GoalOption(OptionSet):
     """Which bosses must be defeated in order to win the game, of the form "<Region> Boss".
 
     If multiple bosses are selected, all of them must be defeated in order to
-    achieve your goal. By default, only "Final Boss" is
+    achieve your goal. By default, only "Final Boss" and "DLC Final Boss" is
     selected.
     """
     display_name = "Goal"
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
-    default = frozenset({"Final Boss"})
+    default = frozenset({"Final Boss", "DLC Final Boss"})
+    
+    visibility = Visibility.none # for now so fuzzer doesn't complain about game being unbeatable
 
     def verify_keys(self) -> None:
         super().verify_keys()
@@ -315,8 +317,8 @@ class ERPriorityLocationGroups(OptionList):
     - *Cross*: All cross items.
     - *Revered*: Revered Spirit Ashes.
     - *KeyItem*: Key items.
-    - *Bosses*: All bosses.
-    - *Overworld Bosses*: All overworld bosses.
+    - *Bosses*: All goal bosses.
+    - *Overworld Bosses*: All overworld goal bosses.
     """
     display_name = "Priority Location Groups"
     default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Bosses"]

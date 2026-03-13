@@ -77,6 +77,7 @@ class ERItemData:
         self.ap_code = self.ap_code or ERItemData.__item_id
         if not self.base_name: self.base_name = self.name
         ERItemData.__item_id += 1
+        if self.replacable: self.filler = True
 
     def item_groups(self) -> List[str]:
         """The names of item groups this item should appear in.
@@ -2902,7 +2903,7 @@ for item_data in _all_items:
     for group_name in item_data.item_groups():
         item_name_groups[group_name].add(item_data.name)
 
-filler_item_names = [item_data.name for item_data in _all_items if item_data.filler]
+filler_item_names_dlc = [item_data.name for item_data in _dlc_items if item_data.filler]
 filler_item_names_vanilla = [item_data.name for item_data in _vanilla_items if item_data.filler]
 item_table = {item_data.name: item_data for item_data in _all_items}
 item_table_vanilla = {item_data.name: item_data for item_data in _vanilla_items}
