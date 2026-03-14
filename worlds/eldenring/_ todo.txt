@@ -10,6 +10,10 @@ fuzzer python fuzz.py -r 10 -j 8 -g eldenring -n 1    keep low till no fails
 
 TODO
 
+find out why im getting assert errors only with fuzzer
+
+fix dlc_randomization option
+
 static rando options
 
 boss region lock using bosses.py

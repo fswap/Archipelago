@@ -587,18 +587,21 @@ class ERLocationData:
 
     def should_randomize(self, options: PerGameCommonOptions) -> bool:
         """Whether this location should be forced to contain its default item."""
-        if (
+        if not ( # if randomize is False, return False else continue
             self.randomize if isinstance(self.randomize, bool)
             else self.randomize(self, options)
-        ): return True
-
-        return not (
+        ): return False
+        
+        return not (( # if any of these are true, return False
             options.missable_location_behavior == "do_not_randomize"
             and self.is_missable(options)
         ) or (
             options.excluded_location_behavior == "do_not_randomize"
             and self.name in options.exclude_locations.value
-        )
+        ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == "do_not_randomize"
+        ) or (self.map and options.map_option.value == "do_not_randomize"
+        ) or (self.smithingbell and options.smithing_bell_bearing_option.value == "do_not_randomize"
+        ))
 
     def location_groups(self) -> List[str]:
         """The names of location groups this location should appear in.
@@ -1361,7 +1364,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RH/DLC: Cure Poison - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
         ERLocationData("RH/DLC: Flame Fortification - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
         ERLocationData("RH/DLC: Magic Fortification - Corhyn shop", "Dummy item", key="110000,0:0000000000:100350:", incantations=True, shop=True),
-        ERLocationData("RH/DLC: Dagger - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
+        ERLocationData("RH/DLC: Dagger - Twin maiden shop", "Crafting Kit", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
         ERLocationData("RH/DLC: Longsword - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
         ERLocationData("RH/DLC: Rapier - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
         ERLocationData("RH/DLC: Scimitar - Twin maiden shop", "Dummy item", key="111000,0:0000000000:101800:", raceshop=True, shop=True),
