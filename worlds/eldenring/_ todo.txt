@@ -1,16 +1,16 @@
 https://github.com/ArchipelagoMW/Archipelago/tree/main/worlds/dark_souls_3
 er mod tools Smithbox, and Dark Script 3
 
-Run python generate.py   need yaml in players
-Or python launcher.py    so you can gen template options
-fuzzer python fuzz.py -r 10 -j 8 -g eldenring -n 1    keep low till no fails
+Run       python generate.py   need yaml in players
+Or        python launcher.py    so you can gen template options
+fuzzer    python fuzz.py -r 16 -j 16 -g eldenring -n 1    if the runs > threads fuzzer dies and starts erroring
 
 
 
 
 TODO
 
-find out why im getting assert errors only with fuzzer
+dlc only stuff should be a local item
 
 fix dlc_randomization option
 

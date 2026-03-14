@@ -125,6 +125,8 @@ class EldenRing(World):
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
         self.local_itempool = None
+        self.base_itempool = None
+        self.dlc_itempool = None
         self.created_regions = None
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
@@ -612,6 +614,8 @@ class EldenRing(World):
     def create_items(self) -> None:
         # Gather all default items on randomized locations
         self.local_itempool = []
+        self.base_itempool = []
+        self.dlc_itempool = []
         num_required_extra_items = 0
         total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
@@ -652,33 +656,71 @@ class EldenRing(World):
                     total_important_items.append(item)
                 
                 if not location.data.dlc:
-                    self.local_itempool.append(self.create_item(default_item_name))
+                    self.base_itempool.append(self.create_item(default_item_name))
                 elif location.data.dlc:
                     # make base items dlc if in dlc
                     dlc_item = self.create_item(default_item_name)
                     dlc_item.data.found_in_dlc = True
-                    self.local_itempool.append(dlc_item)
+                    self.dlc_itempool.append(dlc_item)
         
-        total_important_inj, injectables = self._create_injectable_items(num_required_extra_items)
+        total_important_inj, base_injectables, dlc_injectables = self._create_injectable_items(num_required_extra_items)
         total_important_items += total_important_inj
-        num_required_extra_items -= len(injectables)
-        self.local_itempool.extend(injectables)
+        self.base_itempool.extend(base_injectables)
+        self.dlc_itempool.extend(dlc_injectables)
         
-        if self.options.important_at_priority_only.value: 
-            # could also add to this and if there are negative num_required_extra_items dupe random locations
-            num_required_extra_items += self._create_dupe_locations(total_important_items)
+        if self.options.important_at_priority_only.value:
+            self._create_dupe_locations(total_important_items)
 
         # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
         
-        self.local_itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(len(self.multiworld.get_unfilled_locations(self.player)) - len(self.local_itempool)))
-        warning(f"injects:{len(injectables)}, extra required:{num_required_extra_items}")
-        warning(f"itempool:{len(self.local_itempool)}, unfilled locations:{len(self.multiworld.get_unfilled_locations(self.player))}")
-       
-        # Add items to itempool
-        self.multiworld.itempool += self.local_itempool
+        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(#len([l for l in self.all_duplicate_locations if not l.data.dlc]) +
+            len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if not unfilled.data.dlc]) - len(self.base_itempool)))
+        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(#len([l for l in self.all_duplicate_locations if l.data.dlc]) +
+            len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if unfilled.data.dlc]) - len(self.dlc_itempool)))
         
-    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> int: 
+        warning(f"important items:{len(total_important_items)}, important_locations:{len(self.all_priority_locations)}")
+        warning(f"dupe locations:{len(self.all_duplicate_locations)}")
+        
+        # if there are more priority locations then items in base / dlc the generator will complain, didn't fix the issue but should work
+        if self.options.dlc_randomization == 1:
+            base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in total_important_items if not l.is_dlc])
+            dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in total_important_items if l.is_dlc])
+            while base_priority_remove > 0:
+                location = self.multiworld.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
+                found = False
+                for region in self.multiworld.get_regions(self.player):
+                    for index, loc in enumerate(region.locations):
+                        if loc.name == location:
+                            self.all_priority_locations.remove(location)
+                            region.locations[index].progress_type = LocationProgressType.DEFAULT
+                            base_priority_remove -= 1
+                            found = True
+                            break
+                    if found: break
+            while dlc_priority_remove > 0:
+                location = self.multiworld.random.choice([l for l in self.all_priority_locations if location_dictionary[l].dlc])
+                found = False
+                for region in self.multiworld.get_regions(self.player):
+                    for index, loc in enumerate(region.locations):
+                        if loc.name == location:
+                            self.all_priority_locations.remove(location)
+                            region.locations[index].progress_type = LocationProgressType.DEFAULT
+                            dlc_priority_remove -= 1
+                            found = True
+                            break
+                    if found: break
+                            
+        warning(f"important items:{len(total_important_items)}, important_locations:{len(self.all_priority_locations)}")
+        warning(f"base injects:{len(base_injectables)}, dlc injects:{len(dlc_injectables)}")
+        warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
+        warning(f"base unfilled:{len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if not unfilled.data.dlc])}"
+                f", dlc unfilled:{len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if unfilled.data.dlc])}")       
+        
+        # Add items to itempool
+        self.multiworld.itempool += self.base_itempool + self.dlc_itempool
+        
+    def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
         """Create duplicate locations for priority locations."""
         
         if len(self.all_priority_locations) < int(len(total_important_items)/8):
@@ -748,8 +790,6 @@ class EldenRing(World):
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
             location_dictionary.update({location.data.name: location.data for location in self.all_duplicate_locations})
-            return len(self.all_duplicate_locations)
-        return 0
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -827,22 +867,13 @@ class EldenRing(World):
             # continue till enough room to inject all
             req = len(inj_items) - number_to_inject # how many need to be removed to make space
             while req > 0:
-                item = self.random.choice(self.local_itempool)
+                item = self.random.choice(self.base_itempool + self.dlc_itempool)
                 if item.data.replacable:
-                    self.local_itempool.remove(item)
+                    if item in self.base_itempool: self.base_itempool.remove(item)
+                    else: self.dlc_itempool.remove(item)
                     req -= 1
-            
-            # Old code, didn't account for dupes and wouldn't add them to inventory causing rare fill errors
-            # for item in injectable_mandatory:
-            #     if item in inj_items: continue
-            #     self._add_to_inventory(self.create_item(item))
-            #     warning(
-            #         f"Couldn't add \"{item.name}\" to the item pool for " + 
-            #         f"{self.player_name}. Adding it to the starting " +
-            #         f"inventory instead."
-            #     )
 
-        return injectable_mandatory, [self.create_item(item) for item in inj_items]
+        return injectable_mandatory, [self.create_item(item) for item in inj_items if not item.is_dlc], [self.create_item(item) for item in inj_items if item.is_dlc]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -868,7 +899,7 @@ class EldenRing(World):
 
         If the item could not be placed, it will be added to starting inventory.
         """
-        item = next((item for item in self.local_itempool if item.name == name), None)
+        item = next((item for item in self.base_itempool + self.dlc_itempool if item.name == name), None)
         if not item: return
 
         candidate_locations = [
@@ -892,7 +923,8 @@ class EldenRing(World):
             and self.options.important_at_priority_only # option is on
         ]
         
-        self.local_itempool.remove(item)
+        if item in self.base_itempool: self.base_itempool.remove(item)
+        else: self.dlc_itempool.remove(item)
 
         if not candidate_locations:
             warning(f"Couldn't place \"{name}\" in a valid location for {self.player_name}. Adding it to starting inventory instead.")
@@ -928,10 +960,14 @@ class EldenRing(World):
                 location.item = candidate
                 return
 
-    def get_filler_item_name(self) -> str:
+    def get_filler_item_name(self, dlc: bool|None) -> str:
         candidate_filler = []
-        if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
-        if self.base_enabled: candidate_filler.extend(filler_item_names_vanilla)
+        if dlc == None:
+            if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
+            if self.base_enabled: candidate_filler.extend(filler_item_names_vanilla)
+        else:
+            if dlc: candidate_filler.extend(filler_item_names_dlc)
+            else: candidate_filler.extend(filler_item_names_vanilla)
         return self.random.choice(candidate_filler)
 
     def set_rules(self) -> None: #MARK: Rules

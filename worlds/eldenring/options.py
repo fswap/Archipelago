@@ -20,7 +20,7 @@ class GoalOption(OptionSet):
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
     default = frozenset({"Final Boss", "DLC Final Boss"})
     
-    visibility = Visibility.none # for now so fuzzer doesn't complain about game being unbeatable
+    # visibility = Visibility.none # for now so fuzzer doesn't complain about game being unbeatable
 
     def verify_keys(self) -> None:
         super().verify_keys()
@@ -102,7 +102,7 @@ class DLCRandomization(Choice):
     option_separately = 1
     default = 0
     
-    visibility = Visibility.none # for now so fuzzer doesn't complain
+    # visibility = Visibility.none # for now so fuzzer doesn't complain
     
 class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
     """Messmer Kindle Shards"""
@@ -273,10 +273,12 @@ class SmithingBellBearingOption(Choice):
 class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
+    visibility = Visibility.none # rare fill errors
     
 class SmoothRuneItems(Toggle):
     """Smooth Rune Items."""
     display_name = "Smooth Rune Items"
+    visibility = Visibility.none # rare fill errors
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
