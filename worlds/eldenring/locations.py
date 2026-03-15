@@ -627,6 +627,9 @@ class ERLocationData:
         if self.npc: names.append("Friendly NPC Rewards")
         if self.scarab: names.append("Scarab")
         if self.hidden: names.append("Hidden")
+        if self.blizzard: names.append("Blizzard")
+        if self.dlc: names.append("DLC")
+        if self.furnacegolem: names.append("Furnace Golem")
 
         default_item = item_table[cast(str, self.default_item_name)]
         names.append({
@@ -6276,8 +6279,10 @@ location_name_groups: Dict[str, Set[str]] = {
     "Progression": set(),
     "Remembrance": set(),
     "Boss Reward": set(),
+    "DLC": set(),
     "Remembrance DLC": set(),
     "Boss Reward DLC": set(),
+    "Furnace Golem": set(),
     "Hostile NPC Rewards": set(),
     "Friendly NPC Rewards": set(),
     "Scarab": set(),

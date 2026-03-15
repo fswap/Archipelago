@@ -727,7 +727,7 @@ class EldenRing(World):
                 else: dlc_priority_loc.append(loc)
             if self.base_enabled and len(base_priority_loc) == 0: # make sure there is a location in base game
                 raise OptionError(f"There are no base game priority locations")
-            if self.options.dlc_start == 1 and self.options.enable_dlc and len(dlc_priority_loc) == 0: # make sure there is a location in dlc
+            if self.options.enable_dlc and len(dlc_priority_loc) == 0: # make sure there is a location in dlc
                 raise OptionError(f"There are no dlc priority locations")
             
             base_items = []

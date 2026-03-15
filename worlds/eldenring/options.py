@@ -345,12 +345,13 @@ class ScaduAtPriority(Toggle):
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
-    - **dlc**: If you want DLC items but dont wanna do DLC.
-    - **hidden**: Hard to find items.
-    - **blizzard**: The hard to see area of snowfield."""
-    default = frozenset({}) # idk how ds3 does this, it just errors
-    # valid_keys = ["dlc", "hidden", "blizzard"]
-    # valid_keys_casefold = True
+    - **DLC**: If you want DLC items but dont wanna do DLC.
+    - **Hidden**: Hard to find items.
+    - **Blizzard**: The hard to see area of snowfield.
+    - **Scarab**: Scarabs that drop items.
+    - **Furnace Golem**: DLC Furnace Golems."""
+    default = frozenset({"Hidden"})
+    valid_keys = ["DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"]
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
