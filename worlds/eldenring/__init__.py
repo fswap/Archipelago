@@ -639,7 +639,7 @@ class EldenRing(World):
                 num_required_extra_items += 1
             else:
                 # if self.options.important_at_priority_only.value:
-                if item.classification == ItemClassification.progression or item.classification == ItemClassification.useful:
+                if item.classification == ItemClassification.progression:
                     total_important_items.append(item)
                 
                 if not location.data.dlc:
@@ -709,28 +709,7 @@ class EldenRing(World):
                             found = True
                             break
                     if found: break
-                            
-        # if itempools are bigger then unfilled remove items
-        if unfilled_base < len(self.base_itempool):
-            # find random item in list, check to see if its a replacable, then remove
-            # continue till enough room to inject all
-            req = len(self.base_itempool) - unfilled_base # how many need to be removed to make space
-            while req > 0:
-                item = self.random.choice(self.base_itempool)
-                if item.data.replacable:
-                    self.base_itempool.remove(item)
-                    req -= 1
-        if unfilled_dlc < len(self.dlc_itempool):
-            # find random item in list, check to see if its a replacable, then remove
-            # continue till enough room to inject all
-            req = len(self.dlc_itempool) - unfilled_dlc # how many need to be removed to make space
-            while req > 0:
-                item = self.random.choice(self.dlc_itempool)
-                if item.data.replacable:
-                    self.dlc_itempool.remove(item)
-                    req -= 1
         
-        warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
         warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
         warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
         warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
@@ -888,7 +867,7 @@ class EldenRing(World):
         #             else: self.dlc_itempool.remove(item)
         #             req -= 1
 
-        return injectable_mandatory, [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
+        return [inj for inj in injectable_mandatory if inj.classification == ItemClassification.progression], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -1702,7 +1681,6 @@ class EldenRing(World):
                 "LAC/RC: Gold Bracelets - on Goldmask's body",
                 "LAC/RC: Gold Waistwrap - on Goldmask's body"
             ], lambda state: self._can_get(state, "LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask"))
-            
             
             # MARK: Enia
             
@@ -2645,30 +2623,30 @@ class EldenRing(World):
         """Returns whether state can access the given location name."""
         return state.can_reach_location(location, self.player)
     
-    def _is_location_available(
-        self,
-        location: Union[str, ERLocationData, ERLocation]
-    ) -> bool:
-        """Returns whether the given location is being randomized."""
-        if isinstance(location, ERLocationData):
-            data = location
-        elif isinstance(location, ERLocation):
-            data = location.data
-        else:
-            data = location_dictionary[location]
+    # def _is_location_available(
+    #     self,
+    #     location: Union[str, ERLocationData, ERLocation]
+    # ) -> bool:
+    #     """Returns whether the given location is being randomized."""
+    #     if isinstance(location, ERLocationData):
+    #         data = location
+    #     elif isinstance(location, ERLocation):
+    #         data = location.data
+    #     else:
+    #         data = location_dictionary[location]
 
-        return (
-            not data.is_event
-            and (not data.dlc or bool(self.options.enable_dlc))
-            and not (
-                self.options.excluded_location_behavior == "do_not_randomize"
-                and data.name in self.all_excluded_locations
-            )
-            and not (
-                self.options.missable_location_behavior == "do_not_randomize"
-                and data.missable
-            )
-        )
+    #     return (
+    #         not data.is_event
+    #         and (not data.dlc or bool(self.options.enable_dlc))
+    #         and not (
+    #             self.options.excluded_location_behavior == "do_not_randomize"
+    #             and data.name in self.all_excluded_locations
+    #         )
+    #         and not (
+    #             self.options.missable_location_behavior == "do_not_randomize"
+    #             and data.missable
+    #         )
+    #     )
     
     def _goal_bosses(self) -> list[ERBossInfo]:
         """Returns all the bosses that are goals for this run."""

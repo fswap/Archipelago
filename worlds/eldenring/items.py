@@ -124,7 +124,7 @@ class ERItemData:
                 base_name = self.base_name,
                 count = count,
                 filler = self.filler,
-                replacable = False, # dont replace items with multiple counts
+                replacable = True,
             )
 
     def should_inject(self, options: PerGameCommonOptions) -> bool:

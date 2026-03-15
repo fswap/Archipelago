@@ -366,7 +366,7 @@ class ExcludedLocationBehaviorOption(Choice):
     display_name = "Excluded Locations Behavior"
     option_allow_useful = 1
     option_forbid_useful = 2
-    option_do_not_randomize = 3
+    option_do_not_randomize = 3 # quest items can be at excluded locations and fill errors can happen
     default = 2
 
 class MissableLocationBehaviorOption(Choice):
@@ -383,7 +383,7 @@ class MissableLocationBehaviorOption(Choice):
     display_name = "Missable Locations Behavior"
     option_allow_useful = 1
     option_forbid_useful = 2
-    option_do_not_randomize = 3
+    option_do_not_randomize = 3 # quest items can be at missable locations and fill errors can happen
     default = 2
 
 @dataclass
