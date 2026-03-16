@@ -270,6 +270,8 @@ class EldenRing(World):
                                         self.all_priority_locations.add(loc.name)
                                         break
         
+        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove missable from priority
+        
         item_table.update(item_table_vanilla | item_table_dlc)
 
     def create_regions(self) -> None: #MARK: Connections
@@ -553,24 +555,21 @@ class EldenRing(World):
             elif status.is_randomized:
                 new_location = ERLocation(self.player, location, new_region)
                 
-                if location.name in self.all_priority_locations and location.is_missable(self.options):
-                    self.all_priority_locations.remove(location.name) # if its missable remove it from priority
-                elif location.name in self.all_priority_locations:
-                    new_location.progress_type = LocationProgressType.PRIORITY
-                
                 if (
                     # Exclude missable locations that don't allow useful items
-                    location.is_missable(self.options)
+                    status.is_missable
                     and self.options.missable_location_behavior == "forbid_useful"
-                    and not (
+                    or (
                         # Unless they are excluded to a higher degree already
                         location.name in self.all_excluded_locations
-                        and self.options.missable_location_behavior < self.options.excluded_location_behavior
+                        and self.options.excluded_location_behavior == "forbid_useful"
                     )
                 ): 
                     new_location.progress_type = LocationProgressType.EXCLUDED
                     if location.name in self.all_priority_locations: # if its excluded remove it from priority
                         self.all_priority_locations.remove(location.name)
+                elif location.name in self.all_priority_locations:
+                    new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -1138,7 +1137,7 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
                         and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                    if self.options.dlc_timing == 0: # Early medal
+                    if self.options.dlc_timing == 0 and self.options.missable_location_behavior != "do_not_randomize": # Early medal
                         self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
                         self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 

@@ -133,7 +133,7 @@ class DLCScadutreeFragments(Toggle):
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
 
-    - **Early:** 'Pureblood Knight Medal' will spawn in an early sphere.
+    - **Early:** 'Pureblood Knight Medal' will spawn in an early sphere, unless MissableLocationBehaviorOption is set to do_not_randomize, it'll be at its normal spot.
     - **Off:** You may have to enter the DLC with 'Pureblood Knight Medal' item.
     - **Late:** You won't have to enter the DLC until after getting to Snowfield.
     """
