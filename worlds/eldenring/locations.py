@@ -594,10 +594,10 @@ class ERLocationData:
         ): return False
         
         return not (( # if any of these are true, return False
-            options.missable_location_behavior == 2
+            options.missable_location_behavior == 3
             and self.is_missable(options)
         ) or (
-            options.excluded_location_behavior == 2
+            options.excluded_location_behavior == 3
             and self.name in options.exclude_locations.value
         ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == 2
         ) or (self.map and options.map_option.value == 2
