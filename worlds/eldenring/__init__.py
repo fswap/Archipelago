@@ -164,7 +164,7 @@ class EldenRing(World):
             item_table_vanilla["Margit's Shackle"].classification = ItemClassification.progression
             item_table_vanilla["Mohg's Shackle"].classification = ItemClassification.progression
         
-        if self.options.smithing_bell_bearing_option.value == 1:
+        if self.options.smithing_bell_bearing_option.value == 1 and self.base_enabled:
             item_table_vanilla["Smithing-Stone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
             item_table_vanilla["Smithing-Stone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
             item_table_vanilla["Smithing-Stone Miner's Bell Bearing [3]"].classification = ItemClassification.progression
@@ -200,6 +200,9 @@ class EldenRing(World):
             raise OptionError(f"Player {self.player_name} has DLC excluded but DLC only is on.")
         elif len([boss for boss in m_goal_bosses if boss in dlc_bosses]) == 0: # dlc only, is there a dlc boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
+        
+        if self.options.enable_dlc and self.base_enabled and len([boss for boss in m_goal_bosses if boss in base_bosses + dlc_bosses]) == 0: # is there a goal boss?
+            raise OptionError(f"Player {self.player_name} no valid Goal bosses, please set a valid Goal boss.")
         
         if not self.base_enabled:
             item_table_vanilla["Starlight Shards"].classification = ItemClassification.filler
@@ -614,25 +617,6 @@ class EldenRing(World):
             
             if not item.should_skip(self.options): # if not skipped these need to be skipped
                 if self.options.use_master_key.value and item.name in ["Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"]: skip_item = True
-                if self.options.map_option == 1 and item.map:
-                    skip_item = True
-                    self._add_to_inventory(self.create_item(item))
-            
-                if self.options.enable_dlc:
-                    if self.options.dlc_start != 0: # dlc starting items
-                        for val in self.options.dlc_starting_items.value:
-                            if default_item_name == "Sacred Tear" and "sacred tears" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
-                            elif default_item_name == "Golden Seed" and "golden seeds" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
-                            elif default_item_name == "Talisman Pouch" and "talisman pouches" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
-                            elif default_item_name == "Memory Stone" and "memory stones" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
-                            elif item.whetblade and "whetblades" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
-                            elif item.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
-                                skip_item = True; self._add_to_inventory(self.create_item(item)); break
             
             if item.should_skip(self.options) or skip_item:
                 num_required_extra_items += 1
@@ -712,6 +696,9 @@ class EldenRing(World):
         warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
         warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
         warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
+        
+        warning([location_dictionary[loc].default_item_name for loc in location_dictionary 
+            if item_table[location_dictionary[loc].default_item_name].classification == ItemClassification.progression and location_dictionary[loc].missable and location_dictionary[loc].dlc])
         
     def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
         """Create duplicate locations for priority locations."""
@@ -809,9 +796,6 @@ class EldenRing(World):
         
         if self.options.enable_dlc:
             if self.options.dlc_start == 1:
-                all_injectable_items += [item_table["Dragon Heart x3"]] # ghostflame breath cannot be gotten without, idk what matt did
-                # if self.options.crafting_kit_option != 2: all_injectable_items += [item_table["Crafting Kit"]]
-                
                 # if not started with add to injection since base game items dont exist
                 if "Sacred Tears" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
                 if "Golden Seeds" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Golden Seed"] for i in range(43)]
@@ -880,6 +864,25 @@ class EldenRing(World):
             if self.options.crafting_kit_option.value == 1:
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
 
+        if self.options.enable_dlc: # dlc starting items
+            for item in self.base_itempool + self.dlc_itempool:
+                for val in self.options.dlc_starting_items.value:
+                    if item.data.name == "Sacred Tear" and "sacred tears" == val.lower(): 
+                        self._add_to_inventory(item); break
+                    elif item.data.name == "Golden Seed" and "golden seeds" == val.lower(): 
+                        self._add_to_inventory(item); break
+                    elif item.data.name == "Talisman Pouch" and "talisman pouches" == val.lower(): 
+                        self._add_to_inventory(item); break
+                    elif item.data.name == "Memory Stone" and "memory stones" == val.lower(): 
+                        self._add_to_inventory(item); break
+                    elif item.data.whetblade and "whetblades" == val.lower(): 
+                        self._add_to_inventory(item); break
+                    elif item.data.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
+                        self._add_to_inventory(item); break
+
+        if self.options.map_option == 1:
+            [self._add_to_inventory(item) for item in self.base_itempool + self.dlc_itempool if item.data.map]
+
     def _fill_local_item(
         self, name: str,
         regions: List[str],
@@ -915,9 +918,6 @@ class EldenRing(World):
             or location.name in dupe_location.data.name[dupe_location.data.name.find(":")+2:] for dupe_location in self.all_duplicate_locations) # location is duped priority
             and self.options.important_at_priority_only # option is on
         ]
-        
-        if item in self.base_itempool: self.base_itempool.remove(item)
-        else: self.dlc_itempool.remove(item)
 
         if not candidate_locations:
             warning(f"Couldn't place \"{name}\" in a valid location for {self.player_name}. Adding it to starting inventory instead.")
@@ -928,6 +928,11 @@ class EldenRing(World):
             if location: self._replace_with_filler(location)
             self._add_to_inventory(self.create_item(name))
             return
+        
+        if item in self.dlc_itempool or self.options.enable_dlc and self.options.dlc_start == 1:
+            self.dlc_itempool.remove(item)
+        elif item in self.base_itempool:
+            self.base_itempool.remove(item)
 
         location = self.random.choice(candidate_locations)
         location.place_locked_item(item)
@@ -935,6 +940,10 @@ class EldenRing(World):
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
         self.all_starting_items.append(item)
+        if item in self.dlc_itempool or self.options.enable_dlc and self.options.dlc_start == 1:
+            self.dlc_itempool.remove(item)
+        elif item in self.base_itempool:
+            self.base_itempool.remove(item)
         # idk how its being handled so everything added to starting inventory will be called here
         self.multiworld.push_precollected(item)
 
@@ -1286,7 +1295,7 @@ class EldenRing(World):
                 if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
                 self._add_entrance_rule("Belurat", "Belurat Lock")
                 self._add_entrance_rule("Castle Ensis", "Ensis Lock")
-                self._add_entrance_rule("Fog Rift Fort", "Ensis Lock")
+                self._add_entrance_rule("Fog Rift Fort", lambda state: state.has("Ensis Lock", self.player) and state.has("Scadu Altus Lock", self.player))
                 self._add_entrance_rule("Ellac River", "Ellac Lock")
                 self._add_entrance_rule("Cerulean Coast", "Cerulean Lock")
                 self._add_entrance_rule("Stone Coffin Fissure", "Stone Coffin Lock")

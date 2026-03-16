@@ -19,12 +19,10 @@ class GoalOption(OptionSet):
     display_name = "Goal"
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
     default = frozenset({"Final Boss", "DLC Final Boss"})
-    
-    # visibility = Visibility.none # for now so fuzzer doesn't complain about game being unbeatable
 
-    def verify_keys(self) -> None:
-        super().verify_keys()
-        if not set(self.value): raise OptionError("You must set at least one Goal.")
+    # def verify_keys(self) -> None: # i check this in gen early, no more failed fuzzer
+    #     super().verify_keys()
+    #     if not set(self.value): raise OptionError("You must set at least one Goal.")
         
 class ExcludeDungeonBosses(DefaultOnToggle):
     "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
@@ -273,12 +271,12 @@ class SmithingBellBearingOption(Choice):
 class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
-    visibility = Visibility.none # rare fill errors
+    #visibility = Visibility.none # rare fill errors
     
 class SmoothRuneItems(Toggle):
     """Smooth Rune Items."""
     display_name = "Smooth Rune Items"
-    visibility = Visibility.none # rare fill errors
+    #visibility = Visibility.none # rare fill errors
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
@@ -351,7 +349,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **Scarab**: Scarabs that drop items.
     - **Furnace Golem**: DLC Furnace Golems."""
     default = frozenset({"Hidden"})
-    valid_keys = ["DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"]
+    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"}
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
