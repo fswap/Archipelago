@@ -106,6 +106,11 @@ class EldenRing(World):
     all_duplicate_locations: list[ERLocation] = []
     all_starting_items: list[ERItem] = []
     goal_bosses: list[ERBossInfo] = []
+    this_item_table: Dict[str, ERItemData] = {}
+    this_item_table_vanilla: Dict[str, ERItemData] = {}
+    this_item_table_dlc: Dict[str, ERItemData] = {}
+    this_location_dictionary: Dict[str, ERLocationData] = {}
+    this_location_tables: Dict[str, list[ERLocationData]] = {}
     
     def visualize_world(self): # puml gets put in root folder
         Utils.visualize_regions(self.multiworld.get_region(self.multiworld.worlds[1].origin_region_name, 1), f"{self.multiworld.player_name[1]}.puml")
@@ -135,8 +140,18 @@ class EldenRing(World):
         self.all_starting_items = []
         self.goal_bosses = []
         self.explicit_indirect_conditions = False
+        self.this_item_table = {}
+        self.this_item_table_vanilla = {}
+        self.this_item_table_dlc = {}
+        self.this_location_dictionary = {}
+        self.this_location_tables = {}
 
     def generate_early(self) -> None:
+        self.this_item_table.update(item_table)
+        self.this_item_table_vanilla.update(item_table_vanilla)
+        self.this_item_table_dlc.update(item_table_dlc)
+        self.this_location_dictionary.update(location_dictionary)
+        self.this_location_tables.update(location_tables)
         self.base_enabled = not (self.options.dlc_start == 1 and self.options.enable_dlc)
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
@@ -161,34 +176,34 @@ class EldenRing(World):
                         f"Player {self.player_name} has goal option set to all bosses.")
      
         if not self.options.enemy_rando and self.base_enabled:
-            item_table_vanilla["Purifying Crystal Tear"].classification = ItemClassification.progression
-            item_table_vanilla["Margit's Shackle"].classification = ItemClassification.progression
-            item_table_vanilla["Mohg's Shackle"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Purifying Crystal Tear"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Margit's Shackle"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Mohg's Shackle"].classification = ItemClassification.progression
         
         if self.options.smithing_bell_bearing_option.value == 1 and self.base_enabled:
-            item_table_vanilla["Smithing-Stone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
-            item_table_vanilla["Smithing-Stone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
-            item_table_vanilla["Smithing-Stone Miner's Bell Bearing [3]"].classification = ItemClassification.progression
-            item_table_vanilla["Smithing-Stone Miner's Bell Bearing [4]"].classification = ItemClassification.progression
-            item_table_vanilla["Somberstone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
-            item_table_vanilla["Somberstone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
-            item_table_vanilla["Somberstone Miner's Bell Bearing [3]"].classification = ItemClassification.progression
-            item_table_vanilla["Somberstone Miner's Bell Bearing [4]"].classification = ItemClassification.progression
-            item_table_vanilla["Somberstone Miner's Bell Bearing [5]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Smithing-Stone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Smithing-Stone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Smithing-Stone Miner's Bell Bearing [3]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Smithing-Stone Miner's Bell Bearing [4]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Somberstone Miner's Bell Bearing [1]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Somberstone Miner's Bell Bearing [2]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Somberstone Miner's Bell Bearing [3]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Somberstone Miner's Bell Bearing [4]"].classification = ItemClassification.progression
+            self.this_item_table_vanilla["Somberstone Miner's Bell Bearing [5]"].classification = ItemClassification.progression
         
         if not self.options.flask_at_priority:
-            item_table_vanilla["Golden Seed"].classification = ItemClassification.deprioritized
-            item_table_vanilla["Sacred Tear"].classification = ItemClassification.deprioritized
+            self.this_item_table_vanilla["Golden Seed"].classification = ItemClassification.deprioritized
+            self.this_item_table_vanilla["Sacred Tear"].classification = ItemClassification.deprioritized
         
         if self.options.enable_dlc:
             # warming stone craft
-            # item_table["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
+            # self.this_item_table_vanilla["Nomadic Warrior's Cookbook [19]"].classification = ItemClassification.progression
             
             if not self.options.scadu_at_priority:
-                item_table_dlc["Scadutree Fragment"].classification = ItemClassification.deprioritized
+                self.this_item_table_dlc["Scadutree Fragment"].classification = ItemClassification.deprioritized
             
             if self.options.dlc_timing != 2 and self.base_enabled:
-                item_table_vanilla["Pureblood Knight's Medal"].classification = ItemClassification.progression
+                self.this_item_table_vanilla["Pureblood Knight's Medal"].classification = ItemClassification.progression
             
             if "dlc" not in self.options.exclude_locations.value: # if dlc is excluded, exclude bosses too
                 self.goal_bosses += [boss for boss in m_goal_bosses if boss in dlc_bosses]
@@ -206,11 +221,11 @@ class EldenRing(World):
             raise OptionError(f"Player {self.player_name} no valid Goal bosses, please set a valid Goal boss.")
         
         if not self.base_enabled:
-            item_table_vanilla["Starlight Shards"].classification = ItemClassification.filler
+            self.this_item_table_vanilla["Starlight Shards"].classification = ItemClassification.filler
         
         using_table = {}
-        if self.base_enabled: using_table.update(item_table_vanilla)
-        if self.options.enable_dlc: using_table.update(item_table_dlc)
+        if self.base_enabled: using_table.update(self.this_item_table_vanilla)
+        if self.options.enable_dlc: using_table.update(self.this_item_table_dlc)
         for item in using_table.values(): # loop of whole item table
             if self.options.local_item_option:
                 if item.classification != ItemClassification.progression and item.classification != ItemClassification.useful:
@@ -237,10 +252,10 @@ class EldenRing(World):
                             break
                 
         if not self.options.royal_access and self.base_enabled:
-            for location in location_tables["Leyndell, Royal Capital"]:
+            for location in self.this_location_tables["Leyndell, Royal Capital"]:
                 location.missable = True
 
-        for locations in location_tables.values():
+        for locations in self.this_location_tables.values():
             for loc in locations:
                 for loc_type in self.options.priority_location_groups.value:
                     if (self.options.enable_dlc and loc.dlc # dlc items
@@ -274,18 +289,18 @@ class EldenRing(World):
                                         self.all_priority_locations.add(loc.name)
                                         break
         
-        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove missable from priority
+        self.all_priority_locations = [loc for loc in self.all_priority_locations if not self.this_location_dictionary[loc].missable] # remove missable from priority
         
-        item_table.update(item_table_vanilla | item_table_dlc)
+        self.this_item_table.update(self.this_item_table_vanilla | self.this_item_table_dlc)
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
-        if self.base_enabled:  regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
-        else: regions.update({"Roundtable Hold DLC Only": self.create_region("Roundtable Hold DLC Only", location_tables["Roundtable Hold DLC Only"])})
+        if self.base_enabled:  regions.update({region_name: self.create_region(region_name, self.this_location_tables[region_name]) for region_name in region_order})
+        else: regions.update({"Roundtable Hold DLC Only": self.create_region("Roundtable Hold DLC Only", self.this_location_tables["Roundtable Hold DLC Only"])})
 
         # Create DLC Regions
-        if self.options.enable_dlc: regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order_dlc})
+        if self.options.enable_dlc: regions.update({region_name: self.create_region(region_name, self.this_location_tables[region_name]) for region_name in region_order_dlc})
 
         # Connect Regions
         def create_connection(from_region: str, to_region: str):
@@ -610,7 +625,7 @@ class EldenRing(World):
                 raise Exception("ER generation bug: Added an unavailable location.")
             
             default_item_name = cast(str, location.data.default_item_name)
-            item = item_table[default_item_name]
+            item = self.this_item_table[default_item_name]
             skip_item = False
             
             if not item.should_skip(self.options): # if not skipped these need to be skipped
@@ -662,12 +677,12 @@ class EldenRing(World):
         
         # if there are more priority locations then items in base / dlc the generator will complain
         if self.options.dlc_randomization == 1 and self.base_enabled:
-            base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
-            dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
-            # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
-            # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
+            base_priority_remove = len([l for l in self.all_priority_locations if not self.this_location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
+            dlc_priority_remove = len([l for l in self.all_priority_locations if self.this_location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
+            # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not self.this_location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
+            # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if self.this_location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
             while base_priority_remove > 0:
-                location = self.multiworld.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
+                location = self.multiworld.random.choice([l for l in self.all_priority_locations if not self.this_location_dictionary[l].dlc])
                 found = False
                 for region in self.multiworld.get_regions(self.player):
                     for index, loc in enumerate(region.locations):
@@ -679,7 +694,7 @@ class EldenRing(World):
                             break
                     if found: break
             while dlc_priority_remove > 0:
-                location = self.multiworld.random.choice([l for l in self.all_priority_locations if location_dictionary[l].dlc])
+                location = self.multiworld.random.choice([l for l in self.all_priority_locations if self.this_location_dictionary[l].dlc])
                 found = False
                 for region in self.multiworld.get_regions(self.player):
                     for index, loc in enumerate(region.locations):
@@ -704,7 +719,7 @@ class EldenRing(World):
             base_priority_loc = []
             dlc_priority_loc = []
             for loc in self.all_priority_locations:
-                if not location_dictionary[loc].dlc and self.base_enabled: base_priority_loc.append(loc)
+                if not self.this_location_dictionary[loc].dlc and self.base_enabled: base_priority_loc.append(loc)
                 else: dlc_priority_loc.append(loc)
             if self.base_enabled and len(base_priority_loc) == 0: # make sure there is a location in base game
                 raise OptionError(f"There are no base game priority locations")
@@ -721,17 +736,17 @@ class EldenRing(World):
             dlc_loc_needed = min(len(dlc_items) - len(dlc_priority_loc), 0)
             
             times_duped = {}
-            new_code = len(location_dictionary)
+            new_code = len(self.this_location_dictionary)
             # _ = len(total_important_items) - len(self.all_priority_locations)
             while base_loc_needed + dlc_loc_needed > 0: # how many dupes
                 location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
-                if not location_dictionary[location].dlc and base_loc_needed == 0:
+                if not self.this_location_dictionary[location].dlc and base_loc_needed == 0:
                     continue # we dont need any more of these locations
                 elif dlc_loc_needed == 0: continue
                 
                 # places that shouldn't be duped
-                if (location_dictionary[location].shop
-                    or location_dictionary[location].hidden): continue
+                if (self.this_location_dictionary[location].shop
+                    or self.this_location_dictionary[location].hidden): continue
                 
                 found = False
                 for region in self.multiworld.get_regions(self.player):
@@ -739,7 +754,7 @@ class EldenRing(World):
                         if location == loc.name:
                             if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
                             else: times_duped[location] = 1 # add to dict
-                            new_loc = location_dictionary[location]
+                            new_loc = self.this_location_dictionary[location]
                             new_loc.name = f"Dupe {times_duped[location]}: {location}"
                             new_loc.default_item_name = "Dummy item"
                             new_code += 1
@@ -751,20 +766,20 @@ class EldenRing(World):
                             )
                             dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
-                            location_tables[region.name].append(dupe_location.data)
+                            self.this_location_tables[region.name].append(dupe_location.data)
                             self.all_duplicate_locations.append(dupe_location)
                             found = True
                             break
                     if found: break
                 if found: # make sure a dupe location was made
-                    if not location_dictionary[location].dlc: base_loc_needed -= 1
+                    if not self.this_location_dictionary[location].dlc: base_loc_needed -= 1
                     else: dlc_loc_needed -= 1
             
             self.location_name_to_id.update({ # add new locations
-                location.name: 7000000 + len(location_dictionary) + num
+                location.name: 7000000 + len(self.this_location_dictionary) + num
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
-            location_dictionary.update({location.data.name: location.data for location in self.all_duplicate_locations})
+            self.this_location_dictionary.update({location.data.name: location.data for location in self.all_duplicate_locations})
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -775,43 +790,43 @@ class EldenRing(World):
         """
         all_injectable_items = [
             item for item
-            in item_table.values()
+            in self.this_item_table.values()
             if item.should_inject(self.options) and (
             (not item.is_dlc and self.base_enabled)
             or (item.is_dlc and self.options.enable_dlc))
         ]
         
         if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock items
-            for item in item_table:
-                if ((self.base_enabled and item_table[item].lock) 
-                or (self.options.enable_dlc and item_table[item].lock and item_table[item].is_dlc)):
+            for item in self.this_item_table:
+                if ((self.base_enabled and self.this_item_table[item].lock) 
+                or (self.options.enable_dlc and self.this_item_table[item].lock and self.this_item_table[item].is_dlc)):
                     if item == "Gravesite Lock" and self.options.dlc_start != 0 and self.options.enable_dlc:
                         continue
-                    else: all_injectable_items += [item_table[item]]
+                    else: all_injectable_items += [self.this_item_table[item]]
         
         if self.options.enable_dlc:
             if self.options.dlc_start == 1:
                 # if not started with add to injection since base game items dont exist
-                if "Sacred Tears" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
-                if "Golden Seeds" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Golden Seed"] for i in range(43)]
-                if "Talisman Pouches" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Talisman Pouch"] for i in range(3)]
-                if "Memory Stones" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Memory Stone"] for i in range(8)]
-                if "Whetblades" not in self.options.dlc_starting_items.value: all_injectable_items += [item_table["Iron Whetblade"],
-                    item_table["Red-Hot Whetblade"], item_table["Sanctified Whetblade"], item_table["Glintstone Whetblade"], item_table["Black Whetblade"]]
+                if "Sacred Tears" not in self.options.dlc_starting_items.value: all_injectable_items += [self.this_item_table["Sacred Tear"] for i in range(12)]
+                if "Golden Seeds" not in self.options.dlc_starting_items.value: all_injectable_items += [self.this_item_table["Golden Seed"] for i in range(43)]
+                if "Talisman Pouches" not in self.options.dlc_starting_items.value: all_injectable_items += [self.this_item_table["Talisman Pouch"] for i in range(3)]
+                if "Memory Stones" not in self.options.dlc_starting_items.value: all_injectable_items += [self.this_item_table["Memory Stone"] for i in range(8)]
+                if "Whetblades" not in self.options.dlc_starting_items.value: all_injectable_items += [self.this_item_table["Iron Whetblade"],
+                    self.this_item_table["Red-Hot Whetblade"], self.this_item_table["Sanctified Whetblade"], self.this_item_table["Glintstone Whetblade"], self.this_item_table["Black Whetblade"]]
                 if "Upgrade Bell Bearings" not in self.options.dlc_starting_items.value: all_injectable_items += [
-                    item_table["Smithing-Stone Miner's Bell Bearing [1]"],
-                    item_table["Smithing-Stone Miner's Bell Bearing [2]"],item_table["Smithing-Stone Miner's Bell Bearing [3]"],
-                    item_table["Smithing-Stone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [1]"],
-                    item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
-                    item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
+                    self.this_item_table["Smithing-Stone Miner's Bell Bearing [1]"],
+                    self.this_item_table["Smithing-Stone Miner's Bell Bearing [2]"],self.this_item_table["Smithing-Stone Miner's Bell Bearing [3]"],
+                    self.this_item_table["Smithing-Stone Miner's Bell Bearing [4]"],self.this_item_table["Somberstone Miner's Bell Bearing [1]"],
+                    self.this_item_table["Somberstone Miner's Bell Bearing [2]"],self.this_item_table["Somberstone Miner's Bell Bearing [3]"],
+                    self.this_item_table["Somberstone Miner's Bell Bearing [4]"],self.this_item_table["Somberstone Miner's Bell Bearing [5]"]]
                 
             if self.options.messmer_kindle:
-                all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
+                all_injectable_items += [self.this_item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             else:
-                all_injectable_items += [item_table["Messmer's Kindling"]]
+                all_injectable_items += [self.this_item_table["Messmer's Kindling"]]
         
         if self.base_enabled:
-            if self.options.use_master_key.value: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
+            if self.options.use_master_key.value: all_injectable_items += [self.this_item_table[item] for item in self.this_item_table if self.this_item_table[item].master_key]
         
         injectable_mandatory = [
             item for item in all_injectable_items
@@ -897,7 +912,7 @@ class EldenRing(World):
             location for location in (
                 self.multiworld.get_location(location.name, self.player)
                 for region in regions
-                for location in location_tables[region]
+                for location in self.this_location_tables[region]
                 if self._location_status(location) == _LocationStatus.RANDOMIZED_UNMISSABLE
                 and not location.conditional
                 and (not additional_condition or additional_condition(location))
@@ -943,7 +958,7 @@ class EldenRing(World):
         self.multiworld.push_precollected(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
-        data = item if isinstance(item, ERItemData) else item_table[item]
+        data = item if isinstance(item, ERItemData) else self.this_item_table[item]
         return ERItem(self.player, data)
 
     def _replace_with_filler(self, location: ERLocation) -> None:
@@ -1232,8 +1247,8 @@ class EldenRing(World):
         
         # Create duplicate location rules
         if self.options.important_at_priority_only.value and len(self.all_duplicate_locations) > 0:
-            for region in location_tables:
-                for location in location_tables[region]:
+            for region in self.this_location_tables:
+                for location in self.this_location_tables[region]:
                     if location.name not in self.all_priority_locations:
                         if ((self.base_enabled and not location.dlc) # base
                         or ((self.options.enable_dlc and location.dlc and region != "Roundtable Hold DLC Only") # dlc
@@ -2595,17 +2610,17 @@ class EldenRing(World):
             if self._location_status(location).is_absent: continue
             
             if isinstance(rule, str):
-                assert item_table[rule].classification == ItemClassification.progression
+                assert self.this_item_table[rule].classification == ItemClassification.progression
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
     
     def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str], from_region: Optional[str] = None) -> None:
         """Sets a rule for the entrance to the given region."""
-        assert region in location_tables
+        assert region in self.this_location_tables
         if region not in self.created_regions: return
         if isinstance(rule, str):
             if " -> " not in rule:
-                assert item_table[rule].classification == ItemClassification.progression
+                assert self.this_item_table[rule].classification == ItemClassification.progression
             rule = lambda state, item=rule: state.has(item, self.player)
         entrance = (
             f"{from_region} => {region}" if from_region
@@ -2636,7 +2651,7 @@ class EldenRing(World):
     #     elif isinstance(location, ERLocation):
     #         data = location.data
     #     else:
-    #         data = location_dictionary[location]
+    #         data = self.this_location_dictionary[location]
 
     #     return (
     #         not data.is_event
@@ -2687,7 +2702,7 @@ class EldenRing(World):
         elif isinstance(location, ERLocation):
             data = location.data
         else:
-            data = location_dictionary[location]
+            data = self.this_location_dictionary[location]
 
         if data.should_omit(self.options): return _LocationStatus.ABSENT
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
@@ -2754,10 +2769,10 @@ class EldenRing(World):
         for er_world in er_worlds:
             # All items in the base game in approximately the order they appear
             all_item_order: List[ERItemData] = [
-                item_table[location.default_item_name]
+                er_world.this_item_table[location.default_item_name]
                 for region in region_order
                 # Shuffle locations within each region.
-                for location in er_world._shuffle(location_tables[region])
+                for location in er_world._shuffle(er_world.this_location_tables[region])
                 if er_world._location_status(location).is_randomized
             ]
 
@@ -2850,7 +2865,7 @@ class EldenRing(World):
             # item.code None is used for events, which we want to skip
             if location.item.code is not None and location.item.player == self.player
         }
-        for item in item_table.values():
+        for item in self.this_item_table.values():
             if item.name not in items_by_name:
                 items_by_name[item.name] = item
 
