@@ -121,6 +121,7 @@ class EldenRing(World):
     def pre_fill(self) -> None:
         ":)"
         # self.test_state()
+        # self.visualize_world()
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
@@ -280,13 +281,11 @@ class EldenRing(World):
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
-        if self.base_enabled:
-            regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
+        if self.base_enabled:  regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
         else: regions.update({"Roundtable Hold DLC Only": self.create_region("Roundtable Hold DLC Only", location_tables["Roundtable Hold DLC Only"])})
 
         # Create DLC Regions
-        if self.options.enable_dlc:
-            regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order_dlc})
+        if self.options.enable_dlc: regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order_dlc})
 
         # Connect Regions
         def create_connection(from_region: str, to_region: str):
@@ -304,7 +303,6 @@ class EldenRing(World):
             self.multiworld.get_entrance("New Game", self.player).connect(regions["Limgrave"])
             create_connection("Limgrave", "Roundtable Hold")
             
-        
         # Base game Regions
         if self.base_enabled:
             create_connection("Limgrave", "Fringefolk Hero's Grave")
@@ -659,15 +657,15 @@ class EldenRing(World):
         self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(
             unfilled_dlc - len(self.dlc_itempool)))
         
-        warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
-        warning(f"dupe locations:{len(self.all_duplicate_locations)}")
+        # warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
+        # warning(f"dupe locations:{len(self.all_duplicate_locations)}")
         
         # if there are more priority locations then items in base / dlc the generator will complain
         if self.options.dlc_randomization == 1 and self.base_enabled:
             base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
             dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
-            warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
-            warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
+            # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
+            # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
             while base_priority_remove > 0:
                 location = self.multiworld.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
                 found = False
@@ -693,12 +691,9 @@ class EldenRing(World):
                             break
                     if found: break
         
-        warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
-        warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
-        warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
-        
-        warning([location_dictionary[loc].default_item_name for loc in location_dictionary 
-            if item_table[location_dictionary[loc].default_item_name].classification == ItemClassification.progression and location_dictionary[loc].missable and location_dictionary[loc].dlc])
+        # warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
+        # warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
+        # warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
         
     def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
         """Create duplicate locations for priority locations."""
@@ -1255,7 +1250,6 @@ class EldenRing(World):
                    
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
-        # self.visualize_world()
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
@@ -1294,6 +1288,7 @@ class EldenRing(World):
             if self.options.enable_dlc:
                 if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
                 self._add_entrance_rule("Belurat", "Belurat Lock")
+                self._add_entrance_rule("Belurat Swamp", "Belurat Lock")
                 self._add_entrance_rule("Castle Ensis", "Ensis Lock")
                 self._add_entrance_rule("Fog Rift Fort", lambda state: state.has("Ensis Lock", self.player) and state.has("Scadu Altus Lock", self.player))
                 self._add_entrance_rule("Ellac River", "Ellac Lock")
@@ -2918,6 +2913,8 @@ class EldenRing(World):
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
                 "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
+                "flask_at_priority": self.options.flask_at_priority.value,
+                "scadu_at_priority": self.options.scadu_at_priority.value,
                 "exclude_locations": self.options.exclude_locations.value,
                 "excluded_location_behavior": self.options.excluded_location_behavior.value,
                 "missable_location_behavior": self.options.missable_location_behavior.value,

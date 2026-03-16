@@ -4,6 +4,7 @@ from logging import warning
 
 from BaseClasses import ItemClassification, Location, Region
 from Options import PerGameCommonOptions
+from .options import EROptions
 from .items import ERItemCategory, item_table
 
 # Regions in approximate order of progression
@@ -577,15 +578,15 @@ class ERLocationData:
         if self.exclusive: # makes sure exclusive is marked missable
             self.missable = True
 
-    def is_missable(self, options: PerGameCommonOptions) -> bool:
+    def is_missable(self, options: EROptions) -> bool:
         """Whether this location is missable given a set of options."""
         return self.missable if isinstance(self.missable, bool) else self.missable(self, options)
 
-    def should_omit(self, options: PerGameCommonOptions) -> bool:
+    def should_omit(self, options: EROptions) -> bool:
         """Whether this location should be omitted given a set of options."""
         return self.omit if isinstance(self.omit, bool) else self.omit(self, options)
 
-    def should_randomize(self, options: PerGameCommonOptions) -> bool:
+    def should_randomize(self, options: EROptions) -> bool:
         """Whether this location should be forced to contain its default item."""
         if not ( # if randomize is False, return False else continue
             self.randomize if isinstance(self.randomize, bool)
@@ -593,14 +594,14 @@ class ERLocationData:
         ): return False
         
         return not (( # if any of these are true, return False
-            options.missable_location_behavior == "do_not_randomize"
+            options.missable_location_behavior == 2
             and self.is_missable(options)
         ) or (
-            options.excluded_location_behavior == "do_not_randomize"
+            options.excluded_location_behavior == 2
             and self.name in options.exclude_locations.value
-        ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == "do_not_randomize"
-        ) or (self.map and options.map_option.value == "do_not_randomize"
-        ) or (self.smithingbell and options.smithing_bell_bearing_option.value == "do_not_randomize"
+        ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == 2
+        ) or (self.map and options.map_option.value == 2
+        ) or (self.smithingbell and options.smithing_bell_bearing_option.value == 2
         ))
 
     def location_groups(self) -> List[str]:
@@ -660,11 +661,11 @@ class ERLocation(Location):
         super().__init__(player, data.name, None if event else data.ap_code, parent)
         self.data = data
 
-def disable_base(self: ERLocationData, options: PerGameCommonOptions) -> bool:
+def disable_base(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when Base is disabled."""
     return options.enable_dlc and options.dlc_start == 1
 
-def disable_dlc(self: ERLocationData, options: PerGameCommonOptions) -> bool:
+def disable_dlc(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when DLC is disabled."""
     return not options.enable_dlc
 
