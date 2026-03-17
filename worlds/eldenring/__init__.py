@@ -591,7 +591,6 @@ class EldenRing(World):
             if item.should_skip(self.options) or skip_item:
                 num_required_extra_items += 1
             else:
-                # if self.options.important_at_priority_only.value:
                 if item.is_important(self.options) == ItemClassification.progression:
                     total_important_items.append(item)
                 
@@ -600,7 +599,7 @@ class EldenRing(World):
                 elif location.data.dlc:
                     # make base items dlc if in dlc
                     dlc_item = self.create_item(default_item_name)
-                    dlc_item.data.found_in_dlc = True
+                    dlc_item.found_in_dlc = True
                     self.dlc_itempool.append(dlc_item)
         
         total_important_inj, base_injectables, dlc_injectables = self._create_injectable_items(num_required_extra_items)
@@ -666,8 +665,7 @@ class EldenRing(World):
         # warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
         # warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
         # warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
-        
-        warning([item.data.name for item in self.base_itempool + self.dlc_itempool if item.data.name == "Starlight Shards"])
+        # warning(self.options)
         
     def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
         """Create duplicate locations for priority locations."""
@@ -917,9 +915,9 @@ class EldenRing(World):
         self.multiworld.push_precollected(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
-        data = item if isinstance(item, ERItemData) else item_table[item]
-        data.classification = data.is_important(self.options)
-        return ERItem(self.player, data)
+        new_item = ERItem(self.player, item if isinstance(item, ERItemData) else item_table[item])
+        new_item.classification = new_item.data.is_important(self.options)
+        return new_item
 
     def _replace_with_filler(self, location: ERLocation) -> None:
         """If possible, choose a filler item to replace location's current contents with."""
@@ -1139,7 +1137,7 @@ class EldenRing(World):
                                 elif region.name in region_order_dlc:
                                     self._add_item_rule(location.name,
                                         lambda item: (item.player != self.player) 
-                                            or item.data.is_dlc or item.data.found_in_dlc
+                                            or item.data.is_dlc or item.found_in_dlc
                                         )
                             else: # else make certain items dlc only
                                 if region.name in region_order:
@@ -1215,8 +1213,8 @@ class EldenRing(World):
                         or (self.options.dlc_start == 1 and self.options.enable_dlc and region == "Roundtable Hold DLC Only"))): # dlc only roundtable
                             self._add_item_rule(location.name,
                                 lambda item: 
-                                    not item.data.is_important(self.options) == ItemClassification.progression
-                                    and not item.data.is_important(self.options) == ItemClassification.progression_skip_balancing
+                                    not item.is_important(self.options) == ItemClassification.progression
+                                    and not item.is_important(self.options) == ItemClassification.progression_skip_balancing
                                 )
             
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
@@ -1905,7 +1903,7 @@ class EldenRing(World):
                 "LL/(SR): Carian Retaliation - Seluvis shop after potion used"
             ], "Seluvis's Potion")
             
-            # THIS BREAKS
+            # this breaks?
             self._add_location_rule([
                 "LL/(SR): Jarwight Puppet - Seluvis shop after finding puppet room",
                 "LL/(SR): Finger Maiden Therolina Puppet - Seluvis shop after finding puppet room"
@@ -2708,7 +2706,7 @@ class EldenRing(World):
                 item_table[location.default_item_name]
                 for region in region_order
                 # Shuffle locations within each region.
-                for location in er_world._shuffle(location_tables[region] + er_world.dupe_location_tables[region] if region in er_world.dupe_location_tables else location_tables[region])
+                for location in er_world._shuffle(location_tables[region])
                 if er_world._location_status(location).is_randomized
             ]
 

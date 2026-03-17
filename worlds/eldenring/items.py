@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import dataclasses
 from enum import IntEnum
 from typing import Any, cast, Callable, ClassVar, Dict, Generator, List, Optional, Set, Union
+from logging import warning
 
 from BaseClasses import Item, ItemClassification
 from .options import EROptions
@@ -34,9 +35,6 @@ class ERItemData:
 
     is_dlc: bool = False
     """Whether this item is only found in DLC."""
-    
-    found_in_dlc: bool = False
-    """Whether this item is found in DLC. like smithing stones"""
 
     count: int = 1
     """The number of copies of this item included in each drop."""
@@ -143,16 +141,16 @@ class ERItemData:
 
     def is_important(self, options: EROptions) -> ItemClassification:
         "Is this item important based on options."
-        if not (options.enable_dlc and options.dlc_start == 1):
+        if not (options.enable_dlc and options.dlc_start.value == 1):
             if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
-            if self.boss_tools and not options.enemy_rando: return ItemClassification.progression
+            if self.boss_tools and options.enemy_rando.value == 0: return ItemClassification.progression
         else:
             # if i make this filler the fuzzed gens cant get seluvis items, smth is still wrong but this works ig
             if self.name == "Starlight Shards": return ItemClassification.filler #progression_deprioritized
-            
+        
         if options.enable_dlc:
             if options.scadu_at_priority and self.scadu: return ItemClassification.deprioritized
-            if self.name == "Pureblood Knight's Medal" and options.dlc_timing != 2 and not (options.enable_dlc and options.dlc_start == 1):
+            if self.name == "Pureblood Knight's Medal" and options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1):
                 return ItemClassification.progression
             
         if options.flask_at_priority and (self.name == "Golden Seed" or self.name == "Sacred Tear"): return ItemClassification.deprioritized
@@ -162,6 +160,8 @@ class ERItemData:
 class ERItem(Item):
     game: str = "EldenRing"
     data: ERItemData
+    found_in_dlc: bool = False
+    """Whether this item is found in DLC. like smithing stones"""
 
     def __init__(
             self,
@@ -172,7 +172,7 @@ class ERItem(Item):
         self.data = data
     
     def is_important(self, options: EROptions) -> ItemClassification:
-        return self.data.classification
+        return self.classification
 
     @staticmethod
     def event(name: str, player: int) -> "ERItem":

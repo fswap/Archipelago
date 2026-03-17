@@ -593,10 +593,10 @@ class ERLocationData:
         ): return False
         
         return not (( # if any of these are true, return False
-            options.missable_location_behavior == 3
+            options.missable_location_behavior.value == 3
             and self.is_missable(options)
         ) or (
-            options.excluded_location_behavior == 3
+            options.excluded_location_behavior.value == 3
             and self.name in options.exclude_locations.value
         ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == 2
         ) or (self.map and options.map_option.value == 2
@@ -662,14 +662,14 @@ class ERLocation(Location):
 
 def disable_base(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when Base is disabled."""
-    return options.enable_dlc and options.dlc_start == 1
+    return options.enable_dlc.value and options.dlc_start.value == 1
 
 def disable_dlc(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when DLC is disabled."""
-    return not options.enable_dlc
+    return not options.enable_dlc.value
 
 def missable_capital(self: ERLocationData, options: EROptions) -> bool:
-    return not options.royal_access
+    return not options.royal_access.value
 
 # from ds3 locations.py
 

@@ -271,12 +271,12 @@ class SmithingBellBearingOption(Choice):
 class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
-    #visibility = Visibility.none # rare fill errors
+    visibility = Visibility.none # rare fill errors
     
 class SmoothRuneItems(Toggle):
     """Smooth Rune Items."""
     display_name = "Smooth Rune Items"
-    #visibility = Visibility.none # rare fill errors
+    visibility = Visibility.none # rare fill errors
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
