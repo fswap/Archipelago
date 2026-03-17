@@ -4,7 +4,7 @@ from enum import IntEnum
 from typing import Any, cast, Callable, ClassVar, Dict, Generator, List, Optional, Set, Union
 
 from BaseClasses import Item, ItemClassification
-from Options import PerGameCommonOptions
+from .options import EROptions
 
 class ERItemCategory(IntEnum):
     GOODS = 1 # Misc, Key, Spell, most stuff that goes into your inventory
@@ -50,10 +50,10 @@ class ERItemData:
     filler: bool = False
     """Whether this is a candidate for a filler item to be added to fill out extra locations."""
 
-    skip: Union[bool, Callable[[PerGameCommonOptions], bool]] = False
+    skip: Union[bool, Callable[[EROptions], bool]] = False
     """Whether to omit this item from randomization and replace it with filler or unique items."""
     
-    inject: Union[bool, Callable[[PerGameCommonOptions], bool]] = False
+    inject: Union[bool, Callable[[EROptions], bool]] = False
     """If this is set, the randomizer will try to inject this item into the game."""
     
     replacable: bool = False
@@ -73,6 +73,12 @@ class ERItemData:
     
     whetblade: bool = False
     """Whetblades"""
+    
+    boss_tools: bool = False
+    """Tools used against bosses."""
+    
+    scadu: bool = False
+    """Scadutree frags"""
 
     def __post_init__(self):
         self.ap_code = self.ap_code or ERItemData.__item_id
@@ -127,13 +133,31 @@ class ERItemData:
                 replacable = True,
             )
 
-    def should_inject(self, options: PerGameCommonOptions) -> bool:
+    def should_inject(self, options: EROptions) -> bool:
         """Whether this item should be injected given a set of options."""
         return self.inject if isinstance(self.inject, bool) else self.inject(self, options)
 
-    def should_skip(self, options: PerGameCommonOptions) -> bool:
+    def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
         return self.skip if isinstance(self.skip, bool) else self.skip(self, options)
+
+    def is_important(self, options: EROptions) -> ItemClassification:
+        "Is this item important based on options."
+        if not (options.enable_dlc and options.dlc_start == 1):
+            if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
+            if self.boss_tools and not options.enemy_rando: return ItemClassification.progression
+        else:
+            # if i make this filler the fuzzed gens cant get seluvis items, smth is still wrong but this works ig
+            if self.name == "Starlight Shards": return ItemClassification.filler #progression_deprioritized
+            
+        if options.enable_dlc:
+            if options.scadu_at_priority and self.scadu: return ItemClassification.deprioritized
+            if self.name == "Pureblood Knight's Medal" and options.dlc_timing != 2 and not (options.enable_dlc and options.dlc_start == 1):
+                return ItemClassification.progression
+            
+        if options.flask_at_priority and (self.name == "Golden Seed" or self.name == "Sacred Tear"): return ItemClassification.deprioritized
+        
+        return self.classification
 
 class ERItem(Item):
     game: str = "EldenRing"
@@ -146,6 +170,9 @@ class ERItem(Item):
             classification = None):
         super().__init__(data.name, classification or data.classification, data.ap_code, player)
         self.data = data
+    
+    def is_important(self, options: EROptions) -> ItemClassification:
+        return self.data.classification
 
     @staticmethod
     def event(name: str, player: int) -> "ERItem":
@@ -1400,8 +1427,8 @@ _vanilla_items = [
     *ERItemData("Soap", 2120, ERItemCategory.GOODS, replacable=True).counts([3, 4]),
     ERItemData("Celestial Dew", 2130, ERItemCategory.GOODS),
 
-    ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, classification=ItemClassification.useful),
-    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, classification=ItemClassification.useful),
+    ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
+    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, boss_tools=True,classification=ItemClassification.useful),
     ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS), # is modified in init
 
     ERItemData("Prattling Pate \"Hello\"", 2200, ERItemCategory.GOODS, skip=True),
@@ -2033,7 +2060,7 @@ _vanilla_items = [
     ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS),
     ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS),
     ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS),
-    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, classification=ItemClassification.useful),
+    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
     ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS),
     ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS),
     ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS),
@@ -2787,8 +2814,8 @@ _dlc_items = [
     ERItemData("St. Trina Disciple's Cookbook [2]", 2009345, ERItemCategory.GOODS),
 
     ERItemData("Hefty Cracked Pot", 2009500, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Scadutree Fragment", 2010000, ERItemCategory.GOODS, classification=ItemClassification.useful),
-    ERItemData("Scadutree Fragment x2", 2010000, ERItemCategory.GOODS, classification=ItemClassification.useful, count=2),
+    ERItemData("Scadutree Fragment", 2010000, ERItemCategory.GOODS, scadu=True, classification=ItemClassification.useful),
+    ERItemData("Scadutree Fragment x2", 2010000, ERItemCategory.GOODS, scadu=True, classification=ItemClassification.useful, count=2),
     ERItemData("Revered Spirit Ash", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Revered Spirit Ash x2", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful, count=2),
 

@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from logging import warning
 
 from BaseClasses import ItemClassification, Location, Region
-from Options import PerGameCommonOptions
 from .options import EROptions
 from .items import ERItemCategory, item_table
 
@@ -271,7 +270,7 @@ class ERLocationData:
     key: Optional[str] = None
     """The key used by the static randomizer"""
 
-    missable: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = False
+    missable: Union[bool, Callable[['ERLocationData', EROptions], bool]] = False
     """Whether this location is possible to permanently lose access to.
 
     This is also used for items that are *technically* possible to get at any time, but are
@@ -282,10 +281,10 @@ class ERLocationData:
     progression or useful items.
     """
     
-    omit: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = False
+    omit: Union[bool, Callable[['ERLocationData', EROptions], bool]] = False
     """Whether to not include this location in the multiworld at all."""
     
-    randomize: Union[bool, Callable[['ERLocationData', PerGameCommonOptions], bool]] = True
+    randomize: Union[bool, Callable[['ERLocationData', EROptions], bool]] = True
     """Whether to allow this location to be randomized.
 
     Even if this is True, the location may still be unrandomized based on to the player's options.
@@ -668,6 +667,9 @@ def disable_base(self: ERLocationData, options: EROptions) -> bool:
 def disable_dlc(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when DLC is disabled."""
     return not options.enable_dlc
+
+def missable_capital(self: ERLocationData, options: EROptions) -> bool:
+    return not options.royal_access
 
 # from ds3 locations.py
 
@@ -6272,6 +6274,9 @@ for region in [# conditional locations
 ]:
     for location in location_tables[region]:
         location.conditional = True
+
+for location in location_tables["Leyndell, Royal Capital"]:
+    if not location.missable: location.missable = missable_capital
 
 location_name_groups: Dict[str, Set[str]] = {
     # We could insert these locations automatically with setdefault(), but we set them up explicitly
