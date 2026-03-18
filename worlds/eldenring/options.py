@@ -94,13 +94,15 @@ class DLCRandomization(Choice):
     
     - **Together:** Randomize base and DLC together.
     - **Separately:** Randomize DLC items to DLC locations or other worlds.
+    
+    This option errors a lot, use at own risk.
     """
     display_name = "DLC Randomization"
     option_together = 0
     option_separately = 1
     default = 0
     
-    # visibility = Visibility.none # for now so fuzzer doesn't complain
+    visibility = Visibility.none # so fuzzer doesn't complain
     
 class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
     """Messmer Kindle Shards"""
@@ -332,6 +334,7 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
     display_name = "Important at Priority Only"
+    visibility = Visibility.none # doesn't work till dupe is fixed
     
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
