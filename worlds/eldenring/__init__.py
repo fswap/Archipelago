@@ -787,11 +787,15 @@ class EldenRing(World):
         
         injectable_mandatory = [
             item for item in all_injectable_items
-            if item.is_important(self.options) == ItemClassification.progression or item.is_important(self.options) == ItemClassification.useful
+            if (item.is_important(self.options) == ItemClassification.progression 
+                or item.is_important(self.options) == ItemClassification.useful 
+                or item.is_important(self.options) == ItemClassification.progression_deprioritized)
         ]
         injectable_optional = [
             item for item in all_injectable_items
-            if item.is_important(self.options) != ItemClassification.progression and item.is_important(self.options) != ItemClassification.useful
+            if (item.is_important(self.options) != ItemClassification.progression 
+                and item.is_important(self.options) != ItemClassification.useful 
+                and item.is_important(self.options) != ItemClassification.progression_deprioritized)
         ]
 
         number_to_inject = min(num_required_extra_items, len(all_injectable_items))
@@ -806,16 +810,17 @@ class EldenRing(World):
             )
         )
 
-        # if number_to_inject < len(inj_items):
-        #     # find random item in list, check to see if its a replacable, then remove
-        #     # continue till enough room to inject all
-        #     req = len(inj_items) - number_to_inject # how many need to be removed to make space
-        #     while req > 0:
-        #         item = self.random.choice(self.base_itempool + self.dlc_itempool)
-        #         if item.data.replacable:
-        #             if item in self.base_itempool: self.base_itempool.remove(item)
-        #             else: self.dlc_itempool.remove(item)
-        #             req -= 1
+        # remove items to fit injectables
+        if number_to_inject < len(inj_items):
+            # find random item in list, check to see if its a replacable, then remove
+            # continue till enough room to inject all
+            req = len(inj_items) - number_to_inject # how many need to be removed to make space
+            while req > 0:
+                item: ERItem = self.random.choice(self.base_itempool + self.dlc_itempool)
+                if item.data.replacable:
+                    if item in self.base_itempool and not item.found_in_dlc: self.base_itempool.remove(item)
+                    else: self.dlc_itempool.remove(item)
+                    req -= 1
 
         return [inj for inj in injectable_mandatory if inj.is_important(self.options) == ItemClassification.progression], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
 
@@ -2568,7 +2573,7 @@ class EldenRing(World):
             if self._location_status(location).is_absent: continue
             
             if isinstance(rule, str):
-                assert item_table[rule].is_important(self.options) == ItemClassification.progression
+                assert item_table[rule].is_important(self.options) == ItemClassification.progression or item_table[rule].is_important(self.options) == ItemClassification.progression_deprioritized
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
     
@@ -2578,7 +2583,7 @@ class EldenRing(World):
         if region not in self.created_regions: return
         if isinstance(rule, str):
             if " -> " not in rule:
-                assert item_table[rule].is_important(self.options) == ItemClassification.progression
+                assert item_table[rule].is_important(self.options) == ItemClassification.progression or item_table[rule].is_important(self.options) == ItemClassification.progression_deprioritized
             rule = lambda state, item=rule: state.has(item, self.player)
         entrance = (
             f"{from_region} => {region}" if from_region
