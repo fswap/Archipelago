@@ -632,35 +632,35 @@ class EldenRing(World):
         # warning(f"dupe locations:{len(self.all_duplicate_locations)}")
         
         # if there are more priority locations then items in base / dlc the generator will complain
-        if self.options.dlc_randomization == 1 and self.base_enabled:
-            base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
-            dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
-            # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
-            # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
-            while base_priority_remove > 0:
-                location = self.multiworld.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
-                found = False
-                for region in self.multiworld.get_regions(self.player):
-                    for index, loc in enumerate(region.locations):
-                        if loc.name == location:
-                            self.all_priority_locations.remove(location)
-                            region.locations[index].progress_type = LocationProgressType.DEFAULT
-                            base_priority_remove -= 1
-                            found = True
-                            break
-                    if found: break
-            while dlc_priority_remove > 0:
-                location = self.multiworld.random.choice([l for l in self.all_priority_locations if location_dictionary[l].dlc])
-                found = False
-                for region in self.multiworld.get_regions(self.player):
-                    for index, loc in enumerate(region.locations):
-                        if loc.name == location:
-                            self.all_priority_locations.remove(location)
-                            region.locations[index].progress_type = LocationProgressType.DEFAULT
-                            dlc_priority_remove -= 1
-                            found = True
-                            break
-                    if found: break
+        # if self.options.dlc_randomization == 1 and self.base_enabled:
+        #     base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
+        #     dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
+        #     # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
+        #     # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
+        #     while base_priority_remove > 0:
+        #         location = self.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
+        #         found = False
+        #         for region in self.multiworld.get_regions(self.player):
+        #             for index, loc in enumerate(region.locations):
+        #                 if loc.name == location:
+        #                     self.all_priority_locations.remove(location)
+        #                     region.locations[index].progress_type = LocationProgressType.DEFAULT
+        #                     base_priority_remove -= 1
+        #                     found = True
+        #                     break
+        #             if found: break
+        #     while dlc_priority_remove > 0:
+        #         location = self.random.choice([l for l in self.all_priority_locations if location_dictionary[l].dlc])
+        #         found = False
+        #         for region in self.multiworld.get_regions(self.player):
+        #             for index, loc in enumerate(region.locations):
+        #                 if loc.name == location:
+        #                     self.all_priority_locations.remove(location)
+        #                     region.locations[index].progress_type = LocationProgressType.DEFAULT
+        #                     dlc_priority_remove -= 1
+        #                     found = True
+        #                     break
+        #             if found: break
         
         # warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
         # warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")

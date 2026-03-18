@@ -1347,7 +1347,7 @@ _vanilla_items = [
     #ERItemData("Rykard's Great Rune (Restored)", 194, ERItemCategory.GOODS),
     #ERItemData("Mohg's Great Rune (Restored)", 195, ERItemCategory.GOODS),
     #ERItemData("Malenia's Great Rune (Restored)", 196, ERItemCategory.GOODS),
-    ERItemData("Flask of Wondrous Physick", 250, ERItemCategory.GOODS, classification=ItemClassification.progression), # dont randomize, make option
+    ERItemData("Flask of Wondrous Physick", 250, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized), # dont randomize, make option
 
     ERItemData("Rowa Raisin", 810, ERItemCategory.GOODS),
     ERItemData("Sweet Raisin", 811, ERItemCategory.GOODS),
@@ -1668,8 +1668,8 @@ _vanilla_items = [
     ERItemData("Golden Lightning Fortification", 7903, ERItemCategory.GOODS),
 
     #Key and quest stuff
-    ERItemData("Stonesword Key", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Stonesword Key x3", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression, count=3),
+    ERItemData("Stonesword Key", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("Stonesword Key x3", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=3),
     ERItemData("Stonesword Key x5", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression, count=5),
     ERItemData("Rusty Key", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Dectus Medallion (Left)", 8105, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -1691,7 +1691,7 @@ _vanilla_items = [
     ERItemData("Amber Starlight", 8142, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Seluvis's Introduction", 8143, ERItemCategory.GOODS),
     ERItemData("Sellen's Primal Glintstone", 8144, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
-    ERItemData("Miniature Ranni", 8146, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Miniature Ranni", 8146, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
 
     ERItemData("Godrick's Great Rune", 8148, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Radahn's Great Rune", 8149, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -1703,17 +1703,17 @@ _vanilla_items = [
     ERItemData("Lord of Blood's Favor", 8154, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Lord of Blood's Favor (Soaked)", 8155, ERItemCategory.GOODS, skip=True),
     ERItemData("Spirit Calling Bell", 8158, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Fingerslayer Blade", 8159, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Fingerslayer Blade", 8159, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Sewing Needle", 8161, ERItemCategory.GOODS),
     ERItemData("Gold Sewing Needle", 8162, ERItemCategory.GOODS),
     ERItemData("Tailoring Tools", 8163, ERItemCategory.GOODS),
     ERItemData("Seluvis's Potion", 8164, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Amber Draught", 8166, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter to Patches", 8167, ERItemCategory.GOODS),
-    ERItemData("Dancer's Castanets", 8168, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Sellian Sealbreaker", 8169, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Chrysalids' Memento", 8171, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Black Knifeprint", 8172, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Dancer's Castanets", 8168, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("Sellian Sealbreaker", 8169, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("Chrysalids' Memento", 8171, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("Black Knifeprint", 8172, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter to Bernahl", 8173, ERItemCategory.GOODS),
     ERItemData("Academy Glintstone Key (Thops)", 8174, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Haligtree Secret Medallion (Left)", 8175, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -1725,8 +1725,8 @@ _vanilla_items = [
     ERItemData("Imbued Sword Key", 8186, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Golden Tailoring Tools", 8188, ERItemCategory.GOODS),
     ERItemData("Knifeprint Clue", 8190, ERItemCategory.GOODS, skip=True),
-    ERItemData("Cursemark of Death", 8191, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Seedbed Curse", 8193, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Cursemark of Death", 8191, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("Seedbed Curse", 8193, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("The Stormhawk King", 8194, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Sewer-Gaol Key", 8197, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Meeting Place Map", 8198, ERItemCategory.GOODS, skip=True),
@@ -1867,7 +1867,7 @@ _vanilla_items = [
     ERItemData("Sellia's Secret", 8978, ERItemCategory.GOODS, skip=True),
     
     ERItemData("Beast Eye", 8979, ERItemCategory.GOODS),
-    ERItemData("Weathered Dagger", 8980, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Weathered Dagger", 8980, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     #gestures
     ERItemData("Bow", 9000, ERItemCategory.GOODS, skip=True),
     ERItemData("Polite Bow", 9001, ERItemCategory.GOODS, skip=True),
