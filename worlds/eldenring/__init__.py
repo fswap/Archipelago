@@ -628,43 +628,11 @@ class EldenRing(World):
         self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(
             unfilled_dlc - len(self.dlc_itempool)))
         
-        # warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
-        # warning(f"dupe locations:{len(self.all_duplicate_locations)}")
-        
-        # if there are more priority locations then items in base / dlc the generator will complain
-        # if self.options.dlc_randomization == 1 and self.base_enabled:
-        #     base_priority_remove = len([l for l in self.all_priority_locations if not location_dictionary[l].dlc]) - len([l for l in important_items if not l.is_dlc])
-        #     dlc_priority_remove = len([l for l in self.all_priority_locations if location_dictionary[l].dlc]) - len([l for l in important_items if l.is_dlc])
-        #     # warning(f"base prio locations: {len([l for l in self.all_priority_locations if not location_dictionary[l].dlc])}, base important: {len([l for l in important_items if not l.is_dlc])}")
-        #     # warning(f"dlc prio locations: {len([l for l in self.all_priority_locations if location_dictionary[l].dlc])}, dlc important: {len([l for l in important_items if l.is_dlc])}")
-        #     while base_priority_remove > 0:
-        #         location = self.random.choice([l for l in self.all_priority_locations if not location_dictionary[l].dlc])
-        #         found = False
-        #         for region in self.multiworld.get_regions(self.player):
-        #             for index, loc in enumerate(region.locations):
-        #                 if loc.name == location:
-        #                     self.all_priority_locations.remove(location)
-        #                     region.locations[index].progress_type = LocationProgressType.DEFAULT
-        #                     base_priority_remove -= 1
-        #                     found = True
-        #                     break
-        #             if found: break
-        #     while dlc_priority_remove > 0:
-        #         location = self.random.choice([l for l in self.all_priority_locations if location_dictionary[l].dlc])
-        #         found = False
-        #         for region in self.multiworld.get_regions(self.player):
-        #             for index, loc in enumerate(region.locations):
-        #                 if loc.name == location:
-        #                     self.all_priority_locations.remove(location)
-        #                     region.locations[index].progress_type = LocationProgressType.DEFAULT
-        #                     dlc_priority_remove -= 1
-        #                     found = True
-        #                     break
-        #             if found: break
-        
-        # warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
-        # warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
-        # warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
+        warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
+        warning(f"dupe locations:{len(self.all_duplicate_locations)}")
+        warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
+        warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
+        warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
         # warning(self.options)
         
     def _create_dupe_locations(self, total_important_items: list[ERItemData]) -> None: 
@@ -754,12 +722,11 @@ class EldenRing(World):
         ]
         
         if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock items
-            for item in item_table:
-                if ((self.base_enabled and item_table[item].lock) 
-                or (self.options.enable_dlc and item_table[item].lock and item_table[item].is_dlc)):
-                    if item == "Gravesite Lock" and self.options.dlc_start != 0 and self.options.enable_dlc:
-                        continue
-                    else: all_injectable_items += [item_table[item]]
+            for item_name in item_table:
+                if ((self.base_enabled and item_table[item_name].lock) 
+                or (self.options.enable_dlc and item_table[item_name].lock and item_table[item_name].is_dlc)):
+                    if item_name != "Gravesite Lock" or self.options.dlc_start == 0 and self.options.enable_dlc:
+                        all_injectable_items += [item_table[item_name]]
         
         if self.options.enable_dlc:
             if self.options.dlc_start == 1:
@@ -809,18 +776,6 @@ class EldenRing(World):
                 k=max(0, number_to_inject - len(injectable_mandatory))
             )
         )
-
-        # remove items to fit injectables
-        if number_to_inject < len(inj_items):
-            # find random item in list, check to see if its a replacable, then remove
-            # continue till enough room to inject all
-            req = len(inj_items) - number_to_inject # how many need to be removed to make space
-            while req > 0:
-                item: ERItem = self.random.choice(self.base_itempool + self.dlc_itempool)
-                if item.data.replacable:
-                    if item in self.base_itempool and not item.found_in_dlc: self.base_itempool.remove(item)
-                    else: self.dlc_itempool.remove(item)
-                    req -= 1
 
         return [inj for inj in injectable_mandatory if inj.is_important(self.options) == ItemClassification.progression], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
 
@@ -1137,7 +1092,7 @@ class EldenRing(World):
                                 if region.name in region_order:
                                     self._add_item_rule(location.name,
                                         lambda item: (item.player != self.player)
-                                            or not item.data.is_dlc or item.data.name == "Gravesite Lock" # if not here game unbeatable
+                                            or (not item.data.is_dlc and not item.found_in_dlc)
                                         )
                                 elif region.name in region_order_dlc:
                                     self._add_item_rule(location.name,

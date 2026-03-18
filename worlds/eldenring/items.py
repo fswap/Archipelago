@@ -144,15 +144,13 @@ class ERItemData:
         if not (options.enable_dlc and options.dlc_start.value == 1):
             if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
             if self.boss_tools and options.enemy_rando.value == 0: return ItemClassification.progression
-        else:
-            if self.name == "Starlight Shards": return ItemClassification.progression_deprioritized
         
         if options.enable_dlc:
-            if options.scadu_at_priority and self.scadu: return ItemClassification.progression
+            if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
             if self.name == "Pureblood Knight's Medal" and options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1):
                 return ItemClassification.progression
             
-        if options.flask_at_priority and (self.name == "Golden Seed" or self.name == "Sacred Tear"): return ItemClassification.progression
+        if options.flask_at_priority and options.important_at_priority_only and (self.name == "Golden Seed" or self.name == "Sacred Tear"): return ItemClassification.progression
         
         return self.classification
 
@@ -215,6 +213,7 @@ _vanilla_items = [
     ERItemData("Sword of Night and Flame", 2140000, ERItemCategory.WEAPON),
     ERItemData("Crystal Sword", 2150000, ERItemCategory.WEAPON),
     ERItemData("Carian Knight's Sword", 2180000, ERItemCategory.WEAPON),
+    ERItemData("Sword of St. Trina", 2190000, ERItemCategory.WEAPON),
     #thrusting sword
     ERItemData("Miquellan Knight's Sword", 2200000, ERItemCategory.WEAPON),
     ERItemData("Cane Sword", 2210000, ERItemCategory.WEAPON),
@@ -2244,6 +2243,8 @@ _vanilla_items = [
     ERItemData("Ashen Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     ERItemData("Haligtree Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    
+    ERItemData("Gravesite Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
 ]
 
 #MARK: DLC Items
@@ -2252,8 +2253,6 @@ _dlc_items = [
     #dagger
     ERItemData("Main-gauche", 1500000, ERItemCategory.WEAPON),
     ERItemData("Fire Knight's Shortsword", 1510000, ERItemCategory.WEAPON),
-    #sword but long?
-    ERItemData("Sword of St. Trina", 2190000, ERItemCategory.WEAPON),
     #thrusting sword
     ERItemData("Velvet Sword of St. Trina", 2510000, ERItemCategory.WEAPON),
     ERItemData("Star-Lined Sword", 2520000, ERItemCategory.WEAPON),
@@ -2890,7 +2889,6 @@ _dlc_items = [
     ERItemData("Jolán and Anna", 2220000, ERItemCategory.GOODS),
     
     #MARK: DLC Region Lock Items
-    ERItemData("Gravesite Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Belurat Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Ensis Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Ellac Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
