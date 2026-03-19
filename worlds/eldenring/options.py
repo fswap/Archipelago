@@ -102,7 +102,7 @@ class DLCRandomization(Choice):
     option_separately = 1
     default = 0
     
-    visibility = Visibility.none # so fuzzer doesn't complain
+    visibility = Visibility.none # so fuzzer doesn't complain, this errors a lot
     
 class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
     """Messmer Kindle Shards"""
@@ -273,12 +273,12 @@ class SmithingBellBearingOption(Choice):
 class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
-    visibility = Visibility.none # rare fill errors
+    # visibility = Visibility.none
     
 class SmoothRuneItems(Toggle):
     """Smooth Rune Items."""
     display_name = "Smooth Rune Items"
-    visibility = Visibility.none # rare fill errors
+    # visibility = Visibility.none
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
@@ -334,7 +334,7 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
     display_name = "Important at Priority Only"
-    visibility = Visibility.none # doesn't work till dupe is fixed
+    visibility = Visibility.none # working, but likes to error
     
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."

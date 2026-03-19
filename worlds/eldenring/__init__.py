@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 from collections import defaultdict
 from enum import Enum
+from dataclasses import replace
 import settings, typing, Utils
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
@@ -542,7 +543,8 @@ class EldenRing(World):
                     if location.name in self.all_priority_locations: # if its excluded remove it from priority
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
-                    new_location.progress_type = LocationProgressType.PRIORITY
+                    if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
+                    else: new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -605,8 +607,8 @@ class EldenRing(World):
         self.base_itempool.extend(base_injectables)
         self.dlc_itempool.extend(dlc_injectables)
         
-        # if self.options.important_at_priority_only.value:
-        #     self._create_dupe_locations(total_important_items)
+        if self.options.important_at_priority_only.value:
+            self._create_dupe_locations(total_important_items) # this still doesn't work
 
         # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
@@ -675,14 +677,13 @@ class EldenRing(World):
                         if location == loc.name:
                             if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
                             else: times_duped[location] = 1 # add to dict
-                            new_loc = ERLocationData(location_dictionary[location]) # this modifies global variables, needs to be fixed
-                            new_loc.name = f"Dupe {times_duped[location]}: {location}"
-                            new_loc.default_item_name = "Dummy item"
                             new_code += 1
-                            new_loc.ap_code = 7000000 + new_code
-                            dupe_location = ERLocation(
+                            dupe_location = ERLocation( # replace works, yippee
                                 self.player,
-                                new_loc,
+                                replace(location_dictionary[location], 
+                                    name=f"Dupe {times_duped[location]}: {location}", 
+                                    default_item_name = "Dummy item",
+                                    ap_code = 7000000 + new_code),
                                 parent = region,
                             )
                             dupe_location.progress_type = LocationProgressType.PRIORITY
@@ -1164,18 +1165,18 @@ class EldenRing(World):
                 dupe_name = dupe_location.data.name
                 self._add_location_rule(dupe_name, lambda state: self._can_get(state, dupe_name[dupe_name.find(":")+2:]))
                 
-        # if self.options.important_at_priority_only.value:
-        #     for region in location_tables:
-        #             for location in location_tables[region]:
-        #                 if location.name not in self.all_priority_locations:
-        #                     if ((self.base_enabled and not location.dlc) # base
-        #                     or ((self.options.enable_dlc and location.dlc and region != "Roundtable Hold DLC Only") # dlc
-        #                     or (self.options.dlc_start == 1 and self.options.enable_dlc and region == "Roundtable Hold DLC Only"))): # dlc only roundtable
-        #                         self._add_item_rule(location.name,
-        #                             lambda item: 
-        #                                 not item.is_important(self.options) == ItemClassification.progression
-        #                                 and not item.is_important(self.options) == ItemClassification.progression_skip_balancing
-        #                             )
+        if self.options.important_at_priority_only.value:
+            for region in location_tables:
+                    for location in location_tables[region]:
+                        if location.name not in self.all_priority_locations:
+                            if ((self.base_enabled and not location.dlc) # base
+                            or ((self.options.enable_dlc and location.dlc and region != "Roundtable Hold DLC Only") # dlc
+                            or (self.options.dlc_start == 1 and self.options.enable_dlc and region == "Roundtable Hold DLC Only"))): # dlc only roundtable
+                                self._add_item_rule(location.name,
+                                    lambda item: 
+                                        not item.is_important(self.options) == ItemClassification.progression
+                                        and not item.is_important(self.options) == ItemClassification.progression_skip_balancing
+                                    )
              
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
@@ -1480,6 +1481,14 @@ class EldenRing(World):
             self._add_location_rule([f"LG/(WR): {s_item} - {scroll}" for s_item in scroll_items], scroll)
         for (book, book_items) in books:
             self._add_location_rule([f"RH: {b_item} - {book}" for b_item in book_items], book)
+        
+        if self.options.spell_shop_spells_only:
+            for loc in self.multiworld.get_locations(self.player):
+                if loc.data.shop and (loc.data.sorceries or loc.data.incantations):
+                    self._add_item_rule(loc.data.name,
+                        lambda item: (item.player == self.player)
+                            and (item.data.sorcery or item.data.incantation)
+                        )
                 
     def _add_npc_rules(self) -> None: # MARK: NPC Rules
         """Adds rules for items accessible via NPC quests.
