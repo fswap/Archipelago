@@ -192,8 +192,10 @@ class EldenRing(World):
         if self.options.enable_dlc: using_table.update(item_table_dlc)
         for item in using_table.values(): # loop of whole item table
             if self.options.local_item_option:
-                if item.is_important(self.options) != ItemClassification.progression and item.is_important(self.options) != ItemClassification.useful:
-                    match item.category: # this works, could be better
+                if (item.is_important(self.options) != ItemClassification.progression 
+                    and item.is_important(self.options) != ItemClassification.progression_deprioritized
+                    and item.is_important(self.options) != ItemClassification.useful):
+                    match item.category:
                         case ERItemCategory.GOODS:
                             if 'goods' not in exclude_local_item_only_lowercase:
                                 self.options.local_items.value.add(item.name)
@@ -544,7 +546,9 @@ class EldenRing(World):
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
                     if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
-                    else: new_location.progress_type = LocationProgressType.PRIORITY
+                    elif not self.options.dlc_randomization and not self.options.important_at_priority_only:
+                        # PRIORITY locations and these options make generator unhappy
+                        new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -686,7 +690,7 @@ class EldenRing(World):
                                     ap_code = 7000000 + new_code),
                                 parent = region,
                             )
-                            dupe_location.progress_type = LocationProgressType.PRIORITY
+                            # dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
                             self.dupe_location_tables.update({region.name: [dupe_location.data]})
                             self.all_duplicate_locations.append(dupe_location)

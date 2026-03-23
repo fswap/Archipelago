@@ -95,7 +95,8 @@ class DLCRandomization(Choice):
     - **Together:** Randomize base and DLC together.
     - **Separately:** Randomize DLC items to DLC locations or other worlds.
     
-    This option errors a lot, use at own risk.
+    This option errors a lot use at own risk,
+    also disables Priority locations since generator is unhappy.
     """
     display_name = "DLC Randomization"
     option_together = 0
@@ -307,7 +308,7 @@ class ExcludeLocalItemOnly(OptionList):
     display_name = "Exclude Local Item Only"
     default = ["Weapon", "Armor", "Accessory", "AshofWar"]
     valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
-    valid_keys_casefold = True
+    valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
     
 class ERPriorityLocationGroups(OptionList):
     """Prevent these location types from having an unimportant items.
