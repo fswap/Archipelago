@@ -335,7 +335,7 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
     display_name = "Important at Priority Only"
-    visibility = Visibility.none # working, but likes to error
+    # visibility = Visibility.none # working, but likes to error
     
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."

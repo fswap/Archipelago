@@ -251,7 +251,7 @@ class EldenRing(World):
                                         self.all_priority_locations.add(loc.name)
                                         break
         
-        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove missable from priority
+        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -643,7 +643,9 @@ class EldenRing(World):
         """Create duplicate locations locations."""
         base_priority_loc = []
         dlc_priority_loc = []
-        for loc in self.all_priority_locations:
+        valid_dupe_locations = [loc for loc in self.all_priority_locations 
+            if not location_dictionary[loc].shop and not location_dictionary[loc].hidden]
+        for loc in valid_dupe_locations:
             if not location_dictionary[loc].dlc and self.base_enabled: base_priority_loc.append(loc)
             else: dlc_priority_loc.append(loc)
         if self.base_enabled and len(base_priority_loc) == 0 and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # make sure there is a location in base game
@@ -660,20 +662,16 @@ class EldenRing(World):
         base_loc_needed = max(len(base_items) - len(base_priority_loc), 0) # what base / dlc need
         dlc_loc_needed = max(len(dlc_items) - len(dlc_priority_loc), 0)
             
-        if len(self.all_priority_locations) < int(len(total_important_items)/8) and self.options.important_at_priority_only:
-            raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(total_important_items)/8)}")
+        if len(valid_dupe_locations) < int(len(total_important_items)/8) and self.options.important_at_priority_only:
+            raise OptionError(f"There are to little priority locations {len(valid_dupe_locations)}. You need more then {int(len(total_important_items)/8)}")
         if (base_loc_needed > 0 or dlc_loc_needed > 0) and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # do we need to dupe
 
             times_duped = {}
             new_code = len(location_dictionary)
             while base_loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
-                location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
+                location = self.multiworld.random.choice(list(valid_dupe_locations)) # pick random location
                 if not location_dictionary[location].dlc and base_loc_needed == 0: continue # we dont need any more of these locations
                 if location_dictionary[location].dlc and dlc_loc_needed == 0: continue
-                
-                # places that shouldn't be duped
-                if (location_dictionary[location].shop
-                    or location_dictionary[location].hidden): continue
                 
                 found = False
                 for region in self.multiworld.get_regions(self.player):
