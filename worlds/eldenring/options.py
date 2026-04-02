@@ -335,7 +335,13 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     If the total amount of priority checks are low there will be like 20 items on each location."""
     display_name = "Important at Priority Only"
-    # visibility = Visibility.none # working, but likes to error
+    visibility = Visibility.none # not working
+    
+class ERUsefulAtPriority(Toggle):
+    """Should useful items be included in Priority locations.
+    This is used with Important at Priority Only option since it uses custom priority handling."""
+    display_name = "Useful at Priority"
+    visibility = Visibility.none # wip
     
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
@@ -437,6 +443,7 @@ class EROptions(PerGameCommonOptions):
     exclude_local_item_only: ExcludeLocalItemOnly
     priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
+    useful_at_priority: ERUsefulAtPriority
     flask_at_priority: FlaskUpgradesAtPriority
     scadu_at_priority: ScaduAtPriority
     exclude_locations: ERExcludeLocations
@@ -496,6 +503,7 @@ option_groups = [
     OptionGroup("Priority Location Rules", [
         ERPriorityLocationGroups,
         ERImportantAtPriorityOnly,
+        ERUsefulAtPriority,
         FlaskUpgradesAtPriority,
         ScaduAtPriority,
     ])

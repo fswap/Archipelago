@@ -104,9 +104,10 @@ class EldenRing(World):
     base_enabled: bool = None
     all_excluded_locations: Set[str] = set()
     all_priority_locations: Set[str] = set()
-    all_duplicate_locations: list[ERLocation] = []
+    all_duplicate_locations: Set[str] = set()
     all_starting_items: list[ERItem] = []
     goal_bosses: list[ERBossInfo] = []
+    dupe_location_dictionary: Dict[str, ERLocationData] = {}
     dupe_location_tables: Dict[str, list[ERLocationData]] = {}
     
     def visualize_world(self): # puml gets put in root folder
@@ -127,13 +128,18 @@ class EldenRing(World):
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
-        self.location_name_to_id = {}
+        self.location_name_to_id = {
+            location.name: location.ap_code
+            for locations in location_tables.values()
+            for location in locations
+            if location.ap_code is not None
+        }
         self.base_itempool = None
         self.dlc_itempool = None
         self.created_regions = None
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
-        self.all_duplicate_locations = []
+        self.all_duplicate_locations = set()
         self.all_starting_items = []
         self.goal_bosses = []
         self.dupe_location_dictionary = {}
@@ -141,12 +147,8 @@ class EldenRing(World):
         self.explicit_indirect_conditions = False
 
     def generate_early(self) -> None:
-        self.location_name_to_id = {
-            location.name: location.ap_code
-            for locations in location_tables.values()
-            for location in locations
-            if location.ap_code is not None
-        }
+        for region in location_tables: # make sure table has all values
+            self.dupe_location_tables.setdefault(region, [])
         
         self.base_enabled = not (self.options.dlc_start == 1 and self.options.enable_dlc)
         self.created_regions = set()
@@ -603,7 +605,8 @@ class EldenRing(World):
                     # make base items dlc if in dlc
                     new_item.found_in_dlc = True
                     self.dlc_itempool.append(new_item)
-                if new_item.is_important(self.options) == ItemClassification.progression:
+                if (new_item.is_important(self.options) == ItemClassification.progression 
+                    or (self.options.useful_at_priority and new_item.is_important(self.options) == ItemClassification.useful)):
                     total_important_items.append(new_item)
         
         total_important_inj, base_injectables, dlc_injectables = self._create_injectable_items(num_required_extra_items)
@@ -643,9 +646,7 @@ class EldenRing(World):
         """Create duplicate locations locations."""
         base_priority_loc = []
         dlc_priority_loc = []
-        valid_dupe_locations = [loc for loc in self.all_priority_locations 
-            if not location_dictionary[loc].shop and not location_dictionary[loc].hidden]
-        for loc in valid_dupe_locations:
+        for loc in self.all_priority_locations:
             if not location_dictionary[loc].dlc and self.base_enabled: base_priority_loc.append(loc)
             else: dlc_priority_loc.append(loc)
         if self.base_enabled and len(base_priority_loc) == 0 and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # make sure there is a location in base game
@@ -662,14 +663,14 @@ class EldenRing(World):
         base_loc_needed = max(len(base_items) - len(base_priority_loc), 0) # what base / dlc need
         dlc_loc_needed = max(len(dlc_items) - len(dlc_priority_loc), 0)
             
-        if len(valid_dupe_locations) < int(len(total_important_items)/8) and self.options.important_at_priority_only:
-            raise OptionError(f"There are to little priority locations {len(valid_dupe_locations)}. You need more then {int(len(total_important_items)/8)}")
+        if len(self.all_priority_locations) < int(len(total_important_items)/8) and self.options.important_at_priority_only:
+            raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(total_important_items)/8)}")
         if (base_loc_needed > 0 or dlc_loc_needed > 0) and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # do we need to dupe
 
             times_duped = {}
             new_code = len(location_dictionary)
             while base_loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
-                location = self.multiworld.random.choice(list(valid_dupe_locations)) # pick random location
+                location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
                 if not location_dictionary[location].dlc and base_loc_needed == 0: continue # we dont need any more of these locations
                 if location_dictionary[location].dlc and dlc_loc_needed == 0: continue
                 
@@ -690,8 +691,9 @@ class EldenRing(World):
                             )
                             # dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
-                            self.dupe_location_tables.update({region.name: [dupe_location.data]})
-                            self.all_duplicate_locations.append(dupe_location)
+                            self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
+                            self.dupe_location_tables[region.name].append(dupe_location.data)
+                            self.all_duplicate_locations.add(dupe_location.data.name)
                             found = True
                             break
                     if found: break
@@ -700,7 +702,7 @@ class EldenRing(World):
                     else: dlc_loc_needed -= 1
             
             self.location_name_to_id.update({ # add new locations
-                location.name: 7000000 + len(location_dictionary) + num
+                location: 7000000 + len(location_dictionary) + num
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
 
@@ -721,7 +723,7 @@ class EldenRing(World):
         
         if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock items
             for item_name in item_table:
-                if ((self.base_enabled and item_table[item_name].lock) 
+                if ((self.base_enabled and item_table[item_name].lock and not item_table[item_name].is_dlc) 
                 or (self.options.enable_dlc and item_table[item_name].lock and item_table[item_name].is_dlc)):
                     if item_name != "Gravesite Lock" or self.options.dlc_start == 0 and self.options.enable_dlc:
                         all_injectable_items += [item_table[item_name]]
@@ -775,7 +777,11 @@ class EldenRing(World):
             )
         )
 
-        return [self.create_item(inj) for inj in injectable_mandatory if inj.is_important(self.options) == ItemClassification.progression], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
+        return [self.create_item(inj) for inj in injectable_mandatory 
+                if inj.is_important(self.options) == ItemClassification.progression 
+                or (self.options.useful_at_priority and inj.is_important(self.options) == ItemClassification.useful)
+                ], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled
+                ], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -1164,21 +1170,22 @@ class EldenRing(World):
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
-                dupe_name = dupe_location.data.name
-                self._add_location_rule(dupe_name, lambda state: self._can_get(state, dupe_name[dupe_name.find(":")+2:]))
+                self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
                 
         if self.options.important_at_priority_only.value:
-            for region in location_tables:
-                    for location in location_tables[region]:
-                        if location.name not in self.all_priority_locations:
-                            if ((self.base_enabled and not location.dlc) # base
-                            or ((self.options.enable_dlc and location.dlc and region != "Roundtable Hold DLC Only") # dlc
-                            or (self.options.dlc_start == 1 and self.options.enable_dlc and region == "Roundtable Hold DLC Only"))): # dlc only roundtable
-                                self._add_item_rule(location.name,
-                                    lambda item: 
-                                        not item.is_important(self.options) == ItemClassification.progression
-                                        and not item.is_important(self.options) == ItemClassification.progression_skip_balancing
-                                    )
+            for loc in list(self.all_priority_locations) + list(self.all_duplicate_locations):
+                if "Dupe" in loc: location = self.dupe_location_dictionary[loc]
+                else: location = location_dictionary[loc]
+                
+                if ((self.base_enabled and not location.dlc) # base
+                or ((self.options.enable_dlc and location.dlc and region != "Roundtable Hold DLC Only") # dlc
+                or (self.options.dlc_start == 1 and self.options.enable_dlc and region == "Roundtable Hold DLC Only"))): # dlc only roundtable
+                    self._add_item_rule(location.name,
+                        lambda item:
+                            item.classification == ItemClassification.progression
+                            or item.classification == ItemClassification.progression_skip_balancing
+                            or (self.options.useful_at_priority and item.classification == ItemClassification.useful)
+                        )
              
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
@@ -2603,7 +2610,7 @@ class EldenRing(World):
             data = location.data
         else:
             if location in location_dictionary: data = location_dictionary[location]
-            else: data = location_dictionary[location[location.find(":")+2:]] # remove Dupe #:
+            else: data = self.dupe_location_dictionary[location]
 
         if data.should_omit(self.options): return _LocationStatus.ABSENT
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
@@ -2829,6 +2836,7 @@ class EldenRing(World):
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
                 "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
+                "useful_at_priority": self.options.useful_at_priority.value,
                 "flask_at_priority": self.options.flask_at_priority.value,
                 "scadu_at_priority": self.options.scadu_at_priority.value,
                 "exclude_locations": self.options.exclude_locations.value,

@@ -10,6 +10,8 @@ fuzzer    python fuzz.py -r 16 -j 16 -g eldenring -n 1    if the runs > threads 
 
 TODO
 
+serpent hunter stuff
+
 dlc only stuff should be a local item
 
 fix dlc_randomization option
