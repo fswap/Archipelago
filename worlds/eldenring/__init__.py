@@ -1172,7 +1172,7 @@ class EldenRing(World):
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
                 self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
                 
-        if self.options.important_at_priority_only.value:
+        if self.options.important_at_priority_only.value: # wip
             for loc in list(self.all_priority_locations) + list(self.all_duplicate_locations):
                 if "Dupe" in loc: location = self.dupe_location_dictionary[loc]
                 else: location = location_dictionary[loc]

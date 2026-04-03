@@ -366,7 +366,8 @@ class ExcludedLocationBehaviorOption(Choice):
 
     - **Allow Useful:** Excluded locations can't have progression items, but they can have useful items.
     - **Forbid Useful:** Neither progression items nor useful items can be placed in excluded locations.
-    - **Do Not Randomize:** Excluded locations always contain the same item as in vanilla Elden Ring.
+    - **Do Not Randomize:** Excluded locations always contain the same item as in vanilla.
+    - **Omit:** This location won't count as a check (if the item is filler) and contains the same item as in vanilla.
 
     A "progression item" is anything that's required to unlock another location in some game.
     A "useful item" is something each game defines individually, usually items that are quite
@@ -375,7 +376,8 @@ class ExcludedLocationBehaviorOption(Choice):
     display_name = "Excluded Locations Behavior"
     option_allow_useful = 1
     option_forbid_useful = 2
-    option_do_not_randomize = 3 # quest items can be at excluded locations and fill errors can happen
+    option_do_not_randomize = 3
+    option_omit = 4
     default = 2
 
 class MissableLocationBehaviorOption(Choice):

@@ -583,7 +583,16 @@ class ERLocationData:
 
     def should_omit(self, options: EROptions) -> bool:
         """Whether this location should be omitted given a set of options."""
-        return self.omit if isinstance(self.omit, bool) else self.omit(self, options)
+        if (self.omit if isinstance(self.omit, bool) 
+            else self.omit(self, options)
+            ): return True
+        
+        return (
+            options.excluded_location_behavior.value == 4
+            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
+            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
+            and self.name in options.exclude_locations.value
+        )
 
     def should_randomize(self, options: EROptions) -> bool:
         """Whether this location should be forced to contain its default item."""
@@ -593,10 +602,10 @@ class ERLocationData:
         ): return False
         
         return not (( # if any of these are true, return False
-            options.missable_location_behavior.value == 3
+            options.missable_location_behavior.value >= 3
             and self.is_missable(options)
         ) or (
-            options.excluded_location_behavior.value == 3
+            options.excluded_location_behavior.value >= 3
             and self.name in options.exclude_locations.value
         ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == 2
         ) or (self.map and options.map_option.value == 2
