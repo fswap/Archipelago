@@ -143,6 +143,7 @@ class ERItemData:
 
     def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
+        if options.messmer_kindle.value and self.name == "Messmer's Kindling": return True
         return self.skip if isinstance(self.skip, bool) else self.skip(self, options)
 
     def is_important(self, options: EROptions) -> ItemClassification:
@@ -2727,7 +2728,7 @@ _dlc_items = [
     ERItemData("Ruins Map (2nd)", 2008017, ERItemCategory.GOODS, skip=True),
     ERItemData("Ruins Map (3rd)", 2008018, ERItemCategory.GOODS, skip=True),
     ERItemData("Black Syrup", 2008019, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
-    ERItemData("Messmer's Kindling", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression, skip=True),
+    ERItemData("Messmer's Kindling", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Furnace Keeper's Note", 2008025, ERItemCategory.GOODS, skip=True),
     ERItemData("Castle Cross Message", 2008027, ERItemCategory.GOODS, skip=True),
     ERItemData("Ancient Ruins Cross Message", 2008028, ERItemCategory.GOODS, skip=True),

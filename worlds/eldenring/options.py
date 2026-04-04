@@ -359,7 +359,15 @@ class ERExcludeLocations(ExcludeLocations):
     - **Scarab**: Scarabs that drop items.
     - **Furnace Golem**: DLC Furnace Golems."""
     default = frozenset({"Hidden"})
-    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"}
+    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"} # "All Locations"
+    
+    unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names
+    def verify_keys(self) -> None:
+        super().verify_keys()
+        self.unconverted_groups = self.value
+        
+    def excluded_groups(self):
+        return self.unconverted_groups
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
@@ -442,7 +450,7 @@ class EROptions(PerGameCommonOptions):
     smooth_upgrade_items: SmoothUpgradeItems
     smooth_rune_items: SmoothRuneItems
     spell_shop_spells_only: SpellShopSpellsOnly
-    early_legacy_dungeons:EarlyLegacyDungeonsEarly
+    early_legacy_dungeons: EarlyLegacyDungeonsEarly
     local_item_option: LocalItemOnly
     exclude_local_item_only: ExcludeLocalItemOnly
     priority_location_groups: ERPriorityLocationGroups

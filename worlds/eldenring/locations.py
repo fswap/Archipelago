@@ -5,6 +5,7 @@ from logging import warning
 from BaseClasses import ItemClassification, Location, Region
 from .options import EROptions
 from .items import ERItemCategory, item_table
+from .bosses import all_boss_locations
 
 # Regions in approximate order of progression
 #MARK: Location Order
@@ -563,10 +564,8 @@ class ERLocationData:
             self.ap_code = self.ap_code or ERLocationData.__location_id
             ERLocationData.__location_id += 1
         if self.scarab or self.hostile_npc or self.hardenemy or self.furnacegolem: self.drop = True
-        if self.enemyfragment:
-            self.fragment = True
-        if self.hangingpot:
-            self.hidden = True
+        if self.enemyfragment: self.fragment = True
+        if self.hangingpot: self.hidden = True
         if (self.boss or self.altboss or self.catacombboss or self.miscboss or self.minidungeonboss or self.graveboss
         or self.caveboss or self.tunnelboss or self.overworldboss or self.dragonboss or self.gaolboss): # any boss should be a prominent place
             if not self.missable:
@@ -590,10 +589,12 @@ class ERLocationData:
         return (
             options.excluded_location_behavior.value == 4
             and self.name in options.exclude_locations.value
+            and self.name not in all_boss_locations
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
         ) or (
             options.missable_location_behavior.value == 4 and self.is_missable(options)
+            and self.name not in all_boss_locations
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
         )
@@ -656,6 +657,9 @@ class ERLocationData:
         if default_item.classification == ItemClassification.progression:
             names.append("Progression")
             self.progression = True
+            
+        # testing
+        names.append("All Locations")
         
         return names
 
@@ -6317,6 +6321,9 @@ location_name_groups: Dict[str, Set[str]] = {
     "Accessory": set(),
     "Ash of war": set(),
     #"Upgraded Weapons": set(),
+    
+    # testing 
+    "All Locations": set(),
 }
 
 location_descriptions = {
