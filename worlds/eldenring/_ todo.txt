@@ -14,7 +14,10 @@ serpent hunter stuff
 
 dlc only stuff should be a local item
 
-fix dlc_randomization option
+fix dlc_randomization and important at prio option
+
+
+
 
 static rando options
 

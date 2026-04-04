@@ -589,9 +589,13 @@ class ERLocationData:
         
         return (
             options.excluded_location_behavior.value == 4
+            and self.name in options.exclude_locations.value
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
             and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
-            and self.name in options.exclude_locations.value
+        ) or (
+            options.missable_location_behavior.value == 4 and self.is_missable(options)
+            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
+            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
         )
 
     def should_randomize(self, options: EROptions) -> bool:

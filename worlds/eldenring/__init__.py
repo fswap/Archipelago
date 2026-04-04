@@ -1078,7 +1078,7 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
                         and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                    if self.options.dlc_timing == 0 and self.options.missable_location_behavior != "do_not_randomize": # Early medal
+                    if self.options.dlc_timing == 0 and self.options.missable_location_behavior <= 1: # Early medal
                         self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
                         self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 
