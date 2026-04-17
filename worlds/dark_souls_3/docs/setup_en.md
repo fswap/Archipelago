@@ -139,7 +139,7 @@ If you've checked all of these, you can also try:
 
 * Running `launch-ds3.bat` as an administrator.
 
-* Reinstalling DS3 or even reinstalling Steam itself.
+* Reinstalling DS3 or even reinstalling Steam itself. When reinstalling DS3, double-check that the DS3 game directory is completely empty or deleted by Steam after uninstalling. If it is not empty the remaining files may be remnants of mods you have installed in the past, which can cause conflicts. You should delete any remaining files in the DS3 game directory before you install the game again to ensure a clean game installation.
 
 * Making sure DS3 is installed on the same drive as Steam and as the randomizer. (A number of users
   are able to run these on different drives, but this has helped some users.)
