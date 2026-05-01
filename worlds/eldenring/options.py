@@ -333,15 +333,15 @@ class ERPriorityLocationGroups(OptionList):
     
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
-    If the total amount of priority checks are low there will be like 20 items on each location."""
+    Generator likes to fail if there is to little priority locations, add more if it fails."""
     display_name = "Important at Priority Only"
-    visibility = Visibility.none # not working
+    visibility = Visibility.none # likes to fill error depending on how many priority locations there are
     
 class ERUsefulAtPriority(Toggle):
     """Should useful items be included in Priority locations.
     This is used with Important at Priority Only option since it uses custom priority handling."""
     display_name = "Useful at Priority"
-    visibility = Visibility.none # wip
+    visibility = Visibility.none
     
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
@@ -359,7 +359,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **Scarab**: Scarabs that drop items.
     - **Furnace Golem**: DLC Furnace Golems."""
     default = frozenset({"Hidden"})
-    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"} # "All Locations"
+    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"} # testing "All Locations"
     
     unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names
     def verify_keys(self) -> None:
