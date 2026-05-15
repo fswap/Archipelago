@@ -2207,6 +2207,8 @@ _vanilla_items = [
     ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable, and dupe priority locations
     
     # MARK: Master Keys
+    ERItemData("Stonesword Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    
     ERItemData("Limgrave Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
     ERItemData("Roundtable Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
     ERItemData("Weeping Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),

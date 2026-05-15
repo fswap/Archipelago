@@ -755,7 +755,8 @@ class EldenRing(World):
                     all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
         
         if self.base_enabled:
-            if self.options.use_master_key.value: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
+            if self.options.use_master_key.value == 1: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
+            elif self.options.use_master_key.value == 2: all_injectable_items += [item_table["Stonesword Master Key"]]
         
         injectable_mandatory = [
             item for item in all_injectable_items
@@ -815,6 +816,12 @@ class EldenRing(World):
                         self._add_to_inventory(item); break
                     elif item.data.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
                         self._add_to_inventory(item); break
+            
+            if self.options.dlc_scadutree_fragments.value == 1:
+                [self._fill_local_item(item, region_order_dlc) for item in self.dlc_itempool if item.data.scadu]
+            if self.options.dlc_messmer_kindle.value == 1:
+                [self._fill_local_item(item, region_order_dlc) for item in self.dlc_itempool 
+                 if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
 
         if self.options.map_option == 1:
             [self._add_to_inventory(item) for item in self.base_itempool + self.dlc_itempool if item.data.map]
@@ -1405,8 +1412,9 @@ class EldenRing(World):
         
     def _choose_key_rules(self, state: CollectionState, keys_required: int, master_key: str) -> bool:
         "choose key rules"
-        if self.options.use_master_key.value: return state.has(master_key, self.player)
-        else: return self._has_enough_keys(state, keys_required)
+        if self.options.use_master_key.value == 1:   return state.has(master_key, self.player)
+        elif self.options.use_master_key.value == 2: return state.has("Stonesword Master Key", self.player)
+        return self._has_enough_keys(state, keys_required)
         
     def _dragon_communion_rules(self) -> None: # MARK: Dragon Rules
         """Rules for dragon communion"""

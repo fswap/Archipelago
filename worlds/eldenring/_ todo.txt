@@ -12,16 +12,14 @@ TODO
 
 serpent hunter stuff
 
-dlc only stuff should be a local item
-
-fix dlc_randomization and important at prio option
 
 
-
-
-static rando options
+after release stuff
 
 boss region lock using bosses.py
+
+fix dlc_randomization
+dupe locations aren't consistent
 
 
 Ideas
@@ -32,11 +30,6 @@ scadutree options, start with, not random, only within dlc, anywhere
 
 "This dungeon is not on the path." or "This dungeon is on the path of the Elden Lord."
 using ground messages or the small stones with text on them
-
-dlc start / dlc only
-
-Master Key per region
-ex: Limgrave Master Key, Underground Master Key
 
 
 Art that will be needed probs
@@ -92,4 +85,4 @@ people who want to be pinged for playtesting
 @ubernugget @.aznova @reignycs @kiewie
 @bokyubi @journair @dezinator @animubot
 @stressoexpresso @jasler7 @garfunkelton @syrknightnight
-@moroccan7755 @markrk @seesaweffectt
+@moroccan7755 @markrk @seesaweffectt @cerbion

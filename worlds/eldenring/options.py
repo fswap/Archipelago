@@ -79,9 +79,16 @@ class RoyalAccess(Toggle):
     """Keep Royal Capital graces accessable after it becomes ashen."""
     display_name = "Royal Capital Accessable"
 
-class StoneswordMasterKey(Toggle):
-    "Replace Stonesword Keys with a Master Key for each region"
+class StoneswordMasterKey(Choice):
+    """Stonesword Key options
+    
+    **Regional Key:** Adds an individual Master Key for each region.
+    **Single Key:** Adds a Single Master Key.
+    """
     display_name = "Stonesword Master Key"
+    option_vanilla = 0
+    option_regional_keys = 1
+    option_single_key = 2
 
 # MARK: DLC
 
@@ -105,7 +112,7 @@ class DLCRandomization(Choice):
     
     visibility = Visibility.none # so fuzzer doesn't complain, this errors a lot
     
-class MessmerKindle(Toggle): # another toggle to make them only spawn in dlc?
+class MessmerKindle(Toggle):
     """Messmer Kindle Shards"""
     display_name = "Messmer Kindle Shards"
     
@@ -124,12 +131,26 @@ class MessmerKindleMax(Range):
     default = 10
     
 class DLCMessmerKindle(Toggle):
-    """Randomize Messmer's Kindling and Shards to DLC or other worlds."""
-    display_name = "DLC Messmer's Kindling"
+    """Randomize Messmer's Kindling / Shards.
     
-class DLCScadutreeFragments(Toggle):
-    """Randomize Scadutree Fragments to DLC or other worlds."""
+    **DLC Only:** Randomize Kindling to your DLC.
+    **Not Base:** Don't randomize Kindling to your base game.
+    """
+    display_name = "DLC Messmer's Kindling"
+    option_normal = 0
+    option_dlc_only = 1
+    option_not_base = 2
+    
+class DLCScadutreeFragments(Choice):
+    """Randomize Scadutree Fragments.
+    
+    **DLC Only:** Randomize Scadutree Fragments to your DLC.
+    **Not Base:** Don't randomize Scadutree Fragments to your base game.
+    """
     display_name = "DLC Scadutree Fragments"
+    option_normal = 0
+    option_dlc_only = 1
+    option_not_base = 2
 
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
