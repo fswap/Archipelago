@@ -238,6 +238,43 @@ class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
     display_name = "Material Randomizer"
 
+# MARK: Traps
+
+class TrapFillPercentage(Range):
+    """
+    Replace a percentage of filler items in the item pool with random traps.
+    """
+    display_name = "Trap Fill Percentage"
+    range_start = 0
+    range_end = 100
+    default = 0
+    
+class BaseTrapWeight(Choice):
+    """
+    Base Class for Trap Weights
+    """
+    option_none = 0
+    option_low = 1
+    option_medium = 2
+    option_high = 4
+    default = 2
+    # visibility = Visibility.none
+    
+class ExampleTrapWeight(BaseTrapWeight):
+    """
+    Example Trap: Description
+    """
+    display_name = "Example Trap Weight"
+    
+# Traps that need dlc stuff to work
+    
+class ExampleDLCTrapWeight(BaseTrapWeight):
+    """
+    Example DLC Trap: Description
+    """
+    display_name = "Example DLC Trap Weight"
+    
+
 # MARK: Item & Location
 
 class RandomizeStartingLoadout(DefaultOnToggle):
@@ -460,6 +497,10 @@ class EROptions(PerGameCommonOptions):
     enemy_rando: EnemyRando
     material_rando: MaterialRando
     death_link: DeathLink
+    
+    trap_fill_percentage: TrapFillPercentage
+    example_trap_weight: ExampleTrapWeight
+    example_dlc_trap_weight: ExampleDLCTrapWeight
 
     random_start: RandomizeStartingLoadout
     auto_equip: AutoEquipOption
@@ -518,6 +559,11 @@ option_groups = [
         DLCStartingShop,
         DLCCarePackage,
         DLCInitialRuneLevel,
+    ]),
+    OptionGroup("Traps", [
+        TrapFillPercentage,
+        ExampleTrapWeight,
+        ExampleDLCTrapWeight
     ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,

@@ -12,13 +12,15 @@ TODO
 
 serpent hunter stuff
 
+remove dlc_randomization
+
 
 
 after release stuff
 
 boss region lock using bosses.py
 
-fix dlc_randomization
+
 dupe locations aren't consistent
 
 
@@ -37,7 +39,8 @@ Art that will be needed probs
 modified main menu with arch text
 a apitem item sprite for pickups and shop
 custom region lock items
-Stonesword Master Keys
+Stonesword Master Key, Regional Master Keys
+Traps
 
 
 

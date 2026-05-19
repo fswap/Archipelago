@@ -2914,7 +2914,17 @@ _dlc_items = [
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
 ]
 
-for item in _dlc_items:
+#MARK: Traps
+
+vanilla_traps = [
+    ERItemData("Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+]
+
+dlc_traps = [
+    ERItemData("DLC Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+]
+
+for item in _dlc_items + dlc_traps:
     item.is_dlc = True
 
 item_name_groups: Dict[str, Set] = {

@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from collections import defaultdict
 from enum import Enum
 from dataclasses import replace
-import settings, typing, Utils
+import settings, typing, Utils, math
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
 
@@ -13,7 +13,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, vanilla_traps, dlc_traps
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
 from Options import OptionError
@@ -614,33 +614,25 @@ class EldenRing(World):
         self.base_itempool.extend(base_injectables)
         self.dlc_itempool.extend(dlc_injectables)
         
+        unfilled_base = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if not unfilled.data.dlc]) - len(self.base_itempool)
+        unfilled_dlc = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if unfilled.data.dlc]) - len(self.dlc_itempool)
+        
+        # traps
+        trap_pool = self._add_traps(unfilled_base + unfilled_dlc)
+        unfilled_base -= len(trap_pool)
+        
         # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
         
         if self.options.important_at_priority_only.value:
             self._create_dupe_locations(self.base_itempool, self.dlc_itempool) # this still doesn't work
         
-        self._prune_itempool(total_important_items, base_injectables, dlc_injectables)
+        # if to little items in itempool add filler
+        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(unfilled_base))
+        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(unfilled_dlc))
         
         # Add items to itempool
-        self.multiworld.itempool += self.base_itempool + self.dlc_itempool
-        
-    def _prune_itempool(self, important_items: list[ERItem], base_inj: list[ERItem], dlc_inj: list[ERItem]) -> None:
-        unfilled_base = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if not unfilled.data.dlc])
-        unfilled_dlc = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if unfilled.data.dlc])
-        
-        # if to little items in itempool add filler
-        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(
-            unfilled_base - len(self.base_itempool)))
-        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(
-            unfilled_dlc - len(self.dlc_itempool)))
-        
-        # warning(f"important items:{len(important_items)}, important_locations:{len(self.all_priority_locations)}")
-        # warning(f"dupe locations:{len(self.all_duplicate_locations)}")
-        # warning(f"base injects:{len(base_inj)}, dlc injects:{len(dlc_inj)}")
-        # warning(f"base itempool:{len(self.base_itempool)}, dlc itempool:{len(self.dlc_itempool)}")
-        # warning(f"base unfilled:{unfilled_base}, dlc unfilled:{unfilled_dlc}")
-        # warning(self.options)
+        self.multiworld.itempool += self.base_itempool + self.dlc_itempool + trap_pool
         
     def _create_dupe_locations(self, base_items: list[ERItem], dlc_items: list[ERItem]) -> None: 
         """Create duplicate locations locations."""
@@ -788,6 +780,20 @@ class EldenRing(World):
                 or (self.options.useful_at_priority and inj.is_important(self.options) == ItemClassification.useful)
                 ], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled
                 ], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
+
+    def _add_traps(self, total_filler_count: int):
+        trap_weights = []
+        trap_weights += (vanilla_traps["Example Trap"] * self.options.example_trap_weight.value)
+        if self.options.enable_dlc:
+            trap_weights += (dlc_traps["Example DLC Trap"] * self.options.example_dlc_trap_weight.value)
+        
+        trap_count = 0 if (len(trap_weights) == 0) else math.ceil(total_filler_count * (self.options.trap_fill_percentage.value / 100.0))
+        
+        trap_pool = []
+        for i in range(trap_count):
+            trap_item = self.random.choice(trap_weights)
+            trap_pool.append(self.create_item(trap_item))
+        return trap_pool
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -2803,6 +2809,9 @@ class EldenRing(World):
                 "enemy_rando": self.options.enemy_rando.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
+                "trap_fill_percentage": self.options.trap_fill_percentage.value,
+                "example_trap_weight": self.options.example_trap_weight.value,
+                "example_dlc_trap_weight": self.options.example_dlc_trap_weight.value,
                 "random_start": self.options.random_start.value,
                 "auto_equip": self.options.auto_equip.value,
                 "auto_upgrade": self.options.auto_upgrade.value,
