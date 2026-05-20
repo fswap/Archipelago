@@ -95,22 +95,6 @@ class StoneswordMasterKey(Choice):
 class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
-
-class DLCRandomization(Choice):
-    """How to randomize DLC items.
-    
-    - **Together:** Randomize base and DLC together.
-    - **Separately:** Randomize DLC items to DLC locations or other worlds.
-    
-    This option errors a lot use at own risk,
-    also disables Priority locations since generator is unhappy.
-    """
-    display_name = "DLC Randomization"
-    option_together = 0
-    option_separately = 1
-    default = 0
-    
-    visibility = Visibility.none # so fuzzer doesn't complain, this errors a lot
     
 class MessmerKindle(Toggle):
     """Messmer Kindle Shards"""
@@ -484,7 +468,6 @@ class EROptions(PerGameCommonOptions):
     dlc_starting_shop: DLCStartingShop
     dlc_care_package: DLCCarePackage
     dlc_initial_rune_level: DLCInitialRuneLevel
-    dlc_randomization: DLCRandomization
     messmer_kindle: MessmerKindle
     messmer_kindle_required: MessmerKindleRequired
     messmer_kindle_max: MessmerKindleMax
@@ -543,7 +526,6 @@ option_groups = [
     ]),
     OptionGroup("DLC", [
         EnableDLC,
-        DLCRandomization,
         MessmerKindle,
         MessmerKindleRequired,
         MessmerKindleMax,

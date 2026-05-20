@@ -548,7 +548,7 @@ class EldenRing(World):
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
                     if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
-                    elif not self.options.dlc_randomization and not self.options.important_at_priority_only:
+                    elif not self.options.important_at_priority_only:
                         # PRIORITY locations and these options make generator unhappy
                         new_location.progress_type = LocationProgressType.PRIORITY
             else:
@@ -580,8 +580,7 @@ class EldenRing(World):
     
     def create_items(self) -> None:
         # Gather all default items on randomized locations
-        self.base_itempool = []
-        self.dlc_itempool = []
+        self.itempool = []
         num_required_extra_items = 0
         total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
@@ -600,77 +599,56 @@ class EldenRing(World):
             else:
                 new_item = self.create_item(default_item_name)
                 if not location.data.dlc:
-                    self.base_itempool.append(new_item)
+                    self.itempool.append(new_item)
                 elif location.data.dlc:
                     # make base items dlc if in dlc
                     new_item.found_in_dlc = True
-                    self.dlc_itempool.append(new_item)
+                    self.itempool.append(new_item)
                 if (new_item.is_important(self.options) == ItemClassification.progression 
                     or (self.options.useful_at_priority and new_item.is_important(self.options) == ItemClassification.useful)):
                     total_important_items.append(new_item)
         
-        total_important_inj, base_injectables, dlc_injectables = self._create_injectable_items(num_required_extra_items)
+        total_important_inj, injectables = self._create_injectable_items(num_required_extra_items)
         total_important_items += total_important_inj
-        self.base_itempool.extend(base_injectables)
-        self.dlc_itempool.extend(dlc_injectables)
+        num_required_extra_items -= len(injectables)
+        self.itempool.extend(injectables)
         
-        unfilled_base = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if not unfilled.data.dlc]) - len(self.base_itempool)
-        unfilled_dlc = len([unfilled for unfilled in self.multiworld.get_unfilled_locations(self.player) if unfilled.data.dlc]) - len(self.dlc_itempool)
+        if self.options.important_at_priority_only.value:
+            self._create_dupe_locations() # this still doesn't work
+            num_required_extra_items += len(self.all_duplicate_locations)
         
         # traps
-        trap_pool = self._add_traps(unfilled_base + unfilled_dlc)
-        unfilled_base -= len(trap_pool)
+        trap_pool = self._add_traps(num_required_extra_items)
+        num_required_extra_items -= len(trap_pool)
         
         # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
         
-        if self.options.important_at_priority_only.value:
-            self._create_dupe_locations(self.base_itempool, self.dlc_itempool) # this still doesn't work
-        
         # if to little items in itempool add filler
-        self.base_itempool.extend(self.create_item(self.get_filler_item_name(False)) for _ in range(unfilled_base))
-        self.dlc_itempool.extend(self.create_item(self.get_filler_item_name(True)) for _ in range(unfilled_dlc))
+        self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(num_required_extra_items))
         
         # Add items to itempool
-        self.multiworld.itempool += self.base_itempool + self.dlc_itempool + trap_pool
+        self.multiworld.itempool += self.itempool + trap_pool
         
-    def _create_dupe_locations(self, base_items: list[ERItem], dlc_items: list[ERItem]) -> None: 
+    def _create_dupe_locations(self) -> None:
         """Create duplicate locations locations."""
-        base_priority_loc = []
-        dlc_priority_loc = []
-        for loc in self.all_priority_locations:
-            if not location_dictionary[loc].dlc and self.base_enabled: base_priority_loc.append(loc)
-            else: dlc_priority_loc.append(loc)
-        if self.base_enabled and len(base_priority_loc) == 0 and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # make sure there is a location in base game
-            raise OptionError(f"There are no base game priority locations")
-        if self.options.enable_dlc and len(dlc_priority_loc) == 0 and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # make sure there is a location in dlc
-            raise OptionError(f"There are no dlc priority locations")
-        
-        important_base_items = []
-        important_dlc_items = []
-        for item in base_items: 
+        important_items = []
+        for item in self.itempool: 
             if (item.is_important(self.options) == ItemClassification.progression 
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
-                important_base_items.append(item)
-        for item in dlc_items: 
-            if (item.is_important(self.options) == ItemClassification.progression 
-                or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
-                important_dlc_items.append(item)
+                important_items.append(item)
         
-        mult = 1.5 # this helps gen fail less
-        base_loc_needed = max((len(important_base_items)*mult) - len(base_priority_loc), 0) # what base / dlc need
-        dlc_loc_needed = max((len(important_dlc_items)*mult) - len(dlc_priority_loc), 0)
+        mult = 1 # this helps gen fail less
+        loc_needed = max((len(important_items)*mult) - len(self.all_priority_locations), 0)
             
-        # if len(self.all_priority_locations) < int(len(important_base_items + important_dlc_items)/8) and self.options.important_at_priority_only:
-        #     raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(important_base_items + important_dlc_items)/8)}")
-        if (base_loc_needed > 0 or dlc_loc_needed > 0) and (self.options.important_at_priority_only or self.options.dlc_randomization == 1): # do we need to dupe
+        # if len(self.all_priority_locations) < int(len(important_items/8) and self.options.important_at_priority_only:
+        #     raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(important_items)/8)}")
+        if loc_needed > 0 and self.options.important_at_priority_only: # do we need to dupe
 
             times_duped = {}
             new_code = len(location_dictionary)
-            while base_loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
+            while loc_needed > 0: # how many dupes
                 location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
-                if not location_dictionary[location].dlc and base_loc_needed == 0: continue # we dont need any more of these locations
-                if location_dictionary[location].dlc and dlc_loc_needed == 0: continue
                 
                 found = False
                 for region in self.multiworld.get_regions(self.player):
@@ -693,12 +671,10 @@ class EldenRing(World):
                             self.dupe_location_tables[region.name].append(dupe_location.data)
                             self.all_duplicate_locations.add(dupe_location.data.name)
                             found = True
+                            loc_needed -= 1
                             break
                     if found: break
-                if found: # make sure a dupe location was made
-                    if not location_dictionary[location].dlc: base_loc_needed -= 1
-                    else: dlc_loc_needed -= 1
-            
+                    
             self.location_name_to_id.update({ # add new locations
                 location: 7000000 + len(location_dictionary) + num
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
@@ -778,14 +754,13 @@ class EldenRing(World):
         return [self.create_item(inj) for inj in injectable_mandatory 
                 if inj.is_important(self.options) == ItemClassification.progression 
                 or (self.options.useful_at_priority and inj.is_important(self.options) == ItemClassification.useful)
-                ], [self.create_item(item) for item in inj_items if not item.is_dlc and self.base_enabled
-                ], [self.create_item(item) for item in inj_items if item.is_dlc or not self.base_enabled]
+                ], [self.create_item(item) for item in inj_items]
 
     def _add_traps(self, total_filler_count: int):
         trap_weights = []
-        trap_weights += (vanilla_traps["Example Trap"] * self.options.example_trap_weight.value)
+        trap_weights += (["Example Vanilla Trap"] * self.options.example_trap_weight.value)
         if self.options.enable_dlc:
-            trap_weights += (dlc_traps["Example DLC Trap"] * self.options.example_dlc_trap_weight.value)
+            trap_weights += (["Example DLC Trap"] * self.options.example_dlc_trap_weight.value)
         
         trap_count = 0 if (len(trap_weights) == 0) else math.ceil(total_filler_count * (self.options.trap_fill_percentage.value / 100.0))
         
@@ -808,7 +783,7 @@ class EldenRing(World):
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
 
         if self.options.enable_dlc: # dlc starting items
-            for item in self.base_itempool + self.dlc_itempool:
+            for item in self.itempool:
                 for val in self.options.dlc_starting_items.value:
                     if item.data.name == "Sacred Tear" and "sacred tears" == val.lower(): 
                         self._add_to_inventory(item); break
@@ -824,13 +799,13 @@ class EldenRing(World):
                         self._add_to_inventory(item); break
             
             if self.options.dlc_scadutree_fragments.value == 1:
-                [self._fill_local_item(item, region_order_dlc) for item in self.dlc_itempool if item.data.scadu]
+                [self._fill_local_item(item, region_order_dlc) for item in self.itempool if item.data.scadu]
             if self.options.dlc_messmer_kindle.value == 1:
-                [self._fill_local_item(item, region_order_dlc) for item in self.dlc_itempool 
+                [self._fill_local_item(item, region_order_dlc) for item in self.itempool 
                  if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
 
         if self.options.map_option == 1:
-            [self._add_to_inventory(item) for item in self.base_itempool + self.dlc_itempool if item.data.map]
+            [self._add_to_inventory(item) for item in self.itempool if item.data.map]
 
     def _fill_local_item(
         self, name: str,
@@ -844,7 +819,7 @@ class EldenRing(World):
 
         If the item could not be placed, it will be added to starting inventory.
         """
-        item = next((item for item in self.base_itempool + self.dlc_itempool if item.name == name), None)
+        item = next((item for item in self.itempool if item.name == name), None)
         if not item: return
 
         candidate_locations = [
@@ -878,10 +853,7 @@ class EldenRing(World):
             self._add_to_inventory(self.create_item(name))
             return
         
-        if item in self.dlc_itempool or self.options.enable_dlc and self.options.dlc_start == 1:
-            self.dlc_itempool.remove(item)
-        elif item in self.base_itempool:
-            self.base_itempool.remove(item)
+        self.itempool.remove(item)
 
         location = self.random.choice(candidate_locations)
         location.place_locked_item(item)
@@ -889,10 +861,7 @@ class EldenRing(World):
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
         self.all_starting_items.append(item)
-        if item in self.dlc_itempool or self.options.enable_dlc and self.options.dlc_start == 1:
-            self.dlc_itempool.remove(item)
-        elif item in self.base_itempool:
-            self.base_itempool.remove(item)
+        self.itempool.remove(item)
         # idk how its being handled so everything added to starting inventory will be called here
         self.multiworld.push_precollected(item)
 
@@ -912,14 +881,10 @@ class EldenRing(World):
                 location.item = candidate
                 return
 
-    def get_filler_item_name(self, dlc: bool|None) -> str:
+    def get_filler_item_name(self) -> str:
         candidate_filler = []
-        if dlc == None:
-            if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
-            if self.base_enabled: candidate_filler.extend(filler_item_names_vanilla)
-        else:
-            if dlc: candidate_filler.extend(filler_item_names_dlc)
-            else: candidate_filler.extend(filler_item_names_vanilla)
+        if self.base_enabled: candidate_filler.extend(filler_item_names_vanilla)
+        if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
         return self.random.choice(candidate_filler)
 
     def set_rules(self) -> None: #MARK: Rules
@@ -1105,35 +1070,22 @@ class EldenRing(World):
                 self._add_entrance_rule("Rauh Ruins Limited", 
                     lambda state: state.has("Imbued Sword Key", self.player, 1) or self._can_go_to(state, "Ancient Ruins of Rauh"))
             elif "DLC" not in self.options.exclude_locations.excluded_groups():
-                if (self.options.dlc_randomization.value == 1 
-                    or self.options.dlc_scadutree_fragments.value 
+                if (self.options.dlc_scadutree_fragments.value
                     or self.options.dlc_messmer_kindle.value): # only do loop if one of these are on
                     for region in self.multiworld.get_regions(self.player):
                         for location in region.locations:
-                            if self.options.dlc_randomization.value == 1: # make base be base, and dlc be dlc
-                                if region.name in region_order:
+                            if region.name in region_order:
+                                if self.options.dlc_scadutree_fragments.value:
                                     self._add_item_rule(location.name,
                                         lambda item: (item.player != self.player)
-                                            or (not item.data.is_dlc and not item.found_in_dlc)
+                                            or (item.data.name != "Scadutree Fragment" and item.data.name != "Scadutree Fragment x2")
                                         )
-                                elif region.name in region_order_dlc:
+                                if self.options.dlc_messmer_kindle.value:
                                     self._add_item_rule(location.name,
-                                        lambda item: (item.player != self.player) 
-                                            or item.data.is_dlc or item.found_in_dlc
+                                        lambda item: (item.player != self.player)
+                                            or (item.data.name != "Messmer's Kindling" and item.data.name != "Messmer's Kindling Shard")
                                         )
-                            else: # else make certain items dlc only
-                                if region.name in region_order:
-                                    if self.options.dlc_scadutree_fragments.value:
-                                        self._add_item_rule(location.name,
-                                            lambda item: (item.player != self.player)
-                                                or (item.data.name != "Scadutree Fragment" and item.data.name != "Scadutree Fragment x2")
-                                            )
-                                    if self.options.dlc_messmer_kindle.value:
-                                        self._add_item_rule(location.name,
-                                            lambda item: (item.player != self.player)
-                                                or (item.data.name != "Messmer's Kindling" and item.data.name != "Messmer's Kindling Shard")
-                                            )
-                                    
+                                
                 self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 4))
@@ -2797,7 +2749,6 @@ class EldenRing(World):
                 "dlc_starting_shop": self.options.dlc_starting_shop.value,
                 "dlc_care_package": self.options.dlc_care_package.value,
                 "dlc_initial_rune_level": self.options.dlc_initial_rune_level.value,
-                "dlc_randomization": self.options.dlc_randomization.value,
                 "messmer_kindle": self.options.messmer_kindle.value,
                 "messmer_kindle_required": self.options.messmer_kindle_required.value,
                 "messmer_kindle_max": self.options.messmer_kindle_max.value,

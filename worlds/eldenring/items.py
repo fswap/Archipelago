@@ -2917,11 +2917,11 @@ _dlc_items = [
 #MARK: Traps
 
 vanilla_traps = [
-    ERItemData("Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("Example Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
 dlc_traps = [
-    ERItemData("DLC Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("Example DLC Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
 for item in _dlc_items + dlc_traps:
@@ -2945,12 +2945,14 @@ item_descriptions = {
 
 _all_items = _vanilla_items + _dlc_items
 
+all_traps = vanilla_traps + dlc_traps
+
 for item_data in _all_items:
     for group_name in item_data.item_groups():
         item_name_groups[group_name].add(item_data.name)
 
 filler_item_names_dlc = [item_data.name for item_data in _dlc_items if item_data.filler]
 filler_item_names_vanilla = [item_data.name for item_data in _vanilla_items if item_data.filler]
-item_table = {item_data.name: item_data for item_data in _all_items}
+item_table = {item_data.name: item_data for item_data in _all_items + all_traps}
 item_table_vanilla = {item_data.name: item_data for item_data in _vanilla_items}
 item_table_dlc = {item_data.name: item_data for item_data in _dlc_items}
