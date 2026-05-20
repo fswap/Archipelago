@@ -12,9 +12,6 @@ TODO
 
 serpent hunter stuff
 
-remove dlc_randomization
-
-
 
 after release stuff
 
@@ -41,6 +38,9 @@ a apitem item sprite for pickups and shop
 custom region lock items
 Stonesword Master Key, Regional Master Keys
 Traps
+
+*Check bottom of items.py for traps and bottom of item array for locks and keys
+
 
 
 

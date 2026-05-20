@@ -617,17 +617,11 @@ class EldenRing(World):
             self._create_dupe_locations() # this still doesn't work
             num_required_extra_items += len(self.all_duplicate_locations)
         
-        # traps
         trap_pool = self._add_traps(num_required_extra_items)
-        num_required_extra_items -= len(trap_pool)
-        
-        # Potentially fill some items locally and remove them from the itempool
         self._fill_local_items()
+        self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(
+            (len(self.multiworld.get_unfilled_locations(self.player)) + len(self.all_duplicate_locations)) - len(self.itempool + trap_pool)))
         
-        # if to little items in itempool add filler
-        self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(num_required_extra_items))
-        
-        # Add items to itempool
         self.multiworld.itempool += self.itempool + trap_pool
         
     def _create_dupe_locations(self) -> None:
@@ -761,6 +755,7 @@ class EldenRing(World):
         trap_weights += (["Example Vanilla Trap"] * self.options.example_trap_weight.value)
         if self.options.enable_dlc:
             trap_weights += (["Example DLC Trap"] * self.options.example_dlc_trap_weight.value)
+            trap_weights += (["Blindness Trap"] * self.options.blindness_trap_weight.value)
         
         trap_count = 0 if (len(trap_weights) == 0) else math.ceil(total_filler_count * (self.options.trap_fill_percentage.value / 100.0))
         
@@ -2760,9 +2755,13 @@ class EldenRing(World):
                 "enemy_rando": self.options.enemy_rando.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
+                
                 "trap_fill_percentage": self.options.trap_fill_percentage.value,
                 "example_trap_weight": self.options.example_trap_weight.value,
+                
                 "example_dlc_trap_weight": self.options.example_dlc_trap_weight.value,
+                "blindness_trap_weight": self.options.blindness_trap_weight.value,
+                
                 "random_start": self.options.random_start.value,
                 "auto_equip": self.options.auto_equip.value,
                 "auto_upgrade": self.options.auto_upgrade.value,

@@ -2922,6 +2922,7 @@ vanilla_traps = [
 
 dlc_traps = [
     ERItemData("Example DLC Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("Blindness Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
 for item in _dlc_items + dlc_traps:

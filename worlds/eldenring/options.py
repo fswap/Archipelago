@@ -258,6 +258,12 @@ class ExampleDLCTrapWeight(BaseTrapWeight):
     """
     display_name = "Example DLC Trap Weight"
     
+class BlindnessTrapWeight(BaseTrapWeight):
+    """
+    Blindness Trap: Blinds the player for a short time.
+    """
+    display_name = "Blindness Trap Weight"
+    
 
 # MARK: Item & Location
 
@@ -483,7 +489,9 @@ class EROptions(PerGameCommonOptions):
     
     trap_fill_percentage: TrapFillPercentage
     example_trap_weight: ExampleTrapWeight
+    
     example_dlc_trap_weight: ExampleDLCTrapWeight
+    blindness_trap_weight: BlindnessTrapWeight
 
     random_start: RandomizeStartingLoadout
     auto_equip: AutoEquipOption
@@ -545,7 +553,10 @@ option_groups = [
     OptionGroup("Traps", [
         TrapFillPercentage,
         ExampleTrapWeight,
-        ExampleDLCTrapWeight
+    ]),
+    OptionGroup("DLC Traps", [
+        ExampleDLCTrapWeight,
+        BlindnessTrapWeight
     ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,
