@@ -398,7 +398,7 @@ _vanilla_items = [
     #big spear
     ERItemData("Mohgwyn's Sacred Spear", 17010000, ERItemCategory.WEAPON),
     ERItemData("Siluria's Tree", 17020000, ERItemCategory.WEAPON),
-    ERItemData("Serpent-Hunter", 17030000, ERItemCategory.WEAPON),
+    ERItemData("Serpent-Hunter", 17030000, ERItemCategory.WEAPON, classification=ItemClassification.progression), # MARK: Rykard wep
     ERItemData("Vyke's War Spear", 17050000, ERItemCategory.WEAPON),
     ERItemData("Lance", 17060000, ERItemCategory.WEAPON),
     ERItemData("Treespear", 17070000, ERItemCategory.WEAPON),

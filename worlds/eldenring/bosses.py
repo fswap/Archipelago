@@ -25,6 +25,9 @@ class ERBossInfo:
     
     dungeon: bool = False
     """This boss appears in a underground dungeon."""
+    
+    allow_rykard: bool = False
+    """Which bosses can be replaced by Rykard."""
 
     locations: list[str] = field(default_factory=list)
     """Locations the boss blocks so we can do can_get location."""
@@ -33,17 +36,17 @@ class ERBossInfo:
 base_bosses = [
     # MARK: Limgrave
     #ERBossInfo("Solder of Godrick", ["Limgrave"], 0, 18000850), # doesn't have an item behind it since emote spots dont count
-    ERBossInfo("Tree Sentinel (LG)", ["Limgrave", "Overworld"], 0, 1042360800,
+    ERBossInfo("Tree Sentinel (LG)", ["Limgrave", "Overworld"], 0, 1042360800, allow_rykard=True,
         locations=[
             "LG/TFS: Golden Halberd - first field boss"
         ]
     ),
-    ERBossInfo("Flying Dragon Agheel (LG)", ["Limgrave", "Overworld"], 0, 1043360800,
+    ERBossInfo("Flying Dragon Agheel (LG)", ["Limgrave", "Overworld"], 0, 1043360800, allow_rykard=True,
         locations=[
             "LG/DBR: Dragon Heart - boss drop N of DBR"
         ]
     ),
-    ERBossInfo("Night's Cavalry (LG)", ["Limgrave", "Overworld"], 0, 1043370800,
+    ERBossInfo("Night's Cavalry (LG)", ["Limgrave", "Overworld"], 0, 1043370800, allow_rykard=True,
         locations=[
             "LG/ALN: Ash of War: Repeating Thrust - night boss drop to SE"
         ]
@@ -53,7 +56,7 @@ base_bosses = [
             "LG/(FHE): Bloodhound's Fang - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Tibia Mariner (LG)", ["Limgrave", "Overworld"], 0, 1045390800,
+    ERBossInfo("Tibia Mariner (LG)", ["Limgrave", "Overworld"], 0, 1045390800, allow_rykard=True,
         locations=[
             "LG/(SWV): Deathroot - boss drop",
             "LG/(SWV): Skeletal Militiaman Ashes - boss drop"
@@ -74,12 +77,12 @@ base_bosses = [
             "LG/(SE): Aspects of the Crucible: Tail - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Deathbird (LG)", ["Limgrave", "Overworld"], 0, 1042380800,
+    ERBossInfo("Deathbird (LG)", ["Limgrave", "Overworld"], 0, 1042380800, allow_rykard=True,
         locations=[
             "LG/WS: Blue-Feathered Branchsword - night boss drop SE of WS"
         ]
     ),
-    ERBossInfo("Bell Bearing Hunter (LG)", ["Limgrave", "Overworld"], 0, 1042380850,
+    ERBossInfo("Bell Bearing Hunter (LG)", ["Limgrave", "Overworld"], 0, 1042380850, allow_rykard=True,
         locations=[
             "LG/(WS): Bone Peddler's Bell Bearing - night boss drop"
         ]
@@ -129,12 +132,12 @@ base_bosses = [
     ),
     
     # MARK: Stormveil
-    ERBossInfo("Margit, the Fell Omen (SV)", ["Stormveil Castle", "Main"], 0, 10000850,
+    ERBossInfo("Margit, the Fell Omen (SV)", ["Stormveil Castle", "Main"], 0, 10000850, allow_rykard=True,
         locations=[
             "SV/CT: Talisman Pouch - boss drop" # + the entire castle, but im not doing all that
         ]
     ),
-    ERBossInfo("Godrick the Grafted (SV)", ["Stormveil Castle", "Remembrance", "Great Rune", "Main"], 0, 10000800,
+    ERBossInfo("Godrick the Grafted (SV)", ["Stormveil Castle", "Remembrance", "Great Rune", "Main"], 0, 10000800, allow_rykard=True,
         locations=[
             "SV/SeC: Godrick's Great Rune - mainboss drop",
             "SV/SeC: Remembrance of the Grafted - mainboss drop"
@@ -147,23 +150,23 @@ base_bosses = [
             "WP/(WE): Radagon's Scarseal - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Leonine Misbegotten (WP/CM)", ["Weeping Peninsula", "Castle Morne", "Overworld"], 0, 1043300800,
+    ERBossInfo("Leonine Misbegotten (WP/CM)", ["Weeping Peninsula", "Castle Morne", "Overworld"], 0, 1043300800, allow_rykard=True,
         locations=[
             "WP/(CM): Grafted Blade Greatsword - boss drop"
         ]
     ),
-    ERBossInfo("Erdtree Avatar (WP)", ["Weeping Peninsula", "Overworld"], 0, 1043330800,
+    ERBossInfo("Erdtree Avatar (WP)", ["Weeping Peninsula", "Overworld"], 0, 1043330800, allow_rykard=True,
         locations=[
             "WP/ME: Opaline Bubbletear - boss drop",
             "WP/ME: Crimsonburst Crystal Tear - boss drop"
         ]
     ),
-    ERBossInfo("Deathbird (WP)", ["Weeping Peninsula", "Overworld"], 0, 1044320800,
+    ERBossInfo("Deathbird (WP)", ["Weeping Peninsula", "Overworld"], 0, 1044320800, allow_rykard=True,
         locations=[
             "WP/CMR: Sacrificial Axe - night boss drop far to SW"
         ]
     ),
-    ERBossInfo("Night's Cavalry (WP)", ["Weeping Peninsula", "Overworld"], 0, 1044320850,
+    ERBossInfo("Night's Cavalry (WP)", ["Weeping Peninsula", "Overworld"], 0, 1044320850, allow_rykard=True,
         locations=[
             "WP/CMR: Nightrider Flail - night boss drop to SW",
             "WP/CMR: Ash of War: Barricade Shield - night boss drop to SW"
@@ -197,53 +200,53 @@ base_bosses = [
     ),
     
     # MARK: SE Underground
-    ERBossInfo("Ancestor Spirit (SR)", ["Siofra River", "Underground"], 0, 12080800,
+    ERBossInfo("Ancestor Spirit (SR)", ["Siofra River", "Underground"], 0, 12080800, allow_rykard=True,
         locations=[
             "SR/(HG): Ancestral Follower Ashes - boss drop"
         ]
     ),
-    ERBossInfo("Dragonkin Soldier (SR)", ["Siofra River", "Underground"], 0, 12020830,
+    ERBossInfo("Dragonkin Soldier (SR)", ["Siofra River", "Underground"], 0, 12020830, allow_rykard=True,
         locations=[
             "SR/WW: Dragon Halberd - upper siofra, boss drop"
         ]
     ),
-    ERBossInfo("Mimic Tear (NR)", ["Nokron, Eternal City", "Underground"], 0, 12020850,
+    ERBossInfo("Mimic Tear (NR)", ["Nokron, Eternal City", "Underground"], 0, 12020850, allow_rykard=True,
         locations=[
             "NR/NEC: Silver Tear Mask - boss drop",
             "NR/NEC: Larval Tear x2 - boss drop"
         ]
     ),
-    ERBossInfo("Valiant Gargoyles (NR)", ["Nokron, Eternal City", "Underground"], 0, 12020800,
+    ERBossInfo("Valiant Gargoyles (NR)", ["Nokron, Eternal City", "Underground"], 0, 12020800, allow_rykard=True,
         locations=[
             "NR/(SA): Gargoyle's Greatsword - boss drop", "Gargoyle's Greatsword",
             "NR/(SA): Gargoyle's Twinblade - boss drop", "Gargoyle's Twinblade"
         ]
     ),
-    ERBossInfo("Regal Ancestor Spirit (NR)", ["Nokron, Eternal City", "Underground", "Remembrance"], 0, 12090800,
+    ERBossInfo("Regal Ancestor Spirit (NR)", ["Nokron, Eternal City", "Underground", "Remembrance"], 0, 12090800, allow_rykard=True,
         locations=[
             "NR/(HG): Remembrance of the Regal Ancestor - boss drop"
         ]
     ),
     
     # MARK: N Underground
-    ERBossInfo("Crucible Knight Siluria (DD)", ["Deeproot Depths", "Underground"], 0, 12020390, # maybe
+    ERBossInfo("Crucible Knight Siluria (DD)", ["Deeproot Depths", "Underground"], 0, 12020390, allow_rykard=True, # maybe
         locations=[
             "DD/TNEC: Siluria's Tree - boss drop way to W by tree stump"
         ]
     ),
-    ERBossInfo("Fia's Champions (DD)", ["Deeproot Depths", "Underground"], 0, 12030800,
+    ERBossInfo("Fia's Champions (DD)", ["Deeproot Depths", "Underground"], 0, 12030800, allow_rykard=True,
         locations=[
             "DD/AR: Fia's Mist - boss drop"
         ]
     ),
-    # ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850,
+    # ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850, allow_rykard=True,
     #     locations=[
     #         "DD/PDT: Remembrance of the Lichdragon - mainboss drop"
     #     ]
     # ), # uncomment once made unmissable
     
     # MARK: Liurnia of The Lakes
-    ERBossInfo("Erdtree Avatar (LL/MEW)", ["Liurnia of The Lakes", "Overworld"], 0, 1033430800,
+    ERBossInfo("Erdtree Avatar (LL/MEW)", ["Liurnia of The Lakes", "Overworld"], 0, 1033430800, allow_rykard=True,
         locations=[
             "LL/MEW: Cerulean Crystal Tear - boss drop, Minor Erdtree W",
             "LL/MEW: Ruptured Crystal Tear - boss drop, Minor Erdtree W"
@@ -254,7 +257,7 @@ base_bosses = [
             "LL/(CE): Greatblade Phalanx - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Glintstone Dragon Smarag (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1034450800,
+    ERBossInfo("Glintstone Dragon Smarag (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1034450800, allow_rykard=True,
         locations=[
             "LL/TQ: Dragon Heart - boss drop to N"
         ]
@@ -264,50 +267,50 @@ base_bosses = [
             "LL/(VA): Crucible Knot Talisman - boss drop"
         ]
     ),
-    ERBossInfo("Loretta, Royal Knight (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1035500800,
+    ERBossInfo("Loretta, Royal Knight (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1035500800, allow_rykard=True,
         locations=[
             "LL/(CM): Loretta's Greatbow - boss drop",
             "LL/(CM): Ash of War: Loretta's Slash - boss drop"
         ]
     ),
-    ERBossInfo("Death Rite Bird (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1036450340,
+    ERBossInfo("Death Rite Bird (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1036450340, allow_rykard=True,
         locations=[
             "LL/GTN: Ancient Death Rancor - night boss drop to S"
         ]
     ),
-    ERBossInfo("Deathbird (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1037420340,
+    ERBossInfo("Deathbird (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1037420340, allow_rykard=True,
         locations=[
             "LL/SeI: Red-Feathered Branchsword - night boss drop to NE"
         ]
     ),
-    ERBossInfo("Bell Bearing Hunter (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1037460800,
+    ERBossInfo("Bell Bearing Hunter (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1037460800, allow_rykard=True,
         locations=[
             "LL/(CV): Meat Peddler's Bell Bearing - night boss drop"
         ]
     ),
-    ERBossInfo("Adan, Thief of Fire (LL)", ["Liurnia of The Lakes", "Overworld", "Evergaol"], 0, 1038410800,
+    ERBossInfo("Adan, Thief of Fire (LL)", ["Liurnia of The Lakes", "Overworld", "Evergaol"], 0, 1038410800, allow_rykard=True,
         locations=[
             "LL/(ME): Flame of the Fell God - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Night's Cavalry (LL/GTB)", ["Liurnia of The Lakes", "Overworld"], 0, 1036480340,
+    ERBossInfo("Night's Cavalry (LL/GTB)", ["Liurnia of The Lakes", "Overworld"], 0, 1036480340, allow_rykard=True,
         locations=[
             "LL/GTB: Ash of War: Ice Spear - night boss drop to SE"
         ]
     ),
-    ERBossInfo("Tibia Mariner (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1039440800,
+    ERBossInfo("Tibia Mariner (LL)", ["Liurnia of The Lakes", "Overworld"], 0, 1039440800, allow_rykard=True,
         locations=[
             "LL/AS: Deathroot - boss drop SE of AS",
             "LL/AS: Skeletal Bandit Ashes - boss drop SE of AS"
         ]
     ),
-    ERBossInfo("Night's Cavalry (LL/BC)", ["Liurnia of The Lakes", "Overworld"], 0, 1039430340,
+    ERBossInfo("Night's Cavalry (LL/BC)", ["Liurnia of The Lakes", "Overworld"], 0, 1039430340, allow_rykard=True,
         locations=[
             "LL/BC: Nightrider Glaive - night boss drop S of BC",
             "LL/BC: Ash of War: Giant Hunt - night boss drop S of BC"
         ]
     ),
-    ERBossInfo("Erdtree Avatar (LL/MEE)", ["Liurnia of The Lakes", "Overworld"], 0, 1038480800,
+    ERBossInfo("Erdtree Avatar (LL/MEE)", ["Liurnia of The Lakes", "Overworld"], 0, 1038480800, allow_rykard=True,
         locations=[
             "LL/MEE: Magic-Shrouding Cracked Tear - boss drop, Minor Erdtree E",
             "LL/MEE: Lightning-Shrouding Cracked Tear - boss drop, Minor Erdtree E",
@@ -373,7 +376,7 @@ base_bosses = [
         ]
     ),
     # other
-    ERBossInfo("Grafted Scion (CA)", ["Chapel of Anticipation"], 0, 10010800,
+    ERBossInfo("Grafted Scion (CA)", ["Chapel of Anticipation"], 0, 10010800, allow_rykard=True,
         locations=[
             "LL/(TFB/CA): Ornamental Straight Sword - boss drop",
             "LL/(TFB/CA): Golden Beast Crest Shield - boss drop"
@@ -381,17 +384,17 @@ base_bosses = [
     ),
     
     # MARK: SW Underground
-    ERBossInfo("Dragonkin Soldier of Nokstella (AR)", ["Ainsel River", "Underground"], 0, 12010800,
+    ERBossInfo("Dragonkin Soldier of Nokstella (AR)", ["Ainsel River", "Underground"], 0, 12010800, allow_rykard=True,
         locations=[
             "AR/ARD: Frozen Lightning Spear - boss drop"
         ]
     ),
-    ERBossInfo("Dragonkin Soldier (LR)", ["Lake of Rot", "Underground"], 0, 12010850,
+    ERBossInfo("Dragonkin Soldier (LR)", ["Lake of Rot", "Underground"], 0, 12010850, allow_rykard=True,
         locations=[
             "LR/LRS: Dragonscale Blade - boss drop"
         ]
     ),
-    ERBossInfo("Astel, Naturalborn of the Void (LR)", ["Lake of Rot", "Underground", "Remembrance"], 0, 12040800,
+    ERBossInfo("Astel, Naturalborn of the Void (LR)", ["Lake of Rot", "Underground", "Remembrance"], 0, 12040800, allow_rykard=True,
         locations=[
             "LR: Remembrance of the Naturalborn - mainboss drop"
         ]
@@ -403,7 +406,7 @@ base_bosses = [
             "MA/(RE): Black Knife Tiche - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Glintstone Dragon Adula (MA)", ["Moonlight Altar"], 0, 1034420800,
+    ERBossInfo("Glintstone Dragon Adula (MA)", ["Moonlight Altar"], 0, 1034420800, allow_rykard=True,
         locations=[
             "MA/MA: Adula's Moonblade - boss drop to NE",
             "MA/MA: Dragon Heart x3 - boss drop to NE"
@@ -416,7 +419,7 @@ base_bosses = [
             "RLA/SC: Memory Stone - boss drop"
         ]
     ),
-    ERBossInfo("Rennala, Queen of the Full Moon (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 0, 14000800,
+    ERBossInfo("Rennala, Queen of the Full Moon (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 0, 14000800, allow_rykard=True,
         locations=[
             "RLA: Great Rune of the Unborn - mainboss drop",
             "RLA: Remembrance of the Full Moon Queen - mainboss drop"
@@ -424,13 +427,13 @@ base_bosses = [
     ),
     
     # MARK: Caelid
-    ERBossInfo("Erdtree Avatar (CL)", ["Caelid", "Overworld"], 0, 1047400800,
+    ERBossInfo("Erdtree Avatar (CL)", ["Caelid", "Overworld"], 0, 1047400800, allow_rykard=True,
         locations=[
             "CL/MEW: Greenburst Crystal Tear - boss drop",
             "CL/MEW: Flame-Shrouding Cracked Tear - boss drop"
         ]
     ),
-    ERBossInfo("Decaying Ekzykes (CL)", ["Caelid", "Overworld"], 0, 1048370800,
+    ERBossInfo("Decaying Ekzykes (CL)", ["Caelid", "Overworld"], 0, 1048370800, allow_rykard=True,
         locations=[
             "CL/CHS: Dragon Heart - boss drop to SE"
         ]
@@ -440,17 +443,17 @@ base_bosses = [
             "CL/(CR): Visage Shield - in chest after boss"
         ]
     ),
-    ERBossInfo("Night's Cavalry (CL)", ["Caelid", "Overworld"], 0, 1049370800,
+    ERBossInfo("Night's Cavalry (CL)", ["Caelid", "Overworld"], 0, 1049370800, allow_rykard=True,
         locations=[
             "CL/SASB: Ash of War: Poison Moth Flight - night boss drop to SW"
         ]
     ),
-    ERBossInfo("Death Rite Bird (CL)", ["Caelid", "Overworld"], 0, 1049370850,
+    ERBossInfo("Death Rite Bird (CL)", ["Caelid", "Overworld"], 0, 1049370850, allow_rykard=True,
         locations=[
             "CL/SASB: Death's Poker - night boss drop to SE"
         ]
     ),
-    ERBossInfo("Commander O'Neil (CL)", ["Caelid", "Overworld"], 0, 1049380800,
+    ERBossInfo("Commander O'Neil (CL)", ["Caelid", "Overworld"], 0, 1049380800, allow_rykard=True,
         locations=[
             "CL/IA: Commander's Standard - boss drop to SE",
             "CL/IA: Unalloyed Gold Needle (Broken) - boss drop to SE"
@@ -509,7 +512,7 @@ base_bosses = [
             "CL/(RC): Ruins Greatsword - boss drop"
         ]
     ),
-    ERBossInfo("Starscourge Radahn (CL)", ["Caelid", "Overworld", "Remembrance", "Great Rune", "Main"], 0, 1252380800,
+    ERBossInfo("Starscourge Radahn (CL)", ["Caelid", "Overworld", "Remembrance", "Great Rune", "Main"], 0, 1252380800, allow_rykard=True,
         locations=[
             "CL/(WD): Radahn's Great Rune - mainboss drop",
             "CL/(WD): Remembrance of the Starscourge - mainboss drop"
@@ -517,34 +520,34 @@ base_bosses = [
     ),
     
     # MARK: Dragonbarrow
-    ERBossInfo("Bell Bearing Hunter (DB)", ["Dragonbarrow", "Overworld"], 0, 1048410800,
+    ERBossInfo("Bell Bearing Hunter (DB)", ["Dragonbarrow", "Overworld"], 0, 1048410800, allow_rykard=True,
         locations=[
             "DB/(IMS): Gravity Stone Peddler's Bell Bearing - night boss drop"
         ]
     ),
-    ERBossInfo("Battlemage Hugues (DB)", ["Dragonbarrow", "Overworld", "Evergaol"], 0, 1049390850,
+    ERBossInfo("Battlemage Hugues (DB)", ["Dragonbarrow", "Overworld", "Evergaol"], 0, 1049390850, allow_rykard=True,
         locations=[
             "DB/(SE): Battlemage Hugues - Sellia Evergaol"
         ]
     ),
-    ERBossInfo("Putrid Avatar (DB)", ["Dragonbarrow", "Overworld"], 0, 1051400800,
+    ERBossInfo("Putrid Avatar (DB)", ["Dragonbarrow", "Overworld"], 0, 1051400800, allow_rykard=True,
         locations=[
             "DB/MEE: Opaline Hardtear - boss drop",
             "DB/MEE: Stonebarb Cracked Tear - boss drop"
         ]
     ),
-    ERBossInfo("Black Blade Kindred (DB)", ["Dragonbarrow", "Overworld"], 0, 1051430800,
+    ERBossInfo("Black Blade Kindred (DB)", ["Dragonbarrow", "Overworld"], 0, 1051430800, allow_rykard=True,
         locations=[
             "DB/BS: Gargoyle's Blackblade - boss drop SE of BS",
             "DB/BS: Gargoyle's Black Halberd - boss drop SE of BS"
         ]
     ),
-    ERBossInfo("Flying Dragon Greyll (DB)", ["Dragonbarrow", "Overworld"], 0, 1052410800,
+    ERBossInfo("Flying Dragon Greyll (DB)", ["Dragonbarrow", "Overworld"], 0, 1052410800, allow_rykard=True,
         locations=[
             "DB/FG: Dragon Heart - boss drop to S"
         ]
     ),
-    ERBossInfo("Night's Cavalry (DB)", ["Dragonbarrow", "Overworld"], 0, 1052410850,
+    ERBossInfo("Night's Cavalry (DB)", ["Dragonbarrow", "Overworld"], 0, 1052410850, allow_rykard=True,
         locations=[
             "DB/LR: Ash of War: Bloodhound's Step - night boss drop N of LR"
         ]
@@ -570,12 +573,12 @@ base_bosses = [
     ),
 
     # MARK: Altus Plateau
-    ERBossInfo("Ancient Dragon Lansseax (AP)", ["Altus Plateau", "Overworld"], 0, 1041520800, # early altus 1037510800   late altus 1041520800
+    ERBossInfo("Ancient Dragon Lansseax (AP)", ["Altus Plateau", "Overworld"], 0, 1041520800, allow_rykard=True, # early altus 1037510800   late altus 1041520800
         locations=[
             "AP/RP: Lansseax's Glaive - boss drop up hill to SW or NE of AC grace"
         ]
     ),
-    ERBossInfo("Tibia Mariner (AP)", ["Altus Plateau", "Overworld"], 0, 1038520800,
+    ERBossInfo("Tibia Mariner (AP)", ["Altus Plateau", "Overworld"], 0, 1038520800, allow_rykard=True,
         locations=[
             "AP/WhR: Deathroot - boss drop",
             "AP/WhR: Tibia's Summons - boss drop"
@@ -586,7 +589,7 @@ base_bosses = [
             "AP/GLE: Godfrey Icon - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Night's Cavalry (AP)", ["Altus Plateau", "Overworld"], 0, 1039510800,
+    ERBossInfo("Night's Cavalry (AP)", ["Altus Plateau", "Overworld"], 0, 1039510800, allow_rykard=True,
         locations=[
             "AP/AHJ: Ash of War: Shared Order - night boss drop to SW"
         ]
@@ -597,7 +600,7 @@ base_bosses = [
             "TSC/SCIG: Briar Greatshield - boss drop"
         ]
     ),
-    ERBossInfo("Black Knife Assassin (AP)", ["Altus Plateau", "Overworld"], 0, 1040520800,
+    ERBossInfo("Black Knife Assassin (AP)", ["Altus Plateau", "Overworld"], 0, 1040520800, allow_rykard=True,
         locations=[
             "AP/SHG: Black Knife - boss drop guarding SHG"
         ]
@@ -607,26 +610,26 @@ base_bosses = [
             "AP/(WbR): Bloody Helice - in chest after boss underground"
         ]
     ),
-    ERBossInfo("Fallingstar Beast (AP)", ["Altus Plateau", "Overworld"], 0, 1041500800,
+    ERBossInfo("Fallingstar Beast (AP)", ["Altus Plateau", "Overworld"], 0, 1041500800, allow_rykard=True,
         locations=[
             "AP/AHJ: Gravity Stone Chunk x10 - boss drop S of great stairs in meteor crater",
             "AP/AHJ: Smithing Stone [6] x5 - boss drop S of great stairs in meteor crater",
             "AP/AHJ: Somber Smithing Stone [5] - boss drop S of great stairs in meteor crater"
         ]
     ),
-    ERBossInfo("Tree Sentinels (AP)", ["Altus Plateau", "Overworld"], 0, 1041510800,
+    ERBossInfo("Tree Sentinels (AP)", ["Altus Plateau", "Overworld"], 0, 1041510800, allow_rykard=True,
         locations=[
             "AP/AHJ: Erdtree Greatshield - boss drop duo to E top of great stairs",
             "AP/AHJ: Hero's Rune [1] - boss drop duo to E top of great stairs",
         ]
     ),
-    ERBossInfo("Wormface (AP)", ["Altus Plateau", "Overworld"], 0, 1041530800,
+    ERBossInfo("Wormface (AP)", ["Altus Plateau", "Overworld"], 0, 1041530800, allow_rykard=True,
         locations=[
             "AP/ME: Crimsonspill Crystal Tear - boss drop, Minor Erdtree",
             "AP/ME: Speckled Hardtear - boss drop, Minor Erdtree"
         ]
     ),
-    ERBossInfo("Godskin Apostle (AP)", ["Altus Plateau", "Overworld"], 0, 1042550800,
+    ERBossInfo("Godskin Apostle (AP)", ["Altus Plateau", "Overworld"], 0, 1042550800, allow_rykard=True,
         locations=[
             "AP/(DWV): Godskin Peeler - boss drop",
             "AP/(DWV): Scouring Black Flame - boss drop"
@@ -670,17 +673,17 @@ base_bosses = [
     ),
    
     # MARK: Capital Outskirts
-    ERBossInfo("Deathbird (CO)", ["Capital Outskirts", "Overworld"], 0, 1044530800,
+    ERBossInfo("Deathbird (CO)", ["Capital Outskirts", "Overworld"], 0, 1044530800, allow_rykard=True,
         locations=[
             "CO/HMS: Twinbird Kite Shield - night boss drop to NE in block flower field"
         ]
     ),
-    ERBossInfo("Bell Bearing Hunter (CO)", ["Capital Outskirts", "Overworld"], 0, 1043530800,
+    ERBossInfo("Bell Bearing Hunter (CO)", ["Capital Outskirts", "Overworld"], 0, 1043530800, allow_rykard=True,
         locations=[
             "CO/(HMS): Medicine Peddler's Bell Bearing - night boss drop"
         ]
     ),
-    ERBossInfo("Draconic Tree Sentinel (CO)", ["Capital Outskirts", "Overworld", "Main"], 0, 1045520800,
+    ERBossInfo("Draconic Tree Sentinel (CO)", ["Capital Outskirts", "Overworld", "Main"], 0, 1045520800, allow_rykard=True,
         locations=[
             "CO: Dragon Greatclaw - capital great rune gate boss drop",
             "CO: Dragonclaw Shield - capital great rune gate boss drop"
@@ -708,24 +711,24 @@ base_bosses = [
     ),
     
     # MARK: Mt. Gelmir
-    ERBossInfo("Magma Wyrm (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1035530800,
+    ERBossInfo("Magma Wyrm (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1035530800, allow_rykard=True,
         locations=[
             "MtG/FL: Dragon Heart - boss drop S of FL in magma lake"
         ]
     ),
-    ERBossInfo("Full-Grown Fallingstar Beast (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1036540800,
+    ERBossInfo("Full-Grown Fallingstar Beast (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1036540800, allow_rykard=True,
         locations=[
             "MtG/NMGC: Fallingstar Beast Jaw - boss drop",
             "MtG/NMGC: Smithing Stone [6] x5 - boss drop",
             "MtG/NMGC: Somber Smithing Stone [6] - boss drop"
         ]
     ),
-    ERBossInfo("Demi-Human Queen Maggie (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037530800,
+    ERBossInfo("Demi-Human Queen Maggie (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037530800, allow_rykard=True,
         locations=[
             "MtG/PSA: Memory Stone - boss drop to S"
         ]
     ),
-    ERBossInfo("Ulcerated Tree Spirit (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037540810,
+    ERBossInfo("Ulcerated Tree Spirit (MtG)", ["Mt. Gelmir", "Overworld"], 0, 1037540810, allow_rykard=True,
         locations=[
             "MtG/ME: Leaden Hardtear - boss drop, Minor Erdtree",
             "MtG/ME: Cerulean Hidden Tear - boss drop, Minor Erdtree"
@@ -778,7 +781,7 @@ base_bosses = [
             "LRC/WCR: Talisman Pouch - mainboss drop"
         ]
     ),
-    ERBossInfo("Morgott, The Omen King (LRC)", ["Leyndell, Royal Capital", "Remembrance", "Great Rune", "Main"], 0, 11000800,
+    ERBossInfo("Morgott, The Omen King (LRC)", ["Leyndell, Royal Capital", "Remembrance", "Great Rune", "Main"], 0, 11000800, allow_rykard=True,
         locations=[
             "LRC/QB: Morgott's Great Rune - mainboss drop",
             "LRC/QB: Remembrance of the Omen King - mainboss drop"
@@ -798,17 +801,17 @@ base_bosses = [
     ),
     
     # MARK: Forbidden Lands
-    ERBossInfo("Fell Twins (FL)", ["Forbidden Lands", "Overworld"], 0, 34140850,
+    ERBossInfo("Fell Twins (FL)", ["Forbidden Lands", "Overworld"], 0, 34140850, allow_rykard=True,
         locations=[
             "DTEA: Omenkiller Rollo - boss drop on way to divine tower"
         ]
     ),
-    ERBossInfo("Night's Cavalry (FL)", ["Forbidden Lands", "Overworld"], 0, 1048510800,
+    ERBossInfo("Night's Cavalry (FL)", ["Forbidden Lands", "Overworld"], 0, 1048510800, allow_rykard=True,
         locations=[
             "FL/FL: Ash of War: Phantom Slash - night boss drop to E"
         ]
     ),
-    ERBossInfo("Black Blade Kindred (FL)", ["Forbidden Lands", "Overworld"], 0, 1049520800,
+    ERBossInfo("Black Blade Kindred (FL)", ["Forbidden Lands", "Overworld"], 0, 1049520800, allow_rykard=True,
         locations=[
             "FL/GLR: Gargoyle's Black Blades - boss drop to S",
             "FL/GLR: Gargoyle's Black Axe - boss drop to S"
@@ -816,7 +819,7 @@ base_bosses = [
     ),
     
     # MARK: Mountaintops of the Giants
-    ERBossInfo("Death Rite Bird (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1050570800,
+    ERBossInfo("Death Rite Bird (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1050570800, allow_rykard=True,
         locations=[
             "MotG/CSMG: Death Ritual Spear - boss drop to W by statue"
         ]
@@ -826,7 +829,7 @@ base_bosses = [
             "MotG/(CS): Veteran's Prosthesis - mainboss drop"
         ]
     ),
-    ERBossInfo("Erdtree Avatar (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1052560800,
+    ERBossInfo("Erdtree Avatar (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1052560800, allow_rykard=True,
         locations=[
             "MotG/(ME): Cerulean Crystal Tear - boss drop",
             "MotG/(ME): Crimson Bubbletear - boss drop"
@@ -841,12 +844,12 @@ base_bosses = [
             "MotG/(LCE): Vyke's Dragonbolt - boss drop Evergaol"
         ]
     ),
-    ERBossInfo("Borealis the Freezing Fog (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1254560800,
+    ERBossInfo("Borealis the Freezing Fog (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1254560800, allow_rykard=True,
         locations=[
             "MotG/FR: Dragon Heart - boss drop to SE"
         ]
     ),
-    ERBossInfo("Fire Giant (FP)", ["Mountaintops of the Giants", "Overworld", "Remembrance", "Main"], 0, 1052520800,
+    ERBossInfo("Fire Giant (FP)", ["Mountaintops of the Giants", "Overworld", "Remembrance", "Main"], 0, 1052520800, allow_rykard=True,
         locations=[
             "FP/FF: Remembrance of the Fire Giant - mainboss drop"
         ]
@@ -875,17 +878,17 @@ base_bosses = [
     ),
     
     # MARK: Farum Azula
-    ERBossInfo("Dragonlord Placidusax (FA)", ["Farum Azula", "Remembrance"], 0, 13000830,
+    ERBossInfo("Dragonlord Placidusax (FA)", ["Farum Azula", "Remembrance"], 0, 13000830, allow_rykard=True,
         locations=[
             "FA/BGB: Remembrance of the Dragonlord - alt mainboss drop"
         ]
     ),
-    ERBossInfo("Maliketh, The Black Blade (FA)", ["Farum Azula", "Remembrance", "Main"], 0, 13000800,
+    ERBossInfo("Maliketh, The Black Blade (FA)", ["Farum Azula", "Remembrance", "Main"], 0, 13000800, allow_rykard=True,
         locations=[
             "FA/BGB: Remembrance of the Black Blade - mainboss drop"
         ]
     ),
-    ERBossInfo("Godskin Duo (FA)", ["Farum Azula", "Main"], 0, 13000850,
+    ERBossInfo("Godskin Duo (FA)", ["Farum Azula", "Main"], 0, 13000850, allow_rykard=True,
         locations=[
             "FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop",
             "FA/DTT: Ash of War: Black Flame Tornado - boss drop"
@@ -893,7 +896,7 @@ base_bosses = [
     ),
     
     # MARK: Consecrated Snowfield
-    ERBossInfo("Night's Cavalry Duo (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1248550800,
+    ERBossInfo("Night's Cavalry Duo (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1248550800, allow_rykard=True,
         locations=[
             "CS/ICS: Ancient Dragon Smithing Stone - night boss drop, following caravan to SW",
             "CS/ICS: Night's Cavalry Helm - night boss drop, following caravan to SW",
@@ -902,17 +905,17 @@ base_bosses = [
             "CS/ICS: Night's Cavalry Greaves - night boss drop, following caravan to SW"
         ]
     ),
-    ERBossInfo("Death Rite Bird (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1048570800,
+    ERBossInfo("Death Rite Bird (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1048570800, allow_rykard=True,
         locations=[
             "CS/AD: Explosive Ghostflame - night boss drop to SE on frozen river"
         ]
     ),
-    ERBossInfo("Great Wyrm Theodorix (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1050560800,
+    ERBossInfo("Great Wyrm Theodorix (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1050560800, allow_rykard=True,
         locations=[
             "CS/CF: Dragon Heart x3 - boss drop E of CF"
         ]
     ),
-    ERBossInfo("Putrid Avatar (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1050570850,
+    ERBossInfo("Putrid Avatar (CS)", ["Consecrated Snowfield", "Overworld"], 0, 1050570850, allow_rykard=True,
         locations=[
             "CS/ME: Thorny Cracked Tear - boss drop N of ME",
             "CS/ME: Ruptured Crystal Tear - boss drop N of ME"
@@ -942,7 +945,7 @@ base_bosses = [
     ),
     
     # MARK: Mohgwyn Palace
-    ERBossInfo("Mohg, Lord of Blood (MP)", ["Mohgwyn Palace", "Remembrance", "Great Rune", "Main"], 0, 12050800,
+    ERBossInfo("Mohg, Lord of Blood (MP)", ["Mohgwyn Palace", "Remembrance", "Great Rune", "Main"], 0, 12050800, allow_rykard=True,
         locations=[
             "MP/(MDM): Mohg's Great Rune - mainboss drop",
             "MP/(MDM): Remembrance of the Blood Lord - mainboss drop"
@@ -950,13 +953,13 @@ base_bosses = [
     ),
     
     # MARK: Miquella's Haligtree
-    ERBossInfo("Malenia, Blade of Miquella (EBH)", ["Miquella's Haligtree", "Remembrance", "Great Rune", "Main"], 0, 15000800,
+    ERBossInfo("Malenia, Blade of Miquella (EBH)", ["Miquella's Haligtree", "Remembrance", "Great Rune", "Main"], 0, 15000800, allow_rykard=True,
         locations=[
             "EBH/HR: Malenia's Great Rune - mainboss drop",
             "EBH/HR: Remembrance of the Rot Goddess - mainboss drop"
         ]
     ),
-    ERBossInfo("Loretta, Knight of the Haligtree (MH)", ["Miquella's Haligtree", "Main"], 0, 15000850,
+    ERBossInfo("Loretta, Knight of the Haligtree (MH)", ["Miquella's Haligtree", "Main"], 0, 15000850, allow_rykard=True,
         locations=[
             "MH/HTP: Loretta's War Sickle - boss drop",
             "MH/HTP: Loretta's Mastery - boss drop"
@@ -964,7 +967,7 @@ base_bosses = [
     ),
 
     # MARK: Leyndell, Ashen Capital
-    ERBossInfo("Sir Gideon Ofnir, The All-Knowing (LAC)", ["Leyndell, Ashen Capital", "Main"], 0, 11050850,
+    ERBossInfo("Sir Gideon Ofnir, The All-Knowing (LAC)", ["Leyndell, Ashen Capital", "Main"], 0, 11050850, allow_rykard=True,
         locations=[
             "LAC/LCA: Scepter of the All-Knowing - boss drop",
             "LAC/LCA: All-Knowing Helm - boss drop",
@@ -973,12 +976,12 @@ base_bosses = [
             "LAC/LCA: All-Knowing Greaves - boss drop"
         ]
     ),
-    ERBossInfo("Godfrey, First Elden Lord (LAC)", ["Leyndell, Ashen Capital", "Remembrance", "Main"], 0, 11050800, # 11000850 is phase 1 11050800 phase 2
+    ERBossInfo("Godfrey, First Elden Lord (LAC)", ["Leyndell, Ashen Capital", "Remembrance", "Main"], 0, 11050800, allow_rykard=True,# 11000850 is phase 1 11050800 phase 2
         locations=[
             "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"
         ]
     ),
-    ERBossInfo("Elden Beast (ET)", ["Erdtree", "Remembrance", "Final", "Main"], 0, 19000800,
+    ERBossInfo("Elden Beast (ET)", ["Erdtree", "Remembrance", "Final", "Main"], 0, 19000800, allow_rykard=True,
         locations=[
             "ET: Elden Remembrance - mainboss drop"
         ]
@@ -987,7 +990,7 @@ base_bosses = [
 
 dlc_bosses = [
     # MARK: Gravesite Plain
-    ERBossInfo("Ghostflame Dragon (GP)", ["Gravesite Plain", "Overworld"], 0, 2045440800,
+    ERBossInfo("Ghostflame Dragon (GP)", ["Gravesite Plain", "Overworld"], 0, 2045440800, allow_rykard=True,
         locations=[
             "GP/BG: Dragon Heart - boss drop E of BG",
         ]
@@ -1019,7 +1022,7 @@ dlc_bosses = [
     ),
     
     # MARK: Belurat
-    ERBossInfo("Divine Beast Dancing Lion (BTS)", ["Belurat", "DLC Remembrance"], 0, 20000800,
+    ERBossInfo("Divine Beast Dancing Lion (BTS)", ["Belurat", "DLC Remembrance"], 0, 20000800, allow_rykard=True,
         locations=[
             "BTS/SF: Remembrance of the Dancing Lion - mainboss drop",
             "BTS/BTS: Divine Beast Head - boss drop"
@@ -1027,12 +1030,12 @@ dlc_bosses = [
     ),
     
     # MARK: Castle Ensis
-    ERBossInfo("Rellana, Twin Moon Knight (CE)", ["Castle Ensis", "DLC Remembrance", "DLC Main"], 0, 2048440800,
+    ERBossInfo("Rellana, Twin Moon Knight (CE)", ["Castle Ensis", "DLC Remembrance", "DLC Main"], 0, 2048440800, allow_rykard=True,
         locations=[
             "CE/CLC: Remembrance of the Twin Moon Knight - mainboss drop"
         ]
     ),
-    ERBossInfo("Black Knight Garrew (CE)", ["Castle Ensis", "Fort"], 0, 2047450800, # requires scadu altus access
+    ERBossInfo("Black Knight Garrew (CE)", ["Castle Ensis", "Fort"], 0, 2047450800, allow_rykard=True, # requires scadu altus access
         locations=[
             "CE/(FRF): Black Steel Greatshield - boss drop"
         ]
@@ -1055,12 +1058,12 @@ dlc_bosses = [
             "CC/CCW: Dancer's Trousers - boss drop"
         ]
     ),
-    ERBossInfo("Demi-Human Queen Marigga (CC)", ["Cerulean Coast", "Overworld"], 0, 2046400800,
+    ERBossInfo("Demi-Human Queen Marigga (CC)", ["Cerulean Coast", "Overworld"], 0, 2046400800, allow_rykard=True,
         locations=[
             "CC/CCW: Star-Lined Sword - boss drop"
         ]
     ),
-    ERBossInfo("Ghostflame Dragon (CC)", ["Cerulean Coast", "Overworld"], 0, 2048380850,
+    ERBossInfo("Ghostflame Dragon (CC)", ["Cerulean Coast", "Overworld"], 0, 2048380850, allow_rykard=True,
         locations=[
             "CC/CC: Dragon Heart - boss drop",
             "CC/CC: Somber Ancient Dragon Smithing Stone - boss drop"
@@ -1068,31 +1071,31 @@ dlc_bosses = [
     ),
     
     # Stone Coffin Fissure
-    ERBossInfo("Putrescent Knight (SCF)", ["Stone Coffin Fissure", "DLC Remembrance"], 0, 22000800,
+    ERBossInfo("Putrescent Knight (SCF)", ["Stone Coffin Fissure", "DLC Remembrance"], 0, 22000800, allow_rykard=True,
         locations=[
             "SCF/FD: Remembrance of Putrescence - mainboss drop"
         ]
     ),
     
     # MARK: Jagged Peak
-    ERBossInfo("Jagged Peak Drake (JP/DPT)", ["Jagged Peak", "Overworld"], 0, 2049410800,
+    ERBossInfo("Jagged Peak Drake (JP/DPT)", ["Jagged Peak", "Overworld"], 0, 2049410800, allow_rykard=True,
         locations=[
             "JP/DPT: Dragon Heart - boss drop to E",
             "JP/DPT: Dragonscale Flesh - boss drop to E"
         ]
     ),
-    ERBossInfo("Jagged Peak Drake (JP/FJP)", ["Jagged Peak", "Overworld"], 0, 2052400800, # the fighting one
+    ERBossInfo("Jagged Peak Drake (JP/FJP)", ["Jagged Peak", "Overworld"], 0, 2052400800, allow_rykard=True, # the fighting one
         locations=[
             "JP/FJP: Dragon Heart - boss drop to SE",
             "JP/FJP: Dragonscale Flesh - boss drop to SE"
         ]
     ),
-    ERBossInfo("Bayle the Dread (JP)", ["Jagged Peak", "Overworld", "DLC Remembrance"], 0, 2054390800,
+    ERBossInfo("Bayle the Dread (JP)", ["Jagged Peak", "Overworld", "DLC Remembrance"], 0, 2054390800, allow_rykard=True,
         locations=[
             "JP/JPS: Heart of Bayle - mainboss drop"
         ]
     ),
-    ERBossInfo("Ancient Dragon Senessax (JP)", ["Jagged Peak", "Overworld"], 0, 2054390850,
+    ERBossInfo("Ancient Dragon Senessax (JP)", ["Jagged Peak", "Overworld"], 0, 2054390850, allow_rykard=True,
         locations=[
             "JP/JPM: Ancient Dragon Smithing Stone - boss drop to S",
             "JP/JPM: Somber Ancient Dragon Smithing Stone - boss drop to S"
@@ -1100,7 +1103,7 @@ dlc_bosses = [
     ),
     
     # MARK: Charo's Hidden Grave
-    ERBossInfo("Death Rite Bird (CHG)", ["Charo's Hidden Grave", "Overworld"], 0, 2047390800,
+    ERBossInfo("Death Rite Bird (CHG)", ["Charo's Hidden Grave", "Overworld"], 0, 2047390800, allow_rykard=True,
         locations=[
             "CHG/CHG: Ash of War: Ghostflame Call - boss drop to NW in lake"
         ]
@@ -1112,7 +1115,7 @@ dlc_bosses = [
     ),
     
     # MARK: Scadu Altus
-    ERBossInfo("Ghostflame Dragon (SA)", ["Scadu Altus", "Overworld"], 0, 2049430800,
+    ERBossInfo("Ghostflame Dragon (SA)", ["Scadu Altus", "Overworld"], 0, 2049430800, allow_rykard=True,
         locations=[
             "SA/MR: Dragon Heart - boss drop to S",
             "SA/MR: Somber Ancient Dragon Smithing Stone - boss drop to S"
@@ -1123,7 +1126,7 @@ dlc_bosses = [
             "SA/FR: Ash of War: Aspects of the Crucible: Wings - boss drop to S inside"
         ]
     ),
-    ERBossInfo("Ralva the Great Red Bear (SA)", ["Scadu Altus", "Overworld"], 0, 2049450800,
+    ERBossInfo("Ralva the Great Red Bear (SA)", ["Scadu Altus", "Overworld"], 0, 2049450800, allow_rykard=True,
         locations=[
             "SA/HC: Pelt of Ralva - boss drop to N, E before camp, deep woods"
         ]
@@ -1135,7 +1138,7 @@ dlc_bosses = [
     ),
     
     # MARK: Rauh Base
-    ERBossInfo("Rugalea the Great Red Bear (RB)", ["Rauh Base", "Overworld"], 0, 2044470800,
+    ERBossInfo("Rugalea the Great Red Bear (RB)", ["Rauh Base", "Overworld"], 0, 2044470800, allow_rykard=True,
         locations=[
             "RB/RN: Roar of Rugalea - boss drop to NW"
         ]
@@ -1157,24 +1160,24 @@ dlc_bosses = [
     ),
     
     # MARK: Shadow Keep
-    ERBossInfo("Messmer the Impaler (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 21010800,
+    ERBossInfo("Messmer the Impaler (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 21010800, allow_rykard=True,
         locations=[
             "SK/DCE: Remembrance of the Impaler - mainboss drop",
             "SK/DCE: Messmer's Kindling - mainboss drop"
         ]
     ),
-    ERBossInfo("Golden Hippopotamus (SK)", ["Shadow Keep"], 0, 21000850,
+    ERBossInfo("Golden Hippopotamus (SK)", ["Shadow Keep"], 0, 21000850, allow_rykard=True,
         locations=[
             "SK/SKMG: Aspects of the Crucible: Thorns - boss drop",
             "SK/SKMG: Scadutree Fragment x2 - boss drop"
         ]
     ),
-    ERBossInfo("Commander Gaius (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2049480800,
+    ERBossInfo("Commander Gaius (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2049480800, allow_rykard=True,
         locations=[
             "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"
         ]
     ),
-    ERBossInfo("Scadutree Avatar (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2050480800,
+    ERBossInfo("Scadutree Avatar (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2050480800, allow_rykard=True,
         locations=[
             "SK/TWS: Remembrance of the Shadow Sunflower - mainboss drop",
             "SK/TWS: Miquella's Great Rune - mainboss drop"
@@ -1182,24 +1185,24 @@ dlc_bosses = [
     ),
     
     # MARK: Hinterland
-    ERBossInfo("Tree Sentinel (HL hill)", ["Hinterland", "Overworld"], 0, 2050470800, # these could be wrong but doesn't matter
+    ERBossInfo("Tree Sentinel (HL hill)", ["Hinterland", "Overworld"], 0, 2050470800, allow_rykard=True, # these could be wrong but doesn't matter
         locations=[
             "HL/HL: Blessing of Marika - boss drop on hill"
         ]
     ),
-    ERBossInfo("Tree Sentinel (HL bridge)", ["Hinterland", "Overworld"], 0, 2050480860, #
+    ERBossInfo("Tree Sentinel (HL bridge)", ["Hinterland", "Overworld"], 0, 2050480860, allow_rykard=True, #
         locations=[
             "HL/HL: Blessing of Marika - boss drop by bridge"
         ]
     ),
-    ERBossInfo("Fallingstar Beast (HL)", ["Hinterland", "Overworld"], 0, 2052480800,
+    ERBossInfo("Fallingstar Beast (HL)", ["Hinterland", "Overworld"], 0, 2052480800, allow_rykard=True,
         locations=[
             "HL/FH: Gravitational Missile - boss drop to NE"
         ]
     ),
     
     # MARK: Finger Ruins
-    ERBossInfo("Metyr, Mother of Fingers (FRM)", ["Finger Ruins", "DLC Remembrance"], 0, 25000800,
+    ERBossInfo("Metyr, Mother of Fingers (FRM)", ["Finger Ruins", "DLC Remembrance"], 0, 25000800, allow_rykard=True,
         locations=[
             "FRM: Remembrance of the Mother of Fingers - mainboss drop"
         ]
@@ -1231,33 +1234,37 @@ dlc_bosses = [
     ),
     
     # MARK: Midra's Manse
-    ERBossInfo("Midra, Lord of Frenzied Flame (MM)", ["Midra's Manse", "DLC Remembrance"], 0, 28000800,
+    ERBossInfo("Midra, Lord of Frenzied Flame (MM)", ["Midra's Manse", "DLC Remembrance"], 0, 28000800, allow_rykard=True,
         locations=[
             "MM/SFC: Remembrance of the Lord of Frenzied Flame - mainboss drop"
         ]
     ),
     
     # MARK: Ancient Ruins of Rauh
-    ERBossInfo("Romina, Saint of the Bud (ARR)", ["Ancient Ruins of Rauh", "Overworld", "DLC Remembrance", "DLC Main"], 0, 2044450800,
+    ERBossInfo("Romina, Saint of the Bud (ARR)", ["Ancient Ruins of Rauh", "Overworld", "DLC Remembrance", "DLC Main"], 0, 2044450800, allow_rykard=True,
         locations=[
             "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop"
         ]
     ),
-    ERBossInfo("Divine Beast Dancing Lion (ARR)", ["Ancient Ruins of Rauh", "Overworld"], 0, 2046460800,
+    ERBossInfo("Divine Beast Dancing Lion (ARR)", ["Ancient Ruins of Rauh", "Overworld"], 0, 2046460800, allow_rykard=True,
         locations=[
             "ARR/ARGS: Divine Beast Tornado - boss drop to NE"
         ]
     ),
     
     # MARK: Enir Ilim
-    ERBossInfo("Promised Consort Radahn (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800,
+    ERBossInfo("Promised Consort Radahn (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800, allow_rykard=True,
         locations=[
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
         ]
     ),
 ]
 
-for boss in base_bosses: boss.type.append("All Base")
+default_rykard_location = ""
+for boss in base_bosses: 
+    boss.type.append("All Base")
+    if boss.name == "Rykard, Lord of Blasphemy (VM)":
+        default_rykard_location = boss
 for boss in dlc_bosses: 
     boss.dlc = True
     boss.type.append("All DLC")

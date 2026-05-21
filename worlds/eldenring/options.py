@@ -218,6 +218,10 @@ class EnemyRando(Toggle):
     """Randomizes the enemies."""
     display_name = "Enemy Randomizer"
 
+class RestrictRykardPlacement(DefaultOnToggle):
+    """Restrict what bosses Rykard can replace."""
+    display_name = "Restrict Rykard Placement"
+
 class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
     display_name = "Material Randomizer"
@@ -484,6 +488,7 @@ class EROptions(PerGameCommonOptions):
     dlc_abyssal_torrent: DLCAbyssalTorrent
     
     enemy_rando: EnemyRando
+    restrictive_rykard: RestrictRykardPlacement
     material_rando: MaterialRando
     death_link: DeathLink
     
@@ -528,9 +533,17 @@ option_groups = [
         RoyalAccess,
         StoneswordMasterKey,
     ]),
+    OptionGroup("Other Randomizers", [
+        EnemyRando,
+        RestrictRykardPlacement,
+        MaterialRando,
+    ]),
     OptionGroup("Equipment", [
         RandomizeStartingLoadout,
         AutoEquipOption,
+    ]),
+    OptionGroup("Death Link", [
+        DeathLink
     ]),
     OptionGroup("DLC", [
         EnableDLC,

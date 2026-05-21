@@ -12,7 +12,7 @@ from Fill import remaining_fill
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
-from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses
+from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, vanilla_traps, dlc_traps
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
@@ -100,6 +100,12 @@ class EldenRing(World):
     item_name_groups = item_name_groups
     location_descriptions = location_descriptions
     item_descriptions = item_descriptions
+    
+    rykard_location: ERBossInfo = default_rykard_location
+    """If enemy randomization is enabled, this is the boss who Rykard should replace.
+    
+    This is used to determine where the Serpent-Hunter can be placed.
+    """
     
     base_enabled: bool = None
     all_excluded_locations: Set[str] = set()
@@ -189,6 +195,20 @@ class EldenRing(World):
         if self.options.enable_dlc and self.base_enabled and len([boss for boss in m_goal_bosses if boss in base_bosses + dlc_bosses]) == 0: # is there a goal boss?
             raise OptionError(f"Player {self.player_name} no valid Goal bosses, please set a valid Goal boss.")
             
+        # Inform Universal Tracker where Rykard is being randomized to.
+        if hasattr(self.multiworld, "re_gen_passthrough"):
+            if "Elden Ring" in self.multiworld.re_gen_passthrough:
+                if self.multiworld.re_gen_passthrough["Elden Ring"]["options"]["enemy_rando"]:
+                    rykard_data = self.multiworld.re_gen_passthrough["Elden Ring"]["rykard"]
+                    for boss in all_bosses:
+                        if rykard_data.startswith(boss.name):
+                            self.rykard_location = boss
+
+        # Randomize Rykard manually so that we know where to place the Serpent-Hunter.
+        elif self.options.enemy_rando:
+            self.rykard_location = self.random.choice(
+                [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
+            
         using_table = {}
         if self.base_enabled: using_table.update(item_table_vanilla)
         if self.options.enable_dlc: using_table.update(item_table_dlc)
@@ -254,6 +274,12 @@ class EldenRing(World):
                                         break
         
         self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
+
+    def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
+        """Returns whether boss is a valid location for Rykard in this seed."""
+        if not boss.allow_rykard and self.options.restrictive_rykard or not self.options.enable_dlc and boss.dlc: return False
+        elif boss.name != "Rykard, Lord of Blasphemy (VM)": return True
+        else: return False
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -1132,6 +1158,10 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 3))
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
+        # Rykard Rule
+        if self.rykard_location != default_rykard_location:
+            self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+            
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
@@ -2525,6 +2555,9 @@ class EldenRing(World):
     
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
+        
+        if self.rykard_location != default_rykard_location:
+            text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world\n"
 
         if self.options.excluded_location_behavior == "forbid_useful":
             text += f"\n{self.player_name}'s world excluded: {sorted(self.all_excluded_locations)}\n"
@@ -2753,6 +2786,7 @@ class EldenRing(World):
                 "dlc_max_level_weapons": self.options.dlc_max_level_weapons.value,
                 "dlc_abyssal_torrent": self.options.dlc_abyssal_torrent.value,
                 "enemy_rando": self.options.enemy_rando.value,
+                "restrictive_rykard": self.options.restrictive_rykard.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 
@@ -2785,6 +2819,11 @@ class EldenRing(World):
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
+            "rykard": (
+                f"{self.rykard_location.name} {self.rykard_location.id}"
+                if self.rykard_location != default_rykard_location
+                else None
+            ),
             "goal": [boss.flag for boss in self.goal_bosses],
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,

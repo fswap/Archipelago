@@ -3509,6 +3509,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith", "Glass Shard x3", key="310000,0:0031007030::", missable=True),
     ],
     "Volcano Manor Upper":[ # volcano_temple                              done
+        ERLocationData("VM/AP: Serpent-Hunter - statue in mainboss arena", "Serpent-Hunter", key="160000,0:0016007700::"),
         ERLocationData("VM/AP: Rykard's Great Rune - mainboss drop", "Rykard's Great Rune", key="160000,0:0000000174::", boss=True, deadend=True, mtgelmir_boss=True),
         ERLocationData("VM/TE: Missionary's Cookbook [6] - E of shortcut elevator, inside lower part of tower in cell", "Missionary's Cookbook [6]", key="160000,0:0000067130::"),
         ERLocationData("VM/RLB: Consort's Mask - kill Tanith", "Consort's Mask", key="160000,0:0000400071::", missable=True, death=True),
@@ -3530,7 +3531,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("VM/TE: Somber Smithing Stone [6] - NW of shortcut elevator, after stairs in room below", "Somber Smithing Stone [6]", key="160000,0:0016007530::"),
         ERLocationData("VM/TE: Dagger Talisman - NW of shortcut elevator, after imp statue, drop to hidden path top item", "Dagger Talisman", key="160000,0:0016007620::", talisman=True, hidden=True),
         ERLocationData("VM/TE: Seedbed Curse - NW of shortcut elevator, after imp statue, lower part of big cage room to SW", "Seedbed Curse", key="160000,0:0016007700::"), # 2
-        ERLocationData("VM/AP: Eye Surcoat - in main boss arena", "Eye Surcoat", key="160000,0:0016007730::"),
+        ERLocationData("VM/AP: Eye Surcoat - in mainboss arena", "Eye Surcoat", key="160000,0:0016007730::"),
         ERLocationData("VM/RLB: Aspects of the Crucible: Breath - enemy drop, spawns after Tanith's death", "Aspects of the Crucible: Breath", key="160000,0:0016007950::", missable=True),
         ERLocationData("VM/TE: Somber Smithing Stone [7] - NW of shortcut elevator, after imp statue, lower part of big cage room outside to SW", "Somber Smithing Stone [7]", key="160000,0:0016007100::"), # 2
     ],
