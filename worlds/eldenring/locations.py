@@ -4009,6 +4009,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/CF: Greater Potentate's Cookbook [7] - to E in lower swamp area, in last poison swamp before sealed spirit spring", "Greater Potentate's Cookbook [7]", key="614943,0:0000068630::", cookbook=True),
     ],
     "Shadow Keep Storehouse Back":[ # storehouse_back                     done
+        ERLocationData("SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", "Remembrance of the Wild Boar Rider", key="614948,0:0000510640::", boss=True, remembrance=True, shadowkeep_boss=True),
         ERLocationData("SK/SBS: Somber Smithing Stone [9] - to NE by elevator", "Somber Smithing Stone [9]", key="210100,0:0021017600::"),
         ERLocationData("SK/SBS: Glintslab Firefly x3 - to NW by left wall", "Glintslab Firefly x3", key="210100,0:0021017610::"),
         ERLocationData("SK/SBS: Carian Thrusting Shield - to NW by back wall", "Carian Thrusting Shield", key="210100,0:0021017620::"),
@@ -6227,7 +6228,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RR/RRD: Scadutree Fragment - enemy drop RR swamp, E side of swamp", "Scadutree Fragment", key="615144,0:2051447510::", enemyfragment=True),
     ],
     "Scaduview":[ # scaduview                                             done
-        ERLocationData("SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", "Remembrance of the Wild Boar Rider", key="614948,0:0000510640::", boss=True, remembrance=True, shadowkeep_boss=True),
         ERLocationData("SV/SKBG: Scadutree Fragment - to SE", "Scadutree Fragment", key="614948,0:2049487000::", fragment=True),
         ERLocationData("SV/(AS): Gaius's Greaves - enemy drop by shack", "Gaius's Greaves", key="614949,0:2049490900::"),
         ERLocationData("SV/(AS): Albinauric Bloodclot - enemy drop by shack", "Albinauric Bloodclot", key="614949,0:2049490900::"),

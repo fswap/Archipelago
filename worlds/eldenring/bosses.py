@@ -218,8 +218,8 @@ base_bosses = [
     ),
     ERBossInfo("Valiant Gargoyles (NR)", ["Nokron, Eternal City", "Underground"], 0, 12020800, allow_rykard=True,
         locations=[
-            "NR/(SA): Gargoyle's Greatsword - boss drop", "Gargoyle's Greatsword",
-            "NR/(SA): Gargoyle's Twinblade - boss drop", "Gargoyle's Twinblade"
+            "NR/(SA): Gargoyle's Greatsword - boss drop",
+            "NR/(SA): Gargoyle's Twinblade - boss drop",
         ]
     ),
     ERBossInfo("Regal Ancestor Spirit (NR)", ["Nokron, Eternal City", "Underground", "Remembrance"], 0, 12090800, allow_rykard=True,
@@ -369,7 +369,7 @@ base_bosses = [
             "LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop"
         ]
     ),
-    ERBossInfo("Magma Wyrm Makar (RSP)", ["Liurnia of The Lakes", "Ruin-Strewn Precipice", "Dungeon", "Main"], 0, 39200800, dungeon=True,
+    ERBossInfo("Magma Wyrm Makar (RSP)", ["Liurnia of The Lakes", "Ruin-Strewn Precipice", "Dungeon", "Main"], 0, 39200800, dungeon=True, allow_rykard=True,
         locations=[
             "RSP/RSPO: Magma Wyrm's Scalesword - boss drop",
             "RSP/RSPO: Dragon Heart - boss drop"
@@ -414,7 +414,7 @@ base_bosses = [
     ),
     
     # MARK: Raya Lucaria Academy
-    ERBossInfo("Red Wolf of Radagon (RLA)", ["Raya Lucaria Academy", "Main"], 0, 14000850,
+    ERBossInfo("Red Wolf of Radagon (RLA)", ["Raya Lucaria Academy", "Main"], 0, 14000850, allow_rykard=True,
         locations=[
             "RLA/SC: Memory Stone - boss drop"
         ]
@@ -459,9 +459,10 @@ base_bosses = [
             "CL/IA: Unalloyed Gold Needle (Broken) - boss drop to SE"
         ]
     ),
-    ERBossInfo("Nox Swordstress & Nox Priest (CL)", ["Caelid", "Overworld"], 0, 1049390800,
+    ERBossInfo("Nox Swordstress & Nox Priest (CL)", ["Caelid", "Overworld"], 0, 1049390800, allow_rykard=True,
         locations=[
-            "CL/(STS): Nox Flowing Sword - boss drop"
+            "CL/(STS): Nox Flowing Sword - boss drop",
+            "CL/(STS): Lusat's Glintstone Staff - in chest after boss"
         ]
     ),
     # caelid dungeons
@@ -763,12 +764,12 @@ base_bosses = [
             "VM/AP: Remembrance of the Blasphemous - mainboss drop"
         ]
     ),
-    ERBossInfo("Abductor Virgins (VM)", ["Volcano Manor", "Dungeon"], 0, 16000860, dungeon=True,
+    ERBossInfo("Abductor Virgins (VM)", ["Volcano Manor", "Dungeon"], 0, 16000860, dungeon=True, allow_rykard=True,
         locations=[
             "(VM)/SIC: Inquisitor's Girandole - boss drop, from RLA warp"
         ]
     ),
-    ERBossInfo("Godskin Noble (VM)", ["Volcano Manor", "Main"], 0, 16000850,
+    ERBossInfo("Godskin Noble (VM)", ["Volcano Manor", "Main"], 0, 16000850, allow_rykard=True,
         locations=[
             "VM/GH: Godskin Stitcher - boss drop",
             "VM/GH: Noble Presence - boss drop"
@@ -776,7 +777,7 @@ base_bosses = [
     ),
     
     # MARK: Leyndell, Royal Capital
-    ERBossInfo("Godfrey, First Elden Lord (LRC)", ["Leyndell, Royal Capital", "Main"], 0, 11000850,
+    ERBossInfo("Godfrey, First Elden Lord (LRC)", ["Leyndell, Royal Capital", "Main"], 0, 11000850, allow_rykard=True,
         locations=[
             "LRC/WCR: Talisman Pouch - mainboss drop"
         ]
@@ -826,7 +827,8 @@ base_bosses = [
     ),
     ERBossInfo("Commander Niall (MotG/CS)", ["Mountaintops of the Giants", "Overworld", "Main"], 0, 1051570800,
         locations=[
-            "MotG/(CS): Veteran's Prosthesis - mainboss drop"
+            "MotG/(CS): Veteran's Prosthesis - mainboss drop",
+            "MotG/(CS): Haligtree Secret Medallion (Left) - after boss"
         ]
     ),
     ERBossInfo("Erdtree Avatar (MotG)", ["Mountaintops of the Giants", "Overworld"], 0, 1052560800, allow_rykard=True,
@@ -1025,7 +1027,9 @@ dlc_bosses = [
     ERBossInfo("Divine Beast Dancing Lion (BTS)", ["Belurat", "DLC Remembrance"], 0, 20000800, allow_rykard=True,
         locations=[
             "BTS/SF: Remembrance of the Dancing Lion - mainboss drop",
-            "BTS/BTS: Divine Beast Head - boss drop"
+            "BTS/BTS: Divine Beast Head - boss drop",
+            "BTS/TDB: Revered Spirit Ash - on statue after boss",
+            "BTS/TDB: Tower of Shadow Message - at the top of the stairs after boss"
         ]
     ),
     
@@ -1073,7 +1077,10 @@ dlc_bosses = [
     # Stone Coffin Fissure
     ERBossInfo("Putrescent Knight (SCF)", ["Stone Coffin Fissure", "DLC Remembrance"], 0, 22000800, allow_rykard=True,
         locations=[
-            "SCF/FD: Remembrance of Putrescence - mainboss drop"
+            "SCF/FD: Remembrance of Putrescence - mainboss drop",
+            "SCF/GDP: St. Trina Disciple's Cookbook [3] - right of St. Trina",
+            "SCF/GDP: St. Trina's Smile - Thiollier invader drop, after you die to St. Trina four times and tell him your findings",
+            "SCF/GDP: St. Trina's Blossom - on St. Trina's body after EI mainboss"
         ]
     ),
     
@@ -1204,7 +1211,12 @@ dlc_bosses = [
     # MARK: Finger Ruins
     ERBossInfo("Metyr, Mother of Fingers (FRM)", ["Finger Ruins", "DLC Remembrance"], 0, 25000800, allow_rykard=True,
         locations=[
-            "FRM: Remembrance of the Mother of Fingers - mainboss drop"
+            "FRM: Remembrance of the Mother of Fingers - mainboss drop",
+            "SA/(CMM): Maternal Staff - kill invader Ymir",
+            "SA/(CMM): High Priest Hat - kill invader Ymir",
+            "SA/(CMM): High Priest Robe - kill invader Ymir",
+            "SA/(CMM): High Priest Gloves - kill invader Ymir",
+            "SA/(CMM): High Priest Undergarments - kill invader Ymir"
         ]
     ),
     # ERBossInfo("Count Ymir, Mother of Fingers (CMM)", ["Finger Ruins"], 0, 0,
@@ -1227,7 +1239,7 @@ dlc_bosses = [
             "RR/(ENM): Rakshasa Greaves - boss drop"
         ]
     ),
-    ERBossInfo("Jori, Elder Inquisitor (RR/DC)", ["Recluses' River", "Dungeon", "Catacomb"], 0, 2052430800, dungeon=True,
+    ERBossInfo("Jori, Elder Inquisitor (RR/DC)", ["Recluses' River", "Dungeon", "Catacomb"], 0, 2052430800, dungeon=True, allow_rykard=True,
         locations=[
             "RR/(DC): Barbed Staff-Spear - boss drop"
         ]

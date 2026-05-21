@@ -10,7 +10,8 @@ fuzzer    python fuzz.py -r 16 -j 16 -g eldenring -n 1    if the runs > threads 
 
 TODO
 
-serpent hunter stuff
+add more location groups
+for excluded and priority location
 
 
 after release stuff

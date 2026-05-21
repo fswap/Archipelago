@@ -277,7 +277,7 @@ class EldenRing(World):
 
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
-        if not boss.allow_rykard and self.options.restrictive_rykard or not self.options.enable_dlc and boss.dlc: return False
+        if not boss.allow_rykard and self.options.restrictive_bosses or not self.options.enable_dlc and boss.dlc: return False
         elif boss.name != "Rykard, Lord of Blasphemy (VM)": return True
         else: return False
 
@@ -960,6 +960,28 @@ class EldenRing(World):
             if not self.options.enemy_rando: # boss rules
                 self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
+            else:
+                # places blocked by bosses, if rykard is here the place requires serpent-hunter
+                self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
+                self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop"))
+                self._add_entrance_rule("Nokron, Eternal City", lambda state: self._can_get(state, "NR/NEC: Silver Tear Mask - boss drop"))
+                self._add_entrance_rule("Deeproot Depths", lambda state: self._can_get(state, "NR/(SA): Gargoyle's Greatsword - boss drop"))
+                self._add_entrance_rule("War-Dead Catacombs", lambda state: self._can_get(state, "CL/(WD): Radahn's Great Rune - mainboss drop"))
+                self._add_entrance_rule("Altus Plateau", lambda state: self._can_get(state, "RSP/RSPO: Dragon Heart - boss drop") or 
+                                        state.has("Dectus Medallion (Left)", self.player) and state.has("Dectus Medallion (Right)", self.player))
+                self._add_entrance_rule("Volcano Manor Upper", lambda state: self._can_get(state, "VM/GH: Godskin Stitcher - boss drop"))
+                self._add_entrance_rule("Leyndell, Royal Capital", lambda state: 
+                    self._can_get(state, "DD/AR: Fia's Mist - boss drop") or self._can_get(state, "CO: Dragon Greatclaw - capital great rune gate boss drop"))
+                self._add_entrance_rule("Leyndell, Royal Capital Throne", lambda state: self._can_get(state, "LRC/WCR: Talisman Pouch - mainboss drop"))
+                self._add_entrance_rule("Divine Tower of East Altus", lambda state: self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop"))
+                self._add_entrance_rule("Frenzied Flame Proscription", lambda state: self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop")
+                                        and self._can_get(state, "SSG/FD: Bloodflame Talons - boss drop"))
+                self._add_entrance_rule("Elphael, Brace of the Haligtree", lambda state: self._can_get(state, "MH/HTP: Loretta's War Sickle - boss drop"))
+                self._add_entrance_rule("Farum Azula", lambda state: self._can_get(state, "FP/FF: Remembrance of the Fire Giant - mainboss drop"))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._can_get(state, "FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop"))
+                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._can_get(state, "FA/BGB: Remembrance of the Black Blade - mainboss drop"))
+                self._add_entrance_rule("Leyndell, Ashen Capital Throne", lambda state: self._can_get(state, "LAC/LCA: Scepter of the All-Knowing - boss drop"))
+                self._add_entrance_rule("Erdtree", lambda state: self._can_get(state, "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"))
 
             # Item Rules
             
@@ -1120,6 +1142,14 @@ class EldenRing(World):
             
             self.multiworld.register_indirect_condition(self.get_region("Ancient Ruins of Rauh"), self.get_entrance("Go To Rauh Ruins Limited"))
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
+            
+            # rykard
+            if self.options.enemy_rando:
+                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop"))
+                self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop"))
+                self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
+                self._add_entrance_rule("Abyssal Woods", lambda state: self._can_get(state, "RR/(DC): Barbed Staff-Spear - boss drop"))
+                self._add_entrance_rule("Enir Ilim", lambda state: self._can_get(state, "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop"))
             
             # dlc paintings
             self._add_location_rule("GP/BG: Serpent Crest Shield - painting reward SE of BG", "\"Incursion\" Painting")
@@ -2786,7 +2816,7 @@ class EldenRing(World):
                 "dlc_max_level_weapons": self.options.dlc_max_level_weapons.value,
                 "dlc_abyssal_torrent": self.options.dlc_abyssal_torrent.value,
                 "enemy_rando": self.options.enemy_rando.value,
-                "restrictive_rykard": self.options.restrictive_rykard.value,
+                "restrictive_bosses": self.options.restrictive_bosses.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 

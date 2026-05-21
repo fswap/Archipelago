@@ -218,9 +218,9 @@ class EnemyRando(Toggle):
     """Randomizes the enemies."""
     display_name = "Enemy Randomizer"
 
-class RestrictRykardPlacement(DefaultOnToggle):
-    """Restrict what bosses Rykard can replace."""
-    display_name = "Restrict Rykard Placement"
+class RestrictiveBossPlacement(DefaultOnToggle):
+    """Restrict what arena's bosses can be placed into."""
+    display_name = "Restrictive Boss Placement"
 
 class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
@@ -488,7 +488,7 @@ class EROptions(PerGameCommonOptions):
     dlc_abyssal_torrent: DLCAbyssalTorrent
     
     enemy_rando: EnemyRando
-    restrictive_rykard: RestrictRykardPlacement
+    restrictive_bosses: RestrictiveBossPlacement
     material_rando: MaterialRando
     death_link: DeathLink
     
@@ -535,7 +535,7 @@ option_groups = [
     ]),
     OptionGroup("Other Randomizers", [
         EnemyRando,
-        RestrictRykardPlacement,
+        RestrictiveBossPlacement,
         MaterialRando,
     ]),
     OptionGroup("Equipment", [
