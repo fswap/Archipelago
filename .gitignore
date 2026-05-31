@@ -1,6 +1,9 @@
 .idea
 .vscode
 
+# Elden Ring fuzzer fixtures — populated locally; commit manually when a bug is confirmed
+worlds/eldenring/tests/regression_fixtures/*.json
+
 *_Spoiler.txt
 *.bmbp
 *.apbp

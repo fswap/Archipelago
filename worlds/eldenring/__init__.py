@@ -166,7 +166,7 @@ class EldenRing(World):
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
-        if self.settings.disable_extreme_options:
+        if self.settings and self.settings.disable_extreme_options:
             if not self.options.local_item_option:
                 raise OptionError(f"EldenRing disable_extreme_options Error:"
                                   f"Player {self.player_name} has local_item_option false."
