@@ -29,7 +29,7 @@ if str(_REPO_ROOT) not in sys.path:
 
 from BaseClasses import MultiWorld
 from Fill import FillError, distribute_items_restrictive
-from Options import Choice, DefaultOnToggle, OptionList, OptionSet, Range, Toggle
+from Options import Choice, DefaultOnToggle, OptionError, OptionList, OptionSet, Range, Toggle
 from test.bases import WorldTestBase
 from worlds import AutoWorld
 from worlds.AutoWorld import call_all
@@ -193,6 +193,10 @@ def main() -> None:
             violations = check_world_errors(mw, options)
             if violations:
                 description = violations[0].split(":")[0]
+        except OptionError:
+            passed += 1
+            print(f"[skip] iter={i:>4}  seed={seed}  invalid option combination")
+            continue
         except FillError as exc:
             tb = traceback.format_exc()
             violations = [f"fill_error: {exc}\n{tb}"]

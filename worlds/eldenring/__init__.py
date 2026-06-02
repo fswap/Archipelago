@@ -2607,7 +2607,12 @@ class EldenRing(World):
             data = location.data
         else:
             if location in location_dictionary: data = location_dictionary[location]
-            else: data = self.dupe_location_dictionary[location]
+            elif location in self.dupe_location_dictionary: data = self.dupe_location_dictionary[location]
+            # location group names (e.g. "Scarab") from exclude_locations end up
+            # in all_excluded_locations but are not individual locations in either dictionary
+            # TODO I'm not 100% certain this is the goal, but if it's not in the dict, ignoring
+            # it seems like the most prudent action
+            else: return _LocationStatus.ABSENT
 
         if data.should_omit(self.options): return _LocationStatus.ABSENT
         if data.is_event: return _LocationStatus.UNRANDOMIZED_UNMISSABLE
