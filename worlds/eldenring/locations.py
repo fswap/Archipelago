@@ -2238,6 +2238,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LRC/AB: Lord's Rune - enemy drop to SE up stairs", "Lord's Rune", key="110000,0:0011007998::", hardenemy=True),
     ],
     "Leyndell, Royal Capital Unmissable":[ #                              done
+        ERLocationData("LRC/WCR: Talisman Pouch - mainboss drop", "Talisman Pouch", key="110000,0:0000060520::", boss=True, leyndell_boss=True),
         ERLocationData("LRC|LAC/WCR: Holy Grease x3 - to SE, down sub branch before boss arena", "Holy Grease x3", key="110000,0:0011007890::"),
         ERLocationData("LRC|LAC/WCR: Golden Seed - seedtree to SE", "Golden Seed", key="110000,0:0011007990::", seedtree=True),
         ERLocationData("LRC|LAC/WCR: Smithing Stone [6] - to SE down stairs NW of seedtree on ledge", "Smithing Stone [6]", key="110000,0:0011007820::"),
@@ -2265,7 +2266,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
     "Leyndell, Royal Capital Throne":[ # leyndell_throne                  done
         ERLocationData("LRC/QB: Morgott's Great Rune - mainboss drop", "Morgott's Great Rune", key="110000,0:0000000173::", boss=True, leyndell_boss=True),
         ERLocationData("LRC/QB: Remembrance of the Omen King - mainboss drop", "Remembrance of the Omen King", key="110000,0:0000510040::", boss=True, remembrance=True, leyndell_boss=True),
-        ERLocationData("LRC/WCR: Talisman Pouch - mainboss drop", "Talisman Pouch", key="110000,0:0000060520::", boss=True, leyndell_boss=True),
         ERLocationData("LRC/ET: Rold Medallion - talk to Melina after boss", "Rold Medallion", key="999999,0:0000400001::", keyitem=True),
         ERLocationData("LRC/ES: Barrier of Gold - scarab to W down elevator, down stairs", "Barrier of Gold", key="110000,0:0000540370::", missable=True, scarab=True),
         ERLocationData("LRC|LAC/ES: Erdtree Bow - in chest second floor", "Erdtree Bow", key="110000,0:0011007015::", chest=True),

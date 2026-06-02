@@ -12,7 +12,7 @@ from Fill import remaining_fill
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
-from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location
+from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, vanilla_traps, dlc_traps
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
@@ -102,6 +102,7 @@ class EldenRing(World):
     item_descriptions = item_descriptions
     
     rykard_location: ERBossInfo = default_rykard_location
+    serpent_location: ERBossInfo = default_serpent_location
     """If enemy randomization is enabled, this is the boss who Rykard should replace.
     
     This is used to determine where the Serpent-Hunter can be placed.
@@ -200,14 +201,19 @@ class EldenRing(World):
             if "Elden Ring" in self.multiworld.re_gen_passthrough:
                 if self.multiworld.re_gen_passthrough["Elden Ring"]["options"]["enemy_rando"]:
                     rykard_data = self.multiworld.re_gen_passthrough["Elden Ring"]["rykard"]
+                    serpent_data = self.multiworld.re_gen_passthrough["Elden Ring"]["serpent"]
                     for boss in all_bosses:
                         if rykard_data.startswith(boss.name):
                             self.rykard_location = boss
+                        if serpent_data.startswith(boss.name):
+                            self.serpent_location = boss
 
-        # Randomize Rykard manually so that we know where to place the Serpent-Hunter.
+        # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
         elif self.options.enemy_rando:
             self.rykard_location = self.random.choice(
                 [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
+            self.serpent_location = self.random.choice(
+                [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
             
         using_table = {}
         if self.base_enabled: using_table.update(item_table_vanilla)
@@ -277,9 +283,8 @@ class EldenRing(World):
 
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
-        if not boss.allow_rykard and self.options.restrictive_bosses or not self.options.enable_dlc and boss.dlc: return False
-        elif boss.name != "Rykard, Lord of Blasphemy (VM)": return True
-        else: return False
+        if not boss.allow_rykard and self.options.restrictive_bosses or not self.options.enable_dlc and boss.dlc or not self.base_enabled and not boss.dlc: return False
+        else: return True
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -960,6 +965,8 @@ class EldenRing(World):
             if not self.options.enemy_rando: # boss rules
                 self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
+                self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
+                                        lambda state: state.has("Serpent-Hunter", self.player))
             else:
                 # places blocked by bosses, if rykard is here the place requires serpent-hunter
                 self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
@@ -1188,9 +1195,10 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 3))
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
-        # Rykard Rule
-        if self.rykard_location != default_rykard_location:
+        # Rykard and Serpent Rule
+        if self.options.enemy_rando:
             self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+            self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
@@ -2586,6 +2594,9 @@ class EldenRing(World):
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
         
+        if self.serpent_location != default_serpent_location:
+            text += f"\nSerpent takes the place of {self.serpent_location.name} in {self.player_name}'s world\n"
+        
         if self.rykard_location != default_rykard_location:
             text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world\n"
 
@@ -2852,6 +2863,11 @@ class EldenRing(World):
             "rykard": (
                 f"{self.rykard_location.name} {self.rykard_location.id}"
                 if self.rykard_location != default_rykard_location
+                else None
+            ),
+            "serpent": (
+                f"{self.serpent_location.name} {self.serpent_location.id}"
+                if self.serpent_location != default_serpent_location
                 else None
             ),
             "goal": [boss.flag for boss in self.goal_bosses],

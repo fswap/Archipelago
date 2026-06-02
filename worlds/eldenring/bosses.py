@@ -419,7 +419,13 @@ base_bosses = [
             "RLA/SC: Memory Stone - boss drop"
         ]
     ),
-    ERBossInfo("Rennala, Queen of the Full Moon (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 0, 14000800, allow_rykard=True,
+    ERBossInfo("Rennala, Queen of the Full Moon (Phase 1) (RLA)", [], 0, None, allow_rykard=True,
+        locations=[
+            "RLA: Great Rune of the Unborn - mainboss drop",
+            "RLA: Remembrance of the Full Moon Queen - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Rennala, Queen of the Full Moon (Phase 2) (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 0, 14000800, allow_rykard=True,
         locations=[
             "RLA: Great Rune of the Unborn - mainboss drop",
             "RLA: Remembrance of the Full Moon Queen - mainboss drop"
@@ -758,7 +764,13 @@ base_bosses = [
     ),
     
     # MARK: Volcano Manor
-    ERBossInfo("Rykard, Lord of Blasphemy (VM)", ["Volcano Manor", "Remembrance", "Great Rune", "Main"], 0, 16000800,
+    ERBossInfo("God-Devouring Serpent (VM)", [], 0, None, allow_rykard=True,
+        locations=[
+            "VM/AP: Rykard's Great Rune - mainboss drop",
+            "VM/AP: Remembrance of the Blasphemous - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Rykard, Lord of Blasphemy (VM)", ["Volcano Manor", "Remembrance", "Great Rune", "Main"], 0, 16000800, allow_rykard=True,
         locations=[
             "VM/AP: Rykard's Great Rune - mainboss drop",
             "VM/AP: Remembrance of the Blasphemous - mainboss drop"
@@ -851,7 +863,12 @@ base_bosses = [
             "MotG/FR: Dragon Heart - boss drop to SE"
         ]
     ),
-    ERBossInfo("Fire Giant (FP)", ["Mountaintops of the Giants", "Overworld", "Remembrance", "Main"], 0, 1052520800, allow_rykard=True,
+    ERBossInfo("Fire Giant (Phase 1) (FP)", [], 0, None, allow_rykard=True,
+        locations=[
+            "FP/FF: Remembrance of the Fire Giant - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Fire Giant (Phase 2) (FP)", ["Mountaintops of the Giants", "Overworld", "Remembrance", "Main"], 0, 1052520800, allow_rykard=True,
         locations=[
             "FP/FF: Remembrance of the Fire Giant - mainboss drop"
         ]
@@ -883,6 +900,11 @@ base_bosses = [
     ERBossInfo("Dragonlord Placidusax (FA)", ["Farum Azula", "Remembrance"], 0, 13000830, allow_rykard=True,
         locations=[
             "FA/BGB: Remembrance of the Dragonlord - alt mainboss drop"
+        ]
+    ),
+    ERBossInfo("Beast Clergyman (FA)", [], 0, None, allow_rykard=True,
+        locations=[
+            "FA/BGB: Remembrance of the Black Blade - mainboss drop"
         ]
     ),
     ERBossInfo("Maliketh, The Black Blade (FA)", ["Farum Azula", "Remembrance", "Main"], 0, 13000800, allow_rykard=True,
@@ -978,9 +1000,19 @@ base_bosses = [
             "LAC/LCA: All-Knowing Greaves - boss drop"
         ]
     ),
-    ERBossInfo("Godfrey, First Elden Lord (LAC)", ["Leyndell, Ashen Capital", "Remembrance", "Main"], 0, 11050800, allow_rykard=True,# 11000850 is phase 1 11050800 phase 2
+    ERBossInfo("Godfrey, First Elden Lord (LAC)", [], 0, None, allow_rykard=True,
         locations=[
             "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Hoarah Loux (LAC)", ["Leyndell, Ashen Capital", "Remembrance", "Main"], 0, 11050800, allow_rykard=True,# 11000850 is phase 1 11050800 phase 2
+        locations=[
+            "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Radagon of the Golden Order (ET)", [], 0, None, allow_rykard=True,
+        locations=[
+            "ET: Elden Remembrance - mainboss drop"
         ]
     ),
     ERBossInfo("Elden Beast (ET)", ["Erdtree", "Remembrance", "Final", "Main"], 0, 19000800, allow_rykard=True,
@@ -1167,7 +1199,13 @@ dlc_bosses = [
     ),
     
     # MARK: Shadow Keep
-    ERBossInfo("Messmer the Impaler (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 21010800, allow_rykard=True,
+    ERBossInfo("Messmer the Impaler (SK)", [], 0, None, allow_rykard=True,
+        locations=[
+            "SK/DCE: Remembrance of the Impaler - mainboss drop",
+            "SK/DCE: Messmer's Kindling - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Base Serpent Messmer (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 21010800, allow_rykard=True,
         locations=[
             "SK/DCE: Remembrance of the Impaler - mainboss drop",
             "SK/DCE: Messmer's Kindling - mainboss drop"
@@ -1219,15 +1257,15 @@ dlc_bosses = [
             "SA/(CMM): High Priest Undergarments - kill invader Ymir"
         ]
     ),
-    # ERBossInfo("Count Ymir, Mother of Fingers (CMM)", ["Finger Ruins"], 0, 0,
-    #     locations=[
-    #         "SA/(CMM): Maternal Staff - kill invader Ymir",
-    #         "SA/(CMM): High Priest Hat - kill invader Ymir",
-    #         "SA/(CMM): High Priest Robe - kill invader Ymir",
-    #         "SA/(CMM): High Priest Gloves - kill invader Ymir",
-    #         "SA/(CMM): High Priest Undergarments - kill invader Ymir"
-    #     ]
-    # ),
+    ERBossInfo("Count Ymir, Mother of Fingers (CMM)", ["Finger Ruins"], 0, 0, # idk event id
+        locations=[
+            "SA/(CMM): Maternal Staff - kill invader Ymir",
+            "SA/(CMM): High Priest Hat - kill invader Ymir",
+            "SA/(CMM): High Priest Robe - kill invader Ymir",
+            "SA/(CMM): High Priest Gloves - kill invader Ymir",
+            "SA/(CMM): High Priest Undergarments - kill invader Ymir"
+        ]
+    ),
     
     # MARK: Recluses' River
     ERBossInfo("Rakshasa (RR)", ["Recluses' River", "Overworld", "Mausoleum"], 0, 2051440800,
@@ -1265,7 +1303,12 @@ dlc_bosses = [
     ),
     
     # MARK: Enir Ilim
-    ERBossInfo("Promised Consort Radahn (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800, allow_rykard=True,
+    ERBossInfo("Promised Consort Radahn (EI)", [], 0, None, allow_rykard=True,
+        locations=[
+            "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
+        ]
+    ),
+    ERBossInfo("Radahn, Consort of Miquella (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800, allow_rykard=True,
         locations=[
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
         ]
@@ -1273,10 +1316,13 @@ dlc_bosses = [
 ]
 
 default_rykard_location = ""
+default_serpent_location = ""
 for boss in base_bosses: 
     boss.type.append("All Base")
     if boss.name == "Rykard, Lord of Blasphemy (VM)":
         default_rykard_location = boss
+    if boss.name == "God-Devouring Serpent (VM)":
+        default_serpent_location = boss
 for boss in dlc_bosses: 
     boss.dlc = True
     boss.type.append("All DLC")
