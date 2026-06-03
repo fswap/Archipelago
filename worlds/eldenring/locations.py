@@ -2261,11 +2261,11 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LRC|LAC/AB: Exalted Flesh - up stairs, to NE past door, on ledge near top of stairs", "Exalted Flesh", key="110000,0:0011007420::"),
         ERLocationData("LRC|LAC/AB: Soporific Grease x2 - up stairs, to NE past door, up stairs, to NW in corner", "Soporific Grease x2", key="110000,0:0011007430::"),
         ERLocationData("LRC|LAC/AB: Somber Smithing Stone [6] - up stairs, to NE past door, up stairs to NW down pit behind statue", "Somber Smithing Stone [6]", key="110000,0:0011007440::"),
+        ERLocationData("LRC/WCR: Talisman Pouch - mainboss drop", "Talisman Pouch", key="110000,0:0000060520::", boss=True, leyndell_boss=True),
     ],
     "Leyndell, Royal Capital Throne":[ # leyndell_throne                  done
         ERLocationData("LRC/QB: Morgott's Great Rune - mainboss drop", "Morgott's Great Rune", key="110000,0:0000000173::", boss=True, leyndell_boss=True),
         ERLocationData("LRC/QB: Remembrance of the Omen King - mainboss drop", "Remembrance of the Omen King", key="110000,0:0000510040::", boss=True, remembrance=True, leyndell_boss=True),
-        ERLocationData("LRC/WCR: Talisman Pouch - mainboss drop", "Talisman Pouch", key="110000,0:0000060520::", boss=True, leyndell_boss=True),
         ERLocationData("LRC/ET: Rold Medallion - talk to Melina after boss", "Rold Medallion", key="999999,0:0000400001::", keyitem=True),
         ERLocationData("LRC/ES: Barrier of Gold - scarab to W down elevator, down stairs", "Barrier of Gold", key="110000,0:0000540370::", missable=True, scarab=True),
         ERLocationData("LRC|LAC/ES: Erdtree Bow - in chest second floor", "Erdtree Bow", key="110000,0:0011007015::", chest=True),
