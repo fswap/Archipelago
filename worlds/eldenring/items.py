@@ -83,6 +83,12 @@ class ERItemData:
     
     scadu: bool = False
     """Scadutree frags"""
+    
+    cracked_tear: bool = False
+    """Whether this is a Wondrous Physick tear."""
+
+    remembrance: bool = False
+    """Whether this is a Remembrance."""
 
     def __post_init__(self):
         self.ap_code = self.ap_code or ERItemData.__item_id
@@ -143,7 +149,9 @@ class ERItemData:
 
     def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
-        if options.messmer_kindle.value and self.name == "Messmer's Kindling": return True
+        if (options.messmer_kindle and self.name == "Messmer's Kindling"
+        or options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
+        or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"): return True
         return self.skip if isinstance(self.skip, bool) else self.skip(self, options)
 
     def is_important(self, options: EROptions) -> ItemClassification:
@@ -156,8 +164,18 @@ class ERItemData:
             if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
             if self.name == "Pureblood Knight's Medal" and options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1):
                 return ItemClassification.progression
-            
-        if options.flask_at_priority and options.important_at_priority_only and (self.name == "Golden Seed" or self.name == "Sacred Tear"): return ItemClassification.progression
+        
+        if options.important_at_priority_only:
+            if options.flask_at_priority and self.base_name in {"Golden Seed", "Sacred Tear"}:
+                return ItemClassification.progression
+            if options.talisman_pouches_at_priority and self.name == "Talisman Pouch":
+                return ItemClassification.progression
+            if options.cracked_tears_at_priority and self.cracked_tear:
+                return ItemClassification.progression
+            if options.memory_stones_at_priority and self.name == "Memory Stone":
+                return ItemClassification.progression
+            if options.remembrances_at_priority and self.remembrance:
+                return ItemClassification.progression
         
         return self.classification
 
@@ -1337,12 +1355,12 @@ _vanilla_items = [
     ERItemData("Taunter's Tongue", 108, ERItemCategory.GOODS, skip=True),
     ERItemData("Small Red Effigy", 110, ERItemCategory.GOODS, skip=True),
     ERItemData("Festering Bloody Finger", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized), # fun
-    ERItemData("Festering Bloody Finger x2", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=2),
-    ERItemData("Festering Bloody Finger x3", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=3),
-    ERItemData("Festering Bloody Finger x5", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=5),
-    ERItemData("Festering Bloody Finger x6", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=6),
-    ERItemData("Festering Bloody Finger x8", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=8),
-    ERItemData("Festering Bloody Finger x10", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=10),
+    ERItemData("Festering Bloody Finger x2", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=2, base_name="Festering Bloody Finger"),
+    ERItemData("Festering Bloody Finger x3", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=3, base_name="Festering Bloody Finger"),
+    ERItemData("Festering Bloody Finger x5", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=5, base_name="Festering Bloody Finger"),
+    ERItemData("Festering Bloody Finger x6", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=6, base_name="Festering Bloody Finger"),
+    ERItemData("Festering Bloody Finger x8", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=8, base_name="Festering Bloody Finger"),
+    ERItemData("Festering Bloody Finger x10", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=10, base_name="Festering Bloody Finger"),
     ERItemData("Recusant Finger", 112, ERItemCategory.GOODS, skip=True),
     #ERItemData("Spectral Steed Whistle", 130, ERItemCategory.GOODS),
     *ERItemData("Furlcalling Finger Remedy", 150, ERItemCategory.GOODS, skip=True).counts([2, 3, 4, 5]),
@@ -1466,21 +1484,21 @@ _vanilla_items = [
     ERItemData("Hero's Rune [5]", 2918, ERItemCategory.GOODS, runes=35000),
     ERItemData("Lord's Rune", 2919, ERItemCategory.GOODS, runes=50000),
 
-    ERItemData("Remembrance of the Grafted", 2950, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Starscourge", 2951, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Omen King", 2952, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Blasphemous", 2953, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Rot Goddess", 2954, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Blood Lord", 2955, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Black Blade", 2956, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of Hoarah Loux", 2957, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Dragonlord", 2958, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Full Moon Queen", 2959, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Lichdragon", 2960, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Fire Giant", 2961, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Regal Ancestor", 2962, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Elden Remembrance", 2963, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Naturalborn", 2964, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Remembrance of the Grafted", 2950, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Starscourge", 2951, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Omen King", 2952, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Blasphemous", 2953, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Rot Goddess", 2954, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Blood Lord", 2955, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Black Blade", 2956, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of Hoarah Loux", 2957, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Dragonlord", 2958, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Full Moon Queen", 2959, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Lichdragon", 2960, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Fire Giant", 2961, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Regal Ancestor", 2962, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Elden Remembrance", 2963, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Naturalborn", 2964, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
 
     ERItemData("Ancestral Infant's Head", 3000, ERItemCategory.GOODS),
     ERItemData("Omen Bairn", 3010, ERItemCategory.GOODS),
@@ -2038,38 +2056,38 @@ _vanilla_items = [
     ERItemData("Ghost Glovewort [9]", 10918, ERItemCategory.GOODS, upgrade_item=True),
     ERItemData("Great Ghost Glovewort", 10919, ERItemCategory.GOODS, upgrade_item=True),
 
-    ERItemData("Crimsonspill Crystal Tear", 11000, ERItemCategory.GOODS),
-    ERItemData("Greenspill Crystal Tear", 11001, ERItemCategory.GOODS),
-    ERItemData("Crimson Crystal Tear", 11002, ERItemCategory.GOODS),
-    ERItemData("Crimson Crystal Tear (Alternate)", 11003, ERItemCategory.GOODS),
-    ERItemData("Cerulean Crystal Tear", 11004, ERItemCategory.GOODS),
-    ERItemData("Cerulean Crystal Tear (Alternate)", 11005, ERItemCategory.GOODS),
-    ERItemData("Speckled Hardtear", 11006, ERItemCategory.GOODS),
-    ERItemData("Crimson Bubbletear", 11007, ERItemCategory.GOODS),
-    ERItemData("Opaline Bubbletear", 11008, ERItemCategory.GOODS),
-    ERItemData("Crimsonburst Crystal Tear", 11009, ERItemCategory.GOODS),
-    ERItemData("Greenburst Crystal Tear", 11010, ERItemCategory.GOODS),
-    ERItemData("Opaline Hardtear", 11011, ERItemCategory.GOODS),
-    ERItemData("Winged Crystal Tear", 11012, ERItemCategory.GOODS),
-    ERItemData("Thorny Cracked Tear", 11013, ERItemCategory.GOODS),
-    ERItemData("Spiked Cracked Tear", 11014, ERItemCategory.GOODS),
-    ERItemData("Windy Crystal Tear", 11015, ERItemCategory.GOODS),
-    ERItemData("Ruptured Crystal Tear", 11016, ERItemCategory.GOODS),
-    ERItemData("Ruptured Crystal Tear (Alternate)", 11017, ERItemCategory.GOODS),
-    ERItemData("Leaden Hardtear", 11018, ERItemCategory.GOODS),
-    ERItemData("Twiggy Cracked Tear", 11019, ERItemCategory.GOODS),
-    ERItemData("Crimsonwhorl Bubbletear", 11020, ERItemCategory.GOODS),
-    ERItemData("Strength-knot Crystal Tear", 11021, ERItemCategory.GOODS),
-    ERItemData("Dexterity-knot Crystal Tear", 11022, ERItemCategory.GOODS),
-    ERItemData("Intelligence-knot Crystal Tear", 11023, ERItemCategory.GOODS),
-    ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS),
-    ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS),
-    ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS),
-    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
-    ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS),
-    ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS),
-    ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS),
-    ERItemData("Holy-Shrouding Cracked Tear", 11031, ERItemCategory.GOODS),
+    ERItemData("Crimsonspill Crystal Tear", 11000, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Greenspill Crystal Tear", 11001, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimson Crystal Tear", 11002, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimson Crystal Tear (Alternate)", 11003, ERItemCategory.GOODS, cracked_tear=True, skip=True),
+    ERItemData("Cerulean Crystal Tear", 11004, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Cerulean Crystal Tear (Alternate)", 11005, ERItemCategory.GOODS, cracked_tear=True, skip=True),
+    ERItemData("Speckled Hardtear", 11006, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimson Bubbletear", 11007, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Opaline Bubbletear", 11008, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimsonburst Crystal Tear", 11009, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Greenburst Crystal Tear", 11010, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Opaline Hardtear", 11011, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Winged Crystal Tear", 11012, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Thorny Cracked Tear", 11013, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Spiked Cracked Tear", 11014, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Windy Crystal Tear", 11015, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Ruptured Crystal Tear", 11016, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Ruptured Crystal Tear (Alternate)", 11017, ERItemCategory.GOODS, cracked_tear=True, skip=True),
+    ERItemData("Leaden Hardtear", 11018, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Twiggy Cracked Tear", 11019, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimsonwhorl Bubbletear", 11020, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Strength-knot Crystal Tear", 11021, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Dexterity-knot Crystal Tear", 11022, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Intelligence-knot Crystal Tear", 11023, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, classification=ItemClassification.useful, boss_tools=True, cracked_tear=True),
+    ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Holy-Shrouding Cracked Tear", 11031, ERItemCategory.GOODS, cracked_tear=True),
     # crafting mats
     *ERItemData("Sliver of Meat", 15000, ERItemCategory.GOODS, replacable=True).counts([2, 3, 5, 6]),
     *ERItemData("Beast Liver", 15010, ERItemCategory.GOODS, replacable=True).counts([3, 5]),
@@ -2237,7 +2255,7 @@ _vanilla_items = [
     ERItemData("South East Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("North Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    # ERItemData("Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True), # dectus
     
     ERItemData("Caelid Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Redmane Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
@@ -2632,16 +2650,16 @@ _dlc_items = [
     ERItemData("Thiollier's Concoction", 2002140, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Prattling Pate \"Lamentation\"", 2002150, ERItemCategory.GOODS, skip=True),
     #remembrances
-    ERItemData("Remembrance of the Wild Boar Rider", 2002900, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Impaler", 2002901, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Shadow Sunflower", 2002902, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Twin Moon Knight", 2002903, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Saint of the Bud", 2002904, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Dancing Lion", 2002905, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of a God and a Lord", 2002907, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Lord of Frenzied Flame", 2002908, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of the Mother of Fingers", 2002909, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Remembrance of Putrescence", 2002910, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Remembrance of the Wild Boar Rider", 2002900, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Impaler", 2002901, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Shadow Sunflower", 2002902, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Twin Moon Knight", 2002903, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Saint of the Bud", 2002904, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Dancing Lion", 2002905, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of a God and a Lord", 2002907, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Lord of Frenzied Flame", 2002908, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of the Mother of Fingers", 2002909, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
+    ERItemData("Remembrance of Putrescence", 2002910, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, remembrance=True),
 
     #runes
     ERItemData("Leda's Rune", 2002950, ERItemCategory.GOODS, runes=40000),
@@ -2822,14 +2840,14 @@ _dlc_items = [
     ERItemData("Revered Spirit Ash", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Revered Spirit Ash x2", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful, count=2),
 
-    ERItemData("Viridian Hidden Tear", 2011000, ERItemCategory.GOODS),
-    ERItemData("Crimsonburst Dried Tear", 2011010, ERItemCategory.GOODS),
-    ERItemData("Crimson-Sapping Cracked Tear", 2011020, ERItemCategory.GOODS),
-    ERItemData("Cerulean-Sapping Cracked Tear", 2011030, ERItemCategory.GOODS),
-    ERItemData("Oil-Soaked Tear", 2011040, ERItemCategory.GOODS),
-    ERItemData("Bloodsucking Cracked Tear", 2011050, ERItemCategory.GOODS),
-    ERItemData("Glovewort Crystal Tear", 2011060, ERItemCategory.GOODS),
-    ERItemData("Deflecting Hardtear", 2011070, ERItemCategory.GOODS),
+    ERItemData("Viridian Hidden Tear", 2011000, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimsonburst Dried Tear", 2011010, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimson-Sapping Cracked Tear", 2011020, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Cerulean-Sapping Cracked Tear", 2011030, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Oil-Soaked Tear", 2011040, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Bloodsucking Cracked Tear", 2011050, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Glovewort Crystal Tear", 2011060, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Deflecting Hardtear", 2011070, ERItemCategory.GOODS, cracked_tear=True),
     # crafting mats
     *ERItemData("Beast Horn", 2015000, ERItemCategory.GOODS, replacable=True).counts([2, 4]),
     *ERItemData("Spirit Calculus", 2015010, ERItemCategory.GOODS, replacable=True).counts([3]),

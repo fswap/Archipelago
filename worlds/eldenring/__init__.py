@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from collections import defaultdict
 from enum import Enum
 from dataclasses import replace
-import settings, typing, Utils, math
+import settings, typing, Utils, math, json
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
 
@@ -160,7 +160,8 @@ class EldenRing(World):
         self.base_enabled = not (self.options.dlc_start == 1 and self.options.enable_dlc)
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
-        self.all_priority_locations.update(self.options.priority_locations.value)
+        self.all_priority_locations.update(self.options.priority_location_groups.value)
+        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         
         m_goal_bosses = self._goal_bosses()
@@ -244,42 +245,6 @@ class EldenRing(World):
                             if 'ashofwar' not in exclude_local_item_only_lowercase:
                                 self.options.local_items.value.add(item.name)
                             break
-
-        for locations in location_tables.values():
-            for loc in locations:
-                for loc_type in self.options.priority_location_groups.value:
-                    if (self.options.enable_dlc and loc.dlc # dlc items
-                        or self.base_enabled and not loc.dlc): # base items
-                        if loc_type.lower() == "remembrance" and loc.remembrance:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "seedtree" and loc.seedtree:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "basin" and loc.basin:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "church" and loc.church:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "map" and loc.map:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "keyitem" and loc.keyitem:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "fragment" and loc.fragment:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "cross" and loc.cross:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "revered" and loc.revered:
-                            self.all_priority_locations.add(loc.name)
-                        elif loc_type.lower() == "bosses" or loc_type.lower() == "overworld bosses":
-                            for boss in self.goal_bosses:
-                                if loc_type.lower() == "bosses":
-                                    if loc.name in boss.locations:
-                                        self.all_priority_locations.add(loc.name)
-                                        break
-                                else:
-                                    if loc.name in boss.locations and "Overworld" in boss.type:
-                                        self.all_priority_locations.add(loc.name)
-                                        break
-        
-        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
 
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
@@ -620,12 +585,8 @@ class EldenRing(World):
             
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
-            skip_item = False
             
-            if not item.should_skip(self.options): # if not skipped these need to be skipped
-                if self.options.use_master_key.value and item.name in ["Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"]: skip_item = True
-            
-            if item.should_skip(self.options) or skip_item:
+            if item.should_skip(self.options):
                 num_required_extra_items += 1
             else:
                 new_item = self.create_item(default_item_name)
@@ -645,7 +606,7 @@ class EldenRing(World):
         self.itempool.extend(injectables)
         
         if self.options.important_at_priority_only.value:
-            self._create_dupe_locations() # this still doesn't work
+            self._create_dupe_locations()
             num_required_extra_items += len(self.all_duplicate_locations)
         
         trap_pool = self._add_traps(num_required_extra_items)
@@ -663,7 +624,7 @@ class EldenRing(World):
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
         
-        mult = 1 # this helps gen fail less
+        mult = 1.5 # this helps gen fail less
         loc_needed = max((len(important_items)*mult) - len(self.all_priority_locations), 0)
             
         # if len(self.all_priority_locations) < int(len(important_items/8) and self.options.important_at_priority_only:
@@ -673,7 +634,7 @@ class EldenRing(World):
             times_duped = {}
             new_code = len(location_dictionary)
             while loc_needed > 0: # how many dupes
-                location = self.multiworld.random.choice(list(self.all_priority_locations)) # pick random location
+                location = self.multiworld.random.choice(sorted(self.all_priority_locations)) # pick random location
                 
                 found = False
                 for region in self.multiworld.get_regions(self.player):
@@ -939,27 +900,10 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
-            # World Logic
-            if self.options.world_logic < 3:
-                if self.options.soft_logic:
-                    self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
-                    self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-                    self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
+            if self.options.soft_logic:
+                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
+                self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
             
-                # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
-                # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
-                
-                # if haligtree region lock adds a key to the evergaol these items would require it
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
-                
-                # only in region lock since it can be bypassed by ruin-strewn precipice
-                self._add_entrance_rule("Altus Plateau", lambda state: 
-                    state.has("Dectus Medallion (Left)", self.player) and
-                    state.has("Dectus Medallion (Right)", self.player))
-
             # Custom Rules
             
             if not self.options.enemy_rando: # boss rules
@@ -968,7 +912,7 @@ class EldenRing(World):
                 self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
                                         lambda state: state.has("Serpent-Hunter", self.player))
             else:
-                # places blocked by bosses, if rykard is here the place requires serpent-hunter
+                # places blocked by bosses, if rykard or serpent is here the place requires serpent-hunter
                 self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
                 self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop"))
                 self._add_entrance_rule("Nokron, Eternal City", lambda state: self._can_get(state, "NR/NEC: Silver Tear Mask - boss drop"))
@@ -1063,14 +1007,19 @@ class EldenRing(World):
                                     or self._can_go_to(state, "Volcano Manor"))
             
             self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
-            if self.options.great_runes_required_mountain.value != 0:
+            if self.options.great_runes_required_mountain.value >= 0:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value))
+                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value))
             else:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Rold Medallion", self.player))
+                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
             
             self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
                 state.has("Haligtree Secret Medallion (Left)", self.player) and
                 state.has("Haligtree Secret Medallion (Right)", self.player))
+            
+            if self.options.great_runes_required_erdtree.value > 0:
+                self._add_entrance_rule("Erdtree", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_erdtree.value))
             
             # Smithing bell bearing rules
             if self.options.smithing_bell_bearing_option.value == 1:
@@ -1229,6 +1178,9 @@ class EldenRing(World):
         """All region lock rules."""
         if self.options.world_logic != "region_bosses":
             if self.base_enabled:
+                # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
+                # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
+                
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
                 self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
                 self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
@@ -1243,13 +1195,13 @@ class EldenRing(World):
                 
                 self._add_entrance_rule("Lake of Rot", "South West Underground Lock")
                 
-                self._add_entrance_rule("Altus Plateau", "Altus Lock")
-                
                 self._add_entrance_rule("Caelid", "Caelid Lock")
                 self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
                 self._add_entrance_rule("Redmane Castle Post Radahn", "Redmane Lock")
                 
-                self._add_entrance_rule("Altus Plateau", "Altus Lock")
+                self._add_entrance_rule("Altus Plateau", lambda state: 
+                    state.has("Dectus Medallion (Left)", self.player) and
+                    state.has("Dectus Medallion (Right)", self.player))
                 self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
                 self._add_entrance_rule("Volcano Manor Entrance", "Volcano Lock")
                 self._add_entrance_rule("Volcano Manor Dungeon", "Volcano Lock")
@@ -1259,6 +1211,13 @@ class EldenRing(World):
                 self._add_entrance_rule("Farum Azula", "Farum Azula Lock")
                 self._add_entrance_rule("Leyndell, Ashen Capital", "Ashen Lock")
                 self._add_entrance_rule("Miquella's Haligtree", "Haligtree Lock")
+                
+                # if haligtree region lock adds a key to the evergaol these items would require it
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be"
+                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
+                
             if self.options.enable_dlc:
                 if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
                 self._add_entrance_rule("Belurat", "Belurat Lock")
@@ -2810,6 +2769,7 @@ class EldenRing(World):
                 "soft_logic": self.options.soft_logic.value,
                 "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
+                "great_runes_required_erdtree": self.options.great_runes_required_erdtree.value,
                 "royal_access": self.options.royal_access.value,
                 "use_master_key": self.options.use_master_key.value,
                 "enable_dlc": self.options.enable_dlc.value,
@@ -2826,8 +2786,11 @@ class EldenRing(World):
                 "dlc_timing": self.options.dlc_timing.value,
                 "dlc_max_level_weapons": self.options.dlc_max_level_weapons.value,
                 "dlc_abyssal_torrent": self.options.dlc_abyssal_torrent.value,
+                
                 "enemy_rando": self.options.enemy_rando.value,
                 "restrictive_bosses": self.options.restrictive_bosses.value,
+                "boss_scaling_percent": self.options.boss_scaling_percent.value,
+                "disable_gargoyle_poison_cloud_damage": self.options.disable_gargoyle_poison_cloud_damage.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 
@@ -2838,8 +2801,15 @@ class EldenRing(World):
                 "blindness_trap_weight": self.options.blindness_trap_weight.value,
                 
                 "random_start": self.options.random_start.value,
+                "randomize_starting_keepsakes": self.options.randomize_starting_keepsakes.value,
+                "require_one_handed_starting_weapons": self.options.require_one_handed_starting_weapons.value,
+                "remove_weapon_and_spell_requirements": self.options.remove_weapon_and_spell_requirements.value,
+                "no_equip_load": self.options.no_equip_load.value,
+                "reduce_non_somber_upgrade_cost": self.options.reduce_non_somber_upgrade_cost.value,
+                "snowfast": self.options.snowfast.value,
                 "auto_equip": self.options.auto_equip.value,
                 "auto_upgrade": self.options.auto_upgrade.value,
+                
                 "crafting_kit_option": self.options.crafting_kit_option.value,
                 "map_option": self.options.map_option.value,
                 "smithing_bell_bearing_option": self.options.smithing_bell_bearing_option.value,
@@ -2854,12 +2824,17 @@ class EldenRing(World):
                 "useful_at_priority": self.options.useful_at_priority.value,
                 "flask_at_priority": self.options.flask_at_priority.value,
                 "scadu_at_priority": self.options.scadu_at_priority.value,
+                "talisman_pouches_at_priority": self.options.talisman_pouches_at_priority.value,
+                "cracked_tears_at_priority": self.options.cracked_tears_at_priority.value,
+                "memory_stones_at_priority": self.options.memory_stones_at_priority.value,
+                "remembrances_at_priority": self.options.remembrances_at_priority.value,
                 "exclude_locations": self.options.exclude_locations.value,
                 "excluded_location_behavior": self.options.excluded_location_behavior.value,
                 "missable_location_behavior": self.options.missable_location_behavior.value,
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
+            "random_enemy_preset": json.dumps(self.options.random_enemy_preset.value),
             "rykard": (
                 f"{self.rykard_location.name} {self.rykard_location.id}"
                 if self.rykard_location != default_rykard_location

@@ -1015,7 +1015,7 @@ base_bosses = [
             "ET: Elden Remembrance - mainboss drop"
         ]
     ),
-    ERBossInfo("Elden Beast (ET)", ["Erdtree", "Remembrance", "Final", "Main"], 0, 19000800, allow_rykard=True,
+    ERBossInfo("Elden Beast (ET)", ["Remembrance", "Final", "Main"], 0, 19000800, allow_rykard=True,
         locations=[
             "ET: Elden Remembrance - mainboss drop"
         ]
@@ -1308,7 +1308,7 @@ dlc_bosses = [
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
         ]
     ),
-    ERBossInfo("Radahn, Consort of Miquella (EI)", ["Enir Ilim", "DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800, allow_rykard=True,
+    ERBossInfo("Radahn, Consort of Miquella (EI)", ["DLC Remembrance", "DLC Final", "DLC Main"], 0, 20010800, allow_rykard=True,
         locations=[
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
         ]

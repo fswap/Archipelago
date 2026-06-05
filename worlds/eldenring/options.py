@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import json
 from typing import Any, Dict
 
-from Options import Choice, DeathLink, DefaultOnToggle, ExcludeLocations, OptionList, OptionDict, \
+from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, ExcludeLocations, OptionList, OptionDict, \
     OptionGroup, OptionSet, PerGameCommonOptions, Range, Toggle, OptionError, Visibility
     
 from .bosses import all_bosses
@@ -40,7 +40,8 @@ class WorldLogic(Choice):
     option_region_bosses = 1
     option_region_lock_bosses = 2
     option_open_world = 3
-    default = 0
+    default = 3
+    visibility = Visibility.none
     
 class RegionBossPercent(Range):
     """The % of bosses in a region to unlock the next."""
@@ -68,9 +69,18 @@ class GreatRunesRequiredLeyndell(Range):
     default = 2
     
 class GreatRunesRequiredMountain(Range):
-    """How many great runes are required to enter Mountaintops.
-    If greater than 0 Rold Medallion is not required."""
+    """What is required to enter Mountaintops.
+
+    - **Vanilla:** Rold Medallion is required.
+    - **0-7:** Rold Medallion is not required; require this many Great Runes instead."""
     display_name = "Mountaintops Great Runes Required"
+    range_start = -1
+    range_end = 7
+    default = -1
+    
+class GreatRunesRequiredErdtree(Range):
+    """How many great runes are required to access the Erdtree."""
+    display_name = "Erdtree Great Runes Required"
     range_start = 0
     range_end = 7
     default = 0
@@ -100,7 +110,7 @@ class MessmerKindle(Toggle):
     """Messmer Kindle Shards"""
     display_name = "Messmer Kindle Shards"
     
-class MessmerKindleRequired(Range): # i just picked these numbers idk how many would be good
+class MessmerKindleRequired(Range):
     """Messmer Kindle Shards required to access Enir Ilim."""
     display_name = "Messmer Kindle Shards Required"
     range_start = 2
@@ -221,6 +231,61 @@ class EnemyRando(Toggle):
 class RestrictiveBossPlacement(DefaultOnToggle):
     """Restrict what arena's bosses can be placed into."""
     display_name = "Restrictive Boss Placement"
+    
+class BossScalingPercent(Range):
+    """Scales HP and damage for enemies placed into boss slots.
+
+    100 keeps the current static randomizer scaling. 90 means 90% of the boss
+    location's HP and damage scaling, while 120 means 120%.
+    """
+    display_name = "Boss HP/Damage Scaling Percent"
+    range_start = 25
+    range_end = 200
+    default = 100
+
+class DisableGargoylePoisonCloudDamage(Toggle):
+    """Disable the damage tick in Valiant Gargoyles' poison cloud while leaving poison buildup intact."""
+    display_name = "Disable Damage Tick in Valiant Gargoyles' Poison Cloud"
+
+class RandomEnemyPresetOption(OptionDict):
+    """The YAML preset for the static enemy randomizer.
+
+    See the online enemy randomization documentation for available options.
+    Include this as nested YAML. For example:
+
+      random_enemy_preset:
+        RemoveSource: Basilisk; Fingercreeper
+        DontRandomize: Tree Sentinel
+
+    Elden Ring uses class-based enemy pools. To let major bosses, minor bosses,
+    world minibosses, night minibosses, dragon minibosses, and evergaol bosses
+    draw from one combined boss pool:
+
+      random_enemy_preset:
+        DontRandomize: DLCAllEnemies
+        Classes:
+          Boss:
+            Pools:
+            - Weight: 100
+              Pool: AllBosses
+
+    To keep only DLC hostile NPCs and invasions at their vanilla placements while
+    still shuffling base game hostile NPCs:
+
+      random_enemy_preset:
+        DontRandomize: DLCHostileNPC
+    """
+    display_name = "Random Enemy Preset"
+    supports_weighting = False
+    default = {}
+
+    valid_keys = ["Description", "RecommendFullRandomization", "RecommendNoEnemyProgression", "Options",
+                  "OopsAll", "Boss", "Miniboss", "Basic", "BuffBasicEnemiesAsBosses",
+                  "DontRandomize", "RemoveSource", "EnemyMultiplier", "AdjustSource", "Classes", "Enemies"]
+
+    @classmethod
+    def get_option_name(cls, value: Dict[str, Any]) -> str:
+        return json.dumps(value)
 
 class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
@@ -274,6 +339,30 @@ class BlindnessTrapWeight(BaseTrapWeight):
 class RandomizeStartingLoadout(DefaultOnToggle):
     """Randomizes the equipment characters begin with."""
     display_name = "Randomize Starting Loadout"
+
+class RandomizeStartingKeepsakes(Toggle):
+    """Randomizes selectable keepsakes at character creation."""
+    display_name = "Randomize Starting Keepsakes"
+
+class RequireOneHandedStartingWeapons(DefaultOnToggle):
+    """Require starting equipment to be usable one-handed."""
+    display_name = "Require One-Handed Starting Weapons"
+
+class RemoveWeaponAndSpellRequirements(Toggle):
+    """Remove all stat requirements from weapons and spells."""
+    display_name = "Remove All Weapon and Spell Requirements"
+
+class NoEquipLoadOption(Toggle):
+    """Disable the equip load constraint from the game."""
+    display_name = "No Equip Load"
+
+class ReduceNonSomberUpgradeCost(Toggle):
+    """Reduce regular Smithing Stone costs for non-somber weapons to one stone per weapon level."""
+    display_name = "Reduce Upgrade Cost for Non-Somber Weapons"
+
+class SnowFast(Toggle):
+    """Adds Mountaintops of the Giants shortcuts for faster traversal."""
+    display_name = "Add Shortcuts in Mountaintops for Faster Traversal"
 
 class AutoEquipOption(Toggle):
     """Automatically equips any received armor or left/right weapons."""
@@ -362,10 +451,15 @@ class ExcludeLocalItemOnly(OptionList):
     valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
     valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
     
-class ERPriorityLocationGroups(OptionList):
+class ERPriorityLocationGroups(PriorityLocations):
     """Prevent these location types from having an unimportant items.
     
-    - *Remembrance*: Main boss Remembrances.
+    - *Remembrance*: Base Remembrance bosses.
+    - *DLC Remembrance*: DLC Remembrance bosses.
+    - *Boss Reward*: Base bosses.
+    - *DLC Boss Reward*: DLC bosses.
+    - *Overworld Boss*: Base Overworld bosses.
+    - *DLC Overworld Boss*: DLC Overworld bosses.
     - *Seedtree*: Golden Seed trees.
     - *Basin*: Basins that contain tears.
     - *Church*: Sacred Tears.
@@ -373,14 +467,13 @@ class ERPriorityLocationGroups(OptionList):
     - *Fragment*: Scadu Fragments.
     - *Cross*: All cross items.
     - *Revered*: Revered Spirit Ashes.
-    - *KeyItem*: Key items.
-    - *Bosses*: All goal bosses.
-    - *Overworld Bosses*: All overworld goal bosses.
+    - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Bosses"]
-    valid_keys = ["remembrance", "seedtree", "basin", "church", "map", 
-                           "fragment", "cross", "revered", "keyitem", "bosses", "overworld bosses"]
+    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
+    valid_keys = ["remembrance", "seedtree", "basin", "church", "map", "key items",
+        "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
+        "remembrance", "dlc remembrance", "boss reward", "dlc boss reward"]
     valid_keys_casefold = True
     
 class ERImportantAtPriorityOnly(Toggle):
@@ -393,8 +486,8 @@ class ERUsefulAtPriority(Toggle):
     """Should useful items be included in Priority locations.
     This is used with Important at Priority Only option since it uses custom priority handling."""
     display_name = "Useful at Priority"
-    visibility = Visibility.none
-    
+    # visibility = Visibility.none
+
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
     display_name = "Flask Upgrades at Priority"
@@ -402,6 +495,22 @@ class FlaskUpgradesAtPriority(Toggle):
 class ScaduAtPriority(Toggle):
     "Should scadu fragments be randomized to important locations."
     display_name = "Scadutree Fragments at Priority"
+
+class TalismanPouchesAtPriority(Toggle):
+    "Should talisman pouches be randomized to important locations."
+    display_name = "Talisman Pouches at Priority"
+
+class CrackedTearsAtPriority(Toggle):
+    "Should Wondrous Physick tears be randomized to important locations."
+    display_name = "Cracked Tears at Priority"
+
+class MemoryStonesAtPriority(Toggle):
+    "Should memory stones be randomized to important locations."
+    display_name = "Memory Stones at Priority"
+
+class RemembrancesAtPriority(Toggle):
+    "Should remembrances be randomized to important priority locations."
+    display_name = "Remembrances at Priority"
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
@@ -469,6 +578,7 @@ class EROptions(PerGameCommonOptions):
     soft_logic: RegionSoftLogic
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
     great_runes_required_mountain: GreatRunesRequiredMountain
+    great_runes_required_erdtree: GreatRunesRequiredErdtree
     royal_access: RoyalAccess
     use_master_key: StoneswordMasterKey
     
@@ -489,6 +599,9 @@ class EROptions(PerGameCommonOptions):
     
     enemy_rando: EnemyRando
     restrictive_bosses: RestrictiveBossPlacement
+    boss_scaling_percent: BossScalingPercent
+    disable_gargoyle_poison_cloud_damage: DisableGargoylePoisonCloudDamage
+    random_enemy_preset: RandomEnemyPresetOption
     material_rando: MaterialRando
     death_link: DeathLink
     
@@ -499,6 +612,12 @@ class EROptions(PerGameCommonOptions):
     blindness_trap_weight: BlindnessTrapWeight
 
     random_start: RandomizeStartingLoadout
+    randomize_starting_keepsakes: RandomizeStartingKeepsakes
+    require_one_handed_starting_weapons: RequireOneHandedStartingWeapons
+    remove_weapon_and_spell_requirements: RemoveWeaponAndSpellRequirements
+    no_equip_load: NoEquipLoadOption
+    reduce_non_somber_upgrade_cost: ReduceNonSomberUpgradeCost
+    snowfast: SnowFast
     auto_equip: AutoEquipOption
     auto_upgrade: AutoUpgradeOption
     
@@ -516,6 +635,10 @@ class EROptions(PerGameCommonOptions):
     useful_at_priority: ERUsefulAtPriority
     flask_at_priority: FlaskUpgradesAtPriority
     scadu_at_priority: ScaduAtPriority
+    talisman_pouches_at_priority: TalismanPouchesAtPriority
+    cracked_tears_at_priority: CrackedTearsAtPriority
+    memory_stones_at_priority: MemoryStonesAtPriority
+    remembrances_at_priority: RemembrancesAtPriority
     exclude_locations: ERExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
@@ -530,17 +653,28 @@ option_groups = [
         RegionSoftLogic,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,
+        GreatRunesRequiredErdtree,
         RoyalAccess,
         StoneswordMasterKey,
     ]),
     OptionGroup("Other Randomizers", [
         EnemyRando,
         RestrictiveBossPlacement,
+        BossScalingPercent,
+        DisableGargoylePoisonCloudDamage,
+        RandomEnemyPresetOption,
         MaterialRando,
     ]),
     OptionGroup("Equipment", [
         RandomizeStartingLoadout,
+        RandomizeStartingKeepsakes,
+        RequireOneHandedStartingWeapons,
+        RemoveWeaponAndSpellRequirements,
+        NoEquipLoadOption,
+        ReduceNonSomberUpgradeCost,
+        SnowFast,
         AutoEquipOption,
+        AutoUpgradeOption,
     ]),
     OptionGroup("Death Link", [
         DeathLink
@@ -591,5 +725,9 @@ option_groups = [
         ERUsefulAtPriority,
         FlaskUpgradesAtPriority,
         ScaduAtPriority,
+        TalismanPouchesAtPriority,
+        CrackedTearsAtPriority,
+        MemoryStonesAtPriority,
+        RemembrancesAtPriority,
     ])
 ]
