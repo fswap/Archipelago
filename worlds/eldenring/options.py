@@ -41,7 +41,7 @@ class WorldLogic(Choice):
     option_region_lock_bosses = 2
     option_open_world = 3
     default = 3
-    visibility = Visibility.none
+    # visibility = Visibility.none
     
 class RegionBossPercent(Range):
     """The % of bosses in a region to unlock the next."""
@@ -231,6 +231,11 @@ class EnemyRando(Toggle):
 class RestrictiveBossPlacement(DefaultOnToggle):
     """Restrict what arena's bosses can be placed into."""
     display_name = "Restrictive Boss Placement"
+    
+class RykardEncounter(DefaultOnToggle):
+    """Give Serpent-Hunter on encounter with Rykard/Serpent in boss arenas.
+    If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent block."""
+    display_name = "Rykard Encounter"
     
 class BossScalingPercent(Range):
     """Scales HP and damage for enemies placed into boss slots.
@@ -599,6 +604,7 @@ class EROptions(PerGameCommonOptions):
     
     enemy_rando: EnemyRando
     restrictive_bosses: RestrictiveBossPlacement
+    rykard_encounter: RykardEncounter
     boss_scaling_percent: BossScalingPercent
     disable_gargoyle_poison_cloud_damage: DisableGargoylePoisonCloudDamage
     random_enemy_preset: RandomEnemyPresetOption
@@ -660,6 +666,7 @@ option_groups = [
     OptionGroup("Other Randomizers", [
         EnemyRando,
         RestrictiveBossPlacement,
+        RykardEncounter,
         BossScalingPercent,
         DisableGargoylePoisonCloudDamage,
         RandomEnemyPresetOption,

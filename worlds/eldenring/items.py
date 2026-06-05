@@ -145,14 +145,14 @@ class ERItemData:
 
     def should_inject(self, options: EROptions) -> bool:
         """Whether this item should be injected given a set of options."""
-        if options.dlc_start.value == 1 and options.enemy_rando and self.name == "Serpent-Hunter": return True
         return self.inject if isinstance(self.inject, bool) else self.inject(self, options)
 
     def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
         if (options.messmer_kindle and self.name == "Messmer's Kindling"
         or options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
-        or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"): return True
+        or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"
+        or options.rykard_encounter and self.name == "Serpent-Hunter"): return True
         return self.skip if isinstance(self.skip, bool) else self.skip(self, options)
 
     def is_important(self, options: EROptions) -> ItemClassification:

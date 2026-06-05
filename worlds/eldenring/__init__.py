@@ -702,6 +702,7 @@ class EldenRing(World):
                     item_table["Smithing-Stone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [1]"],
                     item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
+                if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
             if "DLC" not in self.options.exclude_locations.excluded_groups(): 
                 if self.options.messmer_kindle:
                     all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
@@ -904,9 +905,10 @@ class EldenRing(World):
             if not self.options.enemy_rando: # boss rules
                 self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
-                self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
-                                        lambda state: state.has("Serpent-Hunter", self.player))
-            else:
+                if not self.options.rykard_encounter:
+                    self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
+                                            lambda state: state.has("Serpent-Hunter", self.player))
+            elif not self.options.rykard_encounter:
                 # places blocked by bosses, if rykard or serpent is here the place requires serpent-hunter
                 self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
                 self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop"))
@@ -1043,12 +1045,20 @@ class EldenRing(World):
             # only when normal start
             if self.options.dlc_start == 0:
                 if self.options.dlc_timing == 2:
-                    self._add_entrance_rule("Gravesite Plain",
-                        lambda state: state.has("Rold Medallion", self.player)
-                        and state.has("Haligtree Secret Medallion (Left)", self.player)
-                        and state.has("Haligtree Secret Medallion (Right)", self.player)
-                        and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                    if self.options.great_runes_required_mountain >= 0:
+                        self._add_entrance_rule("Gravesite Plain",
+                            lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
+                            and state.has("Haligtree Secret Medallion (Left)", self.player)
+                            and state.has("Haligtree Secret Medallion (Right)", self.player)
+                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                    else:
+                        self._add_entrance_rule("Gravesite Plain",
+                            lambda state: state.has("Rold Medallion", self.player)
+                            and state.has("Haligtree Secret Medallion (Left)", self.player)
+                            and state.has("Haligtree Secret Medallion (Right)", self.player)
+                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                 else:
                     self._add_entrance_rule("Mohgwyn Palace", # can get to normal way or funny medal
                         lambda state: state.has("Pureblood Knight's Medal", self.player) or self._can_go_to(state, "Consecrated Snowfield"))
@@ -1095,7 +1105,7 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
             
             # rykard
-            if self.options.enemy_rando:
+            if self.options.enemy_rando and not self.options.rykard_encounter:
                 self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop"))
                 self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop"))
                 self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
@@ -1140,7 +1150,7 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Rykard and Serpent Rule
-        if self.options.enemy_rando:
+        if self.options.enemy_rando and not self.options.rykard_encounter:
             self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
@@ -1150,13 +1160,6 @@ class EldenRing(World):
                 self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
                 
         if self.options.important_at_priority_only.value: # wip
-            # for loc in list(self.all_duplicate_locations) + self.all_priority_locations:
-            #     self._add_item_rule(loc,
-            #         lambda item:
-            #             item.classification == ItemClassification.progression
-            #             or item.classification == ItemClassification.progression_skip_balancing
-            #             or (self.options.useful_at_priority and item.classification == ItemClassification.useful)
-            #         )
             for loc in self.multiworld.regions.location_cache[self.player]:
                 if loc not in sorted(self.all_duplicate_locations) + sorted(self.all_priority_locations):
                     self._add_item_rule(loc,
@@ -2784,6 +2787,7 @@ class EldenRing(World):
                 
                 "enemy_rando": self.options.enemy_rando.value,
                 "restrictive_bosses": self.options.restrictive_bosses.value,
+                "rykard_encounter": self.options.rykard_encounter.value,
                 "boss_scaling_percent": self.options.boss_scaling_percent.value,
                 "disable_gargoyle_poison_cloud_damage": self.options.disable_gargoyle_poison_cloud_damage.value,
                 "material_rando": self.options.material_rando.value,
