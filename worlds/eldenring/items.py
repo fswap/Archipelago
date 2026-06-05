@@ -145,6 +145,7 @@ class ERItemData:
 
     def should_inject(self, options: EROptions) -> bool:
         """Whether this item should be injected given a set of options."""
+        if options.dlc_start.value == 1 and options.enemy_rando and self.name == "Serpent-Hunter": return True
         return self.inject if isinstance(self.inject, bool) else self.inject(self, options)
 
     def should_skip(self, options: EROptions) -> bool:

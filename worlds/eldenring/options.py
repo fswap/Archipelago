@@ -124,7 +124,7 @@ class MessmerKindleMax(Range):
     range_end = 20
     default = 10
     
-class DLCMessmerKindle(Toggle):
+class DLCMessmerKindle(Choice):
     """Randomize Messmer's Kindling / Shards.
     
     **DLC Only:** Randomize Kindling to your DLC.

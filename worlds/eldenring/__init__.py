@@ -164,6 +164,9 @@ class EldenRing(World):
         self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         
+        if self.options.important_at_priority_only and len(self.all_priority_locations) == 0: 
+            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but no priority locations. Add groups to priority_location_groups.")
+        
         m_goal_bosses = self._goal_bosses()
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
@@ -544,9 +547,9 @@ class EldenRing(World):
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
                     if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
-                    elif not self.options.important_at_priority_only:
-                        # PRIORITY locations and these options make generator unhappy
-                        new_location.progress_type = LocationProgressType.PRIORITY
+                    # elif not self.options.important_at_priority_only:
+                    #     # PRIORITY locations and these options make generator unhappy
+                    #     new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -578,7 +581,6 @@ class EldenRing(World):
         # Gather all default items on randomized locations
         self.itempool = []
         num_required_extra_items = 0
-        total_important_items: list[ERItemData] = []
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
             if not self._location_status(location.name).is_randomized:
                 raise Exception("ER generation bug: Added an unavailable location.")
@@ -596,12 +598,8 @@ class EldenRing(World):
                     # make base items dlc if in dlc
                     new_item.found_in_dlc = True
                     self.itempool.append(new_item)
-                if (new_item.is_important(self.options) == ItemClassification.progression 
-                    or (self.options.useful_at_priority and new_item.is_important(self.options) == ItemClassification.useful)):
-                    total_important_items.append(new_item)
         
-        total_important_inj, injectables = self._create_injectable_items(num_required_extra_items)
-        total_important_items += total_important_inj
+        injectables = self._create_injectable_items(num_required_extra_items)
         num_required_extra_items -= len(injectables)
         self.itempool.extend(injectables)
         
@@ -737,10 +735,7 @@ class EldenRing(World):
             )
         )
 
-        return [self.create_item(inj) for inj in injectable_mandatory 
-                if inj.is_important(self.options) == ItemClassification.progression 
-                or (self.options.useful_at_priority and inj.is_important(self.options) == ItemClassification.useful)
-                ], [self.create_item(item) for item in inj_items]
+        return [self.create_item(item) for item in inj_items]
 
     def _add_traps(self, total_filler_count: int):
         trap_weights = []
@@ -785,9 +780,9 @@ class EldenRing(World):
                     elif item.data.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
                         self._add_to_inventory(item); break
             
-            if self.options.dlc_scadutree_fragments.value == 1:
+            if self.options.dlc_scadutree_fragments.value == 1 or self.options.dlc_scadutree_fragments.value == 2 and self.multiworld.players == 1:
                 [self._fill_local_item(item, region_order_dlc) for item in self.itempool if item.data.scadu]
-            if self.options.dlc_messmer_kindle.value == 1:
+            if self.options.dlc_messmer_kindle.value == 1 or self.options.dlc_messmer_kindle.value == 2 and self.multiworld.players == 1:
                 [self._fill_local_item(item, region_order_dlc) for item in self.itempool 
                  if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
 
@@ -1163,7 +1158,7 @@ class EldenRing(World):
             #             or (self.options.useful_at_priority and item.classification == ItemClassification.useful)
             #         )
             for loc in self.multiworld.regions.location_cache[self.player]:
-                if loc not in list(self.all_duplicate_locations) + self.all_priority_locations:
+                if loc not in sorted(self.all_duplicate_locations) + sorted(self.all_priority_locations):
                     self._add_item_rule(loc,
                         lambda item:
                             item.classification != ItemClassification.progression

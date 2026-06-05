@@ -654,6 +654,9 @@ class ERLocationData:
         if self.church: names.append("Church")
         if self.cross: names.append("Cross")
         if self.seedtree: names.append("Seedtree")
+        if self.basin: names.append("Basin")
+        if self.fragment: names.append("Fragment")
+        if self.revered: names.append("Revered")
 
         default_item = item_table[cast(str, self.default_item_name)]
         names.append({
@@ -3829,7 +3832,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
     "Shadow Keep":[ # shadowkeep                                          done
         ERLocationData("SK/MGP: Leda's Rune - on Leda's body after invading her alongside Hornsent", "Leda's Rune", key="210000,0:0000400594::", missable=True, exclusive=True),
         ERLocationData("SK/MGP: Ash of War: Swift Slash - on Leda's body after invading her alongside Hornsent", "Ash of War: Swift Slash", key="210000,0:0000400594::", missable=True, exclusive=True),
-        ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, shadowkeep_boss=True),
         ERLocationData("SK/SKMG: Scadutree Fragment x2 - boss drop", "Scadutree Fragment x2", key="210000,0:0000510440::", boss=True, enemyfragment=True, shadowkeep_boss=True),
         ERLocationData("SK/MGP: \"Domain of Dragons\" Painting - painting to SE, to right at top of stairs, down ladder, under waterfall", "\"Domain of Dragons\" Painting", key="210000,0:0000580120::", painting=True),
         ERLocationData("SK/MGP: Festive Grease - to NW after first stairs", "Festive Grease", key="210000,0:0021007000::"),
@@ -5903,6 +5905,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/ARR: Verdigris Discus - NE side of imbued sword key area by altar", "Verdigris Discus", key="614647,0:2046477720::", talisman=True, nocrawl=True),
     ],
     "Scadu Altus":[ # scadualtus                                          done
+        ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, shadowkeep_boss=True),
+        
         ERLocationData("SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her", "Lacerating Crossed-Tree", key="120500,0:0000400590::", missable=True, exclusive=True),
         ERLocationData("SA/HC: Retaliatory Crossed-Tree - given by Leda after invading Ansbach alongside her", "Retaliatory Crossed-Tree", key="120500,0:0000400592::", missable=True, exclusive=True),
         ERLocationData("SA/(CC): Prayer Room Key - invader drop", "Prayer Room Key", key="200000,0:0000400696::", missable=True),
@@ -6332,6 +6336,9 @@ location_name_groups: Dict[str, Set[str]] = {
     "Church": set(),
     "Cross": set(),
     "Seedtree": set(),
+    "Basin": set(),
+    "Fragment": set(),
+    "Revered": set(),
     
     "Goods": set(),
     "Weapons": set(),
