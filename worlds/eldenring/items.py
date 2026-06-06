@@ -2926,8 +2926,6 @@ _dlc_items = [
     ERItemData("Recluses' Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Abyssal Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Ancient Ruins Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Enir Ilim Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    
         
     # copy of normal kindle, idk in game id
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),

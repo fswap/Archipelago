@@ -459,11 +459,11 @@ class ExcludeLocalItemOnly(OptionList):
 class ERPriorityLocationGroups(PriorityLocations):
     """Prevent these location types from having an unimportant items.
     
-    - *Remembrance*: Base Remembrance bosses.
-    - *DLC Remembrance*: DLC Remembrance bosses.
-    - *Boss Reward*: Base bosses.
+    - *Achievement Boss*: Base game Achievement bosses.
+    - *DLC Remembrance Boss*: DLC Remembrance bosses.
+    - *Boss Reward*: Base game bosses.
     - *DLC Boss Reward*: DLC bosses.
-    - *Overworld Boss*: Base Overworld bosses.
+    - *Overworld Boss*: Base game Overworld bosses.
     - *DLC Overworld Boss*: DLC Overworld bosses.
     - *Seedtree*: Golden Seed trees.
     - *Basin*: Basins that contain tears.
@@ -478,7 +478,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
     valid_keys = ["remembrance", "seedtree", "basin", "church", "map", "key items",
         "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
-        "remembrance", "dlc remembrance", "boss reward", "dlc boss reward"]
+        "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
     valid_keys_casefold = True
     
 class ERImportantAtPriorityOnly(Toggle):

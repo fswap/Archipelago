@@ -3,7 +3,7 @@ fs = require('fs');
 var output = ''
 var shoplots = {} // [name: lot]
 
-fs.readFile('./shoplots.txt', 'utf8', function (e, data) {
+fs.readFile('./targets.txt', 'utf8', function (e, data) {
     split = data.split("\n")
     split.forEach(line => {
         if(line.startsWith("\"")){
@@ -20,7 +20,7 @@ fs.readFile('./shoplots.txt', 'utf8', function (e, data) {
 
 fs.readFile('./location table.txt', 'utf8', function (e, data) {
 
-    split = data.split(/\r?\n/); 
+    split = data.split("\n"); 
     split.forEach(line => {
         if(line.includes("ERLocationData") && !line.includes("targets=")){
             included = false

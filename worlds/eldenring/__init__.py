@@ -1224,7 +1224,7 @@ class EldenRing(World):
                 self._add_entrance_rule("Fog Rift Fort", lambda state: state.has("Ensis Lock", self.player) and state.has("Scadu Altus Lock", self.player))
                 self._add_entrance_rule("Ellac River", "Ellac Lock")
                 self._add_entrance_rule("Cerulean Coast", "Cerulean Lock")
-                self._add_entrance_rule("Stone Coffin Fissure", "Stone Coffin Lock")
+                self._add_entrance_rule("Stone Coffin Fissure", lambda state: state.has("Stone Coffin Lock", self.player) and self._can_go_to(state, "Scadu Altus"))
                 self._add_entrance_rule("Jagged Peak Foot", "Jagged Peak Lock")
                 self._add_entrance_rule("Charo's Hidden Grave", "Charo's Lock")
                 self._add_entrance_rule("Scadu Altus", "Scadu Altus Lock")
@@ -1234,7 +1234,6 @@ class EldenRing(World):
                 self._add_entrance_rule("Recluses' River", "Recluses' Lock")
                 self._add_entrance_rule("Abyssal Woods", "Abyssal Lock")
                 self._add_entrance_rule("Ancient Ruins of Rauh", "Ancient Ruins Lock")
-                self._add_entrance_rule("Enir Ilim", "Enir Ilim Lock")
         
         if self.options.world_logic != "region_lock" and False: # redo whole thing to use bosses.py
             "todo"
