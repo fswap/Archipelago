@@ -2252,14 +2252,13 @@ _vanilla_items = [
     ERItemData("Stormveil Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Liurnia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("South West Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("South East Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("North Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    # ERItemData("South West Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Siofra & Ainsel Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Deeproot & Ainsel Main Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     # ERItemData("Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True), # dectus
     
     ERItemData("Caelid Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Redmane Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     ERItemData("Mt. Gelmir Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Volcano Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),

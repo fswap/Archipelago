@@ -55,10 +55,7 @@ class RegionBossType(Toggle):
     display_name = "Region Boss Type"
     
 class RegionSoftLogic(DefaultOnToggle):
-    """Region Soft Logic
-    
-    You might get early caelid access but you won't be expected to go there early.
-    """
+    """You will always get Altus access before needing to go to Caelid."""
     display_name = "Region Soft Logic"
 
 class GreatRunesRequiredLeyndell(Range):
@@ -475,8 +472,8 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Remembrance", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
-    valid_keys = ["remembrance", "seedtree", "basin", "church", "map", "key items",
+    default = ["Achievement Boss", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
+    valid_keys = [ "seedtree", "basin", "church", "map", "key items",
         "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
         "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
     valid_keys_casefold = True

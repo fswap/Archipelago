@@ -15,9 +15,6 @@ for excluded and priority location
 
 merge client stuff
 
-todo options
-RegionKeyLocalCount
-
 https://github.com/FantaTanked/EldenRingArchipelago/blob/main/worlds/eldenring/__init__.py     modified apworld
 https://github.com/FantaTanked/from-software-archipelago-clients                               client
 
