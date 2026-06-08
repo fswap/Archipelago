@@ -1362,7 +1362,7 @@ class EldenRing(World):
                 
                 self._add_entrance_rule("Ainsel River Main", "Deeproot & Ainsel Main Lock")
                 self._add_entrance_rule("Deeproot Depths", "Deeproot & Ainsel Main Lock")
-                self._add_entrance_rule("Lake of Rot", "Deeproot & Ainsel Main Lock")
+                # self._add_entrance_rule("Lake of Rot", "Deeproot & Ainsel Main Lock")
                 
                 self._add_entrance_rule("Caelid", "Caelid Lock")
                 self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
@@ -3132,11 +3132,13 @@ class EldenRing(World):
         # A map from Archipelago's location IDs to the keys the static randomizer uses to identify
         # locations.
         location_ids_to_keys: Dict[int, str] = {}
+        location_ids_to_targets: Dict[int, Tuple] = {}
         for location in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
             # Skip events and only look at this world's locations
             if (location.address is not None and location.item.code is not None
                     and location.data.key):
                 location_ids_to_keys[location.address] = location.data.key
+                location_ids_to_targets[location.address] = location.data.targets
         
         priority_marker_flags = self._get_priority_marker_flags(location_ids_to_keys)
 
@@ -3230,6 +3232,7 @@ class EldenRing(World):
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,
+            "locationIdsToTargets ": location_ids_to_targets,
             "priorityMarkerFlags": priority_marker_flags,
             "priorityMarkerRequirements": self._get_priority_marker_requirements(priority_marker_flags),
         }
