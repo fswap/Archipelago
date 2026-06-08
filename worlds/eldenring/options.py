@@ -482,7 +482,7 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     Generator likes to fail if there is to little priority locations, add more if it fails."""
     display_name = "Important at Priority Only"
-    visibility = Visibility.none # likes to fill error depending on how many priority locations there are
+    # visibility = Visibility.none # likes to fill error depending on how many priority locations there are
     
 class ERUsefulAtPriority(Toggle):
     """Should useful items be included in Priority locations.

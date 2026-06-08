@@ -3265,7 +3265,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CL/MEW: Flame-Shrouding Cracked Tear - boss drop", "Flame-Shrouding Cracked Tear", key="604740,0:0000065280::", altboss=True, nocrawl=True, overworldboss=True, caelid_boss=True, targets=('lot:30411')),
         ERLocationData("CL/MEW: Cracked Pot - N of NEW on root", "Cracked Pot", key="604740,0:0000066190::", targets=('lot:1047400010')),
         ERLocationData("CL/CR: Whirl, O Flame! - scarab to NW", "Whirl, O Flame!", key="604740,0:0000540400::", scarab=True, targets=('lot:40400')),
-        ERLocationData("CL/(FR): Golden Rune [5] - in NE ruin", "Golden Rune [5]", "Golden Rune [5]", key="604740,0:1047407000::", targets=('lot:1047400000')),
+        ERLocationData("CL/(FR): Golden Rune [5] - in NE ruin", "Golden Rune [5]", key="604740,0:1047407000::", targets=('lot:1047400000')),
         ERLocationData("CL/(FR): Smithing Stone [4] - middle of ruins", "Smithing Stone [4]", key="604740,0:1047407020::", targets=('lot:1047400020')),
         ERLocationData("CL/MEW: Somber Smithing Stone [4] - E of MEW, chair way NW of CR grace", "Somber Smithing Stone [4]", key="604740,0:1047407030::", targets=('lot:1047400030')),
         ERLocationData("CL/CR: Explosive Bolt x6 - in camp to N", "Explosive Bolt x6", key="604740,0:1047407040::", targets=('lot:1047400040')),

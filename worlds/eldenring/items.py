@@ -163,7 +163,8 @@ class ERItemData:
         
         if options.enable_dlc:
             if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
-            if self.name == "Pureblood Knight's Medal" and options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1):
+            if self.name == "Pureblood Knight's Medal" and (options.world_logic in (0,2) 
+                    or options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1)):
                 return ItemClassification.progression
         
         if options.important_at_priority_only:
@@ -1453,7 +1454,7 @@ _vanilla_items = [
 
     ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
     ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, boss_tools=True,classification=ItemClassification.useful),
-    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS), # is modified in init
+    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS), # is modified in is_important
 
     ERItemData("Prattling Pate \"Hello\"", 2200, ERItemCategory.GOODS, skip=True),
     ERItemData("Prattling Pate \"Thank you\"", 2201, ERItemCategory.GOODS, skip=True),

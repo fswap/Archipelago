@@ -279,6 +279,7 @@ class EldenRing(World):
         self.marker_entrance_requirements: Dict[str, ERReq] = {}
         self.location_rule_requirements: Dict[str, ERReq] = {}
         self.region_marker_requirement_cache: Dict[str, ERReq] = {}
+        self.ignored_marker_entrance_rules: Set[str] = set()
         self.explicit_indirect_conditions = False
 
     def generate_early(self) -> None:
@@ -675,9 +676,7 @@ class EldenRing(World):
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
                     if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
-                    # elif not self.options.important_at_priority_only:
-                    #     # PRIORITY locations and these options make generator unhappy
-                    #     new_location.progress_type = LocationProgressType.PRIORITY
+                    if self.options.important_at_priority_only: new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -731,12 +730,13 @@ class EldenRing(World):
         num_required_extra_items -= len(injectables)
         self.itempool.extend(injectables)
         
+        self._fill_local_items()
+        
         if self.options.important_at_priority_only.value:
             self._create_dupe_locations()
             num_required_extra_items += len(self.all_duplicate_locations)
         
         trap_pool = self._add_traps(num_required_extra_items)
-        self._fill_local_items()
         self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(
             (len(self.multiworld.get_unfilled_locations(self.player)) + len(self.all_duplicate_locations)) - len(self.itempool + trap_pool)))
         
@@ -745,22 +745,32 @@ class EldenRing(World):
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations locations."""
         important_items = []
-        for item in self.itempool: 
-            if (item.is_important(self.options) == ItemClassification.progression 
+        for item in self.itempool:
+            if (item.is_important(self.options) == ItemClassification.progression or item.is_important(self.options) == ItemClassification.progression_deprioritized
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
         
-        mult = 1.5 # this helps gen fail less
-        loc_needed = max((len(important_items)*mult) - len(self.all_priority_locations), 0)
+        dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc]
+        base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc]
+        early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44] # lim, storm, weep, liurnia, raya
+        
+        loc_needed = max((len([i for i in important_items if not i.data.is_dlc])) - len(base_priority), 0)
+        dlc_loc_needed = max((len([i for i in important_items if i.data.is_dlc])) - len(dlc_priority), 0)
+        
+        if not len(dlc_priority) and dlc_loc_needed: 
+            raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
             
         # if len(self.all_priority_locations) < int(len(important_items/8) and self.options.important_at_priority_only:
         #     raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(important_items)/8)}")
-        if loc_needed > 0 and self.options.important_at_priority_only: # do we need to dupe
+        if (loc_needed > 0 or dlc_loc_needed > 0) and self.options.important_at_priority_only: # do we need to dupe
 
             times_duped = {}
             new_code = len(location_dictionary)
-            while loc_needed > 0: # how many dupes
-                location = self.multiworld.random.choice(sorted(self.all_priority_locations)) # pick random location
+            while loc_needed > 0 and dlc_loc_needed > 0: # how many dupes
+                if loc_needed:
+                    location = self.multiworld.random.choice(sorted(base_priority + early_base * 2)) # higher chance of early game priority locations
+                elif dlc_loc_needed:
+                    location = self.multiworld.random.choice(sorted(dlc_priority))
                 
                 found = False
                 for region in self.multiworld.get_regions(self.player):
@@ -777,13 +787,14 @@ class EldenRing(World):
                                     ap_code = 7000000 + new_code),
                                 parent = region,
                             )
-                            # dupe_location.progress_type = LocationProgressType.PRIORITY
+                            dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
                             self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
                             self.dupe_location_tables[region.name].append(dupe_location.data)
                             self.all_duplicate_locations.add(dupe_location.data.name)
                             found = True
-                            loc_needed -= 1
+                            if not location_dictionary[location].dlc: loc_needed -= 1
+                            else: dlc_loc_needed -= 1
                             break
                     if found: break
                     
@@ -791,6 +802,8 @@ class EldenRing(World):
                 location: 7000000 + len(location_dictionary) + num
                 for num, location in enumerate(self.all_duplicate_locations, start=1)
             })
+            
+            self.all_priority_locations += self.all_duplicate_locations
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -937,7 +950,7 @@ class EldenRing(World):
             location for location in (
                 self.multiworld.get_location(location.name, self.player)
                 for region in regions
-                for location in (location_tables[region] + self.dupe_location_tables[region] if region in self.dupe_location_tables else location_tables[region])
+                for location in (location_tables[region]) #+ self.dupe_location_tables[region] if region in self.dupe_location_tables else location_tables[region])
                 if self._location_status(location) == _LocationStatus.RANDOMIZED_UNMISSABLE
                 and not location.conditional
                 and (not additional_condition or additional_condition(location))
@@ -946,12 +959,12 @@ class EldenRing(World):
             # until after `set_rules()` runs.
             if not location.item and location.name not in self.all_excluded_locations
             and location.item_rule(item)
-            if not self.options.important_at_priority_only # all ignored if option off
-            or (item.is_important(self.options) != ItemClassification.progression and item.is_important(self.options) != ItemClassification.useful) # bypass if not important 
-            or (item.is_important(self.options) == ItemClassification.progression or item.is_important(self.options) == ItemClassification.useful) # important
-            and (location.name in self.all_priority_locations # location is priority
-            or location.name in dupe_location.data.name[dupe_location.data.name.find(":")+2:] for dupe_location in self.all_duplicate_locations) # location is duped priority
-            and self.options.important_at_priority_only # option is on
+            # if not self.options.important_at_priority_only # all ignored if option off
+            # or (item.is_important(self.options) != ItemClassification.progression and item.is_important(self.options) != ItemClassification.useful) # bypass if not important 
+            # or (item.is_important(self.options) == ItemClassification.progression or item.is_important(self.options) == ItemClassification.useful) # important
+            # and (location.name in self.all_priority_locations # location is priority
+            # or location.name in dupe_location.data.name[dupe_location.data.name.find(":")+2:] for dupe_location in self.all_duplicate_locations) # location is duped priority
+            # and self.options.important_at_priority_only # option is on
         ]
 
         if not candidate_locations:
@@ -968,6 +981,8 @@ class EldenRing(World):
 
         location = self.random.choice(candidate_locations)
         location.place_locked_item(item)
+        if location.data.name in self.all_priority_locations:
+            self.all_priority_locations.remove(location.data.name)
 
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
@@ -1024,13 +1039,12 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
-            if self.options.soft_logic:
-                self._add_entrance_rule("Caelid", 
-                    lambda state: self._can_go_to(state, "Altus Plateau")
-                    ,marker_requirement=ERReq.all())
-                self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-            
             if self.options.world_logic not in ("region_lock", "region_lock_bosses"):
+                if self.options.soft_logic:
+                    self._add_entrance_rule("Caelid", 
+                        lambda state: self._can_go_to(state, "Altus Plateau")
+                        ,marker_requirement=ERReq.all())
+                    self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
                 self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau")
                                         ,marker_requirement=ERReq.all())
                 self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau")
@@ -1201,7 +1215,7 @@ class EldenRing(World):
                     marker_requirement=ERReq.any(ERReq.item("Pureblood Knight's Medal"),
                     self._region_marker_requirement("Consecrated Snowfield")))
                 
-            if self.options.dlc_start == 0:
+            if self.options.dlc_start == 0 and self.options.enable_dlc:
                 if self.options.dlc_timing == 2:
                     if self.options.great_runes_required_mountain >= 0:
                         self._add_entrance_rule("Gravesite Plain",
@@ -1331,15 +1345,15 @@ class EldenRing(World):
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
                 self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
                 
-        if self.options.important_at_priority_only.value: # wip
-            for loc in self.multiworld.regions.location_cache[self.player]:
-                if loc not in sorted(self.all_duplicate_locations) + sorted(self.all_priority_locations):
-                    self._add_item_rule(loc,
-                        lambda item:
-                            item.classification != ItemClassification.progression
-                            and item.classification != ItemClassification.progression_skip_balancing
-                            and (not self.options.useful_at_priority or item.classification != ItemClassification.useful)
-                        )
+        # if self.options.important_at_priority_only.value: # wip
+        #     for loc in self.multiworld.regions.location_cache[self.player]:
+        #         if loc not in sorted(self.all_priority_locations):
+        #             self._add_item_rule(loc,
+        #                 lambda item:
+        #                     item.classification != ItemClassification.progression
+        #                     and item.classification != ItemClassification.progression_skip_balancing
+        #                     and (not self.options.useful_at_priority or item.classification != ItemClassification.useful)
+        #                 )
              
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
@@ -3104,6 +3118,25 @@ class EldenRing(World):
     def _get_our_locations(self) -> List[ERLocation]:
         return cast(List[ERLocation], self.multiworld.get_locations(self.player))
     
+    @staticmethod
+    def _er_item_full_id(item: ERItemData) -> int:
+        if item.er_code is None:
+            raise ValueError(f"Cannot encode item without ER code: {item.name}")
+
+        match item.category:
+            case ERItemCategory.GOODS:
+                return 0x40000000 + item.er_code
+            case ERItemCategory.WEAPON:
+                return item.er_code
+            case ERItemCategory.ARMOR:
+                return 0x10000000 + item.er_code
+            case ERItemCategory.ACCESSORY:
+                return 0x20000000 + item.er_code
+            case ERItemCategory.ASHOFWAR:
+                return 0x80000000 + item.er_code
+            case _:
+                raise ValueError(f"Unsupported ER item category for {item.name}: {item.category}")
+    
     def fill_slot_data(self) -> Dict[str, object]:
         slot_data: Dict[str, object] = {}
         # Once all clients support overlapping item IDs, adjust the ER AP item IDs to encode the
@@ -3126,19 +3159,22 @@ class EldenRing(World):
         item_counts: Dict[str, int] = {}
         for item in items_by_name.values():
             if item.ap_code is None: continue
-            if item.er_code: ap_ids_to_er_ids[str(item.ap_code)] = item.er_code
+            if item.er_code is not None: ap_ids_to_er_ids[str(item.ap_code)] = self._er_item_full_id(item)
             if item.count != 1: item_counts[str(item.ap_code)] = item.count
 
         # A map from Archipelago's location IDs to the keys the static randomizer uses to identify
         # locations.
         location_ids_to_keys: Dict[int, str] = {}
-        location_ids_to_targets: Dict[int, Tuple] = {}
+        location_ids_to_targets: Dict[int, list[str]] = {}
         for location in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
             # Skip events and only look at this world's locations
             if (location.address is not None and location.item.code is not None
                     and location.data.key):
                 location_ids_to_keys[location.address] = location.data.key
-                location_ids_to_targets[location.address] = location.data.targets
+                if location.data.targets:
+                    if isinstance(location.data.targets, str):
+                        location.data.targets = [location.data.targets]
+                    location_ids_to_targets[location.address] = list(location.data.targets)
         
         priority_marker_flags = self._get_priority_marker_flags(location_ids_to_keys)
 
@@ -3235,6 +3271,7 @@ class EldenRing(World):
             "locationIdsToTargets ": location_ids_to_targets,
             "priorityMarkerFlags": priority_marker_flags,
             "priorityMarkerRequirements": self._get_priority_marker_requirements(priority_marker_flags),
+            "versions": ">=0.8.3 <0.9.0",
         }
 
         return slot_data
