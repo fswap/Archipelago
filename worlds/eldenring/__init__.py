@@ -738,12 +738,12 @@ class EldenRing(World):
         
         trap_pool = self._add_traps(num_required_extra_items)
         self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(
-            (len(self.multiworld.get_unfilled_locations(self.player)) + len(self.all_duplicate_locations)) - len(self.itempool + trap_pool)))
+            (len(self.multiworld.get_unfilled_locations(self.player))) - len(self.itempool + trap_pool)))
         
         self.multiworld.itempool += self.itempool + trap_pool
         
     def _create_dupe_locations(self) -> None:
-        """Create duplicate locations locations."""
+        """Create duplicate locations."""
         important_items = []
         for item in self.itempool:
             if (item.is_important(self.options) == ItemClassification.progression or item.is_important(self.options) == ItemClassification.progression_deprioritized
@@ -755,55 +755,51 @@ class EldenRing(World):
         early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44] # lim, storm, weep, liurnia, raya
         
         loc_needed = max((len([i for i in important_items if not i.data.is_dlc])) - len(base_priority), 0)
-        dlc_loc_needed = max((len([i for i in important_items if i.data.is_dlc])) - len(dlc_priority), 0)
+        dlc_loc_needed = max((len([i for i in important_items if i.data.is_dlc and self.base_enabled or not self.base_enabled])) - len(dlc_priority), 0)
         
-        if not len(dlc_priority) and dlc_loc_needed: 
+        if not dlc_priority and dlc_loc_needed: 
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
-            
-        # if len(self.all_priority_locations) < int(len(important_items/8) and self.options.important_at_priority_only:
-        #     raise OptionError(f"There are to little priority locations {len(self.all_priority_locations)}. You need more then {int(len(important_items)/8)}")
-        if (loc_needed > 0 or dlc_loc_needed > 0) and self.options.important_at_priority_only: # do we need to dupe
 
-            times_duped = {}
-            new_code = len(location_dictionary)
-            while loc_needed > 0 and dlc_loc_needed > 0: # how many dupes
-                if loc_needed:
-                    location = self.multiworld.random.choice(sorted(base_priority + early_base * 2)) # higher chance of early game priority locations
-                elif dlc_loc_needed:
-                    location = self.multiworld.random.choice(sorted(dlc_priority))
-                
-                found = False
-                for region in self.multiworld.get_regions(self.player):
-                    for loc in region.locations:
-                        if location == loc.name:
-                            if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
-                            else: times_duped[location] = 1 # add to dict
-                            new_code += 1
-                            dupe_location = ERLocation( # replace works, yippee
-                                self.player,
-                                replace(location_dictionary[location], 
-                                    name=f"Dupe {times_duped[location]}: {location}", 
-                                    default_item_name = "Dummy item",
-                                    ap_code = 7000000 + new_code),
-                                parent = region,
-                            )
-                            dupe_location.progress_type = LocationProgressType.PRIORITY
-                            region.locations.append(dupe_location)
-                            self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
-                            self.dupe_location_tables[region.name].append(dupe_location.data)
-                            self.all_duplicate_locations.add(dupe_location.data.name)
-                            found = True
-                            if not location_dictionary[location].dlc: loc_needed -= 1
-                            else: dlc_loc_needed -= 1
-                            break
-                    if found: break
-                    
-            self.location_name_to_id.update({ # add new locations
-                location: 7000000 + len(location_dictionary) + num
-                for num, location in enumerate(self.all_duplicate_locations, start=1)
-            })
+        times_duped = {}
+        new_code = len(location_dictionary)
+        while loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
+            if loc_needed:
+                location = self.multiworld.random.choice(sorted(base_priority + early_base * 1)) # higher chance of early game priority locations
+            elif dlc_loc_needed:
+                location = self.multiworld.random.choice(sorted(dlc_priority))
             
-            self.all_priority_locations += self.all_duplicate_locations
+            found = False
+            for region in self.multiworld.get_regions(self.player):
+                for loc in region.locations:
+                    if location == loc.name:
+                        if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
+                        else: times_duped[location] = 1 # add to dict
+                        new_code += 1
+                        dupe_location = ERLocation( # replace works, yippee
+                            self.player,
+                            replace(location_dictionary[location], 
+                                name=f"Dupe {times_duped[location]}: {location}", 
+                                default_item_name = "Dummy item",
+                                ap_code = 7000000 + new_code),
+                            parent = region,
+                        )
+                        dupe_location.progress_type = LocationProgressType.PRIORITY
+                        region.locations.append(dupe_location)
+                        self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
+                        self.dupe_location_tables[region.name].append(dupe_location.data)
+                        self.all_duplicate_locations.add(dupe_location.data.name)
+                        found = True
+                        if not location_dictionary[location].dlc: loc_needed -= 1
+                        else: dlc_loc_needed -= 1
+                        break
+                if found: break
+                
+        self.location_name_to_id.update({ # add new locations
+            location: 7000000 + len(location_dictionary) + num
+            for num, location in enumerate(self.all_duplicate_locations, start=1)
+        })
+        
+        self.all_priority_locations += self.all_duplicate_locations
 
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -1268,7 +1264,7 @@ class EldenRing(World):
                                 if self.options.dlc_scadutree_fragments.value:
                                     self._add_item_rule(location.name,
                                         lambda item: (item.player != self.player)
-                                            or (item.data.name != "Scadutree Fragment" and item.data.name != "Scadutree Fragment x2")
+                                            or (item.data.base_name != "Scadutree Fragment")
                                         )
                                 if self.options.dlc_messmer_kindle.value:
                                     self._add_item_rule(location.name,

@@ -588,6 +588,7 @@ class ERLocationData:
 
     def should_omit(self, options: EROptions) -> bool:
         """Whether this location should be omitted given a set of options."""
+        if self.dlc and not options.enable_dlc.value: return True
         if (self.omit if isinstance(self.omit, bool) else self.omit(self, options)): return True
         
         return (
