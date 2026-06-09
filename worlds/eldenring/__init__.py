@@ -764,9 +764,9 @@ class EldenRing(World):
         new_code = len(location_dictionary)
         while loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
             if loc_needed:
-                location = self.multiworld.random.choice(sorted(base_priority + early_base * 1)) # higher chance of early game priority locations
+                location = self.random.choice(sorted(base_priority + early_base * 1)) # higher chance of early game priority locations
             elif dlc_loc_needed:
-                location = self.multiworld.random.choice(sorted(dlc_priority))
+                location = self.random.choice(sorted(dlc_priority))
             
             found = False
             for region in self.multiworld.get_regions(self.player):
