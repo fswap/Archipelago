@@ -613,7 +613,7 @@ class EldenRing(World):
             create_connection("Gravesite Plain", "Fog Rift Catacombs")
             create_connection("Gravesite Plain", "Ruined Forge Lava Intake")
             create_connection("Gravesite Plain", "Castle Ensis")
-            create_connection("Castle Ensis", "Scadu Altus")
+            create_connection("Gravesite Plain", "Scadu Altus")
             create_connection("Scadu Altus", "Fog Rift Fort")
             create_connection("Scadu Altus", "Bonny Gaol")
             create_connection("Scadu Altus", "Ruined Forge of Starfall Past")
@@ -795,8 +795,8 @@ class EldenRing(World):
                 if found: break
                 
         self.location_name_to_id.update({ # add new locations
-            location: 7000000 + len(location_dictionary) + num
-            for num, location in enumerate(self.all_duplicate_locations, start=1)
+            location: self.dupe_location_dictionary[location].ap_code
+            for location in self.all_duplicate_locations
         })
         
         self.all_priority_locations += self.all_duplicate_locations
@@ -1294,6 +1294,7 @@ class EldenRing(World):
             else:
                 self._add_entrance_rule("Enir Ilim", "Messmer's Kindling")
             
+            self.multiworld.register_indirect_condition(self.get_region("Castle Ensis"), self.get_entrance("Go To Scadu Altus"))
             self.multiworld.register_indirect_condition(self.get_region("Ancient Ruins of Rauh"), self.get_entrance("Go To Rauh Ruins Limited"))
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
             
