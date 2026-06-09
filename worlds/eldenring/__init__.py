@@ -894,15 +894,31 @@ class EldenRing(World):
         """Removes certain items from the item pool and manually places them in the local world.
 
         We can't do this in pre_fill because the itempool may not be modified after create_items.
-        """
+        """ # fill local before adding to inventory
         if self.base_enabled:
             if self.options.crafting_kit_option.value == 1:
-                self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"]) 
+                self._fill_local_item("Crafting Kit", region_order, lambda location: location.region_value <= 44) 
         else:
             if self.options.crafting_kit_option.value == 1:
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
 
-        if self.options.enable_dlc: # dlc starting items
+
+        if self.options.enable_dlc:
+            if self.options.dlc_scadutree_fragments.value == 1 or self.options.dlc_scadutree_fragments.value == 2 and self.multiworld.players == 1:
+                [self._fill_local_item(item, region_order_dlc) for item in self.itempool if item.data.scadu]
+            if self.options.dlc_messmer_kindle.value == 1 or self.options.dlc_messmer_kindle.value == 2 and self.multiworld.players == 1:
+                [self._fill_local_item(item, region_order_dlc) for item in self.itempool 
+                 if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
+            if self.options.dlc_start != 0:
+                [self._add_to_inventory(self.create_item(item)) for item in (
+                    "Flask of Wondrous Physick",
+                    "Spectral Steed Whistle",
+                    "Spirit Calling Bell",
+                    "Whetstone Knife",
+                    "Lantern",
+                )]
+
+        if not self.base_enabled: # dlc starting items
             for item in self.itempool:
                 for val in self.options.dlc_starting_items.value:
                     if item.data.name == "Sacred Tear" and "sacred tears" == val.lower(): 
@@ -917,12 +933,6 @@ class EldenRing(World):
                         self._add_to_inventory(item); break
                     elif item.data.upgrade_bell_bearing and "upgrade bell bearings" == val.lower(): 
                         self._add_to_inventory(item); break
-            
-            if self.options.dlc_scadutree_fragments.value == 1 or self.options.dlc_scadutree_fragments.value == 2 and self.multiworld.players == 1:
-                [self._fill_local_item(item, region_order_dlc) for item in self.itempool if item.data.scadu]
-            if self.options.dlc_messmer_kindle.value == 1 or self.options.dlc_messmer_kindle.value == 2 and self.multiworld.players == 1:
-                [self._fill_local_item(item, region_order_dlc) for item in self.itempool 
-                 if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
 
         if self.options.map_option == 1:
             [self._add_to_inventory(item) for item in self.itempool if item.data.map]
@@ -983,7 +993,8 @@ class EldenRing(World):
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
         self.all_starting_items.append(item)
-        self.itempool.remove(item)
+        if item in self.itempool:
+            self.itempool.remove(item)
         # idk how its being handled so everything added to starting inventory will be called here
         self.multiworld.push_precollected(item)
 
@@ -1340,17 +1351,7 @@ class EldenRing(World):
         if len(self.all_duplicate_locations) > 0:
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
                 self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
-                
-        # if self.options.important_at_priority_only.value: # wip
-        #     for loc in self.multiworld.regions.location_cache[self.player]:
-        #         if loc not in sorted(self.all_priority_locations):
-        #             self._add_item_rule(loc,
-        #                 lambda item:
-        #                     item.classification != ItemClassification.progression
-        #                     and item.classification != ItemClassification.progression_skip_balancing
-        #                     and (not self.options.useful_at_priority or item.classification != ItemClassification.useful)
-        #                 )
-             
+            
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     

@@ -1364,7 +1364,7 @@ _vanilla_items = [
     ERItemData("Festering Bloody Finger x8", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=8, base_name="Festering Bloody Finger"),
     ERItemData("Festering Bloody Finger x10", 111, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=10, base_name="Festering Bloody Finger"),
     ERItemData("Recusant Finger", 112, ERItemCategory.GOODS, skip=True),
-    #ERItemData("Spectral Steed Whistle", 130, ERItemCategory.GOODS),
+    ERItemData("Spectral Steed Whistle", 130, ERItemCategory.GOODS),
     *ERItemData("Furlcalling Finger Remedy", 150, ERItemCategory.GOODS, skip=True).counts([2, 3, 4, 5]),
     *ERItemData("Rune Arc", 190, ERItemCategory.GOODS, filler=True).counts([3, 5]),
     #ERItemData("Godrick's Great Rune (Restored)", 191, ERItemCategory.GOODS),
