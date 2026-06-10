@@ -164,6 +164,11 @@ class DLCAbyssalTorrent(Toggle):
     """Prevent Torrent from getting frightened."""
     display_name = "DLC Abyssal Torrent"
     
+class DLCSpiritspringStones(Toggle):
+    """Randomize the Spiritsping Stones.""" 
+    display_name = "Randomize Spiritsping Stones"
+    visibility = Visibility.none   
+
 # randomizing spiritspring seals would mean making a location for the seals
     
 # MARK: DLC Start
@@ -598,6 +603,7 @@ class EROptions(PerGameCommonOptions):
     dlc_timing: DLCTimingOption
     dlc_max_level_weapons: DLCMaxLevelWeapons
     dlc_abyssal_torrent: DLCAbyssalTorrent
+    spiritspring_stones: DLCSpiritspringStones
     
     enemy_rando: EnemyRando
     restrictive_bosses: RestrictiveBossPlacement
@@ -693,6 +699,7 @@ option_groups = [
         DLCTimingOption,
         DLCMaxLevelWeapons,
         DLCAbyssalTorrent,
+        DLCSpiritspringStones,
     ]),
     OptionGroup("DLC Start", [
         DLCStart,
