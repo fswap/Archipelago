@@ -117,6 +117,7 @@ coverage.xml
 cover/
 fuzz.py
 fuzz_output
+fuzz.yaml
 
 
 # Flask stuff:

@@ -1351,7 +1351,8 @@ class EldenRing(World):
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
-                self._add_location_rule(dupe_location, lambda state: self._can_get(state, dupe_location[dupe_location.find(":")+2:]))
+                og_location = dupe_location[dupe_location.find(":")+2:]
+                self._add_location_rule(dupe_location, lambda state, og_location=og_location: self._can_get(state, og_location))
             
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
