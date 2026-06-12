@@ -1044,8 +1044,8 @@ class DarkSouls3World(World):
             # quest is done
             "AL: Yorshka's Chime - kill Yorshka",
         ], lambda state: (
-            self._can_get(state, "US: Soul of the Rotted Greatwood")
-            and state.has("Dreamchaser's Ashes", self.player)
+            self._can_get(state, "FS: Budding Green Blossom - shop after killing Creighton and AL boss")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         ## Cornyx
