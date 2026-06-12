@@ -269,7 +269,7 @@ class DarkSouls3World(World):
             )
             create_connection("Dreg Heap", "Ringed City")
 
-            if self.options.goal != {"Kiln of the First Flame Boss"}:
+            if {*self.options.goal} != {"Kiln of the First Flame Boss"}:
                 create_connection("Kiln of the First Flame", "Dreg Heap", explicit_from=True)
 
     # For each region, add the associated locations retrieved from the corresponding location_table
@@ -643,7 +643,7 @@ class DarkSouls3World(World):
                 lambda state: (
                     self._can_get(state, "PW2: Soul of Sister Friede")
                     or (
-                        self.options.goal != {"Kiln of the First Flame Boss"}
+                        {*self.options.goal} != {"Kiln of the First Flame Boss"}
                         and self._can_go_to(state, "Kiln of the First Flame")
                     )
                 ),
