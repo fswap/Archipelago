@@ -633,13 +633,7 @@ class DarkSouls3World(World):
             self._add_entrance_rule("Painted World of Ariandel (After Contraption)", "Contraption Key")
             self._add_entrance_rule(
                 "Dreg Heap",
-                lambda state: (
-                    self._can_get(state, "PW2: Soul of Sister Friede")
-                    or (
-                        {*self.options.goal} != {"Kiln of the First Flame Boss"}
-                        and self._can_go_to(state, "Kiln of the First Flame")
-                    )
-                ),
+                lambda state: self._can_get(state, "PW2: Soul of Sister Friede"),
                 from_region="Painted World of Ariandel (After Contraption)",
             )
             self._add_entrance_rule("Ringed City", lambda state: (
@@ -647,13 +641,26 @@ class DarkSouls3World(World):
                 and self._can_get(state, "DH: Soul of the Demon Prince")
             ))
 
+            is_goal_not_only_kiln_boss = {*self.options.goal} != {"Kiln of the First Flame Boss"}
+
             if self.options.late_dlc:
                 self._add_entrance_rule(
                     "Painted World of Ariandel (Before Contraption)",
                     lambda state: state.has("Small Doll", self.player) and self._has_any_scroll(state))
 
+                if is_goal_not_only_kiln_boss:
+                    self._add_entrance_rule(
+                        "Dreg Heap",
+                        lambda state: state.has("Small Doll", self.player) and self._has_any_scroll(state),
+                        from_region="Kiln of the First Flame",
+                    )
+
             if self.options.late_dlc > 1:  # After Basin
                 self._add_entrance_rule("Painted World of Ariandel (Before Contraption)", "Basin of Vows")
+
+                if is_goal_not_only_kiln_boss:
+                    self._add_entrance_rule("Dreg Heap", "Basin of Vows",
+                        from_region="Kiln of the First Flame")
 
         # Define the access rules to some specific locations
         self._add_location_rule("HWL: Red Eye Orb - wall tower, miniboss", "Lift Chamber Key")
