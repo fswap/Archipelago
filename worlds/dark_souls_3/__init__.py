@@ -1062,15 +1062,6 @@ class DarkSouls3World(World):
             and state.has("Izalith Pyromancy Tome", self.player)
         ))
 
-        self._add_location_rule([
-            "US: Old Sage's Blindfold - kill Cornyx", "US: Cornyx's Garb - kill Cornyx",
-            "US: Cornyx's Wrap - kill Cornyx", "US: Cornyx's Skirt - kill Cornyx"
-        ], lambda state: (
-            state.has("Great Swamp Pyromancy Tome", self.player)
-            and state.has("Carthus Pyromancy Tome", self.player)
-            and state.has("Izalith Pyromancy Tome", self.player)
-        ))
-
         ## Irina
 
         self._add_location_rule([
