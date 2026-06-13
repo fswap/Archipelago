@@ -883,7 +883,6 @@ class DarkSouls3World(World):
             "FS: Hidden Blessing - Greirat from IBV",
             "FS: Titanite Scale - Greirat from IBV",
             "FS: Twinkling Titanite - Greirat from IBV",
-            "FS: Ember - shop for Greirat's Ashes"
         ], lambda state: (
             self._can_go_to(state, "Irithyll of the Boreal Valley")
             and self._can_get(state, "FS: Divine Blessing - Greirat from US")
