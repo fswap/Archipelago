@@ -1631,6 +1631,8 @@ class DarkSouls3World(World):
                 "random_starting_loadout": self.options.random_starting_loadout.value,
                 "require_one_handed_starting_weapons": self.options.require_one_handed_starting_weapons.value,
                 "no_weapon_requirements": self.options.no_weapon_requirements.value,
+                "late_basin_of_vows": self.options.late_basin_of_vows.value,
+                "late_dlc": self.options.late_dlc.value,
                 "death_link": self.options.death_link.value,
                 "death_link_amnesty": self.options.death_link_amnesty.value,
                 "no_spell_requirements": self.options.no_spell_requirements.value,
