@@ -467,6 +467,8 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *DLC Boss Reward*: DLC bosses.
     - *Overworld Boss*: Base game Overworld bosses.
     - *DLC Overworld Boss*: DLC Overworld bosses.
+    - *Chest*: Chests.
+    - *Scarab*: Scarabs.
     - *Seedtree*: Golden Seed trees.
     - *Basin*: Basins that contain tears.
     - *Church*: Sacred Tears.
@@ -478,7 +480,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     """
     display_name = "Priority Location Groups"
     default = ["Achievement Boss", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
-    valid_keys = [ "seedtree", "basin", "church", "map", "key items",
+    valid_keys = ["chest", "scarab", "seedtree", "basin", "church", "map", "key items",
         "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
         "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
     valid_keys_casefold = True
@@ -525,9 +527,11 @@ class ERExcludeLocations(ExcludeLocations):
     - **Hidden**: Hard to find items.
     - **Blizzard**: The hard to see area of snowfield.
     - **Scarab**: Scarabs that drop items.
-    - **Furnace Golem**: DLC Furnace Golems."""
+    - **Furnace Golem**: DLC Furnace Golems.
+    - **Out of the Way**: Items that take a bit to get."""
     default = frozenset({"Hidden"})
-    valid_keys = {"DLC", "Hidden", "Blizzard", "Scarab", "Furnace Golem"} # testing "All Locations"
+    valid_keys = {"dlc", "hidden", "blizzard", "scarab", "furnace Golem", "out of the way"} # testing "All Locations"
+    valid_keys_casefold = True
     
     unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names
     def verify_keys(self) -> None:
