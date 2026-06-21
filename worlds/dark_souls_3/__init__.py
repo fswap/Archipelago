@@ -1631,8 +1631,6 @@ class DarkSouls3World(World):
                 "random_starting_loadout": self.options.random_starting_loadout.value,
                 "require_one_handed_starting_weapons": self.options.require_one_handed_starting_weapons.value,
                 "no_weapon_requirements": self.options.no_weapon_requirements.value,
-                "late_basin_of_vows": self.options.late_basin_of_vows.value,
-                "late_dlc": self.options.late_dlc.value,
                 "death_link": self.options.death_link.value,
                 "death_link_amnesty": self.options.death_link_amnesty.value,
                 "no_spell_requirements": self.options.no_spell_requirements.value,
@@ -1649,6 +1647,11 @@ class DarkSouls3World(World):
                 "scale_enemies": self.options.scale_enemies.value,
                 "all_chests_are_mimics": self.options.all_chests_are_mimics.value,
                 "impatient_mimics": self.options.impatient_mimics.value,
+            },
+            # Options that are needed by the PopTracker and not by the Archipelago client.
+            "poptracker": {
+                "late_basin_of_vows": self.options.late_basin_of_vows.value,
+                "late_dlc": self.options.late_dlc.value,
             },
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
