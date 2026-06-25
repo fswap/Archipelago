@@ -262,7 +262,7 @@ class DarkSouls3World(World):
             )
             create_connection("Dreg Heap", "Ringed City")
 
-            if self.options.goal != {"Kiln of the First Flame Boss"}:
+            if {*self.options.goal} != {"Kiln of the First Flame Boss"}:
                 create_connection("Kiln of the First Flame", "Dreg Heap", explicit_from=True)
 
     # For each region, add the associated locations retrieved from the corresponding location_table
@@ -633,13 +633,7 @@ class DarkSouls3World(World):
             self._add_entrance_rule("Painted World of Ariandel (After Contraption)", "Contraption Key")
             self._add_entrance_rule(
                 "Dreg Heap",
-                lambda state: (
-                    self._can_get(state, "PW2: Soul of Sister Friede")
-                    or (
-                        self.options.goal != {"Kiln of the First Flame Boss"}
-                        and self._can_go_to(state, "Kiln of the First Flame")
-                    )
-                ),
+                lambda state: self._can_get(state, "PW2: Soul of Sister Friede"),
                 from_region="Painted World of Ariandel (After Contraption)",
             )
             self._add_entrance_rule("Ringed City", lambda state: (
@@ -647,13 +641,26 @@ class DarkSouls3World(World):
                 and self._can_get(state, "DH: Soul of the Demon Prince")
             ))
 
+            is_goal_not_only_kiln_boss = {*self.options.goal} != {"Kiln of the First Flame Boss"}
+
             if self.options.late_dlc:
                 self._add_entrance_rule(
                     "Painted World of Ariandel (Before Contraption)",
                     lambda state: state.has("Small Doll", self.player) and self._has_any_scroll(state))
 
+                if is_goal_not_only_kiln_boss:
+                    self._add_entrance_rule(
+                        "Dreg Heap",
+                        lambda state: state.has("Small Doll", self.player) and self._has_any_scroll(state),
+                        from_region="Kiln of the First Flame",
+                    )
+
             if self.options.late_dlc > 1:  # After Basin
                 self._add_entrance_rule("Painted World of Ariandel (Before Contraption)", "Basin of Vows")
+
+                if is_goal_not_only_kiln_boss:
+                    self._add_entrance_rule("Dreg Heap", "Basin of Vows",
+                        from_region="Kiln of the First Flame")
 
         # Define the access rules to some specific locations
         self._add_location_rule("HWL: Red Eye Orb - wall tower, miniboss", "Lift Chamber Key")
@@ -883,7 +890,6 @@ class DarkSouls3World(World):
             "FS: Hidden Blessing - Greirat from IBV",
             "FS: Titanite Scale - Greirat from IBV",
             "FS: Twinkling Titanite - Greirat from IBV",
-            "FS: Ember - shop for Greirat's Ashes"
         ], lambda state: (
             self._can_go_to(state, "Irithyll of the Boreal Valley")
             and self._can_get(state, "FS: Divine Blessing - Greirat from US")
@@ -1045,8 +1051,8 @@ class DarkSouls3World(World):
             # quest is done
             "AL: Yorshka's Chime - kill Yorshka",
         ], lambda state: (
-            self._can_get(state, "US: Soul of the Rotted Greatwood")
-            and state.has("Dreamchaser's Ashes", self.player)
+            self._can_get(state, "FS: Budding Green Blossom - shop after killing Creighton and AL boss")
+            and self._can_get(state, "GA: Soul of the Twin Princes")
         ))
 
         ## Cornyx
@@ -1056,15 +1062,6 @@ class DarkSouls3World(World):
             "US: Cornyx's Garb - kill Cornyx",
             "US: Cornyx's Wrap - kill Cornyx",
             "US: Cornyx's Skirt - kill Cornyx",
-        ], lambda state: (
-            state.has("Great Swamp Pyromancy Tome", self.player)
-            and state.has("Carthus Pyromancy Tome", self.player)
-            and state.has("Izalith Pyromancy Tome", self.player)
-        ))
-
-        self._add_location_rule([
-            "US: Old Sage's Blindfold - kill Cornyx", "US: Cornyx's Garb - kill Cornyx",
-            "US: Cornyx's Wrap - kill Cornyx", "US: Cornyx's Skirt - kill Cornyx"
         ], lambda state: (
             state.has("Great Swamp Pyromancy Tome", self.player)
             and state.has("Carthus Pyromancy Tome", self.player)
