@@ -2867,13 +2867,11 @@ item_name_groups: Dict[str, Set] = {
     "Armor": set(),
     "Accessories": set(),
     "Ash of war": set(),
-    "Upgraded Weapons": set(),
 }
 
 item_descriptions = {
     "Progression": "Items which unlock locations.",
     "Goods": "Misc, Key, Spell, most stuff that goes into your inventory.",
-    "Upgraded Weapons": "Weapons which are reinforced or have an ash of war."
 }
 
 # grace_rando: one AP TOKEN item per Site-of-Grace warp flag. er_code=None -> recognized by

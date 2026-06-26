@@ -6204,10 +6204,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Hostile NPC Rewards": set(),
     "Friendly NPC Rewards": set(),
     "Scarab": set(),
-    "Rise Puzzle": set(),
-    "Breakable": set(),
     "Hidden": set(),
-    "Missable": set(),
     
     "Goods": set(),
     "Weapons": set(),
@@ -6270,11 +6267,8 @@ location_descriptions = {
     "Friendly NPC Rewards": "Items given by friendly NPCs as part of their quests or from " + \
                             "non-violent interaction.",
     "Scarab": "Scarab locations",
-    "Rise Puzzle": "Locations that require a rise puzzle to be solved",
-    "Breakable": "Locations that require a statue to be broken",
     "Hidden": "Locations that are particularly difficult to find, such as behind illusory " + \
               "walls, down hidden drops, and so on. Does not include large locations.",
-    "Missable": "Locations that can be missed in vanilla.",
 }
 
 # --- Auto-generated readable descriptions for lean checks (#14) ----------------
