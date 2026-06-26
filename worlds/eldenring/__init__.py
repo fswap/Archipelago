@@ -1772,6 +1772,70 @@ class EldenRing(World):
         # Add items to itempool
         self.multiworld.itempool += self.local_itempool
 
+        # grace_rando placement MOVED here from pre_fill (2026-06-26): keeps multiworld.itempool
+        # final after create_items (AP test_itempool_not_modified). Priority locs already assigned.
+        # grace_rando (SPEC-grace-rando.md): receiving a region's lock lights ONE random
+        # grace (warp-in); every OTHER (non-boss/border) grace becomes a TOKEN item locked at
+        # a filler check INSIDE that same region. Count-neutral (one pool filler removed per
+        # placement). Built at the TOP of pre_fill so it runs on every config (the chain
+        # branches below return early). The hub's single freebie is lit at load by the
+        # start_graces block. Inert unless grace_rando + region gating.
+        # (patch_apworld_grace_rando_fix_20260622.py)
+        if (getattr(self.options, 'grace_rando', None) and self.options.grace_rando.value
+                and self.options.world_logic < 3):
+            _gr_SKIP = frozenset({71240, 71401, 76415, 76422, 76508, 76509, 76852, 76853,
+                                  76930, 76931, 73204, 73207, 76209, 76229, 76301, 76350,
+                                  76351, 76356})
+            self._grace_rando_freebie_by_region = {}
+            self._grace_items_placed = {}
+            self._grace_rando_placed_by_region = {}
+            _gr_dropped = 0
+            for _gr_region in sorted(REGION_GRACE_POINTS):
+                # grace_rando: the hub (Gravesite Plain in dlc_only) is randomized like every
+                # other region -- NO special treatment. Its rolled freebie + any drop-overflow are
+                # lit at load by the start_graces block (which lights all Gravesite graces NOT
+                # placed as in-region token drops), so nothing vanishes. (Alaric 2026-06-22)
+                _gr_flags = [p[0] for p in REGION_GRACE_POINTS[_gr_region]
+                             if p[0] not in _gr_SKIP]
+                if not _gr_flags:
+                    continue
+                _gr_free = self.random.choice(_gr_flags)
+                self._grace_rando_freebie_by_region[_gr_region] = [_gr_free]
+                _gr_items = [f for f in _gr_flags if f != _gr_free]
+                if not _gr_items:
+                    continue
+                try:
+                    _gr_robj = self.multiworld.get_region(_gr_region, self.player)
+                except KeyError:
+                    _gr_dropped += len(_gr_items)
+                    continue
+                _gr_cands = [l for l in _gr_robj.locations
+                             if l.address is not None and l.item is None
+                             and l.progress_type != LocationProgressType.PRIORITY
+                             and l.name not in getattr(self, 'all_priority_locations', set())]
+                self.random.shuffle(_gr_cands)
+                _gr_fillers = [it for it in self.multiworld.itempool
+                               if it.classification == ItemClassification.filler]
+                _gr_k = min(len(_gr_items), len(_gr_cands), len(_gr_fillers))
+                _gr_fi = 0
+                _gr_placed_flags = set()
+                for _gr_i in range(_gr_k):
+                    _gr_iname = GRACE_FLAG_TO_ITEM.get(_gr_items[_gr_i])
+                    if not _gr_iname:
+                        continue
+                    _gr_cands[_gr_i].place_locked_item(self.create_item(_gr_iname))
+                    self.multiworld.itempool.remove(_gr_fillers[_gr_fi])
+                    _gr_fi += 1
+                    self._grace_items_placed[_gr_iname] = _gr_items[_gr_i]
+                    _gr_placed_flags.add(_gr_items[_gr_i])
+                self._grace_rando_placed_by_region[_gr_region] = _gr_placed_flags
+                if len(_gr_items) > _gr_fi:
+                    _gr_dropped += len(_gr_items) - _gr_fi
+            if self._grace_items_placed or _gr_dropped:
+                warning(f'{self.player_name}: grace_rando placed '
+                        f'{len(self._grace_items_placed)} grace drop(s); {_gr_dropped} '
+                        f'dropped for lack of room.')
+
         # FILL DIAGNOSTIC (env ER_DUMP_FILL) -- inert unless set. Dumps pool/location/advancement
         # composition to Archipelago/output/ so a single gen run reveals the overflow bucket.
         import os as _os
@@ -2564,67 +2628,6 @@ class EldenRing(World):
                     f"PRIORITY location(s) to DEFAULT (e.g. {_pruned[0]}).")
 
     def pre_fill(self) -> None: #MARK: Pre-fill
-        # grace_rando (SPEC-grace-rando.md): receiving a region's lock lights ONE random
-        # grace (warp-in); every OTHER (non-boss/border) grace becomes a TOKEN item locked at
-        # a filler check INSIDE that same region. Count-neutral (one pool filler removed per
-        # placement). Built at the TOP of pre_fill so it runs on every config (the chain
-        # branches below return early). The hub's single freebie is lit at load by the
-        # start_graces block. Inert unless grace_rando + region gating.
-        # (patch_apworld_grace_rando_fix_20260622.py)
-        if (getattr(self.options, 'grace_rando', None) and self.options.grace_rando.value
-                and self.options.world_logic < 3):
-            _gr_SKIP = frozenset({71240, 71401, 76415, 76422, 76508, 76509, 76852, 76853,
-                                  76930, 76931, 73204, 73207, 76209, 76229, 76301, 76350,
-                                  76351, 76356})
-            self._grace_rando_freebie_by_region = {}
-            self._grace_items_placed = {}
-            self._grace_rando_placed_by_region = {}
-            _gr_dropped = 0
-            for _gr_region in sorted(REGION_GRACE_POINTS):
-                # grace_rando: the hub (Gravesite Plain in dlc_only) is randomized like every
-                # other region -- NO special treatment. Its rolled freebie + any drop-overflow are
-                # lit at load by the start_graces block (which lights all Gravesite graces NOT
-                # placed as in-region token drops), so nothing vanishes. (Alaric 2026-06-22)
-                _gr_flags = [p[0] for p in REGION_GRACE_POINTS[_gr_region]
-                             if p[0] not in _gr_SKIP]
-                if not _gr_flags:
-                    continue
-                _gr_free = self.random.choice(_gr_flags)
-                self._grace_rando_freebie_by_region[_gr_region] = [_gr_free]
-                _gr_items = [f for f in _gr_flags if f != _gr_free]
-                if not _gr_items:
-                    continue
-                try:
-                    _gr_robj = self.multiworld.get_region(_gr_region, self.player)
-                except KeyError:
-                    _gr_dropped += len(_gr_items)
-                    continue
-                _gr_cands = [l for l in _gr_robj.locations
-                             if l.address is not None and l.item is None
-                             and l.progress_type != LocationProgressType.PRIORITY
-                             and l.name not in getattr(self, 'all_priority_locations', set())]
-                self.random.shuffle(_gr_cands)
-                _gr_fillers = [it for it in self.multiworld.itempool
-                               if it.classification == ItemClassification.filler]
-                _gr_k = min(len(_gr_items), len(_gr_cands), len(_gr_fillers))
-                _gr_fi = 0
-                _gr_placed_flags = set()
-                for _gr_i in range(_gr_k):
-                    _gr_iname = GRACE_FLAG_TO_ITEM.get(_gr_items[_gr_i])
-                    if not _gr_iname:
-                        continue
-                    _gr_cands[_gr_i].place_locked_item(self.create_item(_gr_iname))
-                    self.multiworld.itempool.remove(_gr_fillers[_gr_fi])
-                    _gr_fi += 1
-                    self._grace_items_placed[_gr_iname] = _gr_items[_gr_i]
-                    _gr_placed_flags.add(_gr_items[_gr_i])
-                self._grace_rando_placed_by_region[_gr_region] = _gr_placed_flags
-                if len(_gr_items) > _gr_fi:
-                    _gr_dropped += len(_gr_items) - _gr_fi
-            if self._grace_items_placed or _gr_dropped:
-                warning(f'{self.player_name}: grace_rando placed '
-                        f'{len(self._grace_items_placed)} grace drop(s); {_gr_dropped} '
-                        f'dropped for lack of room.')
         # dlc_only_chain (SPEC-dlc-only-chain.md, Phase 1): breadcrumb the messmer kept-set DLC
         # locks into a linear chain off the free Gravesite hub. Each gated link's lock is placed
         # on the PRIOR link's boss drop (Gravesite hosts link 1). Locks were pulled from the
