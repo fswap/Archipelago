@@ -1,0 +1,7 @@
+﻿# dev cruft
+*.bak
+*.bak_*
+ER_DIAG.txt
+ER_SPHERE_TIERS_*.txt
+__pycache__/
+*.pyc
