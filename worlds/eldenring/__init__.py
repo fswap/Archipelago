@@ -3,7 +3,7 @@ import settings, typing, Utils
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
 
-from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, ItemClassification
+from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
@@ -113,6 +113,15 @@ class EldenRingWeb(WebWorld):
     theme = "stone"
     option_groups = option_groups
     item_descriptions = item_descriptions
+
+    tutorials = [Tutorial(
+        "Multiworld Setup Guide",
+        "A guide to setting up Elden Ring for Archipelago multiworld games.",
+        "English",
+        "setup_en.md",
+        "setup/en",
+        ["The Elden Ring Archipelago contributors"],
+    )]
 
 # Main World
 class EldenRing(World):

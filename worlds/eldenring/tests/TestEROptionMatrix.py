@@ -57,7 +57,7 @@ class ERSlotDataContract(WorldTestBase):
                     "locationIdsToKeys", "versions"):
             self.assertIn(key, sd)
         # Lockstep contract range, checked by BOTH the randomizer at bake and the client at connect.
-        self.assertEqual(sd["versions"], ">=0.1.0-beta.3 <0.1.0-beta.4")
+        self.assertEqual(sd["versions"], ">=0.1.0-beta.4 <0.1.0-beta.5")
 
     def test_id_maps_are_parseable(self):
         sd = self.world.fill_slot_data()
