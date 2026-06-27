@@ -3243,6 +3243,7 @@ class EldenRing(World):
                 "rykard_encounter": self.options.rykard_encounter.value,
                 "boss_scaling_percent": self.options.boss_scaling_percent.value,
                 "disable_gargoyle_poison_cloud_damage": self.options.disable_gargoyle_poison_cloud_damage.value,
+                "night_bosses": self.options.night_bosses.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 

@@ -19,10 +19,6 @@ class GoalOption(OptionSet):
     display_name = "Goal"
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
     default = frozenset({"Final Boss", "DLC Final Boss"})
-
-    # def verify_keys(self) -> None: # i check this in gen early, no more failed fuzzer
-    #     super().verify_keys()
-    #     if not set(self.value): raise OptionError("You must set at least one Goal.")
         
 class ExcludeDungeonBosses(DefaultOnToggle):
     "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
@@ -254,6 +250,18 @@ class DisableGargoylePoisonCloudDamage(Toggle):
     """Disable the damage tick in Valiant Gargoyles' poison cloud while leaving poison buildup intact."""
     display_name = "Disable Damage Tick in Valiant Gargoyles' Poison Cloud"
 
+class NightBosses(Choice):
+    """
+    Normal: Bosses spawn at night.
+    Always On: Bosses will always spawn.
+    Require Item: Bosses only spawn after finding an item.   just an idea from Spencenox, not implimented
+    """
+    display_name = "Night Bosses"
+    option_normal = 0
+    option_always_on = 1
+    # option_require_item = 2
+    default = 0
+
 class RandomEnemyPresetOption(OptionDict):
     """The YAML preset for the static enemy randomizer.
 
@@ -434,29 +442,10 @@ class SpellShopSpellsOnly(Toggle):
     display_name = "Spell Shop Spells Only"
     
 class EarlyLegacyDungeonsEarly(Toggle):
-    """Early Legacy Dungeons are early"""
-    display_name = "Early Legacy Dungeons Early"
-    
-class LocalItemOnly(DefaultOnToggle):
-    """Only progression or useful items will show up in other players games.
-    Used with ExcludeLocalItemOnly option."""
-    display_name = "Local Item Option"
-    
-class ExcludeLocalItemOnly(OptionList):
-    """If LocalItemOnly is true then these item categories will show up in other players games.
-    - [Items] **Item Group**
-    - [~600] **Weapon**: All Weapons and Ammo.
-    - [621] **Armor**: All Armors.
-    - [154] **Accessory**: All Talismans.
-    - [105] **AshofWar**: All Ashes of War.
-    - [~3700] **Goods**: All Goods.
-    
-    Goods should always be local only.
-    """
-    display_name = "Exclude Local Item Only"
-    default = ["Weapon", "Armor", "Accessory", "AshofWar"]
-    valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
-    valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
+    """Access to Stormveil and Raya Lucaria will be early."""
+    display_name = "Stormveil and Raya Lucaria Early"
+
+# MARK: Priority Stuff
     
 class ERPriorityLocationGroups(PriorityLocations):
     """Prevent these location types from having an unimportant items.
@@ -536,6 +525,29 @@ class MemoryStonesAtPriority(Toggle):
 class RemembrancesAtPriority(Toggle):
     "Should remembrances be randomized to important priority locations."
     display_name = "Remembrances at Priority"
+
+# MARK: Excludes and Behavior
+
+class LocalItemOnly(DefaultOnToggle):
+    """Only progression or useful items will show up in other players games.
+    Used with ExcludeLocalItemOnly option."""
+    display_name = "Local Item Option"
+    
+class ExcludeLocalItemOnly(OptionList):
+    """If LocalItemOnly is true then these item categories will show up in other players games.
+    - [Items] **Item Group**
+    - [~600] **Weapon**: All Weapons and Ammo.
+    - [621] **Armor**: All Armors.
+    - [154] **Accessory**: All Talismans.
+    - [105] **AshofWar**: All Ashes of War.
+    - [~3700] **Goods**: All Goods.
+    
+    Goods should always be local only.
+    """
+    display_name = "Exclude Local Item Only"
+    default = ["Weapon", "Armor", "Accessory", "AshofWar"]
+    valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
+    valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
@@ -630,6 +642,7 @@ class EROptions(PerGameCommonOptions):
     rykard_encounter: RykardEncounter
     boss_scaling_percent: BossScalingPercent
     disable_gargoyle_poison_cloud_damage: DisableGargoylePoisonCloudDamage
+    night_bosses: NightBosses
     random_enemy_preset: RandomEnemyPresetOption
     material_rando: MaterialRando
     death_link: DeathLink
@@ -693,6 +706,7 @@ option_groups = [
         RykardEncounter,
         BossScalingPercent,
         DisableGargoylePoisonCloudDamage,
+        NightBosses,
         RandomEnemyPresetOption,
         MaterialRando,
     ]),
