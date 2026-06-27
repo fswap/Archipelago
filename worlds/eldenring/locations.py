@@ -579,20 +579,24 @@ class ERLocationData:
 
     def should_omit(self, options: EROptions) -> bool:
         """Whether this location should be omitted given a set of options."""
-        if self.dlc and not options.enable_dlc.value: return True
-        if (self.omit if isinstance(self.omit, bool) else self.omit(self, options)): return True
-        
         return (
+            self.dlc and not options.enable_dlc.value
+        ) or (
+            (self.omit if isinstance(self.omit, bool) else self.omit(self, options))
+            and self.name not in all_boss_locations
+            and item_table[self.default_item_name].is_important(options) not in 
+            (ItemClassification.progression, ItemClassification.progression_deprioritized)
+        ) or (
             options.excluded_location_behavior.value == 4
             and self.name in options.exclude_locations.value
             and self.name not in all_boss_locations
-            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
-            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
+            and item_table[self.default_item_name].is_important(options) not in 
+            (ItemClassification.progression, ItemClassification.progression_deprioritized)
         ) or (
             options.missable_location_behavior.value == 4 and self.is_missable(options)
             and self.name not in all_boss_locations
-            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression 
-            and item_table[self.default_item_name].is_important(options) != ItemClassification.progression_deprioritized
+            and item_table[self.default_item_name].is_important(options) not in 
+            (ItemClassification.progression, ItemClassification.progression_deprioritized)
         )
 
     def should_randomize(self, options: EROptions) -> bool:

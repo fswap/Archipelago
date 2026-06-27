@@ -1330,4 +1330,4 @@ for boss in dlc_bosses:
 all_bosses = base_bosses + dlc_bosses
 
 all_boss_locations = []
-all_boss_locations.extend(boss.locations for boss in all_bosses)
+[all_boss_locations.extend(boss.locations) for boss in all_bosses]

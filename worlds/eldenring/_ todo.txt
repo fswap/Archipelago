@@ -10,9 +10,6 @@ fuzzer    python fuzz.py -r 16 -j 16 -g eldenring -n 1    if the runs > threads 
 
 TODO
 
-certain rules check for a location in a region not the region, the location can be omitted and gen will fail
-I think, this is a guess
-
 merge client stuff
 
 https://github.com/FantaTanked/EldenRingArchipelago/blob/main/worlds/eldenring/__init__.py     modified apworld

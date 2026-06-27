@@ -491,6 +491,22 @@ class ERImportantAtPriorityOnly(Toggle):
     display_name = "Important at Priority Only"
     # visibility = Visibility.none # likes to fill error depending on how many priority locations there are
     
+class ERImportantAtPriorityEarly(Range):
+    """
+    Needs Important at Priority Only On.
+    
+    Make extra generated locations appear more early game (Limgrave, Weeping, Liurnia, Stormveil and Raya Lucaria).
+    
+    1: Normal.
+    2+: Multiplied odds of early game locations.
+    
+    Example: Setting this to 3 will make early locations 3 times more likely to have extra locations.
+    """
+    display_name = "Important At Priority Early"
+    range_start = 1
+    range_end = 5
+    default = 1
+
 class ERUsefulAtPriority(Toggle):
     """Should useful items be included in Priority locations.
     This is used with Important at Priority Only option since it uses custom priority handling."""
@@ -645,6 +661,7 @@ class EROptions(PerGameCommonOptions):
     exclude_local_item_only: ExcludeLocalItemOnly
     priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
+    important_at_priority_early: ERImportantAtPriorityEarly
     useful_at_priority: ERUsefulAtPriority
     flask_at_priority: FlaskUpgradesAtPriority
     scadu_at_priority: ScaduAtPriority
@@ -737,6 +754,7 @@ option_groups = [
     OptionGroup("Priority Location Rules", [
         ERPriorityLocationGroups,
         ERImportantAtPriorityOnly,
+        ERImportantAtPriorityEarly,
         ERUsefulAtPriority,
         FlaskUpgradesAtPriority,
         ScaduAtPriority,

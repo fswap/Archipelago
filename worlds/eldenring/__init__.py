@@ -313,14 +313,14 @@ class EldenRing(World):
                         f"Player {self.player_name} has goal option set to all bosses.")
         
         if self.options.enable_dlc:
-            if "DLC" not in self.options.exclude_locations.excluded_groups(): # if dlc is excluded, exclude bosses too
+            if "dlc" not in self.options.exclude_locations.excluded_groups(): # if dlc is excluded, exclude bosses too
                 self.goal_bosses += [boss for boss in m_goal_bosses if boss in dlc_bosses]
         elif len([boss for boss in m_goal_bosses if boss in base_bosses]) == 0: # dlc disabled, is there a base game boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in Base Game but has DLC disabled.")
                 
         if self.base_enabled:
             self.goal_bosses += [boss for boss in m_goal_bosses if boss in base_bosses]
-        elif "DLC" in self.options.exclude_locations.excluded_groups(): # dlc only, is dlc excluded?
+        elif "dlc" in self.options.exclude_locations.excluded_groups(): # dlc only, is dlc excluded?
             raise OptionError(f"Player {self.player_name} has DLC excluded but DLC only is on.")
         elif len([boss for boss in m_goal_bosses if boss in dlc_bosses]) == 0: # dlc only, is there a dlc boss?
             raise OptionError(f"Player {self.player_name} has no boss goals in DLC but is doing DLC Only.")
@@ -709,7 +709,7 @@ class EldenRing(World):
         num_required_extra_items = 0
         for location in cast(List[ERLocation], self.multiworld.get_unfilled_locations(self.player)):
             if not self._location_status(location.name).is_randomized:
-                raise Exception("ER generation bug: Added an unavailable location.")
+                raise Exception(f"ER generation bug: Added an unavailable location. {location.name}")
             
             default_item_name = cast(str, location.data.default_item_name)
             item = item_table[default_item_name]
@@ -753,21 +753,21 @@ class EldenRing(World):
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc]
         early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44] # lim, storm, weep, liurnia, raya
         
-        loc_needed = max((len([i for i in important_items if not i.data.is_dlc])) - len(base_priority), 0)
-        dlc_loc_needed = max((len([i for i in important_items if i.data.is_dlc and self.base_enabled or not self.base_enabled])) - len(dlc_priority), 0)
+        loc_needed = len([i for i in important_items if not i.data.is_dlc]) - len(base_priority)
+        dlc_loc_needed = len([i for i in important_items if i.data.is_dlc and self.base_enabled or not self.base_enabled]) - len(dlc_priority)
         
         if not dlc_priority and dlc_loc_needed: 
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
 
-        if loc_needed + dlc_loc_needed <= 0: 
-            warning(f"Player {self.player_name} has a ton of Priority locations, this can make all progression items be in their world.")
+        if loc_needed + dlc_loc_needed < 0 and self.multiworld.players != 1:
+            warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
 
         times_duped = {}
         new_code = len(location_dictionary)
         while loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
-            if loc_needed:
-                location = self.random.choice(sorted(base_priority + early_base * 1)) # higher chance of early game priority locations
-            elif dlc_loc_needed:
+            if loc_needed > 0:
+                location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
+            elif dlc_loc_needed > 0:
                 location = self.random.choice(sorted(dlc_priority))
             
             found = False
@@ -822,7 +822,7 @@ class EldenRing(World):
             for item_name in item_table:
                 if ((self.base_enabled and item_table[item_name].lock and not item_table[item_name].is_dlc) 
                 or (self.options.enable_dlc and item_table[item_name].lock and item_table[item_name].is_dlc
-                    and "DLC" not in self.options.exclude_locations.excluded_groups())):
+                    and "dlc" not in self.options.exclude_locations.excluded_groups())):
                     if item_name != "Gravesite Lock" or self.options.dlc_start == 0 and self.options.enable_dlc:
                         all_injectable_items += [item_table[item_name]]
         
@@ -842,7 +842,7 @@ class EldenRing(World):
                     item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
                 if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
-            # if "DLC" not in self.options.exclude_locations.excluded_groups(): 
+            # if "dlc" not in self.options.exclude_locations.excluded_groups(): 
             if self.options.messmer_kindle:
                 all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             if self.options.spiritspring_stones:
@@ -1270,7 +1270,7 @@ class EldenRing(World):
             if self.options.dlc_start == 1:
                 self._add_entrance_rule("Rauh Ruins Limited", 
                     lambda state: state.has("Imbued Sword Key", self.player, 1) or self._can_go_to(state, "Ancient Ruins of Rauh"))
-            elif "DLC" not in self.options.exclude_locations.excluded_groups():
+            elif "dlc" not in self.options.exclude_locations.excluded_groups():
                 if (self.options.dlc_scadutree_fragments.value
                     or self.options.dlc_messmer_kindle.value): # only do loop if one of these are on
                     for region in self.multiworld.get_regions(self.player):
@@ -3273,6 +3273,7 @@ class EldenRing(World):
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
                 "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
+                "important_at_priority_early": self.options.important_at_priority_early.value,
                 "useful_at_priority": self.options.useful_at_priority.value,
                 "flask_at_priority": self.options.flask_at_priority.value,
                 "scadu_at_priority": self.options.scadu_at_priority.value,
