@@ -693,6 +693,19 @@ class DerandomizeQuestlines(Choice):
     option_full = 2
     default = 0
 
+class ShopChecks(Toggle):  # [shop-checks]
+    """Randomize shop slots as AP checks. DEFAULT OFF (shops EXCLUDED) in the pure-runtime
+    model: the game world is vanilla, so a randomized shop slot is a blind buy -- you spend
+    runes without seeing the AP reward, which is worse UX than no check. With this OFF, shop
+    locations drop from the active check set (via _in_location_pool, the same curation lever
+    trimmed/lean use) and the shops just sell their vanilla wares.
+
+    Turn this ON to put shop slots back in the randomized pool (legacy behavior). Once shop
+    PREVIEWS ship (Option A of SPEC-shop-checks.md -- LocationScouts + ER shop-text hook), this
+    should become a DefaultOnToggle (default shops back ON), since a previewed shop is a real
+    decision again. See SPEC-shop-checks.md."""
+    display_name = "Shop Checks (randomize shop slots -- off = vanilla shops)"
+
 class SoftConsumableShop(Toggle):
     """Sell Stonesword Keys and Dragon Hearts in unlimited supply at the Twin Maiden Husks
     (Roundtable Hold) instead of scattering them through the world.
@@ -1098,6 +1111,7 @@ class EROptions(PerGameCommonOptions):
     soft_progression: SoftProgression
     tidy_fun_consumables: TidyFunConsumables
     soft_consumable_shop: SoftConsumableShop
+    shop_checks: ShopChecks  # [shop-checks]
     derandomize_gurranq: DerandomizeGurranq
     derandomize_questlines: DerandomizeQuestlines
     location_pool: LocationPool
@@ -1163,6 +1177,7 @@ option_groups = [
         JunkRetentionStyle,
         TidyFunConsumables,
         SoftConsumableShop,
+        ShopChecks,  # [shop-checks]
         DerandomizeGurranq,
         DerandomizeQuestlines,
         SoftProgression,

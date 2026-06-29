@@ -373,7 +373,10 @@ class EldenRing(World):
         # Bearing to an in-pool progression item so its shop checks can require it.
         # NOTE mutates the module-level item_table (same pattern as the smithing block
         # above). Only bells with a real world drop are listed (see merchant_bells.py).
-        if self.options.merchant_bell_logic.value == 1:
+        # [shop-checks] only force the bells to progression when shop checks exist; with shops
+        # excluded (shop_checks off) the gated shop checks vanish, so forcing the bells would
+        # gate nothing. Demote them to normal items in that case. See SPEC-shop-checks.md.
+        if self.options.merchant_bell_logic.value == 1 and self.options.shop_checks.value:
             for _bell in merchant_bell_names(bool(self.options.enable_dlc)):
                 item_table[_bell].skip = False
                 item_table[_bell].classification = ItemClassification.progression
@@ -4756,6 +4759,12 @@ class EldenRing(World):
     def _in_location_pool(self, data: ERLocationData) -> bool:
         """location_pool option: trim the randomized-check set (all / trimmed / lean)."""
         pool = self.options.location_pool.value
+        # [shop-checks] shop_checks OFF -> exclude shop slots from the active check set. In the
+        # pure-runtime model a randomized shop slot is a blind buy (vanilla wares, hidden AP
+        # reward), so by default shops are not checks. Runs ahead of the all/trimmed/lean
+        # branches below so it applies in every pool mode. See SPEC-shop-checks.md.
+        if getattr(data, "shop", False) and not self.options.shop_checks.value:
+            return False
         if pool == 0:
             return True
         # Fix B (demand-restore): reserved cut-filler locations are kept as checks to
@@ -5755,6 +5764,62 @@ class EldenRing(World):
             "versions": ">=0.1.0-beta.4 <0.1.0-beta.5",
         }
 
+        # [p1-location-flags] emit the static vanilla acquisition-flag table for active
+        # locations, so the runtime client gets detection data from slot_data (no baker).
+        try:
+            import os as _p1_os, json as _p1_json
+            _p1_path = _p1_os.path.join(_p1_os.path.dirname(__file__), "er_static_detection_table.json")
+            with open(_p1_path, encoding="utf-8") as _p1_f:
+                _p1_tbl = _p1_json.load(_p1_f)["location_flags"]
+            slot_data["locationFlags"] = {
+                str(_lid): _p1_tbl[str(_lid)]
+                for _lid in location_ids_to_keys
+                if str(_lid) in _p1_tbl
+            }
+        except Exception as _p1_e:
+            slot_data["locationFlags"] = {}
+            print(f"[p1-location-flags] WARN could not load table: {_p1_e}")
+        # [p2-check-items] emit the vanilla check-item FullIDs (+ guarding flags) for the
+        # seed's active checks, so the runtime client can SUPPRESS the vanilla item picked
+        # up at a check (player only gets what the AP server sends). FullIDs are packed with
+        # the SAME nibble logic as apIdsToItemIds (reuses category_nibbles above).
+        try:
+            import os as _p2_os, json as _p2_json
+            _p2_flags = {}
+            try:
+                _p2_path = _p2_os.path.join(_p2_os.path.dirname(__file__), "er_static_detection_table.json")
+                with open(_p2_path, encoding="utf-8") as _p2_f:
+                    _p2_flags = _p2_json.load(_p2_f)["location_flags"]
+            except Exception:
+                _p2_flags = {}
+            _p2_ids = set()
+            _p2_id_flags = {}
+            for _p2_loc in self.multiworld.get_filled_locations(self.player):
+                _p2_data = getattr(_p2_loc, "data", None)
+                if _p2_data is None or _p2_loc.address is None:
+                    continue
+                _p2_name = getattr(_p2_data, "default_item_name", None)
+                if not _p2_name:  # events carry no vanilla item
+                    continue
+                _p2_item = item_table.get(_p2_name)
+                if _p2_item is None or not _p2_item.er_code:
+                    continue
+                _p2_nib = category_nibbles.get(_p2_item.category)
+                if _p2_nib is None:
+                    continue
+                _p2_full = _p2_item.er_code | _p2_nib
+                _p2_ids.add(_p2_full)
+                _p2_flag = _p2_flags.get(str(_p2_loc.address))
+                if _p2_flag:
+                    _p2_bucket = _p2_id_flags.setdefault(str(_p2_full), [])
+                    if _p2_flag not in _p2_bucket:
+                        _p2_bucket.append(_p2_flag)
+            slot_data["checkItemIds"] = sorted(_p2_ids)
+            slot_data["checkItemFlags"] = _p2_id_flags
+        except Exception as _p2_e:
+            slot_data["checkItemIds"] = []
+            slot_data["checkItemFlags"] = {}
+            print(f"[p2-check-items] WARN could not build check items: {_p2_e}")
         return slot_data
 
     @staticmethod
