@@ -409,7 +409,16 @@ class EldenRing(World):
         # Soft-consumable shop / Gurranq de-rando: pull these from the randomized pool BEFORE
         # create_items builds it. Keys/hearts become Twin Maiden shop stock; Deathroot is locked
         # vanilla at the Gurranq ladder (see _fill_local_items). SPEC-soft-consumables.md.
-        if self.options.soft_consumable_shop.value:
+        if self.options.key_gates_missable.value:
+            # [key-gates] pure-runtime replacement for the soft-shop key handling: Stonesword Keys,
+            # Dragon Hearts and Imbued Sword Keys become ordinary FILLER (their imp-seal / Dragon
+            # Communion / Four Belfries locations are flagged EXCLUDED in set_rules), so they no longer
+            # drag into the progression/priority fill. No baked Twin Maiden shop rows needed.
+            for _vn in ("Stonesword Key", "Stonesword Key x3", "Stonesword Key x5",
+                        "Dragon Heart", "Dragon Heart x3", "Dragon Heart x5", "Imbued Sword Key"):
+                if _vn in item_table:
+                    item_table[_vn].classification = ItemClassification.filler
+        elif self.options.soft_consumable_shop.value:
             for _vn in ("Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"):
                 if _vn in item_table: item_table[_vn].skip = True
             if not self.options.dlc_only:  # dlc_only precollects its own 25 hearts
@@ -2694,10 +2703,18 @@ class EldenRing(World):
 
 
     def set_rules(self) -> None: #MARK: Rules
+        # [key-gates] collect + EXCLUDE the key/heart-gated checks added by these two dedicated methods
+        # (every rule in them uses _has_enough_keys / _has_enough_hearts). The flag drives
+        # _add_location_rule / _add_entrance_rule to mark the gated check (or whole region) filler-only.
+        self._collecting_key_gates = self.options.key_gates_missable.value
         self._key_rules() # make option to choose master or normal rules
         #self._master_key_rules()
-        
+
         self._dragon_communion_rules()
+        self._collecting_key_gates = False
+        if self.options.key_gates_missable.value:  # imbued gates the Four Belfries teleport sub-regions (added as plain entrance rules below)
+            for _r in ("The Four Belfries (Chapel of Anticipation)", "The Four Belfries (Nokron)", "The Four Belfries (Farum Azula)"):
+                self._exclude_region(_r)
         self._add_shop_rules()
         self._add_npc_rules()
         self._add_remembrance_rules()
@@ -3501,7 +3518,7 @@ class EldenRing(World):
     
     def _has_enough_keys(self, state: CollectionState, req_keys: int) -> bool:
         """Returns whether the given state has enough keys."""
-        if self.options.soft_consumable_shop.value:
+        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates] keys not required when their gated locations are EXCLUDED
             return True
         return (state.count("Stonesword Key", self.player) + (state.count("Stonesword Key x3", self.player) * 3) + (state.count("Stonesword Key x5", self.player) * 5)) >= req_keys
         
@@ -3524,14 +3541,14 @@ class EldenRing(World):
     
     def _has_enough_hearts(self, state: CollectionState, req_hearts: int) -> bool:
         """Returns whether the given state has enough keys."""
-        if self.options.soft_consumable_shop.value:
+        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates]
             return True
         return (state.count("Dragon Heart", self.player) + (state.count("Dragon Heart x3", self.player) * 3) + (state.count("Dragon Heart x5", self.player) * 5)) >= req_hearts
     
     def _has_enough_imbued(self, state: CollectionState, req: int) -> bool:
         """Imbued Sword Keys: the Twin Maiden Husks shop sells them infinitely under
         soft_consumable_shop (Dragon-Heart treatment), so the requirement is satisfied."""
-        if self.options.soft_consumable_shop.value:
+        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates]
             return True
         return state.has("Imbued Sword Key", self.player, req)
 
@@ -4621,6 +4638,10 @@ class EldenRing(World):
             if not self._content_in_scope(data): continue
 
             if not self._is_location_available(location): continue
+            # [key-gates] while collecting key/heart/imbued gates, mark the gated location EXCLUDED
+            # (filler-only) instead of gating it on the now-dropped key requirement.
+            if getattr(self, "_collecting_key_gates", False):
+                self.multiworld.get_location(location, self.player).progress_type = LocationProgressType.EXCLUDED
             if isinstance(rule, str):
                 assert (item_table[rule].classification == ItemClassification.progression
                         or rule in getattr(self, "_fun_demoted", ())), \
@@ -4628,10 +4649,22 @@ class EldenRing(World):
                 rule = lambda state, item=rule: state.has(item, self.player)
             add_rule(self.multiworld.get_location(location, self.player), rule)
     
+    def _exclude_region(self, region: str) -> None:
+        """[key-gates] Flag every randomized check in `region` EXCLUDED (filler-only). Used when the
+        region's entrance was gated by a key/heart/imbued requirement we're dropping."""
+        if region not in self.created_regions:
+            return
+        for loc in self.multiworld.get_region(region, self.player).locations:
+            if loc.address is not None:
+                loc.progress_type = LocationProgressType.EXCLUDED
+
     def _add_entrance_rule(self, region: str, rule: Union[CollectionRule, str]) -> None:
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
+        # [key-gates] a key/heart/imbued-gated entrance -> the whole region behind it is filler-only.
+        if getattr(self, "_collecting_key_gates", False):
+            self._exclude_region(region)
         if isinstance(rule, str):
             if " -> " not in rule:
                 assert (item_table[rule].classification == ItemClassification.progression
@@ -5820,6 +5853,36 @@ class EldenRing(World):
             slot_data["checkItemIds"] = []
             slot_data["checkItemFlags"] = {}
             print(f"[p2-check-items] WARN could not build check items: {_p2_e}")
+        # [shop-preview] emit the set of ACTIVE shop AP location ids (SPEC-shop-preview-hook.md
+        # Part 1 / SPEC-shop-slot-map.md). The runtime client, on shop-open, scouts ONLY these
+        # ids (CreateAsHint::No) instead of all ~4295 active checks, then maps each open
+        # ShopLineupParam row -> AP location via the static `key` in locationIdsToKeys.
+        #
+        # Why a LIST and not a {ShopLineupParam_row_id: ap_loc_id} map: the ShopLineupParam ROW
+        # ID is NOT derivable on the Python side. A location's `key` (e.g.
+        # "111000,0:0000000000:101898:") identifies a shop PLACEMENT GROUP (base shop id + its
+        # eventFlag_forStock list), not a single row -- e.g. 51 distinct Enia bell-bearing
+        # locations share that one key. The concrete per-row ShopLineupParam.ID is assigned by
+        # the C# static randomizer (PermutationWriter.cs) at bake time and never reaches Python.
+        # So we ship the shop-location-id SET; the client resolves row<->location client-side
+        # from locationIdsToKeys + the live lineup rows. Empty when shop_checks is OFF (the
+        # shipping default), since shop slots are then not active checks at all.
+        try:
+            # Subset of location_ids_to_keys (built above from filled locations) that are shop
+            # slots. Deriving from that map GUARANTEES every emitted id has a resolvable `key`
+            # in locationIdsToKeys -- the client needs the key to identify the shop placement.
+            _shop_ids = set()
+            for _sp_loc in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
+                _sp_data = getattr(_sp_loc, "data", None)
+                if _sp_data is None or _sp_loc.address is None:
+                    continue
+                if (getattr(_sp_data, "shop", False) and getattr(_sp_data, "key", None)
+                        and _sp_loc.address in location_ids_to_keys):
+                    _shop_ids.add(_sp_loc.address)
+            slot_data["shopLocationIds"] = sorted(_shop_ids)
+        except Exception as _sp_e:
+            slot_data["shopLocationIds"] = []
+            print(f"[shop-preview] WARN could not build shop location ids: {_sp_e}")
         return slot_data
 
     @staticmethod

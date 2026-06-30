@@ -717,6 +717,16 @@ class SoftConsumableShop(Toggle):
     baked Twin Maiden shop rows (patch_baker_soft_consumable_shop) -- don't enable without it."""
     display_name = "Soft-Consumable Shop (Twin Maiden keys/hearts)"
 
+class KeyGatesMissable(DefaultOnToggle):  # [key-gates]
+    """Pure-runtime replacement for Soft-Consumable Shop's key handling. Stonesword Keys, Dragon
+    Hearts, and Imbued Sword Keys are 'progression' only because imp-statue seals, the Dragon
+    Communion incantation buys, and the Four Belfries teleports gate locations behind them -- which
+    forces you to hunt and hoard the keys. With this ON (default), everything behind those three
+    keys is flagged EXCLUDED (filler-only), the key/heart/imbued logic gates are dropped, and the
+    keys demote to ordinary filler. No baked shop rows needed (unlike Soft-Consumable Shop, which
+    required the bake step). Turn OFF to restore the keys-as-progression / key-sanity behavior."""
+    display_name = "Key Gates Missable (Stonesword/Dragon Heart/Imbued -> filler)"
+
 class DerandomizeGurranq(Toggle):
     """De-randomize Gurranq's deathroot ladder -- 10 missable rewards behind a blind cumulative
     deathroot gate. Locks the ladder at vanilla and re-injects the three keepers (Clawmark Seal,
@@ -1111,6 +1121,7 @@ class EROptions(PerGameCommonOptions):
     soft_progression: SoftProgression
     tidy_fun_consumables: TidyFunConsumables
     soft_consumable_shop: SoftConsumableShop
+    key_gates_missable: KeyGatesMissable  # [key-gates]
     shop_checks: ShopChecks  # [shop-checks]
     derandomize_gurranq: DerandomizeGurranq
     derandomize_questlines: DerandomizeQuestlines
@@ -1177,6 +1188,7 @@ option_groups = [
         JunkRetentionStyle,
         TidyFunConsumables,
         SoftConsumableShop,
+        KeyGatesMissable,  # [key-gates]
         ShopChecks,  # [shop-checks]
         DerandomizeGurranq,
         DerandomizeQuestlines,
@@ -1241,3 +1253,4 @@ option_groups = [
         DisableSerpentHunterUpgrade,
     ], start_collapsed=True),
 ]
+# [key-gates] feature added 2026-06-30 (KeyGatesMissable)
