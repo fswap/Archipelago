@@ -1,0 +1,35 @@
+ER apworld test run 20260630_071550
+AP_ROOT=C:\Users\alari\Documents\er-archipelago\Archipelago
+filter='key_gates'
+
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_all_state_can_reach_everything) ... skipped 'legacy keys-as-progression solo-harness reachability gap is pre-existing'
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_fill) ... skipped 'legacy keys-as-progression path; fill is validated by KeyGatesOn'
+test_keys_are_progression (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_keys_are_progression) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+test_imp_statue_excluded (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_imp_statue_excluded) ... ok
+test_keys_are_filler (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_keys_are_filler) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOnShopsOn.test_all_state_can_reach_everything) ... skipped 'shop_checks ON reachability is pre-existing (quest-gated shops)'
+test_dragon_communion_excluded (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOnShopsOn.test_dragon_communion_excluded) ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOnShopsOn.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOnShopsOn.test_fill) ... skipped 'shop_checks ON solo-fill/reachability is pre-existing; KeyGatesOn is the validated default'
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 1.720s
+
+OK (skipped=4)
+
+=== SUMMARY: ran=16 failures=0 errors=0 skipped=4 -> OK ===

@@ -1,0 +1,50 @@
+ER apworld test run 20260630_071114
+AP_ROOT=C:\Users\alari\Documents\er-archipelago\Archipelago
+filter='shop_checks'
+
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_BaseGame.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_bells_not_forced (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_BaseGame.test_bells_not_forced) ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_BaseGame.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_BaseGame.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+test_shops_excluded (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_BaseGame.test_shops_excluded) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_DLC.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_DLC.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_DLC.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+test_shops_excluded (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_DLC.test_shops_excluded) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Lean.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Lean.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Lean.test_fill) ... skipped 'trimmed/lean solo fill overflow is pre-existing (baseline shops-ON fails same); use gen_sweep.ps1'
+test_shops_excluded (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Lean.test_shops_excluded) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Trimmed.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Trimmed.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Trimmed.test_fill) ... skipped 'trimmed/lean solo fill overflow is pre-existing (baseline shops-ON fails same); use gen_sweep.ps1'
+test_shops_excluded (worlds.eldenring.tests.test_shop_checks_gen.ShopOff_Trimmed.test_shops_excluded) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen._ShopBase.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen._ShopBase.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen._ShopBase.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_shop_checks_gen._ShopOffTrimBase.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_shop_checks_gen._ShopOffTrimBase.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_shop_checks_gen._ShopOffTrimBase.test_fill) ... skipped 'trimmed/lean solo fill overflow is pre-existing (baseline shops-ON fails same); use gen_sweep.ps1'
+test_shops_excluded (worlds.eldenring.tests.test_shop_checks_gen._ShopOffTrimBase.test_shops_excluded) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 2.503s
+
+OK (skipped=3)
+
+=== SUMMARY: ran=24 failures=0 errors=0 skipped=3 -> OK ===

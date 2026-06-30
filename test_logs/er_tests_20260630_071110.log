@@ -1,0 +1,48 @@
+ER apworld test run 20260630_071110
+AP_ROOT=C:\Users\alari\Documents\er-archipelago\Archipelago
+filter='key_gates'
+
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_fill) ... skipped 'legacy keys-as-progression path; fill is validated by KeyGatesOn'
+test_keys_are_progression (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOff.test_keys_are_progression) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+test_gated_locations_excluded (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_gated_locations_excluded) ... FAIL
+test_keys_are_filler (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_keys_are_filler) ... ok
+test_all_state_can_reach_everything (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_all_state_can_reach_everything)
+Ensure all state can reach everything and complete the game with the defined options ... ok
+test_empty_state_can_reach_something (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_empty_state_can_reach_something)
+Ensure empty state can reach at least one location with the defined options ... ok
+test_fill (worlds.eldenring.tests.test_key_gates_gen._KeyBase.test_fill)
+Generates a multiworld and validates placements with the defined options ... ok
+
+======================================================================
+FAIL: test_gated_locations_excluded (worlds.eldenring.tests.test_key_gates_gen.KeyGatesOn.test_gated_locations_excluded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\alari\Documents\er-archipelago\Archipelago\worlds\eldenring\tests\test_key_gates_gen.py", line 66, in test_gated_locations_excluded
+    self.assertEqual(not_excluded, [], f"key-gated locations NOT EXCLUDED with option ON: {not_excluded}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['LG/(CDC): Dragonfire - Dragon Communion'[39 chars]ion'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'LG/(CDC): Dragonfire - Dragon Communion'
+
++ []
+- ['LG/(CDC): Dragonfire - Dragon Communion',
+-  'LG/(CDC): Dragonclaw - Dragon Communion'] : key-gated locations NOT EXCLUDED with option ON: ['LG/(CDC): Dragonfire - Dragon Communion', 'LG/(CDC): Dragonclaw - Dragon Communion']
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.219s
+
+FAILED (failures=1, skipped=1)
+
+=== SUMMARY: ran=12 failures=1 errors=0 skipped=1 -> FAILED ===

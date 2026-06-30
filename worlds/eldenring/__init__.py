@@ -5912,6 +5912,28 @@ class EldenRing(World):
             slot_data["shopRowFlags"] = {}
             print(f"[shop-detect] WARN could not build shop detection flags: {_shd_e}")
 
+        # [shop-preview-goods] {AP location id -> vanilla good id} for active shop slots whose ware is a
+        # GOOD, so the runtime client overwrites that good's GoodsName/Caption with the scouted AP item.
+        # Gated on shop_checks; source = shop_row_flags.json loc_good_ids (raw ShopLineupParam.equipId).
+        try:
+            _spg = {}
+            if self.options.shop_checks.value:
+                import os as _spg_os, json as _spg_json
+                _spg_path = _spg_os.path.join(_spg_os.path.dirname(__file__), "shop_row_flags.json")
+                with open(_spg_path, encoding="utf-8") as _spg_f:
+                    _spg_map = _spg_json.load(_spg_f).get("loc_good_ids", {})
+                for _spg_loc in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
+                    _spg_data = getattr(_spg_loc, "data", None)
+                    if _spg_data is None or _spg_loc.address is None or not getattr(_spg_data, "shop", False):
+                        continue
+                    _spg_gid = _spg_map.get(str(_spg_loc.address))
+                    if _spg_gid is not None:
+                        _spg[str(_spg_loc.address)] = _spg_gid
+            slot_data["shopPreviewGoods"] = _spg
+        except Exception as _spg_e:
+            slot_data["shopPreviewGoods"] = {}
+            print(f"[shop-preview-goods] WARN could not build shop preview goods: {_spg_e}")
+
         return slot_data
 
     @staticmethod

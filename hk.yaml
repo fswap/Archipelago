@@ -1,0 +1,50 @@
+name: P2_HollowKnight
+description: Player 2 - Hollow Knight, paired with ER test run
+game: Hollow Knight
+
+# DeathLink ON so it actually exercises the link with your ER client.
+# (This is why we dropped Yacht Dice - it has no death to send.)
+Hollow Knight:
+  # --- goal ---
+  Goal: any            # any of Hollow Knight / siblings / radiance completes - most forgiving for a test
+  WhitePalace: exclude # keep Path of Pain etc. out of logic for a quick validation seed
+
+  # --- standard randomizer pool (these are default-on; listed for clarity) ---
+  RandomizeDreamers: true
+  RandomizeSkills: true
+  RandomizeCharms: true
+  RandomizeKeys: true
+  RandomizeMaskShards: true
+  RandomizeVesselFragments: true
+  RandomizeCharmNotches: true
+  RandomizePaleOre: true
+  RandomizeRancidEggs: true
+  RandomizeRelics: true
+  RandomizeStags: true
+  RandomizeLifebloodCocoons: true
+
+  # --- keep logic gentle for a test (no skip tricks required) ---
+  RandomizeFocus: false
+  RandomizeSwim: false
+  RandomizeElevatorPass: false
+  ProficientCombat: false
+  BackgroundObjectPogos: false
+  MildSkips: false
+  SpicySkips: false
+  FireballSkips: false
+  PreciseMovement: false
+  ObscureSkips: false
+  DarkRooms: false
+  ComplexSkips: false
+  DifficultSkips: false
+
+  ExtraPlatforms: true   # adds platforms to ease softlock-prone spots
+  StartingGeo: 0
+
+  # --- death link ---
+  death_link: true
+  DeathLinkShade: vanilla        # leave a shade on death as normal
+  DeathLinkBreaksFragileCharms: false
+
+  # --- common ---
+  progression_balancing: 50
