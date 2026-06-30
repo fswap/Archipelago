@@ -5883,6 +5883,35 @@ class EldenRing(World):
         except Exception as _sp_e:
             slot_data["shopLocationIds"] = []
             print(f"[shop-preview] WARN could not build shop location ids: {_sp_e}")
+        # [shop-detect] pure-runtime shop-check detection (see shop_row_flags.json + shop_flags.rs).
+        # Gated on shop_checks. loc_row_flags -> client rewrites the row's eventFlag_forStock to this
+        # flag (emit as shopRowFlags). loc_extra_flags -> slot has a vanilla stock flag missing from the
+        # detection table, so just add it to locationFlags (self-detects on purchase, no rewrite).
+        try:
+            _shd_row_flags = {}
+            if self.options.shop_checks.value:
+                import os as _shd_os, json as _shd_json
+                _shd_path = _shd_os.path.join(_shd_os.path.dirname(__file__), "shop_row_flags.json")
+                with open(_shd_path, encoding="utf-8") as _shd_f:
+                    _shd_doc = _shd_json.load(_shd_f)
+                _shd_lrf = _shd_doc.get("loc_row_flags", {})
+                _shd_lef = _shd_doc.get("loc_extra_flags", {})
+                _shd_lf = slot_data.setdefault("locationFlags", {})
+                for _shd_loc in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
+                    _shd_data = getattr(_shd_loc, "data", None)
+                    if _shd_data is None or _shd_loc.address is None or not getattr(_shd_data, "shop", False):
+                        continue
+                    _shd_key = str(_shd_loc.address)
+                    if _shd_key in _shd_lrf:
+                        _shd_row, _shd_flag = _shd_lrf[_shd_key]
+                        _shd_row_flags[str(_shd_row)] = _shd_flag
+                    elif _shd_key in _shd_lef:
+                        _shd_lf[_shd_key] = _shd_lef[_shd_key]
+            slot_data["shopRowFlags"] = _shd_row_flags
+        except Exception as _shd_e:
+            slot_data["shopRowFlags"] = {}
+            print(f"[shop-detect] WARN could not build shop detection flags: {_shd_e}")
+
         return slot_data
 
     @staticmethod
