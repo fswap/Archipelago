@@ -22,6 +22,8 @@ from .locations import location_tables, location_dictionary
 from .merchant_bells import resolve_merchant_bells
 from .stone_bells import PROGRESSIVE_SMITHING_BELL, PROGRESSIVE_SOMBER_BELL
 from .rules_data import region_rules_table
+from .region_lock_data import build_region_lock_rules, build_region_lock_location_rules
+from .warp_rules import build_warp_rules
 
 
 class EldenRingRules:
@@ -334,318 +336,40 @@ class EldenRingRules:
         return True
     
     def _region_lock_warp_access(self) -> None:
-        """Warp access model (option region_access = warp): a region's lock unlocks its graces, so
-        receiving it lets you fast-travel straight in -- access = that lock ALONE, not the geographic
-        chain (Altus needs only Altus Lock, not Liurnia Lock too). Adds a direct Limgrave->region warp
-        entrance gated on the region's own lock, for every grace-granted (REGION_LOCK_ITEM) region.
-        region_access = geographic -> skip (access stays the geographic "Go To" chain). Caveat: this
-        models WARP-IN only; with a low graces_per_region, far-flung checks could still need legwork."""
-        if self.options.region_access != "warp":
-            return
-        # Roundtable-hub re-root: under random_start the warp hub is Roundtable (Limgrave is now a
-        # locked region, reached via its own Warp To Limgrave added below). Variable kept named
-        # `limgrave` so the rest of this method is untouched. SPEC-random-start-roundtable-hub.md.
-        _hub = "Roundtable Hold" if getattr(self, "_random_start_region", None) else "Limgrave"
-        limgrave = self.get_region(_hub)
-        for region, lock in REGION_LOCK_ITEM.items():
-            if region not in self.created_regions:
-                continue
-            warp = Entrance(self.player, f"Warp To {region}", limgrave)
-            limgrave.exits.append(warp)
-            warp.connect(self.get_region(region))
-            add_rule(warp, lambda state, item=lock: state.has(item, self.player))
-        # Pure-logic bundle locks (Shadow Catacombs / Altus Caves / Mountaintops Caves) are NOT in
-        # Roundtable-hub re-root (SPEC-random-start-roundtable-hub.md): Limgrave isn't in
-        # REGION_LOCK_ITEM (it was the free hub), so the loop above gives it no warp. Under
-        # random_start add a direct hub -> Limgrave warp gated on Limgrave Lock, so Limgrave behaves
-        # like any locked region. Inert on every other seed.
-        if getattr(self, "_random_start_region", None) and "Limgrave" in self.created_regions:
-            _lwarp = Entrance(self.player, "Warp To Limgrave", limgrave)
-            limgrave.exits.append(_lwarp)
-            _lwarp.connect(self.get_region("Limgrave"))
-            add_rule(_lwarp, lambda state: state.has("Limgrave Lock", self.player))
-        # REGION_LOCK_ITEM, so the loop above skips them. Under warp access, receiving the bundle lock
-        # lights each bundled dungeon's entrance grace (patch_apworld_bundle_lock_graces.py) -> you warp
-        # straight in. Mirror that: a direct Limgrave warp to each bundled dungeon gated on the bundle
-        # lock, only when the bundle's extra_region_locks key is active (so logic == warp reality).
-        _BUNDLE_WARP = {
-            "dlc_catacombs": ("Spelunker's Messmerflame Torch", ["Fog Rift Catacombs", "Belurat Gaol"]),
-            "altus_caves": ("Spelunker's Steel-Wire Torch", ["Sainted Hero's Grave", "Unsightly Catacombs",
-                "Perfumer's Grotto", "Sage's Cave", "Old Altus Tunnel", "Altus Tunnel"]),
-            "mountaintops_caves": ("Spelunker's Beast-Repellent Torch", ["Giant-Conquering Hero's Grave",
-                "Giants' Mountaintop Catacombs", "Spiritcaller Cave", "Consecrated Snowfield Catacombs",
-                "Cave of the Forlorn", "Yelough Anix Tunnel"]),
-            "liurnia_caves": ("Spelunker's Ghostflame Torch", ["Stillwater Cave", "Lakeside Crystal Cave",
-                "Academy Crystal Cave", "Road's End Catacombs", "Black Knife Catacombs",
-                "Cliffbottom Catacombs", "Raya Lucaria Crystal Tunnel", "Ruin-Strewn Precipice"]),
-            "limgrave_underground": ("Spelunker's Torch", ["Fringefolk Hero's Grave", "Coastal Cave",
-                "Church of Dragon Communion", "Groveside Cave", "Stormfoot Catacombs", "Limgrave Tunnels",
-                "Murkwater Cave", "Murkwater Catacombs", "Highroad Cave", "Deathtouched Catacombs"]),
-        }
-        for _bkey, (_block, _bdungeons) in _BUNDLE_WARP.items():
-            if _bkey not in self.options.extra_region_locks.value:
-                continue
-            for _bdn in _bdungeons:
-                if _bdn not in self.created_regions:
-                    continue
-                _bwarp = Entrance(self.player, f"Warp To {_bdn}", limgrave)
-                limgrave.exits.append(_bwarp)
-                _bwarp.connect(self.get_region(_bdn))
-                add_rule(_bwarp, lambda state, item=_block: state.has(item, self.player))
+        """Create the grace-warp entrances from the declarative builder (warp_rules.build_warp_rules).
 
-    def _region_lock(self) -> None: # MARK: Region Lock Items
-        """All region lock rules."""
-        if self.options.world_logic != "region_bosses":
-            self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
-            if "limgrave_underground" in self.options.extra_region_locks.value:
-                # Limgrave underground bundle: 10 minor-dungeon regions share one 'Limgrave Underground Lock'
-                self._add_entrance_rule("Fringefolk Hero's Grave", "Spelunker's Torch")
-                self._add_entrance_rule("Coastal Cave", "Spelunker's Torch")
-                self._add_entrance_rule("Church of Dragon Communion", "Spelunker's Torch")
-                self._add_entrance_rule("Groveside Cave", "Spelunker's Torch")
-                self._add_entrance_rule("Stormfoot Catacombs", "Spelunker's Torch")
-                self._add_entrance_rule("Limgrave Tunnels", "Spelunker's Torch")
-                self._add_entrance_rule("Murkwater Cave", "Spelunker's Torch")
-                self._add_entrance_rule("Murkwater Catacombs", "Spelunker's Torch")
-                self._add_entrance_rule("Highroad Cave", "Spelunker's Torch")
-                self._add_entrance_rule("Deathtouched Catacombs", "Spelunker's Torch")
-            # Stormveil Start (gatehouse + Margit) intentionally FREE in sphere 1: reaching/fighting
-            # Margit is core to ER's opening and is the natural trigger for Melina's Roundtable invite.
-            # Only the deeper castle (Stormveil Castle -> Rampart Tower -> Godrick) is lock-gated. 2026-06-14.
-            # self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
-            self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
-            # Godrick mini-campaign granularity (scoped to ec==godrick; normal seeds untouched).
-            # Stormhill = the sole Limgrave->Stormveil route = mandatory mid-spine key. Godrick
-            # is gated behind its OWN lock, SEPARATE from the Stormveil Lock that opens the
-            # castle, so the Rampart/parkour skip no longer wins the seed -- you must hold
-            # Godrick Lock to complete. With the baked Godrick fog gate this forces real castle
-            # engagement (the other 117 castle checks stay under Stormveil Lock).
-            if "stormhill" in self.options.extra_region_locks.value:
-                self._add_entrance_rule("Stormhill", "Stormhill Lock")
-            if "godrick" in self.options.extra_region_locks.value:
-                self._add_location_rule(region_spine.GODRICK_GOAL_LOCATION, "Godrick Lock")
-            if "castle_morne" in self.options.extra_region_locks.value and "Castle Morne" in location_tables:
-                self._add_entrance_rule("Castle Morne", "Morne Lock")
-            self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
-            if "liurnia_caves" in self.options.extra_region_locks.value:
-                # Liurnia minor-dungeon bundle: 8 dungeons share one 'Liurnia Caves Lock'
-                self._add_entrance_rule("Stillwater Cave", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Lakeside Crystal Cave", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Academy Crystal Cave", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Road's End Catacombs", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Black Knife Catacombs", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Cliffbottom Catacombs", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Raya Lucaria Crystal Tunnel", "Spelunker's Ghostflame Torch")
-                self._add_entrance_rule("Ruin-Strewn Precipice", "Spelunker's Ghostflame Torch")
-            
-            self._add_entrance_rule("Siofra River", "South East Underground Lock")
-            self._add_entrance_rule("Nokron, Eternal City Start", "South East Underground Lock")
-            
-            self._add_entrance_rule("Ainsel River", "North Underground Lock")
-            self._add_entrance_rule("Ainsel River Main", "North Underground Lock")
-            self._add_entrance_rule("Deeproot Depths", "North Underground Lock")
-            
-            self._add_entrance_rule("Lake of Rot", "South West Underground Lock")
-            
-            self._add_entrance_rule("Altus Plateau", "Altus Lock")
-            
-            self._add_entrance_rule("Caelid", "Caelid Lock")
-            self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
-            self._add_entrance_rule("Redmane Castle Post Radahn", "Redmane Lock")
-            # Dragonbarrow is its own countable region (spine step 6): gate it on a dedicated
-            # Dragonbarrow Lock (previously only Caelid-reachable + Sellia-bell gated).
-            self._add_entrance_rule("Dragonbarrow", "Dragonbarrow Lock")
-            
-            self._add_entrance_rule("Altus Plateau", "Altus Lock")
-            self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
-            if "altus_caves" in self.options.extra_region_locks.value:
-                # Altus minor-dungeon bundle: 6 dungeons share one 'Altus Caves Lock'
-                self._add_entrance_rule("Sainted Hero's Grave", "Spelunker's Steel-Wire Torch")
-                self._add_entrance_rule("Unsightly Catacombs", "Spelunker's Steel-Wire Torch")
-                self._add_entrance_rule("Perfumer's Grotto", "Spelunker's Steel-Wire Torch")
-                self._add_entrance_rule("Sage's Cave", "Spelunker's Steel-Wire Torch")
-                self._add_entrance_rule("Old Altus Tunnel", "Spelunker's Steel-Wire Torch")
-                self._add_entrance_rule("Altus Tunnel", "Spelunker's Steel-Wire Torch")
-            self._add_entrance_rule("Volcano Manor Entrance", "Mt. Gelmir Lock")  # folded: Volcano Manor is part of Mt. Gelmir
-            self._add_entrance_rule("Volcano Manor Dungeon", "Mt. Gelmir Lock")  # folded: Volcano Manor is part of Mt. Gelmir
-            
-            self._add_entrance_rule("Mohgwyn Palace", "Mohgwyn Lock")
-            
-            self._add_entrance_rule("Farum Azula", "Farum Azula Lock")
-            self._add_entrance_rule("Leyndell, Ashen Capital", "Ashen Lock")
-            self._add_entrance_rule("Miquella's Haligtree",
-                lambda state: state.has("Haligtree Secret Medallion (Right)", self.player))
-            # Opt-in boss chokepoint locks (extra_region_locks: chokepoint_locks): gate a legacy
-            # dungeon's BACK half on defeating its mid-boss choke, so the fill never strands
-            # progression past it. Pure logic -- gates the after-region entrance on reaching the
-            # choke boss's drop (its guarding flag = the boss death); no item, no open-flag.
-            # Mirrors the Nokron-gated-on-Radahn pattern. See SPEC-chokepoint-locks.md.
-            if "chokepoint_locks" in self.options.extra_region_locks.value:
-                for _after, (_befores, _trigs) in region_spine.CHOKEPOINTS.items():
-                    if _after not in self.created_regions: continue
-                    _trig = next((t for t in _trigs if self._is_location_available(t)), None)
-                    if _trig is None: continue
-                    self._add_entrance_rule(_after, lambda state, loc=_trig: self._can_get(state, loc))
-            if "mountaintops_caves" in self.options.extra_region_locks.value:
-                # Mountaintops/Snowfield minor-dungeon bundle: 6 dungeons share one 'Mountaintops Caves Lock'
-                self._add_entrance_rule("Giant-Conquering Hero's Grave", "Spelunker's Beast-Repellent Torch")
-                self._add_entrance_rule("Giants' Mountaintop Catacombs", "Spelunker's Beast-Repellent Torch")
-                self._add_entrance_rule("Spiritcaller Cave", "Spelunker's Beast-Repellent Torch")
-                self._add_entrance_rule("Consecrated Snowfield Catacombs", "Spelunker's Beast-Repellent Torch")
-                self._add_entrance_rule("Cave of the Forlorn", "Spelunker's Beast-Repellent Torch")
-                self._add_entrance_rule("Yelough Anix Tunnel", "Spelunker's Beast-Repellent Torch")
-            if "snowfield" in self.options.extra_region_locks.value:
-                # Split Consecrated Snowfield off as its own dedicated lock. It was a natural-key
-                # region (gated only by the Haligtree Secret Medallions, shared with the Rold /
-                # Mountaintops cluster); this adds a dedicated 'Snowfield Lock' on top of the
-                # medallion route so Snowfield seals and opens independently. The natural-key
-                # bloom trigger is dropped (see natural_key_triggers) so the in-game grace bloom
-                # follows the lock item rather than the medallions.
-                self._add_entrance_rule("Consecrated Snowfield", "Snowfield Lock")
-            if self.options.enable_dlc:
-                self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
-                self._add_entrance_rule("Belurat", "Belurat Lock")
-                self._add_entrance_rule("Castle Ensis", "Ensis Lock")
-                self._add_entrance_rule("Fog Rift Fort", "Ensis Lock")
-                self._add_entrance_rule("Ellac River", "Ellac Lock")
-                self._add_entrance_rule("Cerulean Coast", "Cerulean Lock")
-                self._add_entrance_rule("Stone Coffin Fissure", "Stone Coffin Lock")
-                self._add_entrance_rule("Jagged Peak Foot", "Jagged Peak Lock")
-                self._add_entrance_rule("Charo's Hidden Grave", "Charo's Lock")
-                self._add_entrance_rule("Scadu Altus", "Scadu Altus Lock")
-                self._add_entrance_rule("Rauh Base", "Rauh Base Lock")
-                self._add_entrance_rule("Shadow Keep", "Shadow Keep Lock")
-                self._add_entrance_rule("Shadow Keep, Church District", "Shadow Keep Lock")
-                self._add_entrance_rule("Recluses' River", "Recluses' Lock")
-                self._add_entrance_rule("Abyssal Woods", "Abyssal Lock")
-                self._add_entrance_rule("Ancient Ruins of Rauh", "Ancient Ruins Lock")
-                self._add_entrance_rule("Enir Ilim", "Enir Ilim Lock")
-                # Opt-in DLC granularity (extra_region_locks: dlc_catacombs): split Gravesite
-                # Plain's two minor dungeons (Fog Rift Catacombs + Belurat Gaol) out behind one
-                # shared key. Pure logic gate -- no REGION_LOCK_ITEM/map_region_data entry, so no
-                # open-flag use and no warp grace (matches the Stormhill/Godrick/Morne locks).
-                if "dlc_catacombs" in self.options.extra_region_locks.value:
-                    self._add_entrance_rule("Fog Rift Catacombs", "Spelunker's Messmerflame Torch")
-                    self._add_entrance_rule("Belurat Gaol", "Spelunker's Messmerflame Torch")
-        
-        if self.options.world_logic != "region_lock" and False: # unfinished always skip
-            if False:  # region_boss_type removed (Part 2); region_bosses rules block is disabled
-                self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"] & self.location_name_groups["Overworld Bosses"]))
-            else:
-                self._add_location_rule("Limgrave Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Limgrave Bosses"]))
-                self._add_location_rule("Weeping Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Weeping Bosses"]))
-                self._add_location_rule("Stormveil Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stormveil Bosses"]))
-                self._add_location_rule("Liurnia Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Liurnia Bosses"]))
-                self._add_location_rule("Raya Lucaria Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Raya Lucaria Bosses"]))
-                self._add_location_rule("South East Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South East Underground Bosses"]))
-                self._add_location_rule("North Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["North Underground Bosses"]))
-                self._add_location_rule("South West Underground Bosses", lambda state: self._can_get_all(state, self.location_name_groups["South West Underground Bosses"]))
-                self._add_location_rule("Moonlight Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Moonlight Bosses"]))
-                self._add_location_rule("Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Altus Bosses"]))
-                self._add_location_rule("Mt. Gelmir Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mt. Gelmir Bosses"]))
-                self._add_location_rule("Caelid Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Caelid Bosses"]))
-                self._add_location_rule("Leyndell Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Leyndell Bosses"]))
-                self._add_location_rule("Mountaintops Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mountaintops Bosses"]))
-                self._add_location_rule("Snowfield Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Snowfield Bosses"]))
-                self._add_location_rule("Farum Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Farum Bosses"]))
-                self._add_location_rule("Mohgwyn Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Mohgwyn Bosses"]))
-                self._add_location_rule("Haligtree Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Haligtree Bosses"]))
-            
-            self._add_entrance_rule("Weeping Peninsula", lambda state: state.has("Limgrave Bosses", self.player))
-            
-            self._add_entrance_rule("Stormveil Start", lambda state: state.has("Weeping Bosses", self.player))
-            self._add_entrance_rule("Liurnia of The Lakes", lambda state: state.has("Stormveil Bosses", self.player))
-            
-            self._add_entrance_rule("Raya Lucaria Academy", lambda state: state.has("Liurnia Bosses", self.player))
-            
-            self._add_entrance_rule("Altus Plateau", lambda state: state.has("Raya Lucaria Bosses", self.player))
-            self._add_entrance_rule("Volcano Manor Dungeon", lambda state: state.has("Raya Lucaria Bosses", self.player))
-            
-            self._add_entrance_rule("Caelid", lambda state: state.has("Altus Bosses", self.player))
-            self._add_entrance_rule("Mt. Gelmir", lambda state: state.has("Altus Bosses", self.player))
-            self._add_entrance_rule("Leyndell, Royal Capital", lambda state: state.has("Altus Bosses", self.player) 
-                    and state.has("Caelid Bosses", self.player) and state.has("Mt. Gelmir Bosses", self.player))
-            
-            self._add_entrance_rule("Nokron, Eternal City Start", lambda state: state.has("Caelid Bosses", self.player))
-            self._add_entrance_rule("Siofra River", lambda state: state.has("Caelid Bosses", self.player))
-            
-            self._add_entrance_rule("Deeproot Depths", lambda state: state.has("South East Underground Bosses", self.player))
-            self._add_entrance_rule("Ainsel River Main", lambda state: state.has("South East Underground Bosses", self.player))
-            self._add_entrance_rule("Ainsel River", lambda state: state.has("South East Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Lake of Rot", lambda state: state.has("North Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Moonlight Altar", lambda state: state.has("South West Underground Bosses", self.player))
-            
-            self._add_entrance_rule("Mountaintops of the Giants", lambda state: state.has("Leyndell Bosses", self.player))
-            self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: state.has("Leyndell Bosses", self.player))
-            
-            self._add_entrance_rule("Miquella's Haligtree", lambda state: state.has("Snowfield Bosses", self.player))
-            if self.options.dlc_timing != 2:
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Liurnia Bosses", self.player))
-            else:
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Snowfield Bosses", self.player))
-            
-            self._add_entrance_rule("Farum Azula", lambda state: state.has("Mountaintops Bosses", self.player))
-            self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: state.has("Farum Bosses", self.player) 
-                                    and state.has("Haligtree Bosses", self.player) and state.has("Mohgwyn Bosses", self.player))
-            
-            if self.options.enable_dlc:
-                if False:  # region_boss_type removed (Part 2), DLC bosses
-                    self._add_location_rule("Ashen Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ashen Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Gravesite Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Gravesite Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Belurat Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Belurat Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ensis Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ensis Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ellac Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ellac Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Cerulean Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Cerulean Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses" & self.location_name_groups["Overworld Bosses"]]))
-                    self._add_location_rule("Jagged Peak Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Jagged Peak Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Charo's Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Charo's Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Scadu Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Scadu Altus Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Rauh Base Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Rauh Base Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Shadow Keep Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Shadow Keep Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Hinterland Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Hinterland Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Finger Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Finger Ruins Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Recluses' Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Recluses' Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Abyssal Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Abyssal Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Ancient Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ancient Ruins Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                    self._add_location_rule("Enir Ilim Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Enir Ilim Bosses"] & self.location_name_groups["Overworld Bosses"]))
-                else:
-                    self._add_location_rule("Ashen Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ashen Bosses"]))
-                    self._add_location_rule("Gravesite Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Gravesite Bosses"]))
-                    self._add_location_rule("Belurat Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Belurat Bosses"]))
-                    self._add_location_rule("Ensis Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ensis Bosses"]))
-                    self._add_location_rule("Ellac Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ellac Bosses"]))
-                    self._add_location_rule("Cerulean Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Cerulean Bosses"]))
-                    self._add_location_rule("Stone Coffin Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Stone Coffin Bosses"]))
-                    self._add_location_rule("Jagged Peak Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Jagged Peak Bosses"]))
-                    self._add_location_rule("Charo's Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Charo's Bosses"]))
-                    self._add_location_rule("Scadu Altus Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Scadu Altus Bosses"]))
-                    self._add_location_rule("Rauh Base Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Rauh Base Bosses"]))
-                    self._add_location_rule("Shadow Keep Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Shadow Keep Bosses"]))
-                    self._add_location_rule("Hinterland Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Hinterland Bosses"]))
-                    self._add_location_rule("Finger Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Finger Ruins Bosses"]))
-                    self._add_location_rule("Recluses' Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Recluses' Bosses"]))
-                    self._add_location_rule("Abyssal Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Abyssal Bosses"]))
-                    self._add_location_rule("Ancient Ruins Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Ancient Ruins Bosses"]))
-                    self._add_location_rule("Enir Ilim Bosses", lambda state: self._can_get_all(state, self.location_name_groups["Enir Ilim Bosses"]))
+        Behaviour-preserving port of the former imperative body (SPEC-region-rules-rulebuilder.md
+        §4h): additive "Warp To {region}" entrances gated on each region\'s own lock. Inert when
+        region_access != warp (the builder returns no edges)."""
+        warp = build_warp_rules(self)
+        hub = self.get_region(warp["hub"])
+        for edge in warp["edges"]:
+            entrance = Entrance(self.player, edge.name, hub)
+            hub.exits.append(entrance)
+            entrance.connect(self.get_region(edge.target))
+            resolved = edge.rule.resolve(self)
+            self.register_rule_dependencies(resolved)
+            add_rule(entrance, resolved)
+
+    def _region_lock(self) -> None:
+        """Apply region-lock ACCESS clauses from the declarative builder (region_lock_data).
+
+        Behaviour-preserving port of the former imperative body (SPEC-region-rules-rulebuilder.md
+        §4e): ANDs each region\'s Has(lock)/chokepoint clause onto its "Go To {region}" entrance,
+        plus the Godrick goal-location lock. Inert under world_logic == region_bosses (the builder
+        returns {}). Attaching via resolve + register_rule_dependencies + add_rule mirrors what
+        World.set_rule does for cache registration, but AND-stacks onto any existing geographic clause
+        instead of replacing it."""
+        for region, rule in build_region_lock_rules(self).items():
+            entrance = self.multiworld.get_entrance(f"Go To {region}", self.player)
+            resolved = rule.resolve(self)
+            self.register_rule_dependencies(resolved)
+            add_rule(entrance, resolved)
+        for location, rule in build_region_lock_location_rules(self).items():
+            loc = self.multiworld.get_location(location, self.player)
+            resolved = rule.resolve(self)
+            self.register_rule_dependencies(resolved)
+            add_rule(loc, resolved)
                 
                 # TODO entrance rules          
     
