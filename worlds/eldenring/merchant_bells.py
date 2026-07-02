@@ -12,10 +12,15 @@ resolve_merchant_bells() matches those tokens against the LIVE location table at
 gen time (filtered to shop locations), so a future rename breaks loudly via the
 double-match / zero-hit guards instead of silently un-gating a shop.
 
-INCLUSION RULE (why only these 11): a merchant is gated only if BOTH (a) it owns
-shop= checks and (b) its Bell Bearing has a real pickup location in locations.py so
-it can be placed as progression. Bells with no world drop (Bernahl, Sellen, Thops,
-Iji, Moore) are EXCLUDED -- gating them would make their shop checks unreachable.
+INCLUSION RULE (why only these 11): a merchant is gated only if it owns shop=
+checks that the tokens below can identify. NOTE (2026-07-02,
+shopslot-reachability): most of these bells have NO live pickup location in
+locations.py (the drop rows are commented out),
+so the gating bells are INJECTED into the item pool by generate_early
+(item_table[bell].inject=True -> _all_injectable_items) instead of arriving
+via a world drop; only Gowry's bell still enters through its location. Bells
+that gate no shop= location (Bernahl, Sellen, Thops, Iji, Moore, Blackguard)
+are never gated or injected.
 
 EXCLUSIONS (never gated): Enia (Great-Rune/Remembrance exchanges, no bell), Twin
 Maiden Husks (the fulfillment hub), Kale (gating his shop would kill the sphere-1

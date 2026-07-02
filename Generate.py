@@ -647,8 +647,17 @@ def roll_alttp_settings(ret: argparse.Namespace, weights):
 
 
 if __name__ == '__main__':
-    import atexit
-    confirmation = atexit.register(input, "Press enter to close.")
+    import atexit, os, sys
+    # Skip the interactive "Press enter to close." pause when run non-interactively
+    # (build.ps1 / gen_sweep.ps1 / gen_fuzz.ps1 set AP_NONINTERACTIVE). On a gen
+    # ERROR the unregister below never runs, so this atexit input() would otherwise
+    # block the harness waiting on Enter (invisibly, since stdout is redirected).
+    # isatty() also covers piped/NUL stdin. LOCAL PATCH -- dropped by any AP
+    # re-checkout; restore with patch_generate_nopause_reapply.py.
+    if os.environ.get("AP_NONINTERACTIVE") or not (sys.stdin and sys.stdin.isatty()):
+        confirmation = None
+    else:
+        confirmation = atexit.register(input, "Press enter to close.")
     erargs, seed = main()
     from Main import main as ERmain
     multiworld = ERmain(erargs, seed)
@@ -662,4 +671,5 @@ if __name__ == '__main__':
         assert not weak(), f"MultiWorld object was not de-allocated, it's referenced {sys.getrefcount(weak())} times." \
                            " This would be a memory leak."
     # in case of error-free exit should not need confirmation
-    atexit.unregister(confirmation)
+    if confirmation:
+        atexit.unregister(confirmation)

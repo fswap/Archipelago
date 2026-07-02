@@ -95,6 +95,46 @@ class HasWeighted(Rule, game="EldenRing"):
             return f"HasWeighted({self.count} across {[i for i, _ in self.item_weights]})"
 
 
+# --- uncached reach rules (patch_priority_fill_fix, 2026-07-01) --------------------------------
+# CanReach{Entrance,Location,Region} depend on graph REACHABILITY, not just collected items, and
+# the rule-result cache cannot invalidate them soundly in this world:
+#   * their only registered invalidation trigger is a reached_region event on the PARENT region
+#     of the target entrance/location, and
+#   * register_rule_builder_dependencies() would fold the target entrance's item deps in, but it
+#     skips every entrance whose access_rule is an add_rule() lambda -- which is ALL of this
+#     world's gated "Go To" entrances (geographic rule + region-lock clause are AND-stacked via
+#     add_rule in rules_mixin).
+# So once the parent region is already reachable in a state (or in any ancestor state that a
+# fill sweep copies from -- sweep states inherit rule_builder_cache), a cached False for these
+# rules is NEVER cleared by later item collection: whole subtrees (Caelid -> Wailing Dunes ->
+# Nokron, Stormveil, Farum Azula, ...) stay "unreachable" inside fill sweeps. Symptoms: FillError
+# at Fill.py "Priority Retry" ("No more spots to place N items", "Already placed 0") across
+# region_lock combos and, on seeds that happened to fill, silent full-accessibility violations.
+# Root-cause proof 2026-07-01: clearing state.rule_builder_cache flipped the three starved
+# priority locations back to reachable=True on the repro seed 85920353982860255231.
+# Fix: force these three rules (and, via NestedRule force_recalculate propagation, any composite
+# containing them) to always re-evaluate. Leaf Has*/HasWeighted rules keep caching. Measured
+# gen-time impact: none (~0.4s per gen either way). Scoped to EldenRing subclasses so the
+# framework's own caching tests (test_rule_builder) keep their contract.
+
+class ERCanReachEntrance(CanReachEntrance, game="EldenRing"):
+    """CanReachEntrance that is never cached (see block comment above)."""
+    class Resolved(CanReachEntrance.Resolved):
+        force_recalculate: ClassVar[bool] = True
+
+
+class ERCanReachLocation(CanReachLocation, game="EldenRing"):
+    """CanReachLocation that is never cached (see block comment above)."""
+    class Resolved(CanReachLocation.Resolved):
+        force_recalculate: ClassVar[bool] = True
+
+
+class ERCanReachRegion(CanReachRegion, game="EldenRing"):
+    """CanReachRegion that is never cached (see block comment above)."""
+    class Resolved(CanReachRegion.Resolved):
+        force_recalculate: ClassVar[bool] = True
+
+
 # =============================== the frozen factory contract ===================================
 
 def can_go_to(region: str) -> Rule:
@@ -102,20 +142,20 @@ def can_go_to(region: str) -> Rule:
     by reaching the region directly (its grace warp). The single seam between the geographic and
     warp environments (SPEC §4b/§4h)."""
     return (
-        CanReachEntrance(f"Go To {region}")
-        | Filtered(CanReachRegion(region),
+        ERCanReachEntrance(f"Go To {region}")
+        | Filtered(ERCanReachRegion(region),
                    options=[OptionFilter(RegionAccessLogic, RegionAccessLogic.option_warp)])
     )
 
 
 def can_get(location: str) -> Rule:
     """Legacy _can_get: the given location is logically reachable."""
-    return CanReachLocation(location)
+    return ERCanReachLocation(location)
 
 
 def can_get_all(locations: Iterable[str]) -> Rule:
     """Legacy _can_get_all: every listed location is reachable."""
-    return And(*(CanReachLocation(loc) for loc in locations))
+    return And(*(ERCanReachLocation(loc) for loc in locations))
 
 
 def has_enough_great_runes(count: int) -> Rule:

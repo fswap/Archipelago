@@ -525,17 +525,21 @@ NUM_REGIONS_MIDDLE_STEPS: List[int] = [2, 3, 4, 5, 6, 7, 8]   # Weeping, Stormve
 
 
 def num_regions_floor(great_runes_required: int) -> int:
-    """Lowest num_regions that keeps the capital reachable under WARP access.
+    """STRUCTURAL minimum num_regions: Limgrave + Leyndell + Altus (= 3). Altus is the only
+    route into the capital (Leyndell has no warp lock). Great runes NO LONGER factor in: the
+    deficit vs great_runes_required is injected into the item pool from sealed rune bosses
+    (rune/region decoupling, 2026-07-02), so rune availability never constrains the roll.
 
-    Limgrave + Leyndell (= 2) plus great_runes_required rune-boss majors. Unlike the geographic
-    region_count floor there is NO Altus-route requirement (warp travel ignores adjacency).
+    great_runes_required is still VALIDATED here: only MAX_PRE_LEYNDELL_RUNES rune bosses exist
+    before the capital, so a higher requirement can never be satisfied under num_regions. The
+    ValueError surfaces as OptionError via the caller's wrap.
     """
     if great_runes_required > MAX_PRE_LEYNDELL_RUNES:
         raise ValueError(
             f"num_regions capital goal needs great_runes_required <= {MAX_PRE_LEYNDELL_RUNES} "
             f"(only that many great-rune bosses exist before Leyndell); got {great_runes_required}."
         )
-    return 2 + max(0, int(great_runes_required)) + (1 if ALTUS_STEP not in RUNE_STEPS else 0)  # +1: Altus is the only route to Leyndell
+    return 3  # Limgrave + Leyndell + Altus; runes come from the pool deficit injector
 
 
 def compute_num_regions_scope(
@@ -573,10 +577,9 @@ def compute_num_regions_scope(
 
     # 0) Altus is the ONLY route to Leyndell (the capstone has no warp lock), so force it in.
     picked = [ALTUS_STEP] if (ALTUS_STEP in NUM_REGIONS_MIDDLE_STEPS and need_random >= 1) else []
-    # 1) guarantee the great-rune floor: pick great_runes_required rune-boss steps at random.
-    _rs = [s for s in rune_steps if s not in picked]
-    n_rune = min(int(great_runes_required), len(_rs), max(0, need_random - len(picked)))
-    picked += list(rng.sample(_rs, n_rune)) if n_rune > 0 else []
+    # 1) great-rune guarantee REMOVED (rune/region decoupling 2026-07-02): rune availability
+    #    is satisfied by the pool deficit injector in __init__ (sealed rune bosses' runes join
+    #    the pool), so the roll is free -- no rune-step bias, better kept-set diversity.
     # 2) fill the remaining slots at random from whatever middle steps are left.
     rest_pool = [s for s in (rune_steps + nonrune_steps + _caves) if s not in picked]  # caves COMPETE for fill slots
     n_fill = min(max(0, need_random - len(picked)), len(rest_pool))

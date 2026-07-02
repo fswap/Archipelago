@@ -63,8 +63,12 @@ class RegionSoftLogic(DefaultOnToggle):
     display_name = "Region Soft Logic"
 
 class GreatRunesRequired(Range):
-    """How many great runes are required to enter Leyndell
-    This option is ignored if Region Lock in On"""
+    """How many great runes are required to enter Leyndell. Enforced as a region rule on
+    Leyndell, Royal Capital under EVERY world logic (rules_data). Under num_regions, region
+    selection is NOT constrained by this: any rune deficit (rune bosses in sealed regions)
+    is injected into the item pool instead (rune/region decoupling). num_regions runs can
+    satisfy at most 4 (Godrick / Rennala / Radahn / Rykard exist before the capital);
+    higher values are rejected at generation."""
     display_name = "Leyndell Great Runes Required"
     range_start = 1
     range_end = 7
@@ -140,8 +144,10 @@ class NumRegions(Range):
                           8 Volcano), reached geographically. This is the old region_count.
 
     Limgrave (the free start hub) and Leyndell + Morgott (the goal capstone) are ALWAYS kept and
-    both count toward this number. A great-rune floor keeps enough great-rune bosses (Godrick /
-    Rennala / Radahn / Rykard) in scope to open Leyndell, so the count is auto-raised if too low.
+    both count toward this number, as does Altus Plateau (the only route into the capital) -- so
+    the structural minimum is 3. Great runes do NOT constrain the roll: any deficit vs
+    great_runes_required is injected into the item pool from sealed rune bosses (rune/region
+    decoupling), e.g. num_regions 4 = Limgrave + Leyndell + Altus + 1 random middle.
 
     Only takes effect with the **Capital** ending condition AND region gating (world_logic
     region_lock / region_lock_bosses). 0 = disabled. ~4 gives a short (roughly 3-4 hour) run."""

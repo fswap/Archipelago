@@ -60,7 +60,9 @@ LIMGRAVE_START_GRACES = [
 # Base for the dedicated per-lock OPEN-STATE event flags. Kept SEPARATE from the 62xxx map-reveal flags
 # so that revealing maps (reveal_all_maps grant, or the tracker) never flips a region open -> maps + lock
 # are independent. Valid free flags in the grace-tail gap (grace max = 76960; 76970 = KICK flag, probe-
-# confirmed valid, so 76971+ are the same allocated group). ~25 distinct locks => 76971..76995.
+# confirmed valid, so 76971+ are the same allocated group). Up to ~27 distinct locks => 76971..76997. Special/NK/extra locks (Morne,
+# Godrick, Mountaintops, Snowfield, Raya, Volcano, Haligtree) get hand-picked flags BELOW
+# base (76961-76967) in __init__.py, DISJOINT from this computed band.
 OPEN_FLAG_BASE = 76971
 
 # ---- THE dictionary: one entry per AP region ----

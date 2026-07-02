@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+import copy
 import settings, typing, Utils
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union
@@ -166,8 +167,35 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
         self.explicit_indirect_conditions = False
+        # --- per-world item-table overlay (patch_per_world_item_table 2026-07-02) ---
+        # generate_early used to mutate the MODULE-LEVEL item_table / item_table_vanilla /
+        # filler_item_names from .items (classification demotes, skip/inject flips, filler
+        # list rewrite), so two ER slots with differing options cross-contaminated each
+        # other (ARCHITECTURE-REVIEW-20260701 #6; tests/test_multiworld_gen.py T3). Copy
+        # the tables per WORLD INSTANCE: every per-slot reader/mutator uses these copies
+        # and the module tables stay pristine templates. NOTE base-game ERItemData
+        # objects are SHARED between item_table and item_table_vanilla (items.py:
+        # _all_items = _vanilla_items + _dlc_items + _grace_items); the copy preserves
+        # that aliasing -- one copy per unique object, referenced from both dicts -- so
+        # single-table mutations still propagate to the sibling table exactly as before.
+        # New code MUST read/mutate self.item_table (never the module import).
+        _copies = {}
+        for _src in (item_table, item_table_vanilla):
+            for _d in _src.values():
+                if id(_d) not in _copies:
+                    _copies[id(_d)] = copy.copy(_d)
+        self.item_table = {_n: _copies[id(_d)] for _n, _d in item_table.items()}
+        self.item_table_vanilla = {_n: _copies[id(_d)] for _n, _d in item_table_vanilla.items()}
+        self.filler_item_names = list(filler_item_names)
+        self.filler_item_names_vanilla = list(filler_item_names_vanilla)
 
     def generate_early(self) -> None:
+        # per-world overlay (patch_per_world_item_table): every table read/mutation in
+        # this method targets THIS slot's instance copies, never the module tables.
+        item_table = self.item_table
+        item_table_vanilla = self.item_table_vanilla
+        filler_item_names = self.filler_item_names
+        filler_item_names_vanilla = self.filler_item_names_vanilla
         self.created_regions = set()
         # Alias: `limgrave_caves` is a documented synonym for `limgrave_underground`
         # (same 10 Limgrave underground dungeons). Only `limgrave_underground` is wired in
@@ -268,6 +296,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             if self.options.important_locations.value:
                 self.options.important_locations.value = []
                 warning(f"{self.player_name}: dlc_only is set; clearing important_locations.")
+        # (Removed 2026-07-01, patch_priority_fill_fix) The constrained-combo accessibility
+        # guard from patch_local_items_fix2 coerced region_lock/region_lock_bosses + dlc-off
+        # to minimal accessibility. Those FillErrors were NOT an option-combo problem: the
+        # root cause was rule_builder cache poisoning of the CanReach* reach rules (see the
+        # uncached ERCanReach* block in rules_predicates.py). With that fixed, the combo
+        # generates cleanly under full accessibility (multi-seed regression in
+        # tests/test_local_items_gen.py), so the coercion is gone.
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         # self.all_priority_locations.update(self.options.priority_locations.value)
 
@@ -342,12 +377,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             _rem_demoted = 0
             for _tbl in (item_table, item_table_vanilla):
                 for _data in _tbl.values():
-                    if (_data.classification == ItemClassification.progression
-                            and _data.name.startswith("Remembrance")):
-                        _data.classification = ItemClassification.useful
-                        _data.filler = False
+                    if _data.name.startswith("Remembrance"):
+                        # record regardless: table is SHARED across ER slots; an earlier
+                        # slot may have demoted it already (2-slot crash 2026-07-01)
                         self._fun_demoted.add(_data.name)
-                        _rem_demoted += 1
+                        if _data.classification == ItemClassification.progression:
+                            _data.classification = ItemClassification.useful
+                            _data.filler = False
+                            _rem_demoted += 1
         
         if self.settings.disable_extreme_options:
             if not self.options.local_item_option:
@@ -381,16 +418,56 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # excluded (shop_checks off) the gated shop checks vanish, so forcing the bells would
         # gate nothing. Demote them to normal items in that case. See SPEC-shop-checks.md.
         if self.options.merchant_bell_logic.value == 1 and self.options.shop_checks.value:
-            for _bell in merchant_bell_names(bool(self.options.enable_dlc)):
+            # [shopslot-reachability] gating bells are INJECTED into the pool (2026-07-02).
+            # Root cause of the 74 unreachable shop checks (test_logs/
+            # er_tests_20260702_084944.log, ShopSlotMap_On): every gating merchant
+            # bell's pickup location is commented out in locations.py (except
+            # Gowry's), and create_items only pools default items of randomized
+            # LOCATIONS -- so skip=False + progression alone never put the bell in
+            # the pool and state.has(<bell>) was unsatisfiable even for all_state.
+            # Fix: flag the bells inject=True so they ride the existing injectable
+            # machinery (_all_injectable_items / _create_injectable_items):
+            # progression injectables take an in-world slot freed by the small-rune
+            # deferral, or spill to the start inventory with a warning. Bells that
+            # gate no available shop check this seed (dlc_only, trimmed-out shops,
+            # Blackguard) are not injected; bells with a live world drop (Gowry)
+            # are not double-injected. See
+            # ANALYSIS-shopslotmap-reachability-20260702.md.
+            _bell_gates = resolve_merchant_bells(
+                location_dictionary, bool(self.options.enable_dlc))
+            _bell_names = merchant_bell_names(bool(self.options.enable_dlc))
+            _bell_name_set = set(_bell_names)
+            _bell_live_drops = set()
+            for _bld in location_dictionary.values():
+                if _bld.default_item_name in _bell_name_set and self._is_location_available(_bld):
+                    _bell_live_drops.add(_bld.default_item_name)
+            for _bell in _bell_names:
                 item_table[_bell].skip = False
                 item_table[_bell].classification = ItemClassification.progression
+                _bell_gates_something = any(
+                    self._is_location_available(location_dictionary[_bgl])
+                    for _bgl in _bell_gates.get(_bell, ()))
+                item_table[_bell].inject = (
+                    _bell_gates_something and _bell not in _bell_live_drops)
 
         # Soft progression (wiggle room): under strict accessibility (full/items), demote boring
         # progression that gates NOTHING in logic -- upgrade Bell Bearings + Progressive Flask of
         # Wondrous Physick -- to useful, so meaningful progression lands on important_locations
         # under full without being diluted. (Smithing stones are already filler.) See SPEC.
         if self.options.soft_progression.value:
+            # [shopslot-reachability] merchant bells stay progression: when
+            # merchant_bell_logic gates shop checks, the bells are REAL logic gates
+            # (rules_mixin._add_shop_rules attaches state.has(<bell>) shorthand
+            # rules whose assert requires progression classification). Demoting
+            # them here would (a) crash that assert at set_rules and (b) drop them
+            # from the MANDATORY injectable set, resurrecting the 74 unreachable
+            # shop checks. Smithing/somber/glovewort bells keep the old behavior.
+            _mb_keep = set()
+            if self.options.merchant_bell_logic.value == 1 and self.options.shop_checks.value:
+                _mb_keep = set(merchant_bell_names(bool(self.options.enable_dlc)))
             for _sp in item_table.values():
+                if _sp.name in _mb_keep:
+                    continue
                 if _sp.classification == ItemClassification.progression and (
                         "Bell Bearing" in _sp.name or "Flask of Wondrous Physick" in _sp.name):
                     _sp.classification = ItemClassification.useful
@@ -557,7 +634,8 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                             f"(a random non-contiguous region set needs warp reachability).")
                 if _eff != self.options.num_regions.value:
                     warning(f"{self.player_name}: num_regions {self.options.num_regions.value} "
-                            f"raised to {_eff} so the capital (Morgott) stays reachable.")
+                            f"raised to {_eff} (Limgrave + Leyndell + Altus are the structural "
+                            f"minimum; great runes are pool-injected, never region-gated).")
 
                 # num_regions_rune_source == pool (SPEC-num-regions-pool-runes.md): decouple the
                 # great-rune floor from region selection. Re-run the scope with the POOL sibling
@@ -623,11 +701,50 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                             f"middle region(s), injecting great runes {sorted(_inject_runes)} "
                             f"into the pool (Roundtable hub, Limgrave rollable).")
 
+                # GENERAL great-rune deficit injector (rune/region decoupling 2026-07-02):
+                # the Leyndell gate (great_runes_required) STAYS, but rune availability no
+                # longer constrains region selection -- inject the deficit into the pool from
+                # sealed rune bosses. Same logic as the pool rune-source block above (which
+                # already ran and is skipped here); create_items demand-drops small Golden
+                # Runes per injected item, so the pool stays count-neutral. The dead-key swap
+                # below dedups against _num_regions_pool_injected_runes as before.
+                if not _pool_runes:
+                    _step_lock = region_spine.NUM_REGIONS_CHAIN_STEP_LOCK
+                    _step_rune = region_spine.NUM_REGIONS_STEP_GREAT_RUNE
+                    _kept_rune_steps = [s for s in _step_rune
+                                        if _step_lock.get(s) in _kept_l]
+                    _gr_target = int(self.options.great_runes_required.value)
+                    _need = max(0, _gr_target - len(_kept_rune_steps))
+                    _sealed_rune_steps = [s for s in sorted(_step_rune)
+                                          if s not in _kept_rune_steps]
+                    _inject_runes = []
+                    for _s in _sealed_rune_steps:
+                        if len(_inject_runes) >= _need:
+                            break
+                        _rn = _step_rune[_s]
+                        if _rn in item_table and _rn not in _inject_runes:
+                            _inject_runes.append(_rn)
+                    for _rn in _inject_runes:
+                        item_table[_rn].inject = True
+                    self._num_regions_pool_injected_runes = list(_inject_runes)
+                    if _need > len(_inject_runes):
+                        warning(f"{self.player_name}: num_regions rune deficit could only "
+                                f"source {len(_inject_runes)} of {_need} great runes from "
+                                f"sealed base bosses; check great_runes_required.")
+                    if _inject_runes:
+                        warning(f"{self.player_name}: num_regions rune decoupling -- "
+                                f"injecting great runes {sorted(_inject_runes)} into the "
+                                f"pool (deficit vs great_runes_required={_gr_target}).")
+
                 # num_regions_chain (SPEC-num-regions-chain.md, Track A): force the kept middles
                 # into a linear lock-breadcrumb chain so the fill spheres ramp 1..N. We only record
                 # the ORDER + the chain locks here; the actual placement happens in pre_fill (after
                 # locations exist) and the inject=False de-pooling happens in the lock-injection
                 # block below. _spine_active is already True (this is inside the num_regions branch).
+                # kept-region NAMES for region-diversity analytics: gen_sweep.ps1
+                # tallies the "middle region(s) [...]" line across seeds.
+                warning(f"{self.player_name}: num_regions kept middle region(s) {sorted(_kept_r)}")
+
                 self._num_regions_chain = bool(self.options.num_regions_chain.value)
                 if self._num_regions_chain:
                     _chain_order = region_spine.compute_num_regions_chain_order(self.random, _kept_l)
@@ -636,6 +753,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     # free (precollected); the rest are breadcrumbed onto the prior link's boss.
                     _chain_locks = [region_spine.NUM_REGIONS_CHAIN_STEP_LOCK[s] for s in _chain_order]
                     self._num_regions_chain_free_lock = _chain_locks[0] if _chain_locks else None
+                    # chain-lock ORDER for diversity analytics: gen_sweep.ps1 tallies
+                    # link-0 (the free lock = the effective start region).
+                    warning(f"{self.player_name}: num_regions_chain order {_chain_locks}")
                     self._num_regions_chain_breadcrumb_locks = set(_chain_locks[1:])
                     # Breadcrumb host map filled in pre_fill (needs created locations); for the
                     # inject pass we only need the set of locks that LEAVE the random pool.
@@ -936,12 +1056,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             self._fun_demoted = getattr(self, "_fun_demoted", set())
             for _tbl in (item_table, item_table_vanilla):
                 for _data in _tbl.values():
-                    if (_data.classification == ItemClassification.progression
-                            and any(_data.name.startswith(_p) for _p in _fun_prefixes)):
-                        _data.classification = ItemClassification.useful
-                        _data.filler = False
+                    if any(_data.name.startswith(_p) for _p in _fun_prefixes):
+                        # record regardless: table is SHARED across ER slots; an earlier
+                        # slot may have demoted it already (2-slot crash 2026-07-01)
                         self._fun_demoted.add(_data.name)
-                        _demoted += 1
+                        if _data.classification == ItemClassification.progression:
+                            _data.classification = ItemClassification.useful
+                            _data.filler = False
+                            _demoted += 1
             _lg.error("ER-FUNDEMOTE-DIAG demoted %d fun-consumable items to useful", _demoted)
             try:
                 with open(_os.path.join(_os.path.dirname(__file__), "ER_DIAG.txt"), "a") as _df:
@@ -1024,30 +1146,26 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
         if self.options.enable_dlc: using_table = item_table
-        for item in using_table.values(): # loop of whole item table
-            if self.options.local_item_option:
+        # local_item_option: keep every non-progression/non-useful item in this world unless its
+        # category is opted out via exclude_local_item_only. This used to be a match/case where
+        # every case ended in `break` -- but `break` inside `match` breaks the enclosing FOR loop
+        # (match is not a loop), so the scan stopped at the first filler item and local_items got
+        # at most 1 entry instead of ~3700. Rewritten as a category->exclude-key map with no break,
+        # and the option check hoisted out of the loop. Same five categories as the original.
+        # (Fixed 2026-07-01, patch_local_items_fix.py.)
+        if self.options.local_item_option:
+            _local_item_cat_keys = {
+                ERItemCategory.GOODS: 'goods',
+                ERItemCategory.WEAPON: 'weapon',
+                ERItemCategory.ARMOR: 'armor',
+                ERItemCategory.ACCESSORY: 'accessory',
+                ERItemCategory.ASHOFWAR: 'ashofwar',
+            }
+            for item in using_table.values(): # loop of whole item table
                 if item.classification != ItemClassification.progression and item.classification != ItemClassification.useful:
-                    match item.category: # this works, could be better
-                        case ERItemCategory.GOODS:
-                            if 'goods' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.WEAPON:
-                            if 'weapon' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ARMOR:
-                            if 'armor' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ACCESSORY:
-                            if 'accessory' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ASHOFWAR:
-                            if 'ashofwar' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
+                    _cat_key = _local_item_cat_keys.get(item.category)
+                    if _cat_key is not None and _cat_key not in exclude_local_item_only_lowercase:
+                        self.options.local_items.value.add(item.name)
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -1426,6 +1544,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         return bool(self.options.progressive_physick.value)
 
     def create_items(self) -> None:
+        item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
         # Gather all default items on randomized locations
         self.local_itempool = []
         num_required_extra_items = 0
@@ -1839,9 +1958,19 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                              and l.progress_type != LocationProgressType.PRIORITY
                              and l.name not in getattr(self, 'all_priority_locations', set())]
                 self.random.shuffle(_gr_cands)
+                # SILENT-NOOP-SWEEP-20260702 A1 (2026-07-02): player filter added -- the
+                # comprehension used to collect EVERY slot's filler, and the remove()
+                # below deleted items belonging to OTHER players (cross-slot filler
+                # theft; counts stayed balanced so gen never errored).
                 _gr_fillers = [it for it in self.multiworld.itempool
-                               if it.classification == ItemClassification.filler]
+                               if it.classification == ItemClassification.filler
+                               and it.player == self.player]
                 _gr_k = min(len(_gr_items), len(_gr_cands), len(_gr_fillers))
+                if len(_gr_fillers) < len(_gr_items):
+                    warning(f'{self.player_name}: grace_rando {_gr_region}: '
+                            f'{len(_gr_items)} grace drop(s) wanted but only '
+                            f'{len(_gr_fillers)} own-slot filler left to swap out; '
+                            f'{len(_gr_items) - len(_gr_fillers)} dropped for lack of filler.')
                 _gr_fi = 0
                 _gr_placed_flags = set()
                 for _gr_i in range(_gr_k):
@@ -1933,6 +2062,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         Shared by create_items (to size how many small-rune slots to free) and
         _create_injectable_items (to choose them), so the two can't drift apart.
         """
+        item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
         items = [
             item for item
             in item_table.values()
@@ -2027,7 +2157,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             return False
         if name not in CURATION_DROP_BASE_GEAR:
             return False
-        _d = item_table.get(name)
+        _d = self.item_table.get(name)  # per-world overlay
         return _d is not None and _d.classification != ItemClassification.progression
 
     def _curated_dlc_gear_names(self) -> List[str]:
@@ -2051,7 +2181,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         the worst/cheapest are swapped first, any un-funded rest return to the pool."""
         if not self.options.pool_builder.value:
             return False
-        _d = item_table.get(name)
+        _d = self.item_table.get(name)  # per-world overlay
         if _d is None or _d.classification == ItemClassification.progression:
             return False
         return (name in CURATION_DROP_BASE_GEAR
@@ -2067,7 +2197,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         (a WEAPON shares the same raw id). These leave the pool; locations stay checks."""
         if name == "Spirit Calling Bell":
             return True
-        _d = item_table.get(name)
+        _d = self.item_table.get(name)  # per-world overlay
         if _d is None or _d.category != ERItemCategory.GOODS:
             return False
         _c = getattr(_d, "er_code", None)
@@ -2081,7 +2211,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         -- rune drops go through the rune-skip path, gear through dlc_gear_curation."""
         if not self.options.dlc_only:
             return False
-        _d = item_table.get(name)
+        _d = self.item_table.get(name)  # per-world overlay
         if _d is None or not getattr(_d, "is_dlc", False):
             return False
         if _d.classification != ItemClassification.filler:
@@ -2104,7 +2234,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         """Create a base-game juice item for injection. Progression items (remembrances,
         some spirit ashes) are downgraded to useful so uplift injects never carry
         progression -- keeps them out of mandatory-progression accounting and fill rules."""
-        data = item_table[name]
+        data = self.item_table[name]  # per-world overlay
         cls = data.classification
         if cls == ItemClassification.progression:
             cls = ItemClassification.useful
@@ -2115,6 +2245,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         spells via ITEM_TIERS, top spirits, talismans, glovewort bells, all remembrances,
         all crystal tears, capped memory stones / talisman pouches), then weighted
         stackables (juicy runes, seeds/tears) to fill the remaining budget."""
+        item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
         if not (self.options.dlc_only or self.options.pool_builder.value) or budget <= 0:
             return []
         # pool_builder_dlc_gear was removed (Part 2): the all-game ladder injects base juice only
@@ -2207,33 +2338,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         elif self.options.bell_physick_option.value == 1:  # lock at vanilla (removed from pool)
             for _name, _loc in bell_physick:
                 _item = next((i for i in self.local_itempool if i.name == _name), None)
-                if _item is None: continue
+                if _item is None:
+                    # SILENT-NOOP-SWEEP-20260702 A3 (2026-07-02): was a silent continue.
+                    warning(f"{self.player_name}: bell_physick_option=1 -- {_name} not in "
+                            f"pool -- neither vanilla-locked nor granted; it will NOT "
+                            f"exist in this seed.")
+                    continue
                 self.local_itempool.remove(_item)
                 self.multiworld.get_location(_loc, self.player).place_locked_item(_item)
 
-        # Scadutree Fragment front-load (SPEC-scadu-in-base.md addendum). Bias up to N
-        # TOTAL fragments into sphere-1 (no-item-reachable) locations so blessing ramps
-        # early and the DLC's area-scaled enemies (atk x3.75 from the first zone) stop
-        # one-shotting a fresh dlc_only start. early_items asks the fill to seat that
-        # many copies early; they stay real checks. Counts by fragment VALUE (an 'x2'
-        # item is 2 frags but one slot), singles first so the total lands near N. 0 =
-        # off (normal distribution). Combat track only; Revered Spirit Ashes untouched.
-        if self.options.enable_dlc and self.options.scadu_frontload.value > 0:
-            _frag_value = {"Scadutree Fragment": 1, "Scadutree Fragment x2": 2}
-            _want = self.options.scadu_frontload.value
-            _got = 0
-            _early = {}
-            for _name in ("Scadutree Fragment", "Scadutree Fragment x2"):
-                if _got >= _want:
-                    break
-                for _it in (i for i in self.local_itempool if i.name == _name):
-                    if _got >= _want:
-                        break
-                    _early[_name] = _early.get(_name, 0) + 1
-                    _got += _frag_value[_name]
-            for _name, _count in _early.items():
-                self.multiworld.early_items[self.player][_name] = \
-                    self.multiworld.early_items[self.player].get(_name, 0) + _count
+        # SILENT-NOOP-SWEEP-20260702 A4 (2026-07-02): the scadu_frontload block that
+        # lived here was MOVED below the vanilla_upgrades block. It registered
+        # early_items from LIVE pool counts, but vanilla_upgrades ('blessings') pulls
+        # every Scadutree Fragment from the pool afterwards, so the registration
+        # silently became unsatisfiable. See the relocated block below.
 
         # Progressive stone bells: front-load a couple copies into sphere 1 (dlc_only) so the
         # upgrade ladder opens near the start. early_items biases placement of copies already in
@@ -2272,6 +2390,43 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         if "blessings" in _vu and self.options.enable_dlc:
             self._lock_class_at_vanilla(lambda d: d.fragment or d.revered)
 
+        # Scadutree Fragment front-load (SPEC-scadu-in-base.md addendum). Bias up to N
+        # TOTAL fragments into sphere-1 (no-item-reachable) locations so blessing ramps
+        # early and the DLC's area-scaled enemies (atk x3.75 from the first zone) stop
+        # one-shotting a fresh dlc_only start. early_items asks the fill to seat that
+        # many copies early; they stay real checks. Counts by fragment VALUE (an 'x2'
+        # item is 2 frags but one slot), singles first so the total lands near N. 0 =
+        # off (normal distribution). Combat track only; Revered Spirit Ashes untouched.
+        # SILENT-NOOP-SWEEP-20260702 A4 (2026-07-02): MOVED here from above the
+        # progressive-bells block. Chosen over an in-place guard because this is an
+        # ORDERING bug: the counts must be taken after the last block that mutates
+        # fragment pool membership (vanilla_upgrades 'blessings'). Nothing between the
+        # old and new sites reads early_items, and early_items registration is
+        # order-independent for the fill, so the move is safe; the recount now reflects
+        # reality for ANY upstream pool change, and a shortfall warns loudly below.
+        if self.options.enable_dlc and self.options.scadu_frontload.value > 0:
+            _frag_value = {"Scadutree Fragment": 1, "Scadutree Fragment x2": 2}
+            _want = self.options.scadu_frontload.value
+            _got = 0
+            _early = {}
+            for _name in ("Scadutree Fragment", "Scadutree Fragment x2"):
+                if _got >= _want:
+                    break
+                for _it in (i for i in self.local_itempool if i.name == _name):
+                    if _got >= _want:
+                        break
+                    _early[_name] = _early.get(_name, 0) + 1
+                    _got += _frag_value[_name]
+            for _name, _count in _early.items():
+                self.multiworld.early_items[self.player][_name] = \
+                    self.multiworld.early_items[self.player].get(_name, 0) + _count
+            if _got < _want:
+                _cause = (" (vanilla_upgrades 'blessings' locks fragments at vanilla)"
+                          if _got == 0 else "")
+                warning(f"{self.player_name}: scadu_frontload requested {_want} but only "
+                        f"{_got} Scadutree Fragment value remains in the pool{_cause} -- "
+                        f"frontload {'had no effect' if _got == 0 else 'only partially applied'}.")
+
         # Tidy junk consumables: start-grant the required counts so the gated checks (Seluvis
         # puppets / Dung Eater) stay reachable after Starlight Shards / Seedbed Curse leave the
         # pool (generate_early). Festering gates nothing, so no grant.
@@ -2303,13 +2458,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             for _ in range(9):
                 self.multiworld.push_precollected(self.create_item("Deathroot"))
             self._lock_class_at_vanilla(lambda d: d.name in _gur_locs)
+            # SILENT-NOOP-SWEEP-20260702 A5 (2026-07-02): filler exhaustion used to
+            # silently break -- keeper items vanished from the seed with no trace.
+            _gur_dropped = []
             for _kp in ("Clawmark Seal", "Beastclaw Greathammer", "Ancient Dragon Smithing Stone"):
                 _filler = next((it for it in self.local_itempool
                                 if it.classification == ItemClassification.filler), None)
                 if _filler is None:
-                    break
+                    _gur_dropped.append(_kp)
+                    continue
                 self.local_itempool.remove(_filler)
                 self.local_itempool.append(self.create_item(_kp))
+            if _gur_dropped:
+                warning(f"{self.player_name}: derandomize_gurranq re-inject ran out of "
+                        f"filler; dropped from seed: {', '.join(_gur_dropped)}.")
 
         # NPC questline de-randomization -- lock optional-only quest chains at vanilla so
         # they stop crowding the priority/progression fill (link items are dead-weight
@@ -2320,13 +2482,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             if self.options.derandomize_questlines.value == 2:  # full: pull good rewards + reinject
                 _present = {it.name for it in self.local_itempool} & QUESTLINE_REWARD_INJECT
                 self._lock_class_at_vanilla(lambda d: d.default_item_name in QUESTLINE_REWARD_INJECT)
+                # SILENT-NOOP-SWEEP-20260702 A5 (2026-07-02): filler exhaustion used to
+                # silently break -- reward items vanished from the seed with no trace.
+                _ql_dropped = []
                 for _name in sorted(_present):
                     _filler = next((it for it in self.local_itempool
                                     if it.classification == ItemClassification.filler), None)
                     if _filler is None:
-                        break
+                        _ql_dropped.append(_name)
+                        continue
                     self.local_itempool.remove(_filler)
                     self.local_itempool.append(self.create_item(_name))
+                if _ql_dropped:
+                    warning(f"{self.player_name}: derandomize_questlines=2 re-inject ran "
+                            f"out of filler; dropped from seed: {', '.join(_ql_dropped)}.")
         
         if self.options.map_option.value == 2:
             self.multiworld.get_location("LG/(GR): Map: Limgrave, West - map pillar", self.player).place_locked_item(self.create_item("Map: Limgrave, West"))
@@ -2358,18 +2527,29 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
     def _lock_class_at_vanilla(self, predicate: Callable[[ERLocationData], bool]) -> None:
         """Lock every available location matching predicate to its vanilla item and remove
         that item from the random pool, keeping item/location counts balanced."""
+        # SILENT-NOOP-SWEEP-20260702 A6 (2026-07-02): tally pool misses and emit ONE
+        # warning() per call -- matched locations used to silently stay randomized.
+        _lcv_missed = []
         for location in self._get_our_locations():
             if location.address is None or location.locked: continue
             if not predicate(location.data): continue
             name = location.data.default_item_name
             item = next((i for i in self.local_itempool if i.name == name), None)
-            if item is None: continue
+            if item is None:
+                _lcv_missed.append(name)
+                continue
             self.local_itempool.remove(item)
             # Downgrade the vanilla-pinned copy to filler so AP's accessibility sweep doesn't
             # treat it as required-reachable when its location is behind a sealed region
             # (num_regions / region_lock). None of these are goal-required.
             item.classification = ItemClassification.filler
             location.place_locked_item(item)
+        if _lcv_missed:
+            _lcv_names = sorted(set(_lcv_missed))
+            warning(f"{self.player_name}: _lock_class_at_vanilla could not lock "
+                    f"{len(_lcv_missed)} matched location(s) -- vanilla item not in pool; "
+                    f"they stay randomized: {', '.join(_lcv_names[:8])}"
+                    f"{' ...' if len(_lcv_names) > 8 else ''}.")
 
     def _fill_local_item(
         self, name: str,
@@ -2384,7 +2564,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         If the item could not be placed, it will be added to starting inventory.
         """
         item = next((item for item in self.local_itempool if item.name == name), None)
-        if not item: return
+        if not item:
+            # SILENT-NOOP-SWEEP-20260702 A2 (2026-07-02): was a silent return -- the
+            # requesting option (e.g. crafting_kit_option) quietly did nothing.
+            warning(f"{self.player_name}: requested local fill for '{name}' but it is "
+                    f"not in the pool -- option had no effect.")
+            return
 
         candidate_locations = [
             location for location in (
@@ -2418,7 +2603,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         location.place_locked_item(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
-        data = item if isinstance(item, ERItemData) else item_table[item]
+        data = item if isinstance(item, ERItemData) else self.item_table[item]  # per-world overlay
         return ERItem(self.player, data)
 
     def _replace_with_filler(self, location: ERLocation) -> None:
@@ -2479,6 +2664,10 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         return spared
 
     def get_filler_item_name(self) -> str:
+        # per-world overlay (patch_per_world_item_table)
+        item_table = self.item_table
+        filler_item_names = self.filler_item_names
+        filler_item_names_vanilla = self.filler_item_names_vanilla
         if getattr(self.options, "filler_replacement", None) is not None \
                 and self.options.filler_replacement.value != 0:
             return self._filler_replacement_name()
@@ -2508,7 +2697,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             table = _FILLER_STONE_WEIGHTS
         else:
             table = _FILLER_RUNE_WEIGHTS
-        names = [n for n in table if n in item_table]
+        names = [n for n in table if n in self.item_table]  # per-world overlay
         weights = [table[n] for n in names]
         return self.random.choices(names, weights=weights, k=1)[0]
 
@@ -2685,13 +2874,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             return
         # link 1 lock: free.
         _free = getattr(self, "_num_regions_chain_free_lock", None)
-        if _free and _free in item_table:
+        if _free and _free in self.item_table:  # per-world overlay
             self.multiworld.push_precollected(self.create_item(_free))
         # links 2..k: breadcrumb each onto the PRIOR link's boss drop.
         for _i in range(1, len(_order)):
             _prev_step = _order[_i - 1]
             _lock_name = region_spine.NUM_REGIONS_CHAIN_STEP_LOCK.get(_order[_i])
-            if not _lock_name or _lock_name not in item_table:
+            if not _lock_name or _lock_name not in self.item_table:  # per-world overlay
                 continue
             _host = self._num_regions_chain_host(_prev_step)
             if _host is None or getattr(_host, "item", None) is not None:
@@ -2818,7 +3007,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # provide freed slots for DLC injectables (see generate_early).
         if (data.name or "") in getattr(self, "_inject_reserve_names", frozenset()):
             return True
-        item = item_table.get(data.default_item_name)
+        item = self.item_table.get(data.default_item_name)  # per-world overlay
         cls = item.classification if item else None
         if pool == 1:  # trimmed: drop low-value filler-item locations
             # Alaric curation: specific fun early ON-PATH checks always kept under Trimmed
@@ -3074,6 +3263,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     base = info.get(m.address, "")
                     info[m.address] = (base + tag) if base else (reward + tag)
     def fill_slot_data(self) -> Dict[str, object]:
+        item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
         slot_data: Dict[str, object] = {}
         # Once all clients support overlapping item IDs, adjust the ER AP item IDs to encode the
         # in-game ID as well as the count so that we don't need to send this information at all.
@@ -3320,10 +3510,10 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # to areaLockFlags -> no play-region KICK -> zero effect on non-godrick region_lock seeds.
         if "godrick" in self.options.extra_region_locks.value and "Godrick Lock" in item_table \
                 and getattr(item_table["Godrick Lock"], "lock", False):
-            region_open_flags["Godrick Lock"] = 76998  # valid grace-tail flag; baker RegionFogGates keys off this
+            region_open_flags["Godrick Lock"] = 76967  # valid grace-tail flag; baker RegionFogGates keys off this
         if "castle_morne" in self.options.extra_region_locks.value and "Morne Lock" in item_table \
                 and getattr(item_table["Morne Lock"], "lock", False):
-            region_open_flags["Morne Lock"] = 76997    # Castle Morne gate fog wall keys off this
+            region_open_flags["Morne Lock"] = 76966    # Castle Morne gate fog wall keys off this
         # Lock -> notify item (packed GOODS address). Granted by the client on lock receipt so the
         # native item ticker fires and NAMES the region (e.g. 'Map: Liurnia, East') -- locks are
         # otherwise invisible (sentinel 99999). Region with no map -> generic token. Shared locks
@@ -3354,7 +3544,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                                       76520, 76521, 76522, 76523, 76524],
                 "Snowfield Lock":    [76550, 76551, 76652, 76653],
             }
-            _NK_OPEN = {"Mountaintops Lock": 76996, "Snowfield Lock": 76961}
+            _NK_OPEN = {"Mountaintops Lock": 76965, "Snowfield Lock": 76961}
             _NK_REVEAL = {"Mountaintops Lock": [62050, 62051], "Snowfield Lock": [62052]}
             for _nlk, _nfs in _NK_GRACES.items():
                 region_graces[_nlk] = sorted(set(region_graces.get(_nlk, []) + list(_nfs)))
@@ -3471,6 +3661,25 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # the grace/open apparatus already keyed by "Snowfield Lock") drives the in-game bloom.
         if self.options.world_logic < 3 and "snowfield" in self.options.extra_region_locks.value:
             natural_key_triggers.pop("Snowfield Lock", None)
+        # --- OPEN-FLAG DISJOINTNESS GUARD (er-open-flag-collision-bug) -----------
+        # Every lock owns a UNIQUE open-state flag. The computed band (OPEN_FLAG_BASE+i,
+        # 76971+) and the hand-picked special/NK flags (below BASE, 76961-76967) must
+        # never alias -- otherwise receiving one lock silently opens another's region.
+        # Fail gen LOUDLY here rather than ship a mis-gated seed.
+        if self.options.world_logic < 3:
+            _of_owner = {}
+            for _lk, _fl in region_open_flags.items():
+                if _fl in _of_owner:
+                    raise Exception(
+                        "[ER region-lock] open-flag collision: %r and %r both use flag %d. "
+                        "Reassign so the OPEN_FLAG_BASE band (76971+) and the below-BASE "
+                        "special flags stay disjoint (see map_region_data.OPEN_FLAG_BASE)."
+                        % (_lk, _of_owner[_fl], _fl))
+                _of_owner[_fl] = _lk
+            if 76970 in _of_owner:
+                raise Exception("[ER region-lock] %r claims the reserved KICK flag 76970."
+                                % _of_owner[76970])
+        # --- end OPEN-FLAG DISJOINTNESS GUARD ------------------------------------
 
         # Start graces (load-time, FLAG-based -- not name-keyed): the client sets these at
         # load via its startGraces consumer, independent of item-name resolution. Needed
@@ -3660,6 +3869,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             except Exception:
                 pass
         slot_data = {
+            # CONTRACT: options subkeys partially LIVE (2026-07-01 audit): the Rust client reads
+            # death_link, auto_upgrade, global_scadutree_blessing, completion_scaling,
+            # completion_scaling_floor, enable_dlc; the PopTracker pack reads world_logic,
+            # dlc_only, enable_dlc, location_pool. All other subkeys have no slot_data consumer
+            # (baker-era ConvertRandomizerOptions inputs or gen-only echoes) -- see
+            # SPEC-goal-send-20260701.md Appendix A before adding or trimming any.
             "options": {
                 "ending_condition": self.options.ending_condition.value,
                 "world_logic": self.options.world_logic.value,
@@ -3728,10 +3943,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "bell_physick_option": self.options.bell_physick_option.value,
                 "torrent_start": self.options.torrent_start.value,
             },
+            # CONTRACT: PORT-GAP (seed-verify guard; ds3 check_seed_conflict precedent, not ported)
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
+            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
             "slot": self.multiworld.player_name[self.player],  # to connect to server
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
+            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
             "locationIdsToKeys": location_ids_to_keys,
             # Optional; only present when dungeon_sweep != none. Consumed by the runtime
             # client only — the static randomizer ignores it.
@@ -3740,13 +3958,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # { chokeBossDefeatFlag : [before-half apLocId,...] }. The baker re-homes these off
             # the end-boss lump onto the choke boss in bosses mode. Empty unless chokepoint_locks
             # + dungeon_sweep are on. Consumed by the static randomizer (sweep_flags), not the client.
+            # CONTRACT: PORT-GAP (bosses-mode chokepoint sweep re-homing; ex-baker sweep_flags input)
             "chokepointSweeps": chokepoint_sweeps,
             # Locations whose full completion = goal, for ending_condition 2/3 (empty
             # otherwise). Consumed by the runtime client only.
+            # CONTRACT: PORT-GAP (goal send -- SPEC-goal-send-20260701.md)
             "goalLocations": goal_locations,
             # Region-fusion grace bundle: lock-item name -> grace warp flags to enable on
             # receipt (region gating only; empty otherwise). Runtime client only. TODO #13.
             "regionGraces": region_graces,
+            # CONTRACT: PORT-GAP (grace-rando warp-flag grant on item receipt; SPEC-grace-rando.md B never ported to Rust)
             "graceItems": getattr(self, "_grace_items_placed", {}),
             # Region-open flags (physical enforcement, SPEC-region-fog-gates.md): lock-item name
             # -> one reserved event flag the client sets on receipt; baked border fog gates gate
@@ -3763,6 +3984,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Map-reveal/open flags per lock (cosmetic under reveal_all_maps; correct for map gating).
             "lockRevealFlags": region_lock_sd["lockRevealFlags"],
             # Unlock-notify items: name the region in the native ticker on lock receipt.
+            # CONTRACT: PORT-GAP (region-name ticker on lock receipt; er-logic grants.rs notify machinery exists unused)
             "lockNotifyItems": lock_notify_items,
             # Natural-key disjunctive triggers (NATURAL_KEY_TRIGGERS_PATCH): lock name -> {"anyOf":[{items,flags}...]}.
             # Client blooms the region apparatus (graces/open-flag/reveal) when ANY clause is satisfied
@@ -3775,6 +3997,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Random/rolled starting region: rolled hub region name + its central warp grace, for the
             # baked WarpPlayer (ApplyRandomStartEntry). "" / 0 when off (-> baker skips the warp).
             "startRegion": getattr(self, "_random_start_region", None) or "",
+            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
             "startWarpGrace": getattr(self, "_rsr_warp_grace", 0),
             # Random-start auto-entry latch (the runtime client mirrors dlcEntryWarpFlag): warp flag
             # (MUST match RegionFogGates.RANDOM_START_FLAG), the Chapel area id the client watches, and
@@ -3785,7 +4008,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # DLC-only auto-entry (SPEC, 2026-06-16): the client sets dlcEntryWarpFlag ONCE when it
             # detects the player in dlcStartAreaId (Chapel of Anticipation) -> baked common.emevd
             # WarpPlayer streams them into Gravesite Plain (m61). 0 on non-dlc_only seeds (client no-ops).
+            # CONTRACT: PORT-GAP (dlc_only Chapel auto-entry latch; C++-client-era feature, no Rust consumer)
             "dlcEntryWarpFlag": 76999 if self.options.dlc_only else 0,
+            # CONTRACT: PORT-GAP (dlc_only Chapel auto-entry latch; pairs with dlcEntryWarpFlag)
             "dlcStartAreaId": 18000 if self.options.dlc_only else 0,  # TODO confirm via RegionLock log
             # Start items granted in-world at load-in (GOODS-packed FullIDs). Used for the Spectral
             # Steed Whistle (Torrent) when companions are handed up front (see fill above). Consumed
@@ -3861,7 +4086,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _p2_bucket = _p2_id_flags.setdefault(str(_p2_full), [])
                     if _p2_flag not in _p2_bucket:
                         _p2_bucket.append(_p2_flag)
+            # CONTRACT: PORT-GAP (vanilla item suppression at checks; pure-runtime port pending)
             slot_data["checkItemIds"] = sorted(_p2_ids)
+            # CONTRACT: PORT-GAP (vanilla item suppression at checks; pairs with checkItemIds)
             slot_data["checkItemFlags"] = _p2_id_flags
         except Exception as _p2_e:
             slot_data["checkItemIds"] = []
@@ -3893,6 +4120,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 if (getattr(_sp_data, "shop", False) and getattr(_sp_data, "key", None)
                         and _sp_loc.address in location_ids_to_keys):
                     _shop_ids.add(_sp_loc.address)
+            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
             slot_data["shopLocationIds"] = sorted(_shop_ids)
         except Exception as _sp_e:
             slot_data["shopLocationIds"] = []

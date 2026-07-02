@@ -21,7 +21,7 @@ from .items import item_table
 from .locations import location_tables, location_dictionary
 from .merchant_bells import resolve_merchant_bells
 from .stone_bells import PROGRESSIVE_SMITHING_BELL, PROGRESSIVE_SOMBER_BELL
-from .rules_data import region_rules_table
+from .rules_data import region_rules_table, build_region_rules
 from .region_lock_data import build_region_lock_rules, build_region_lock_location_rules
 from .warp_rules import build_warp_rules
 
@@ -63,9 +63,7 @@ class EldenRingRules:
             self._region_lock()
             self._region_lock_warp_access()
             if self.options.soft_logic:
-                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
                 self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-                self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
                 # Soft-order (#13): keep the early Varré/Pureblood-medal rush to Mohgwyn
                 # out of sphere 1. Mohgwyn is reachable from Limgrave via the sending gate,
                 # so a sphere-1 Mohgwyn Lock + medal could open a tier-5 region immediately.
@@ -73,7 +71,6 @@ class EldenRingRules:
                 # mirrors the region_boss "Liurnia Bosses" gate. Cannot deadlock: nothing on the
                 # path to Liurnia needs Mohgwyn, and the DLC entry (Mohgwyn→Gravesite) is meant
                 # to be mid-game.
-                self._add_entrance_rule("Mohgwyn Palace", "Liurnia Lock")
            
             # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
             # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
@@ -85,9 +82,6 @@ class EldenRingRules:
             # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
             
             # only in region lock since it can be bypassed by ruin-strewn precipice
-            self._add_entrance_rule("Altus Plateau", lambda state: 
-                state.has("Dectus Medallion (Left)", self.player) and
-                state.has("Dectus Medallion (Right)", self.player))
 
         # Custom Rules
         
@@ -155,47 +149,31 @@ class EldenRingRules:
         # [rule_builder migration] geographic entrance rules from the declarative table
         # (rules_data.region_rules_table). Single-clause, non-region-locked regions only;
         # multi-clause / dynamic / region-locked entrances stay on _add_entrance_rule below.
-        for _rb_region, _rb_rule in region_rules_table.items():
+        # [rule_builder migration — Phase 5] full geographic entrance rules from the
+        # declarative builder (rules_data.build_region_rules). AND-attached via add_rule so
+        # region-lock / warp clauses still stack. Replaces the Phase-1 set_rule table loop
+        # and every imperative _add_entrance_rule below (now neutralized).
+        for _rb_region, _rb_rule in build_region_rules(self).items():
             if _rb_region in self.created_regions:
-                self.set_rule(self.multiworld.get_entrance(f"Go To {_rb_region}", self.player), _rb_rule)
+                _rb_resolved = _rb_rule.resolve(self)
+                self.register_rule_dependencies(_rb_resolved)
+                add_rule(self.multiworld.get_entrance(f"Go To {_rb_region}", self.player), _rb_resolved)
 
-        self._add_entrance_rule("Raya Lucaria Academy", "Academy Glintstone Key")
         
         # festival // altus grace touch or ranni quest stuff
         self._add_location_rule([
             "CL/(RC): Smithing Stone [6] - in church during festival",
         ], lambda state: self._can_go_to(state, "Altus Plateau"))
         
-        self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
         
            
-        self._add_entrance_rule("Moonlight Altar", "Dark Moon Ring")
                 
         # also from RLA side you can get back into main hall through imp statue
-        if self.options.deathless_routing:
-            # Deathless: exclude the Raya Lucaria abduction (a death-based shortcut) from logic;
-            # the Manor complex must be entered legitimately with the Drawing-Room Key (obtainable
-            # via Mt. Gelmir -> Volcano Manor Entrance, no manor gate). Gate directly on the key
-            # rather than on _can_go_to("Volcano Manor"): Volcano Manor's own rule references
-            # VM Dungeon, and _can_go_to evaluates rules without memoization, so a cross-region
-            # call here recurses forever when the key is absent.
-            self._add_entrance_rule("Volcano Manor Dungeon",
-                                    lambda state: state.has("Drawing-Room Key", self.player))
-        else:
-            self._add_entrance_rule("Volcano Manor Dungeon",
-                                    lambda state: self._can_go_to(state, "Raya Lucaria Academy Main")
-                                    or self._can_go_to(state, "Volcano Manor"))
         
-        self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required.value))
         # Great Runes to access the final boss: gate the Erdtree (Radagon / Elden Beast).
         # Default 0 = no extra requirement.
-        self._add_entrance_rule("Erdtree", lambda state: self._has_enough_great_runes(state, self.options.great_runes_final_boss.value))
         
-        self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._can_go_to(state, "Forbidden Lands") and state.has("Rold Medallion", self.player) and self._has_enough_great_runes(state, self.options.great_runes_mountaintops.value))
         
-        self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
-            state.has("Haligtree Secret Medallion (Left)", self.player) and
-            state.has("Haligtree Secret Medallion (Right)", self.player))
         
         # Smithing bell bearing rules
         # soft_progression demotes ALL "Bell Bearing" items (incl. the Progressive Smithing /
@@ -206,46 +184,11 @@ class EldenRingRules:
         # split). The progression-randomize feature only makes sense while the bells stay
         # progression, so skip the gate when soft_progression has pulled them down to useful.
         # (patch_apworld_softprog_bellgate_fix.py)
-        if self.options.smithing_bell_bearing_option.value == 1 and not self.options.soft_progression.value:
-            self._add_entrance_rule("Altus Plateau", lambda state: self._bell_bearings_required(state, 1, False))
-            self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, False))
-            self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, False))
-            self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, False))
-            
-            self._add_entrance_rule("Dragonbarrow", lambda state: self._bell_bearings_required(state, 1, True))
-            self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, True))
-            self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, True))
-            self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, True))
-            self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._bell_bearings_required(state, 5, True))
         
-        if self.options.early_legacy_dungeons:
-            self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
-            self._add_entrance_rule("Caelid", "Rusty Key")
-            self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
         # DLC Rules
         if self.options.enable_dlc:
-            if self.options.dlc_timing == 2:
-                self._add_entrance_rule("Gravesite Plain",
-                    lambda state: state.has("Rold Medallion", self.player)
-                    and state.has("Haligtree Secret Medallion (Left)", self.player)
-                    and state.has("Haligtree Secret Medallion (Right)", self.player)
-                    and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                    and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-            else:
-                self._add_entrance_rule("Mohgwyn Palace", # can get to normal way or funny medal
-                    lambda state: state.has("Pureblood Knight's Medal", self.player) or self._can_go_to(state, "Consecrated Snowfield"))
-                self._add_entrance_rule("Gravesite Plain", 
-                    lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                    and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                if self.options.dlc_timing == 0:
-                    self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
-                    self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
                 
-            if self.options.messmer_kindle:
-                self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
-            else:
-                self._add_entrance_rule("Enir Ilim", "Messmer's Kindling")
             
             self.multiworld.register_indirect_condition(self.get_region("Ancient Ruins of Rauh"), self.get_entrance("Go To Rauh Ruins Limited"))
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
@@ -259,11 +202,6 @@ class EldenRingRules:
             self._add_location_rule("JP/JPM: Rock Heart - \"Domain of Dragons\" Painting reward, after first spirit spring head down return path", "\"Domain of Dragons\" Painting")
             
             # dlc imbued
-            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._has_enough_imbued(state, 4))
-            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._has_enough_imbued(state, 4))
-            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._has_enough_imbued(state, 4))
-            self._add_entrance_rule("Rauh Ruins Limited", 
-                lambda state: self._has_enough_imbued(state, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
             
             # furnace golem / Hefty Furnace Pot
             self._add_location_rule([
@@ -283,11 +221,6 @@ class EldenRingRules:
             
             
             # the funny gaol
-        else:
-            # vanilla imbued
-            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._has_enough_imbued(state, 3))
-            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._has_enough_imbued(state, 3))
-            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._has_enough_imbued(state, 3))
                     
         
         if self.options.ending_condition == 4:
@@ -565,15 +498,6 @@ class EldenRingRules:
             return True
         return (state.count("Stonesword Key", self.player) + (state.count("Stonesword Key x3", self.player) * 3) + (state.count("Stonesword Key x5", self.player) * 5)) >= req_keys
         
-    def _bell_bearings_required(self, state: CollectionState, up_to: int, bell_type: bool) -> bool:
-        """Returns whether the given state has enough bell bearings.
-        false is smithing, true is somber"""
-        if self._progressive_bells_active():
-            return state.has(PROGRESSIVE_SOMBER_BELL if bell_type else PROGRESSIVE_SMITHING_BELL, self.player, up_to)
-        if bell_type:
-            return state.has_all([f"Somberstone Miner's Bell Bearing [{c}]" for c in range(1, up_to+1)], self.player)
-        else:
-            return state.has_all([f"Smithing-Stone Miner's Bell Bearing [{c}]" for c in range(1, up_to+1)], self.player)
     
     def _has_bloody_finger(self, state: CollectionState) -> bool:
         """Returns whether the given state has any bloody fingers"""
@@ -588,12 +512,6 @@ class EldenRingRules:
             return True
         return (state.count("Dragon Heart", self.player) + (state.count("Dragon Heart x3", self.player) * 3) + (state.count("Dragon Heart x5", self.player) * 5)) >= req_hearts
     
-    def _has_enough_imbued(self, state: CollectionState, req: int) -> bool:
-        """Imbued Sword Keys: the Twin Maiden Husks shop sells them infinitely under
-        soft_consumable_shop (Dragon-Heart treatment), so the requirement is satisfied."""
-        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates]
-            return True
-        return state.has("Imbued Sword Key", self.player, req)
 
     def _add_shop_rules(self) -> None:
         """Adds rules for items unlocked in shops."""
@@ -1686,7 +1604,7 @@ class EldenRingRules:
             if getattr(self, "_collecting_key_gates", False):
                 self.multiworld.get_location(location, self.player).progress_type = LocationProgressType.EXCLUDED
             if isinstance(rule, str):
-                assert (item_table[rule].classification == ItemClassification.progression
+                assert (self.item_table[rule].classification == ItemClassification.progression
                         or rule in getattr(self, "_fun_demoted", ())), \
                     f"non-progression item '{rule}' used as a location-gate shorthand"
                 rule = lambda state, item=rule: state.has(item, self.player)
@@ -1710,7 +1628,7 @@ class EldenRingRules:
             self._exclude_region(region)
         if isinstance(rule, str):
             if " -> " not in rule:
-                assert (item_table[rule].classification == ItemClassification.progression
+                assert (self.item_table[rule].classification == ItemClassification.progression
                         or rule in getattr(self, "_fun_demoted", ())), \
                     f"non-progression item '{rule}' used as an entrance-gate shorthand"
             rule = lambda state, item=rule: state.has(item, self.player)

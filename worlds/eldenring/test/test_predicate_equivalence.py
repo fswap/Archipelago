@@ -137,22 +137,10 @@ class _ERPredicateEquivalenceMixin:
     def test_has_enough_hearts_weighted(self):
         self._run_key_like(rp.has_enough_hearts, self.world._has_enough_hearts, rp.DRAGON_HEART_WEIGHTS)
 
-    def test_has_enough_imbued(self):
-        # plain Has(count) + soft/missable short-circuit
-        for t in (1, 3, 4):
-            for n in (0, t - 1, t, t + 1):
-                if n < 0:
-                    continue
-                self._current_state = self._state_with({"Imbued Sword Key": n})
-                resolved = self._resolve(rp.has_enough_imbued(t))
-                legacy_result = self.world._has_enough_imbued(self._current_state, t)
-                self._assert_equiv(resolved, legacy_result, f"imbued={n} threshold={t}")
-
-    def test_bell_bearings_smithing(self):
-        self._run_bell_battery(somber=False)
-
-    def test_bell_bearings_somber(self):
-        self._run_bell_battery(somber=True)
+    # NOTE: has_enough_imbued / bell_bearings_required equivalence tests were removed with the
+    # cleanup that retired the production-dead legacy _has_enough_imbued / _bell_bearings_required
+    # methods (nothing calls them post-migration). The factories remain (used by build_region_rules)
+    # and are exercised by the fill-regression sweep.
 
     # -- shared drivers -------------------------------------------------------------------
     def _run_key_like(self, factory, legacy, weights):
@@ -184,30 +172,6 @@ class _ERPredicateEquivalenceMixin:
                 resolved = self._resolve(factory(t))
                 legacy_result = legacy(self._current_state, t)
                 self._assert_equiv(resolved, legacy_result, f"stacks={stacks} threshold={t}")
-
-    def _run_bell_battery(self, somber: bool):
-        stem = "Somberstone Miner's Bell Bearing" if somber else "Smithing-Stone Miner's Bell Bearing"
-        prog = rp.PROGRESSIVE_SOMBER_BELL if somber else rp.PROGRESSIVE_SMITHING_BELL
-        for up_to in (1, 2, 4):
-            # progressive item counts around up_to
-            for prog_n in (0, up_to - 1, up_to, up_to + 1):
-                if prog_n < 0:
-                    continue
-                self._current_state = self._state_with({prog: prog_n})
-                resolved = self._resolve(rp.bell_bearings_required(up_to, somber))
-                legacy_result = self.world._bell_bearings_required(self._current_state, up_to, somber)
-                self._assert_equiv(resolved, legacy_result,
-                                   f"bell somber={somber} prog_copies={prog_n} up_to={up_to}")
-            # discrete bell-bearing sets: none, partial [1..up_to-1], full [1..up_to], superset
-            discrete_full = {f"{stem} [{c}]": 1 for c in range(1, up_to + 1)}
-            discrete_partial = {f"{stem} [{c}]": 1 for c in range(1, up_to)}
-            discrete_super = {f"{stem} [{c}]": 1 for c in range(1, up_to + 2)}
-            for disc in ({}, discrete_partial, discrete_full, discrete_super):
-                self._current_state = self._state_with(disc)
-                resolved = self._resolve(rp.bell_bearings_required(up_to, somber))
-                legacy_result = self.world._bell_bearings_required(self._current_state, up_to, somber)
-                self._assert_equiv(resolved, legacy_result,
-                                   f"bell somber={somber} discrete={sorted(disc)} up_to={up_to}")
 
     # -- count distribution utilities -----------------------------------------------------
     @staticmethod
