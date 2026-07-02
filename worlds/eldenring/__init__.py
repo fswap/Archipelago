@@ -22,6 +22,7 @@ from . import region_spine
 from Options import OptionError
 
 from .item_tiers import ITEM_TIERS, BAD_TIERS, TIER_KEEP_PREFIXES, REMOTE_THRESHOLD
+from .questline_locations import QUESTLINE_ALL
 from .curation import COMEDY_JUNK, TRIM_CUT_NAMES, ARMOR_SET_NONREP, UPLIFT_SPIRITS_TOP, UPLIFT_TALISMANS_S, UPLIFT_GLOVEWORT_BELLS, UPLIFT_REMEMBRANCES, UPLIFT_UNIQUE_CAPS, UPLIFT_SEEDS_TEARS, UPLIFT_RUNE_MIN_VALUE, UPLIFT_STACKABLE_WEIGHTS, UPLIFT_KEEP_DLC, QUESTLINE_DERANDO, QUESTLINE_REWARD_INJECT
 
 # --- dlc_gear_curation: opt-in item-pool gear curation (see options.py) -------
@@ -335,21 +336,23 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # A Remembrance item only gates the Enia turn-in checks, so it is real progression ONLY
         # when randomize_enia is on. With Enia vanilla it buys optional gear 1:1 and gates nothing
         # -> never promote its drop-location to PRIORITY (it would crowd the constrained fill).
-        if not self.options.randomize_enia:
-            selected_priority_classes = [c for c in selected_priority_classes if c != "remembrance"]
+        # Enia is always vanilla (randomize_enia REMOVED 2026-07-02): Remembrance drops
+        # gate nothing, so never promote them to PRIORITY.
+        selected_priority_classes = [c for c in selected_priority_classes if c != "remembrance"]
         # (1) IN-SCOPE filter: only randomized, in-pool, non-excluded locations are PRIORITY-eligible.
         #     Sealed (num_regions / spine) regions and vanilla Enia slots fail _is_location_available.
         # (2) HEADROOM cap (spine seals only): keep >= _PRIO_HEADROOM free randomizable slots per
         #     region so the lock chain + injected runes always have a reachable home (else the
         #     priority pass eats the scarce kept slots -> 'No more spots to place N items.').
-        _spine_seal = bool(getattr(self, "_spine_active", False))
+        # Headroom GENERALIZED 2026-07-02 (seed-44444 class): applies under EVERY
+        # config, not just spine seals -- region locks always need early homes.
         _PRIO_HEADROOM = 2
         for _region_name, _region_locs in location_tables.items():
             _avail = [l for l in _region_locs
                       if self._is_location_available(l) and l.name not in self.all_excluded_locations]
             _cand = [l for l in _avail
                      if any(priority_class_predicates[c](l) for c in selected_priority_classes)]
-            if _spine_seal and _cand:
+            if _cand:
                 _allowed = max(0, len(_avail) - _PRIO_HEADROOM)
                 if len(_cand) > _allowed:
                     _cand = sorted(_cand, key=lambda l: l.name)[:_allowed]
@@ -372,19 +375,22 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # Added to _fun_demoted so the gate-shorthand asserts stay relaxed. Reachability goals
         # (ending_condition==2) use the LOCATIONS not the items, so this is goal-safe.
         # (patch_apworld_important_locations_scope)
-        if not self.options.randomize_enia:
-            self._fun_demoted = getattr(self, "_fun_demoted", set())
-            _rem_demoted = 0
-            for _tbl in (item_table, item_table_vanilla):
-                for _data in _tbl.values():
-                    if _data.name.startswith("Remembrance"):
-                        # record regardless: table is SHARED across ER slots; an earlier
-                        # slot may have demoted it already (2-slot crash 2026-07-01)
-                        self._fun_demoted.add(_data.name)
-                        if _data.classification == ItemClassification.progression:
-                            _data.classification = ItemClassification.useful
-                            _data.filler = False
-                            _rem_demoted += 1
+        # Enia always vanilla (randomize_enia REMOVED 2026-07-02): remembrances are
+        # SPENT at the Finger Reader (one of two rewards, finite duplication), so
+        # has() gating was spend-blind -- same class as consumable keys. Demote them
+        # out of progression unconditionally.
+        self._fun_demoted = getattr(self, "_fun_demoted", set())
+        _rem_demoted = 0
+        for _tbl in (item_table, item_table_vanilla):
+            for _data in _tbl.values():
+                if _data.name.startswith("Remembrance"):
+                    # record regardless: table is SHARED across ER slots; an earlier
+                    # slot may have demoted it already (2-slot crash 2026-07-01)
+                    self._fun_demoted.add(_data.name)
+                    if _data.classification == ItemClassification.progression:
+                        _data.classification = ItemClassification.useful
+                        _data.filler = False
+                        _rem_demoted += 1
         
         if self.settings.disable_extreme_options:
             if not self.options.local_item_option:
@@ -417,7 +423,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # [shop-checks] only force the bells to progression when shop checks exist; with shops
         # excluded (shop_checks off) the gated shop checks vanish, so forcing the bells would
         # gate nothing. Demote them to normal items in that case. See SPEC-shop-checks.md.
-        if self.options.merchant_bell_logic.value == 1 and self.options.shop_checks.value:
+        if self.options.merchant_bell_logic.value == 1:
             # [shopslot-reachability] gating bells are INJECTED into the pool (2026-07-02).
             # Root cause of the 74 unreachable shop checks (test_logs/
             # er_tests_20260702_084944.log, ShopSlotMap_On): every gating merchant
@@ -463,7 +469,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # from the MANDATORY injectable set, resurrecting the 74 unreachable
             # shop checks. Smithing/somber/glovewort bells keep the old behavior.
             _mb_keep = set()
-            if self.options.merchant_bell_logic.value == 1 and self.options.shop_checks.value:
+            if self.options.merchant_bell_logic.value == 1:
                 _mb_keep = set(merchant_bell_names(bool(self.options.enable_dlc)))
             for _sp in item_table.values():
                 if _sp.name in _mb_keep:
@@ -490,25 +496,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # Soft-consumable shop / Gurranq de-rando: pull these from the randomized pool BEFORE
         # create_items builds it. Keys/hearts become Twin Maiden shop stock; Deathroot is locked
         # vanilla at the Gurranq ladder (see _fill_local_items). SPEC-soft-consumables.md.
-        if self.options.key_gates_missable.value:
-            # [key-gates] pure-runtime replacement for the soft-shop key handling: Stonesword Keys,
-            # Dragon Hearts and Imbued Sword Keys become ordinary FILLER (their imp-seal / Dragon
-            # Communion / Four Belfries locations are flagged EXCLUDED in set_rules), so they no longer
-            # drag into the progression/priority fill. No baked Twin Maiden shop rows needed.
-            for _vn in ("Stonesword Key", "Stonesword Key x3", "Stonesword Key x5",
-                        "Dragon Heart", "Dragon Heart x3", "Dragon Heart x5", "Imbued Sword Key"):
-                if _vn in item_table:
-                    item_table[_vn].classification = ItemClassification.filler
-        elif self.options.soft_consumable_shop.value:
-            for _vn in ("Stonesword Key", "Stonesword Key x3", "Stonesword Key x5"):
-                if _vn in item_table: item_table[_vn].skip = True
-            if not self.options.dlc_only:  # dlc_only precollects its own 25 hearts
-                for _vn in ("Dragon Heart", "Dragon Heart x3", "Dragon Heart x5"):
-                    if _vn in item_table: item_table[_vn].skip = True
-            if "Imbued Sword Key" in item_table:  # Twin Maiden Husks sells it infinitely
-                item_table["Imbued Sword Key"].skip = True
-        if self.options.derandomize_gurranq.value:
-            if "Deathroot" in item_table: item_table["Deathroot"].skip = True
+        # [key-gates] v0.1 single sound mode (option removed 2026-07-02): Stonesword
+        # Keys, Dragon Hearts and Imbued Sword Keys are ALWAYS ordinary FILLER -- their
+        # imp-seal / Dragon Communion / Four Belfries locations are flagged EXCLUDED in
+        # set_rules, so consumable-key counting never enters logic.
+        for _vn in ("Stonesword Key", "Stonesword Key x3", "Stonesword Key x5",
+                    "Dragon Heart", "Dragon Heart x3", "Dragon Heart x5", "Imbued Sword Key"):
+            if _vn in item_table:
+                item_table[_vn].classification = ItemClassification.filler
+        # Questline closure: turn-in currencies gate ONLY evented questline checks
+        # now. Demote to filler -- they stop dragging into the progression fill and
+        # pad the excludable-junk supply instead (helps the excluded-shortage class).
+        for _vn in ('Deathroot', 'Starlight Shards', 'Seedbed Curse', 'Shabriri Grape'):
+            if _vn in item_table:
+                item_table[_vn].classification = ItemClassification.filler
         
         # Region-count / Capital spine (short Morgott runs). Resolve scope BEFORE the lock
         # injection below so sealed locks can be pulled from the pool. Only engages with the
@@ -643,7 +644,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 # runes back into the item pool so Leyndell's pure item-count gate is still met. The
                 # Roundtable-hub re-root (set after the _random_start_region reset below) makes the
                 # non-contiguous random set reachable by warp.
-                _pool_runes = self.options.num_regions_rune_source.value == 1  # option_pool
+                # rune_source option REMOVED 2026-07-02: pool is THE mode (flexible by
+                # design -- inject a rune when one is needed). order=spine override below.
+                _pool_runes = True
                 if _pool_runes and _spine_order:
                     warning(f"{self.player_name}: num_regions_rune_source=pool is ignored under "
                             f"num_regions_order=spine (pool rolls a random non-contiguous set).")
@@ -937,7 +940,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 # inventory (which silently disables region_lock + the Enir Ilim gate). Only
                 # as many as the DLC mandatory-injectable demand; leftover reserve slots just
                 # hold filler. Selected in DLC region order so early-sphere slots exist.
-                if self.options.location_pool.value in (1, 2):
+                if self.options.location_pool.value == 1:
                     _dlc_lock_demand = sum(
                         1 for _n, _d in item_table.items()
                         if getattr(_d, "lock", False) and getattr(_d, "is_dlc", False)
@@ -1030,6 +1033,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # pool from overflowing the priority/progression fill. NOTE: under
         # accessibility==full the side-locations they gate may become unreachable;
         # run minimal or items if that bites.
+        # Spine seals guarantee ONLY the goal (the sealed map is locked-vanilla events) and
+        # the dead-progression demote below assumes it. Enforce the documented contract
+        # instead of assuming it (shops-always-on made the RH scroll/prayerbook turn-in
+        # slots real checks -- 2026-07-02 fuzz class: every num_regions+non-minimal roll
+        # FillErrored on demoted gate items). Same house pattern as the dlc_only coercion.
+        if (getattr(self, "_spine_active", False)
+                and self.options.accessibility.value != self.options.accessibility.option_minimal):
+            self.options.accessibility.value = self.options.accessibility.option_minimal
+            warning(f"{self.player_name}: a region-seal goal is active; forcing accessibility "
+                    f"to minimal (seals guarantee the goal, not full reachability).")
+
         if getattr(self, "_spine_active", False):  # patch_apworld_numregions_dead_progression (B):
             # was `if False` (keep these progression under accessibility=full). Under a spine seal
             # (num_regions / region_count / messmer / godrick -- always accessibility minimal) these
@@ -1965,7 +1979,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 _gr_fillers = [it for it in self.multiworld.itempool
                                if it.classification == ItemClassification.filler
                                and it.player == self.player]
-                _gr_k = min(len(_gr_items), len(_gr_cands), len(_gr_fillers))
+                # Headroom (2026-07-02, seed-44444 class): leave 2 free real checks per
+                # region so grace tokens never starve the progression/lock fill.
+                _gr_k = min(len(_gr_items), max(0, len(_gr_cands) - 2), len(_gr_fillers))
                 if len(_gr_fillers) < len(_gr_items):
                     warning(f'{self.player_name}: grace_rando {_gr_region}: '
                             f'{len(_gr_items)} grace drop(s) wanted but only '
@@ -2289,6 +2305,22 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             fill.append(self.random.choice(buckets[_k]))
         return uniques + fill
 
+    def _place_locked_vanilla(self, location_name: str, item_name: str) -> None:
+        """place_locked_item that tolerates an already-filled location.
+
+        FUZZ-CRASH 2026-07-02 (genfuzz_ci_20260702-163148, 3x, all dlc_only): dlc_only pre-seals
+        base-game locations locked-vanilla, then the do_not_randomize option handlers hard-placed
+        the same vanilla item there and BaseClasses raised "already filled". Same item already
+        present = intent satisfied, silent no-op; DIFFERENT item present = warn and leave it
+        (never silently overwrite a placement)."""
+        loc = self.multiworld.get_location(location_name, self.player)
+        if loc.item is not None:
+            if loc.item.name != item_name:
+                warning(f"{self.player_name}: wanted to lock '{item_name}' at "
+                        f"'{location_name}' but it already holds '{loc.item.name}' -- left as is.")
+            return
+        loc.place_locked_item(self.create_item(item_name))
+
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
 
@@ -2297,20 +2329,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         if self.options.crafting_kit_option.value == 1:
             self._fill_local_item("Crafting Kit", ["Limgrave", "Siofra River", "Weeping Peninsula", "Liurnia of The Lakes"])
         elif self.options.crafting_kit_option.value == 2:
-            self.multiworld.get_location("LG/(CE): Crafting Kit - Kalé Shop", self.player).place_locked_item(self.create_item("Crafting Kit"))
+            self._place_locked_vanilla("LG/(CE): Crafting Kit - Kalé Shop", "Crafting Kit")
         elif self.options.crafting_kit_option.value == 3:  # start with (copy also left in pool, like maps/bell)
             self.multiworld.push_precollected(self.create_item("Crafting Kit"))
             
         if self.options.smithing_bell_bearing_option.value == 2:
-            self.multiworld.get_location("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [1]"))
-            self.multiworld.get_location("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [2]"))
-            self.multiworld.get_location("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [3]"))
-            self.multiworld.get_location("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", self.player).place_locked_item(self.create_item("Smithing-Stone Miner's Bell Bearing [4]"))
-            self.multiworld.get_location("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [1]"))
-            self.multiworld.get_location("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [2]"))
-            self.multiworld.get_location("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [3]"))
-            self.multiworld.get_location("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [4]"))
-            self.multiworld.get_location("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", self.player).place_locked_item(self.create_item("Somberstone Miner's Bell Bearing [5]"))
+            self._place_locked_vanilla("LL/(RLCT): Smithing-Stone Miner's Bell Bearing [1] - boss drop", "Smithing-Stone Miner's Bell Bearing [1]")
+            self._place_locked_vanilla("CO/(ST): Smithing-Stone Miner's Bell Bearing [2] - in chest W side of first room", "Smithing-Stone Miner's Bell Bearing [2]")
+            self._place_locked_vanilla("MotG/(ZR): Smithing-Stone Miner's Bell Bearing [3] - in chest underground", "Smithing-Stone Miner's Bell Bearing [3]")
+            self._place_locked_vanilla("FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop", "Smithing-Stone Miner's Bell Bearing [4]")
+            self._place_locked_vanilla("CL/(SCT): Somberstone Miner's Bell Bearing [1] - boss drop", "Somberstone Miner's Bell Bearing [1]")
+            self._place_locked_vanilla("AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop", "Somberstone Miner's Bell Bearing [2]")
+            self._place_locked_vanilla("MotG/(FCM): Somberstone Miner's Bell Bearing [3] - out front of church", "Somberstone Miner's Bell Bearing [3]")
+            self._place_locked_vanilla("FA/TFB: Somberstone Miner's Bell Bearing [4] - to N", "Somberstone Miner's Bell Bearing [4]")
+            self._place_locked_vanilla("FA/DTR: Somberstone Miner's Bell Bearing [5] - to SE, W of courtyard, in water room by altar", "Somberstone Miner's Bell Bearing [5]")
         
         # map_option=give: we no longer precollect the map fragment ITEMS (that cluttered the bag
         # with ~19 fragments, and granting each set its reveal flag). Instead slot_data
@@ -2427,102 +2459,37 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                         f"{_got} Scadutree Fragment value remains in the pool{_cause} -- "
                         f"frontload {'had no effect' if _got == 0 else 'only partially applied'}.")
 
-        # Tidy junk consumables: start-grant the required counts so the gated checks (Seluvis
-        # puppets / Dung Eater) stay reachable after Starlight Shards / Seedbed Curse leave the
-        # pool (generate_early). Festering gates nothing, so no grant.
-        if self.options.tidy_fun_consumables.value:
-            for _ in range(3):
-                self.multiworld.push_precollected(self.create_item("Starlight Shards"))
-            for _ in range(5):
-                self.multiworld.push_precollected(self.create_item("Seedbed Curse"))
-            for _ in range(3):
-                self.multiworld.push_precollected(self.create_item("Shabriri Grape"))
+        # (2026-07-02) tidy-consumable spawn-grants + derandomize_gurranq +
+        # derandomize_questlines blocks REMOVED: the questline full closure
+        # (questline_locations.py via _is_location_available) events every gated
+        # check, so no grants or re-injects are needed and both options are gone.
 
-        # Gurranq deathroot-ladder de-randomization (SPEC-soft-consumables.md). Lock all 10
-        # reward checks at vanilla, precollect 9 Deathroot so the has(Deathroot,N) rules stay
-        # reachable (Deathroot left the pool in generate_early), and re-inject the 3 keepers
-        # 1:1 against filler so they stay shuffled instead of missable Gurranq-only.
-        if self.options.derandomize_gurranq.value:
-            _gur_locs = {
-                "DB/(BS): Clawmark Seal - Gurranq, deathroot reward 1",
-                "DB/(BS): Beast Eye - Gurranq, deathroot reward 1 or kill Gurranq",
-                "DB/(BS): Bestial Sling - Gurranq, deathroot reward 2",
-                "DB/(BS): Bestial Vitality - Gurranq, deathroot reward 3",
-                "DB/(BS): Ash of War: Beast's Roar - Gurranq, deathroot reward 4",
-                "DB/(BS): Beast Claw - Gurranq, deathroot reward 5",
-                "DB/(BS): Stone of Gurranq - Gurranq, deathroot reward 6",
-                "DB/(BS): Beastclaw Greathammer - Gurranq, deathroot reward 7",
-                "DB/(BS): Gurranq's Beast Claw - Gurranq, deathroot reward 8",
-                "DB/(BS): Ancient Dragon Smithing Stone - Gurranq, deathroot reward 9 or kill Gurranq",
-            }
-            for _ in range(9):
-                self.multiworld.push_precollected(self.create_item("Deathroot"))
-            self._lock_class_at_vanilla(lambda d: d.name in _gur_locs)
-            # SILENT-NOOP-SWEEP-20260702 A5 (2026-07-02): filler exhaustion used to
-            # silently break -- keeper items vanished from the seed with no trace.
-            _gur_dropped = []
-            for _kp in ("Clawmark Seal", "Beastclaw Greathammer", "Ancient Dragon Smithing Stone"):
-                _filler = next((it for it in self.local_itempool
-                                if it.classification == ItemClassification.filler), None)
-                if _filler is None:
-                    _gur_dropped.append(_kp)
-                    continue
-                self.local_itempool.remove(_filler)
-                self.local_itempool.append(self.create_item(_kp))
-            if _gur_dropped:
-                warning(f"{self.player_name}: derandomize_gurranq re-inject ran out of "
-                        f"filler; dropped from seed: {', '.join(_gur_dropped)}.")
-
-        # NPC questline de-randomization -- lock optional-only quest chains at vanilla so
-        # they stop crowding the priority/progression fill (link items are dead-weight
-        # progression). Region/goal-gating quest items are never in the cut set, and no
-        # current goal requires any cut item. See SPEC-questline-derando.md.
-        if self.options.derandomize_questlines.value:
-            self._lock_class_at_vanilla(lambda d: d.default_item_name in QUESTLINE_DERANDO)
-            if self.options.derandomize_questlines.value == 2:  # full: pull good rewards + reinject
-                _present = {it.name for it in self.local_itempool} & QUESTLINE_REWARD_INJECT
-                self._lock_class_at_vanilla(lambda d: d.default_item_name in QUESTLINE_REWARD_INJECT)
-                # SILENT-NOOP-SWEEP-20260702 A5 (2026-07-02): filler exhaustion used to
-                # silently break -- reward items vanished from the seed with no trace.
-                _ql_dropped = []
-                for _name in sorted(_present):
-                    _filler = next((it for it in self.local_itempool
-                                    if it.classification == ItemClassification.filler), None)
-                    if _filler is None:
-                        _ql_dropped.append(_name)
-                        continue
-                    self.local_itempool.remove(_filler)
-                    self.local_itempool.append(self.create_item(_name))
-                if _ql_dropped:
-                    warning(f"{self.player_name}: derandomize_questlines=2 re-inject ran "
-                            f"out of filler; dropped from seed: {', '.join(_ql_dropped)}.")
-        
         if self.options.map_option.value == 2:
-            self.multiworld.get_location("LG/(GR): Map: Limgrave, West - map pillar", self.player).place_locked_item(self.create_item("Map: Limgrave, West"))
-            self.multiworld.get_location("WP/CMR: Map: Weeping Peninsula - to SW", self.player).place_locked_item(self.create_item("Map: Weeping Peninsula"))
-            self.multiworld.get_location("LG/SRW: Map: Limgrave, East - W of SRW", self.player).place_locked_item(self.create_item("Map: Limgrave, East"))
-            self.multiworld.get_location("LL/LLS: Map: Liurnia, East - to N", self.player).place_locked_item(self.create_item("Map: Liurnia, East"))
-            self.multiworld.get_location("LL/AGT: Map: Liurnia, North - near grace", self.player).place_locked_item(self.create_item("Map: Liurnia, North"))
-            self.multiworld.get_location("LL/NLLS: Map: Liurnia, West - to NE on map pillar", self.player).place_locked_item(self.create_item("Map: Liurnia, West"))
-            self.multiworld.get_location("AP/AHJ: Map: Altus Plateau - to N by map pillar", self.player).place_locked_item(self.create_item("Map: Altus Plateau"))
-            self.multiworld.get_location("CO/OWPT: Map: Leyndell, Royal Capital - by map pillar", self.player).place_locked_item(self.create_item("Map: Leyndell, Royal Capital"))
-            self.multiworld.get_location("MtG/RI: Map: Mt. Gelmir - to W by map pillar", self.player).place_locked_item(self.create_item("Map: Mt. Gelmir"))
-            self.multiworld.get_location("CL/SASB: Map: Caelid - to SW", self.player).place_locked_item(self.create_item("Map: Caelid"))
-            self.multiworld.get_location("CL/DW: Map: Dragonbarrow - to E", self.player).place_locked_item(self.create_item("Map: Dragonbarrow"))
-            self.multiworld.get_location("MotG/(GLR): Map: Mountaintops of the Giants, West - map pillar NE of GLR", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, West"))
-            self.multiworld.get_location("FP/GG: Map: Mountaintops of the Giants, East - map pillar", self.player).place_locked_item(self.create_item("Map: Mountaintops of the Giants, East"))
-            self.multiworld.get_location("AR/UPR: Map: Ainsel River - NW of UPR in temple by merchant", self.player).place_locked_item(self.create_item("Map: Ainsel River"))
-            self.multiworld.get_location("LR/LRS: Map: Lake of Rot - to S", self.player).place_locked_item(self.create_item("Map: Lake of Rot"))
-            self.multiworld.get_location("SR/SRB: Map: Siofra River - to SE by bottom of stairs", self.player).place_locked_item(self.create_item("Map: Siofra River"))
-            self.multiworld.get_location("MP/MDE: Map: Mohgwyn Palace - to NW", self.player).place_locked_item(self.create_item("Map: Mohgwyn Palace"))
-            self.multiworld.get_location("DD/DD: Map: Deeproot Depths - path to NE in gazebo", self.player).place_locked_item(self.create_item("Map: Deeproot Depths"))
-            self.multiworld.get_location("CS/ICS: Map: Consecrated Snowfield - map pillar to N", self.player).place_locked_item(self.create_item("Map: Consecrated Snowfield"))
+            self._place_locked_vanilla("LG/(GR): Map: Limgrave, West - map pillar", "Map: Limgrave, West")
+            self._place_locked_vanilla("WP/CMR: Map: Weeping Peninsula - to SW", "Map: Weeping Peninsula")
+            self._place_locked_vanilla("LG/SRW: Map: Limgrave, East - W of SRW", "Map: Limgrave, East")
+            self._place_locked_vanilla("LL/LLS: Map: Liurnia, East - to N", "Map: Liurnia, East")
+            self._place_locked_vanilla("LL/AGT: Map: Liurnia, North - near grace", "Map: Liurnia, North")
+            self._place_locked_vanilla("LL/NLLS: Map: Liurnia, West - to NE on map pillar", "Map: Liurnia, West")
+            self._place_locked_vanilla("AP/AHJ: Map: Altus Plateau - to N by map pillar", "Map: Altus Plateau")
+            self._place_locked_vanilla("CO/OWPT: Map: Leyndell, Royal Capital - by map pillar", "Map: Leyndell, Royal Capital")
+            self._place_locked_vanilla("MtG/RI: Map: Mt. Gelmir - to W by map pillar", "Map: Mt. Gelmir")
+            self._place_locked_vanilla("CL/SASB: Map: Caelid - to SW", "Map: Caelid")
+            self._place_locked_vanilla("CL/DW: Map: Dragonbarrow - to E", "Map: Dragonbarrow")
+            self._place_locked_vanilla("MotG/(GLR): Map: Mountaintops of the Giants, West - map pillar NE of GLR", "Map: Mountaintops of the Giants, West")
+            self._place_locked_vanilla("FP/GG: Map: Mountaintops of the Giants, East - map pillar", "Map: Mountaintops of the Giants, East")
+            self._place_locked_vanilla("AR/UPR: Map: Ainsel River - NW of UPR in temple by merchant", "Map: Ainsel River")
+            self._place_locked_vanilla("LR/LRS: Map: Lake of Rot - to S", "Map: Lake of Rot")
+            self._place_locked_vanilla("SR/SRB: Map: Siofra River - to SE by bottom of stairs", "Map: Siofra River")
+            self._place_locked_vanilla("MP/MDE: Map: Mohgwyn Palace - to NW", "Map: Mohgwyn Palace")
+            self._place_locked_vanilla("DD/DD: Map: Deeproot Depths - path to NE in gazebo", "Map: Deeproot Depths")
+            self._place_locked_vanilla("CS/ICS: Map: Consecrated Snowfield - map pillar to N", "Map: Consecrated Snowfield")
             if self.options.enable_dlc:
-                self.multiworld.get_location("GP/SR: Map: Gravesite Plain - S of SR", self.player).place_locked_item(self.create_item("Map: Gravesite Plain"))
-                self.multiworld.get_location("SA/HC: Map: Scadu Altus - map pillar to N", self.player).place_locked_item(self.create_item("Map: Scadu Altus"))
-                self.multiworld.get_location("CC/CCC: Map: Southern Shore - to N on path", self.player).place_locked_item(self.create_item("Map: Southern Shore"))
-                self.multiworld.get_location("RB/TTR: Map: Rauh Ruins - map pillar to E behind wall", self.player).place_locked_item(self.create_item("Map: Rauh Ruins"))
-                self.multiworld.get_location("AW/AC: Map: Abyss - map pillar NW of AC", self.player).place_locked_item(self.create_item("Map: Abyss"))
+                self._place_locked_vanilla("GP/SR: Map: Gravesite Plain - S of SR", "Map: Gravesite Plain")
+                self._place_locked_vanilla("SA/HC: Map: Scadu Altus - map pillar to N", "Map: Scadu Altus")
+                self._place_locked_vanilla("CC/CCC: Map: Southern Shore - to N on path", "Map: Southern Shore")
+                self._place_locked_vanilla("RB/TTR: Map: Rauh Ruins - map pillar to E behind wall", "Map: Rauh Ruins")
+                self._place_locked_vanilla("AW/AC: Map: Abyss - map pillar NW of AC", "Map: Abyss")
 
     def _lock_class_at_vanilla(self, predicate: Callable[[ERLocationData], bool]) -> None:
         """Lock every available location matching predicate to its vanilla item and remove
@@ -2896,6 +2863,42 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
 
 
 
+        # EXCLUDED-supply balancer -- must be the LAST pre_fill step (all pre-placements
+        # and progress_type flags are final by here).
+        self._balance_excluded_junk()
+
+    def _balance_excluded_junk(self) -> None:
+        """EXCLUDED-supply balancer (2026-07-02). AP fill hard-errors when EXCLUDED locations
+        outnumber excludable (non-advancement, non-useful) items. Cover the deficit by swapping
+        own USEFUL pool items -> Golden Rune [2] (count-neutral; AP reads classifications at
+        fill time, so a pre_fill swap is safe). Graceful OptionError when even useful cannot
+        cover it -- 'clean gen or graceful reject'."""
+        from BaseClasses import LocationProgressType
+        from Options import OptionError
+        excluded = [l for l in self.multiworld.get_locations(self.player)
+                    if l.address is not None and l.item is None
+                    and l.progress_type == LocationProgressType.EXCLUDED]
+        own = [i for i in self.multiworld.itempool if i.player == self.player]
+        excludable = sum(1 for i in own if not i.advancement and not i.useful)
+        deficit = len(excluded) - excludable
+        if deficit <= 0:
+            return
+        useful = [i for i in own if i.useful and not i.advancement]
+        swap = useful[:deficit]
+        for _it in swap:
+            self.multiworld.itempool.remove(_it)
+            self.multiworld.itempool.append(self.create_item("Golden Rune [2]"))
+        if swap:
+            warning(f"{self.player_name}: excluded-junk balancer swapped {len(swap)} useful "
+                    f"item(s) -> Golden Rune [2] to cover a {deficit} excluded-location "
+                    f"deficit (e.g. {', '.join(i.name for i in swap[:5])}).")
+        if len(swap) < deficit:
+            raise OptionError(
+                f"{self.player_name}: {len(excluded)} excluded locations exceed the excludable "
+                f"supply by {deficit - len(swap)} even after swapping every useful item to junk "
+                f"-- relax exclusions (missable/excluded behavior, important_locations) or use "
+                f"a larger location_pool.")
+
     def _can_get(self, state: CollectionState, location) -> bool:
         """Returns whether state can access the given location name."""
         return state.can_reach_location(location, self.player)
@@ -2922,6 +2925,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 getattr(self, "_spine_active", False)
                 and data.name in self._spine_sealed_locations
             )
+            # Questline FULL CLOSURE (2026-07-02): NPC-quest state is not modeled in
+            # logic, so every quest-entangled check (rule sites, Gurranq ladder,
+            # quest-item-gated regions) is a locked-vanilla EVENT -- same exemption
+            # path as spine-sealed checks. Replaces derandomize_questlines /
+            # derandomize_gurranq / reward-inject / currency spawn-grants.
+            and data.name not in QUESTLINE_ALL
             and not (
                 self.options.excluded_location_behavior == "do_not_randomize"
                 and data.name in self.all_excluded_locations
@@ -2930,12 +2939,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 self.options.missable_location_behavior == "do_not_randomize"
                 and data.missable
             )
-            # randomize_enia off: the Roundtable/Enia Finger-Reader slots are not checks
-            # (Remembrance turn-ins are vanilla 1:1 -- "checks with extra steps").
-            and not (
-                not self.options.randomize_enia
-                and "Enia" in data.name
-            )
+            # Enia Finger-Reader slots are NEVER checks (randomize_enia REMOVED
+            # 2026-07-02 -- spend-blind has() gating; turn-ins stay vanilla 1:1).
+            and "Enia" not in data.name
             # map_option=give: map-pillar pickups aren't checks. Their guarding flag IS the
             # map reveal flag, which giving the map sets at spawn -- if they were checks they'd
             # auto-fire and dump their (randomized) item for free. Maps are still precollected.
@@ -2993,14 +2999,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         return self._remoteness(data) >= REMOTE_THRESHOLD
 
     def _in_location_pool(self, data: ERLocationData) -> bool:
-        """location_pool option: trim the randomized-check set (all / trimmed / lean)."""
+        """location_pool option: trim the randomized-check set (all / trimmed).
+        (lean REMOVED 2026-07-02 -- v0.1 one-sound-mode; it produced every retired
+        fill canary. Trimmed is the supported small pool.)"""
         pool = self.options.location_pool.value
-        # [shop-checks] shop_checks OFF -> exclude shop slots from the active check set. In the
-        # pure-runtime model a randomized shop slot is a blind buy (vanilla wares, hidden AP
-        # reward), so by default shops are not checks. Runs ahead of the all/trimmed/lean
-        # branches below so it applies in every pool mode. See SPEC-shop-checks.md.
-        if getattr(data, "shop", False) and not self.options.shop_checks.value:
-            return False
+        # [shop-checks] Shops are ALWAYS checks (ShopChecks option removed 2026-07-02):
+        # slots are runtime-detectable (scout/icon/preview LIVE in-game) and they supply
+        # hundreds of early-sphere candidates the region-lock fill needs (seed-44444
+        # class). Blind-buy UX is covered by the client shop system. SPEC-shop-checks.md.
         if pool == 0:
             return True
         # Fix B (demand-restore): reserved cut-filler locations are kept as checks to
@@ -3088,14 +3094,8 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             if "graveyard" in (data.name or "").lower():
                 return True
             return False
-        # pool == 2 (lean): only meaningful checks (+ anything holding a progression item)
-        _lean = ("boss", "altboss", "catacombboss", "graveboss", "caveboss", "tunnelboss",
-                 "gaolboss", "minidungeonboss", "miscboss", "overworldboss", "dragonboss",
-                 "remembrance", "keyitem", "seedtree", "church", "basin", "fragment",
-                 "revered", "cross")
-        if any(getattr(data, t, False) for t in _lean):
-            return True
-        return cls == ItemClassification.progression
+        # lean value removed 2026-07-02: location_pool can only be 0/1 here.
+        return False
     
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
@@ -3399,12 +3399,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 if len(_cp_ids) > 1:
                     chokepoint_sweeps[str(_cp_flag)] = _cp_ids
 
-        # DLC footgun guard: the v0.8 swap/rune enemy toggles crash the bake against DLC
-        # enemies (untested combo, EnemyRandomizer.cs:8202). Force them off when DLC is on so
-        # a seed can't brick the bake; warn if the player had set them. See TODO #1.
-        if self.options.enable_dlc and (self.options.swap_multiboss or self.options.boss_runes_match):
-            warning(f"{self.player_name}: swap_multiboss/boss_runes_match are not DLC-safe yet; "
-                    f"suppressing them because enable_dlc is on (avoids the enemy-rando bake crash).")
         # Region-fusion grace bundle (TODO #13): when region gating is active, ship
         # {lock_item_name: [grace warp-unlock flags]} so the runtime client can enable a
         # region's Sites of Grace (fast travel) when its lock item is received. graces_per_region
@@ -3879,18 +3873,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "ending_condition": self.options.ending_condition.value,
                 "world_logic": self.options.world_logic.value,
                 # Completion-percent scaling (SPEC-completion-scaling.md): mode + floor. The baker
-                # reshapes each enemy's native scaling tier by this curve/floor (enemy_rando only).
+                # reshapes each enemy's native scaling tier by this curve/floor.
                 "completion_scaling": self.options.completion_scaling.value,
                 "completion_scaling_floor": self.options.completion_scaling_floor.value,
                 "global_scadutree_blessing": self.options.global_scadutree_blessing.value,
                 "location_pool": self.options.location_pool.value,
                 "dlc_gear_curation": self.options.dlc_gear_curation.value,
-                "region_boss_percent": self.options.region_boss_percent.value,
                 "soft_logic": self.options.soft_logic.value,
                 "great_runes_required": self.options.great_runes_required.value,
                 "great_runes_final_boss": self.options.great_runes_final_boss.value,
                 "great_runes_mountaintops": self.options.great_runes_mountaintops.value,
-                "deathless_routing": self.options.deathless_routing.value,
                 # Capital/Morgott short-run scope. region_count = the EFFECTIVE (floor-raised)
                 # spine length actually used; 0 = feature inert. See region_spine.py.
                 "region_count": self._spine_effective_count,
@@ -3902,15 +3894,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "messmer_kindle_required": self.options.messmer_kindle_required.value,
                 "messmer_kindle_max": self.options.messmer_kindle_max.value,
                 "dlc_timing": self.options.dlc_timing.value,
-                "enemy_rando": self.options.enemy_rando.value,
-                "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 "random_start": self.options.random_start.value,
-                "auto_equip": self.options.auto_equip.value,
                 "auto_upgrade": self.options.auto_upgrade.value,
                 "progressive_stone_bells": self.options.progressive_stone_bells.value,
                 "progressive_physick": self.options.progressive_physick.value,
-                "randomize_enia": self.options.randomize_enia.value,
                 "progressive_bell_count": self.options.progressive_bell_count.value,
                 "progressive_bell_early_count": self.options.progressive_bell_early_count.value,
                 "crafting_kit_option": self.options.crafting_kit_option.value,
@@ -3928,7 +3916,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "dungeon_sweep": self.options.dungeon_sweep.value,
                 # Boss attribution + grace complement (SPEC-boss-attribution.md). The bake reads
                 # both from here and emits sweep_flags into apconfig.json when dungeon_sweep==bosses.
-                "grace_sweep": self.options.grace_sweep.value,
                 # Deliberately a REAL bool (not 0/1 like the toggles above): the static
                 # randomizer's options dict only admits JSON booleans, and this one is
                 # consumed there (ConvertRandomizerOptions -> opt["weaponreqs"]).
@@ -3936,10 +3923,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 # Tier-A enemy-rando sub-toggles + Serpent-Hunter tweak. Shipped as REAL
                 # bools (not 0/1) so they survive the static randomizer's bool-only
                 # options filter, same as no_weapon_requirements above.
-                "swap_multiboss": bool(self.options.swap_multiboss.value) and not bool(self.options.enable_dlc.value),
-                "boss_runes_match": bool(self.options.boss_runes_match.value) and not bool(self.options.enable_dlc.value),
-                "impolite_enemies": bool(self.options.impolite_enemies.value),
-                "disable_serpent_hunter_upgrade": bool(self.options.disable_serpent_hunter_upgrade.value),
                 "bell_physick_option": self.options.bell_physick_option.value,
                 "torrent_start": self.options.torrent_start.value,
             },
@@ -4131,7 +4114,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # detection table, so just add it to locationFlags (self-detects on purchase, no rewrite).
         try:
             _shd_row_flags = {}
-            if self.options.shop_checks.value:
+            if True:  # shops are always checks (ShopChecks removed 2026-07-02)
                 import os as _shd_os, json as _shd_json
                 _shd_path = _shd_os.path.join(_shd_os.path.dirname(__file__), "shop_row_flags.json")
                 with open(_shd_path, encoding="utf-8") as _shd_f:
@@ -4159,7 +4142,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # Gated on shop_checks; source = shop_row_flags.json loc_good_ids (raw ShopLineupParam.equipId).
         try:
             _spg = {}
-            if self.options.shop_checks.value:
+            if True:  # shops are always checks (ShopChecks removed 2026-07-02)
                 import os as _spg_os, json as _spg_json
                 _spg_path = _spg_os.path.join(_spg_os.path.dirname(__file__), "shop_row_flags.json")
                 with open(_spg_path, encoding="utf-8") as _spg_f:

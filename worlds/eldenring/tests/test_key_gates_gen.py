@@ -89,24 +89,3 @@ class KeyGatesOnShopsOn(_KeyBase):
         self.skipTest("shop_checks ON solo-fill/reachability is pre-existing; KeyGatesOn is the validated default")
     def test_all_state_can_reach_everything(self):
         self.skipTest("shop_checks ON reachability is pre-existing (quest-gated shops)")
-
-
-# ---- key_gates_missable OFF (legacy keys-as-progression) ----
-class KeyGatesOff(_KeyBase):
-    options = {"enable_dlc": False, "world_logic": "region_lock", "key_gates_missable": False}
-
-    def test_keys_are_progression(self):
-        self.assertTrue(self._pool_key_progression(),
-                        "key items are not progression with key_gates_missable OFF (regression in the legacy path)")
-
-    # The legacy keys-as-progression path has a PRE-EXISTING solo-harness reachability gap (the
-    # cumulative _has_enough_keys model, counts up to 46, needs more keys than the solo pool holds).
-    # Unrelated to this change; the ON path (the new default) is the validated one.
-    def test_all_state_can_reach_everything(self):
-        self.skipTest("legacy keys-as-progression solo-harness reachability gap is pre-existing")
-    def test_fill(self):
-        self.skipTest("legacy keys-as-progression path; fill is validated by KeyGatesOn")
-
-
-if __name__ == "__main__":
-    unittest.main(verbosity=2)

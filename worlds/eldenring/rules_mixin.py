@@ -33,15 +33,16 @@ class EldenRingRules:
         # [key-gates] collect + EXCLUDE the key/heart-gated checks added by these two dedicated methods
         # (every rule in them uses _has_enough_keys / _has_enough_hearts). The flag drives
         # _add_location_rule / _add_entrance_rule to mark the gated check (or whole region) filler-only.
-        self._collecting_key_gates = self.options.key_gates_missable.value
+        self._collecting_key_gates = True  # v0.1 single mode: key gates always soft
         self._key_rules() # make option to choose master or normal rules
         #self._master_key_rules()
 
         self._dragon_communion_rules()
         self._collecting_key_gates = False
-        if self.options.key_gates_missable.value:  # imbued gates the Four Belfries teleport sub-regions (added as plain entrance rules below)
-            for _r in ("The Four Belfries (Chapel of Anticipation)", "The Four Belfries (Nokron)", "The Four Belfries (Farum Azula)"):
-                self._exclude_region(_r)
+        # imbued keys gate the Four Belfries teleport sub-regions: always EXCLUDED
+        # (v0.1 single mode -- entrance rules stay as plain always-true gates below)
+        for _r in ("The Four Belfries (Chapel of Anticipation)", "The Four Belfries (Nokron)", "The Four Belfries (Farum Azula)"):
+            self._exclude_region(_r)
         self._add_shop_rules()
         self._add_npc_rules()
         self._add_remembrance_rules()
@@ -259,8 +260,39 @@ class EldenRingRules:
                 self._add_location_rule("Victory", lambda state: self._can_get_all(state, self.location_name_groups["Boss Reward"]))
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "Victory")
         
+        # dungeon_sweep reachability modeling (patch_dungeon_sweep_logic 2026-07-02): runs
+        # AFTER every other rule attachment so the OR wraps each member's final rule.
+        self._apply_dungeon_sweep_logic()
+
         # self.visualize_world()
         
+    def _apply_dungeon_sweep_logic(self) -> None:
+        """dungeon_sweep members are auto-CHECKED at runtime the moment their trigger fires
+        (client `dungeonSweeps` consumer), so in PRACTICE a member is obtainable whenever its
+        trigger is reachable. Mirror that here: OR each member's access rule with its trigger's
+        reachability. Strictly LOOSENING -- the runtime grants the member regardless of its own
+        rule, so this can never create a softlock; it relieves accessibility:full pressure and
+        lets fill legally use swept members once the trigger is in logic. grace_sweep is NOT
+        modeled (it unlocks traversal graces; the region-lock abstraction already covers
+        movement). MUST run last in set_rules: the OR wraps each member's FINAL rule (anything
+        AND-attached afterwards would wrongly bind outside the OR)."""
+        if not self.options.dungeon_sweep.value:
+            return
+        _sweeps, _groups = self._compute_dungeon_sweeps()
+        _n = 0
+        for _trigger, _members in _groups:
+            for _member in _members:
+                if _member is _trigger or _member.address is None:
+                    continue
+                add_rule(_member,
+                         lambda state, _t=_trigger: _t.can_reach(state),
+                         combine="or")
+                _n += 1
+        if _n:
+            from logging import warning
+            warning(f"{self.player_name}: dungeon_sweep logic: {_n} member checks are also "
+                    f"in-logic via their sweep trigger.")
+
     def _can_get_all(self, state: CollectionState, locations: Set) -> bool:
         """Can get all locations."""
         for location in locations:
@@ -493,10 +525,9 @@ class EldenRingRules:
             "Great Rune of the Unborn"], self.player) >= runes_required)
     
     def _has_enough_keys(self, state: CollectionState, req_keys: int) -> bool:
-        """Returns whether the given state has enough keys."""
-        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates] keys not required when their gated locations are EXCLUDED
-            return True
-        return (state.count("Stonesword Key", self.player) + (state.count("Stonesword Key x3", self.player) * 3) + (state.count("Stonesword Key x5", self.player) * 5)) >= req_keys
+        """Always True (v0.1 single sound mode): counting found keys cannot model
+        SPENDING them, so key gates are open in logic and their checks EXCLUDED."""
+        return True
         
     
     def _has_bloody_finger(self, state: CollectionState) -> bool:
@@ -507,10 +538,8 @@ class EldenRingRules:
             "Festering Bloody Finger x10"], self.player) >= 1)
     
     def _has_enough_hearts(self, state: CollectionState, req_hearts: int) -> bool:
-        """Returns whether the given state has enough keys."""
-        if self.options.soft_consumable_shop.value or self.options.key_gates_missable.value:  # [key-gates]
-            return True
-        return (state.count("Dragon Heart", self.player) + (state.count("Dragon Heart x3", self.player) * 3) + (state.count("Dragon Heart x5", self.player) * 5)) >= req_hearts
+        """Always True (v0.1 single sound mode) -- see _has_enough_keys."""
+        return True
     
 
     def _add_shop_rules(self) -> None:

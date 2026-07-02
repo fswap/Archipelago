@@ -34,7 +34,7 @@ from rule_builder.rules import (
 )
 from rule_builder.options import OptionFilter
 
-from .options import RegionAccessLogic, SoftConsumableShop, KeyGatesMissable, ProgressiveStoneBells
+from .options import RegionAccessLogic, ProgressiveStoneBells
 from .stone_bells import PROGRESSIVE_SMITHING_BELL, PROGRESSIVE_SOMBER_BELL
 
 
@@ -52,12 +52,13 @@ BLOODY_FINGERS = (
 STONESWORD_KEY_WEIGHTS = (("Stonesword Key", 1), ("Stonesword Key x3", 3), ("Stonesword Key x5", 5))
 DRAGON_HEART_WEIGHTS = (("Dragon Heart", 1), ("Dragon Heart x3", 3), ("Dragon Heart x5", 5))
 
-# A consumable-key gate is satisfied outright when keys are sold infinitely (soft_consumable_shop)
-# or the gated checks are made missable (key_gates_missable). Mirrors the legacy `if ...: return True`.
-_KEY_GATE_OFF: Rule = (
-    Filtered(True_(), options=[OptionFilter(SoftConsumableShop, SoftConsumableShop.option_true)])
-    | Filtered(True_(), options=[OptionFilter(KeyGatesMissable, KeyGatesMissable.option_true)])
-)
+# A consumable-key gate is satisfied outright when the gated checks are made
+# missable (key_gates_missable). soft_consumable_shop REMOVED 2026-07-02: its
+# shop half was baked Twin Maiden rows (baker retired), so the short-circuit
+# had become a softlock generator.
+# v0.1 single sound mode (key_gates_missable option removed 2026-07-02): consumable-key
+# gates are ALWAYS open in logic; the gated checks are EXCLUDED and the keys are filler.
+_KEY_GATE_OFF: Rule = True_()
 
 
 @dataclasses.dataclass()

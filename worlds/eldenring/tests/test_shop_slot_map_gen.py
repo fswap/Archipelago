@@ -25,7 +25,6 @@ class ShopSlotMap_On(WorldTestBase):
         "enable_dlc": False,
         "world_logic": "region_lock",
         "merchant_bell_logic": "logic_only",
-        "shop_checks": True,
         "accessibility": "minimal",
     }
 

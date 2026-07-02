@@ -77,11 +77,11 @@ def build_region_rules(world) -> dict[str, Rule]:
         can_get("CL/(WD): Remembrance of the Starscourge - mainboss drop"))
     add("Moonlight Altar", Has("Dark Moon Ring"))
 
-    if o.deathless_routing:
-        add("Volcano Manor Dungeon", Has("Drawing-Room Key"))
-    else:
-        add("Volcano Manor Dungeon",
-            can_go_to("Raya Lucaria Academy Main") | can_go_to("Volcano Manor"))
+    # deathless_routing option REMOVED 2026-07-02 (v0.1 one-sound-mode): the default branch is
+    # hardcoded. VM Dungeon is reachable via the RLA Abductor Virgin death-grab (deterministic
+    # scripted route) or from Volcano Manor itself; the Drawing-Room-Key-only variant is gone.
+    add("Volcano Manor Dungeon",
+        can_go_to("Raya Lucaria Academy Main") | can_go_to("Volcano Manor"))
 
     add("Leyndell, Royal Capital", has_enough_great_runes(o.great_runes_required.value))
     add("Erdtree", has_enough_great_runes(o.great_runes_final_boss.value))

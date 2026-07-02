@@ -46,7 +46,6 @@ ER_FAST_OPTIONS = {
     "enable_dlc": False,
     "world_logic": "region_lock",
     "tidy_fun_consumables": True,
-    "randomize_enia": False,
     "num_regions": 0,
     "accessibility": "minimal",
     "progression_balancing": 0,
@@ -174,7 +173,10 @@ class TestCrossGameDuo(_MultiworldGenTestBase):
     def test_er_as_second_player(self):
         cf = self._world_type("ChecksFinder")
         er = self._world_type("EldenRing")
-        multiworld = setup_multiworld([cf, er], options=[{}, dict(ER_FAST_OPTIONS)], seed=2)
+        # grace_rando ON: exercise the exact theft comprehension this class documents
+        # (it only runs with grace_rando; without it T2 never touched the theft path).
+        multiworld = setup_multiworld(
+            [cf, er], options=[{}, dict(ER_FAST_OPTIONS, grace_rando=True)], seed=2)
         self._assert_per_player_conservation(multiworld)
         self._fill(multiworld)
 
@@ -182,31 +184,27 @@ class TestCrossGameDuo(_MultiworldGenTestBase):
 class TestDifferingOptionsDuo(_MultiworldGenTestBase):
     """T3: DIFFERING-options 2xER -- per-world item_table overlay regression gate."""
 
-    def test_differing_enia_slots_keep_their_own_classifications(self):
-        """Slot 1 (randomize_enia OFF) demotes every Remembrance entry to useful
-        in generate_early; slot 2 (randomize_enia ON) logic-gates its Enia
-        turn-in checks on its Remembrance items, so for slot 2 they MUST stay
-        progression.
+    def test_differing_tidy_slots_keep_their_own_tables(self):
+        """Slot 1 (tidy_fun_consumables ON) flips item_table .skip for the fun-consumable
+        family in generate_early; slot 2 (OFF) must keep them poolable. (Re-keyed from
+        randomize_enia when that option was removed 2026-07-02 -- Enia turn-ins are always
+        vanilla now; the OVERLAY regression this guards is option-agnostic.)
 
-        Historically the demote hit the shared MODULE-LEVEL item_table and
-        leaked into slot 2 (this test was @unittest.expectedFailure). Since
-        patch_per_world_item_table (2026-07-02) each world mutates its own
-        instance copy (world.item_table), so this is a hard regression gate:
-        if it fails, some code path is mutating the module tables again.
+        Historically per-slot generate_early mutations hit the shared MODULE-LEVEL tables
+        and leaked across slots. Since patch_per_world_item_table (2026-07-02) each world
+        mutates its own instance copy (world.item_table): hard regression gate.
         """
         er = self._world_type("EldenRing")
-        slot1 = dict(ER_FAST_OPTIONS)                       # randomize_enia False
-        slot2 = dict(ER_FAST_OPTIONS, randomize_enia=True)  # differs from slot 1
+        slot1 = dict(ER_FAST_OPTIONS, tidy_fun_consumables=True)
+        slot2 = dict(ER_FAST_OPTIONS, tidy_fun_consumables=False)  # differs from slot 1
         multiworld = setup_multiworld([er, er], options=[slot1, slot2], seed=3)
-        remembrances = [item for item in multiworld.itempool
-                        if item.player == 2 and item.name.startswith("Remembrance")]
-        self.assertTrue(remembrances,
-                        "slot 2 (randomize_enia ON) should pool Remembrance items")
-        demoted = sorted({item.name for item in remembrances if not item.advancement})
+        w2 = multiworld.worlds[2]
+        leaked = sorted(n for n in ("Starlight Shards", "Seedbed Curse", "Shabriri Grape")
+                        if n in w2.item_table and getattr(w2.item_table[n], "skip", False))
         self.assertFalse(
-            demoted,
-            "slot 1's randomize_enia=false demote leaked into slot 2's items via the "
-            "shared module-level item_table: %s" % demoted)
+            leaked,
+            "slot 1's tidy_fun_consumables skip leaked into slot 2's item_table via the "
+            "shared module-level tables: %s" % leaked)
         # Overlay invariant: after a DIFFERING-options 2xER generation the MODULE
         # tables must still match their import-time snapshot (all mutation is
         # per-instance now). Catches any new module-table mutation path.

@@ -1080,7 +1080,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/ALS: Larval Tear - transforming enemy to E", "Larval Tear", key="604435,0:1044357100::"),
         ERLocationData("LG/ALS: Great Épée - to E in chest", "Great Épée", key="604435,0:1044357900::", chest=True),
         
-        ERLocationData("LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur", "Sellian Sealbreaker", key="604436,0:0000400102::"), #sellen quest
+        ERLocationData("LG/(WR): Sellian Sealbreaker - given by Sellen after you show her Comet Azur", "Sellian Sealbreaker", key="604436,0:0000400102::", missable=True), #sellen quest
         
         ERLocationData("LG/ALS: Ash of War: Unsheathe - scarab to NW", "Ash of War: Unsheathe", key="604436,0:0000540112::", scarab=True),
         ERLocationData("LG/(WR): Glowstone x2 - within ruins", "Glowstone x2", key="604436,0:1044367000::"),
@@ -2764,9 +2764,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("MtG/(HV): Errant Sorcerer Robe (Altered) - in shack NW side of village", "Errant Sorcerer Robe (Altered)", key="603752,0:1037527100::"),
    
         ERLocationData("MtG/PSA: Comet Azur - given by Azur", "Comet Azur", key="603753,0:0000400440::"),
-        ERLocationData("MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was", "Azur's Glintstone Crown", key="603753,0:0000400441::"),
-        ERLocationData("MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was", "Azur's Glintstone Robe", key="603753,0:0000400441::"),
-        ERLocationData("MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was", "Azur's Manchettes", key="603753,0:0000400441::"),
+        ERLocationData("MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was", "Azur's Glintstone Crown", key="603753,0:0000400441::", missable=True),
+        ERLocationData("MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was", "Azur's Glintstone Robe", key="603753,0:0000400441::", missable=True),
+        ERLocationData("MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was", "Azur's Manchettes", key="603753,0:0000400441::", missable=True),
         
         ERLocationData("MtG/SR: Ash of War: Barrage - scarab to N", "Ash of War: Barrage", key="603753,0:0000540332::"),
         ERLocationData("MtG/SR: Arrow x10 - to NE under slanted rock", "Arrow x10", key="603752,0:1037527020::"),
@@ -4300,10 +4300,10 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
     "Sellia Hideaway":[ # dragonbarrow_selliahideaway                     done
         ERLocationData("DB/(SH): Stars of Ruin - lower first big room N side, need Sellian Sealbreaker, given by Lusat", "Stars of Ruin", key="311100,0:0000400430::"),
-        ERLocationData("DB/(SH): Lusat's Glintstone Crown - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Glintstone Crown", key="311100,0:0000400431::"),
-        ERLocationData("DB/(SH): Lusat's Robe - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Robe", key="311100,0:0000400431::"),
-        ERLocationData("DB/(SH): Lusat's Manchettes - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Manchettes", key="311100,0:0000400431::"),
-        ERLocationData("DB/(SH): Old Sorcerer's Legwraps - side with Sellen, lower first big room N side, where Lusat was", "Old Sorcerer's Legwraps", key="311100,0:0000400431::"),
+        ERLocationData("DB/(SH): Lusat's Glintstone Crown - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Glintstone Crown", key="311100,0:0000400431::", missable=True),
+        ERLocationData("DB/(SH): Lusat's Robe - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Robe", key="311100,0:0000400431::", missable=True),
+        ERLocationData("DB/(SH): Lusat's Manchettes - side with Sellen, lower first big room N side, where Lusat was", "Lusat's Manchettes", key="311100,0:0000400431::", missable=True),
+        ERLocationData("DB/(SH): Old Sorcerer's Legwraps - side with Sellen, lower first big room N side, where Lusat was", "Old Sorcerer's Legwraps", key="311100,0:0000400431::", missable=True),
         ERLocationData("DB/(SH): Crystal Torrent - boss drop", "Crystal Torrent", key="311100,0:0000520460::", altboss=True, minidungeonboss=True, caveboss=True, caelid_boss=True),
         ERLocationData("DB/(SH): Golden Rune [3] - in front of the illusory wall", "Golden Rune [3]", key="311100,0:0031117000::"),
         ERLocationData("DB/(SH): Lost Ashes of War - lower first big room", "Lost Ashes of War", key="311100,0:0031117010::"),
@@ -4684,7 +4684,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("WP/ToR: Golden Rune [1] 4 - graveyard W of ToR", "Golden Rune [1]", key="604132,0:1041327040::"),
         ERLocationData("WP/ToR: Golden Rune [3] - graveyard W of ToR", "Golden Rune [3]", key="604132,0:1041327050::"),
         
-        ERLocationData("WP/(WR): Sellen's Primal Glintstone - talk to Sellen", "Sellen's Primal Glintstone", key="604133,0:0000400100::"),
+        ERLocationData("WP/(WR): Sellen's Primal Glintstone - talk to Sellen", "Sellen's Primal Glintstone", key="604133,0:0000400100::", missable=True),
         
         ERLocationData("WP/WR: Golden Rune [1] - W of WR on beach", "Golden Rune [1]", key="604133,0:1041337000::"),
         ERLocationData("WP/WR: Golden Rune [5] - W of WR on beach", "Golden Rune [5]", key="604133,0:1041337010::"),

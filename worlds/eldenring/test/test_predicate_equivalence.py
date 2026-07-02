@@ -60,6 +60,13 @@ class _ERPredicateEquivalenceMixin:
     def test_fill(self):
         self.skipTest("out of scope: predicate-equivalence file; fill is covered by the ER suite")
 
+    def tearDown(self) -> None:
+        # The fork's WorldTestBase tearDown weakref-asserts the MultiWorld dies. Synthetic
+        # CollectionStates stashed on the instance keep it alive (surfaced by pytest-xdist
+        # scheduling, 2026-07-02) -- drop every state ref before the canary looks.
+        self._current_state = None
+        super().tearDown()  # type: ignore[misc]
+
     # -- state construction ---------------------------------------------------------------
     def _fresh_state(self) -> CollectionState:
         """A pristine CollectionState for this multiworld (no items collected)."""
@@ -86,8 +93,7 @@ class _ERPredicateEquivalenceMixin:
         self.assertEqual(  # type: ignore[attr-defined]
             bool(got), bool(legacy_result),
             f"{msg}: resolved={got!r} legacy={legacy_result!r} "
-            f"[options soft={self.world.options.soft_consumable_shop.value} "
-            f"key_missable={self.world.options.key_gates_missable.value} "
+            f"[options "
             f"prog_bells={self.world.options.progressive_stone_bells.value}]",
         )
 
@@ -217,26 +223,6 @@ class _ERPredicateEquivalenceMixin:
 class TestPredicatesAllGatesOn(_ERPredicateEquivalenceMixin, WorldTestBase):
     """key_gates_missable ON (default): key/heart/imbued predicates short-circuit True."""
     options = {
-        "soft_consumable_shop": 0,
-        "key_gates_missable": 1,
-        "progressive_stone_bells": 0,
-    }
-
-
-class TestPredicatesAllGatesOff(_ERPredicateEquivalenceMixin, WorldTestBase):
-    """All key gates OFF: the weighted/arithmetic paths are actually exercised."""
-    options = {
-        "soft_consumable_shop": 0,
-        "key_gates_missable": 0,
-        "progressive_stone_bells": 0,
-    }
-
-
-class TestPredicatesSoftShopOn(_ERPredicateEquivalenceMixin, WorldTestBase):
-    """soft_consumable_shop ON (key_gates_missable OFF): short-circuit via the OTHER option."""
-    options = {
-        "soft_consumable_shop": 1,
-        "key_gates_missable": 0,
         "progressive_stone_bells": 0,
     }
 
@@ -247,8 +233,6 @@ class TestPredicatesProgressiveBellsOn(_ERPredicateEquivalenceMixin, WorldTestBa
     key gates OFF so the weighted paths still run under this world too.
     """
     options = {
-        "soft_consumable_shop": 0,
-        "key_gates_missable": 0,
         "progressive_stone_bells": 1,
     }
 
@@ -256,8 +240,6 @@ class TestPredicatesProgressiveBellsOn(_ERPredicateEquivalenceMixin, WorldTestBa
 class TestPredicatesProgressiveBellsOff(_ERPredicateEquivalenceMixin, WorldTestBase):
     """progressive_stone_bells OFF: bell predicate uses the discrete HasAll branch."""
     options = {
-        "soft_consumable_shop": 0,
-        "key_gates_missable": 0,
         "progressive_stone_bells": 0,
     }
 

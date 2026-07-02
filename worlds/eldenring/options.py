@@ -46,15 +46,6 @@ class WorldLogic(Choice):
     option_open_world = 3
     default = 0
     
-class RegionBossPercent(Range):
-    """The % of bosses in a region to unlock the next"""
-    display_name = "Region Boss Percent"
-    range_start = 1
-    range_end = 100
-    default = 50
-    
-
-    
 class RegionSoftLogic(DefaultOnToggle):
     """Region Soft Logic
     
@@ -91,12 +82,6 @@ class GreatRunesMountaintops(Range):
     default = 0
 
 
-
-class DeathlessRouting(Toggle):
-    """Exclude the Volcano Manor abduction (a death-based shortcut from Raya Lucaria) from
-    logic. With this on, the Manor complex must be reached legitimately via Mt. Gelmir and
-    the Drawing-Room Key rather than by being abducted."""
-    display_name = "Deathless Routing"
 
 class GracesPerRegion(Range):
     """Region fusion (TODO #13): how many Sites of Grace to unlock per region when you receive
@@ -170,27 +155,6 @@ class NumRegionsOrder(Choice):
     display_name = "Num Regions Order"
     option_rolled = 0
     option_spine = 1
-    default = 0
-
-class NumRegionsRuneSource(Choice):
-    """Where the great runes that open Leyndell come from, under a num_regions Capital run.
-
-    Leyndell's gate is a pure item count (it needs `great_runes_required` great runes, with NO
-    region/tower dependency), so the runes can come from EITHER kept boss regions or the item pool.
-
-    **regions** (default): the runes live on their boss in KEPT regions. num_regions is raised so
-        enough rune bosses (and Altus, the only route) stay in scope -- the floor couples the region
-        count to great_runes_required, so very small runs are impossible. Limgrave is the forced hub.
-
-    **pool**: the runes are INJECTED into the item pool as items (count-neutral -- one filler slot is
-        freed per injected rune) instead of being kept as boss regions. The region floor drops to
-        just the always-kept set (Roundtable hub + Leyndell), so a 1-middle-region run is legal, and
-        Limgrave is no longer force-kept (it becomes a normal rollable/sealable middle). The random
-        non-contiguous set is reached by WARP via the Roundtable hub (each region by its own lock;
-        Limgrave by 'Warp To Limgrave'). Only meaningful when num_regions > 0."""
-    display_name = "Num Regions Rune Source"
-    option_regions = 0
-    option_pool = 1
     default = 0
 
 class NumRegionsChain(Toggle):
@@ -304,7 +268,10 @@ class DLCOnlyRuneCatchup(Toggle):
     display_name = "Rune Catch-up (Lord's Runes, dlc_only)"
 
 class EnableDLC(Toggle):
-    """Enable DLC"""
+    """Include the Shadow of the Erdtree DLC in the randomizer: the Land of Shadow's
+    regions, checks, and items join the pool, and DLC bosses count toward boss-based
+    ending conditions. Requires owning the DLC. See dlc_timing for how early a seed
+    may require entering the DLC; dlc_only forces this on."""
     display_name = "Enable DLC"
 
 class DLCOnly(Toggle):
@@ -326,7 +293,10 @@ class ScadutreeFrontload(Range):
     default = 8
 
 class MessmerKindle(Toggle):
-    """Messmer Kindle Shards"""
+    """Gate Enir Ilim behind collectible Messmer's Kindling Shards shuffled into the
+    item pool: entry requires messmer_kindle_required shards of the messmer_kindle_max
+    in the pool, instead of the single vanilla Messmer's Kindling. Forced off under
+    the Messmer ending condition (Enir Ilim is sealed there)."""
     display_name = "Messmer Kindle Shards"
     
 class MessmerKindleRequired(Range):
@@ -356,24 +326,10 @@ class DLCTimingOption(Choice):
     option_late = 2
     default = 1
     
-class EnemyRando(Toggle):
-    """Randomizes the enemies."""
-    display_name = "Enemy randomizer"
-
-class MaterialRando(DefaultOnToggle):
-    """Randomizes the indefinitely spawning materials."""
-    display_name = "Material Randomizer"
-
-## Item & Location
-
 class RandomizeStartingLoadout(DefaultOnToggle):
     """Randomizes the equipment characters begin with."""
     display_name = "Randomize Starting Loadout"
 
-class AutoEquipOption(Toggle):
-    """Automatically equips any received armor or left/right weapons."""
-    display_name = "Auto-Equip"
-    
 class AutoUpgradeOption(Toggle):
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
@@ -479,11 +435,16 @@ class MerchantBellLogic(Choice):
     default = 0
 
 class SpellShopSpellsOnly(Toggle):
-    """Spell Shops only have spells."""
+    """Constrain randomized spell-shop slots (sorcery and incantation vendors) to hold
+    only spells, so caster builds can still count on spell vendors stocking castable
+    spells instead of arbitrary randomized items."""
     display_name = "Spell Shop Spells Only"
     
 class EarlyLegacyDungeonsEarly(Toggle):
-    """Early Legacy Dungeons are early"""
+    """Route logic through the early legacy dungeons first: progression into Liurnia
+    and Caelid expects the Rusty Key (found in Stormveil), and progression into Altus
+    expects the Academy Glintstone Key (Raya Lucaria), so seeds send you through
+    Stormveil and the Academy early instead of skipping past them."""
     display_name = "Early Legacy Dungeons Early"
     
 class LocalItemOnly(DefaultOnToggle):
@@ -608,44 +569,6 @@ class DungeonSweep(Choice):
     option_bosses = 3
     default = 0
 
-class GraceSweep(Choice):
-    """Complementary trigger for Dungeon Sweep = **Bosses**: lighting a Site of Grace sweeps
-    nearby checks, filling the gaps where field bosses are sparse. A check sends on whichever
-    of its triggers fires first (boss killed OR grace lit). Has no effect unless Dungeon Sweep
-    is set to Bosses.
-
-    - **Off:** Boss triggers only.
-    - **Complement:** Only checks the boss layer covers poorly (far from any field boss, or
-      stuck on a region capstone) also get a grace trigger. Targeted; recommended.
-    - **Full:** Every open-world check also gets its nearest-grace trigger, so lighting graces
-      sweeps the world as you explore. Strong; can trivialize exploration.
-    """
-    display_name = "Grace Sweep"
-    option_off = 0
-    option_complement = 1
-    option_full = 2
-    default = 0
-
-class SwapMultiBoss(Toggle):
-    """Enemy randomizer: swap bosses between multi-boss fights (mini-dungeon bosses only).
-    Only has an effect when the Enemy Randomizer is enabled."""
-    display_name = "Swap Multi-Boss Fights"
-
-class BossRunesMatchOriginal(Toggle):
-    """Enemy randomizer: a relocated boss drops the runes the original occupant of that
-    spot would have dropped, instead of its own. Only applies with Enemy Randomizer on."""
-    display_name = "Boss Runes Match Original"
-
-class ImpoliteEnemies(Toggle):
-    """Enemy randomizer: make enemies less passive in groups (they aggro more readily).
-    Only has an effect when the Enemy Randomizer is enabled."""
-    display_name = "Impolite Enemies"
-
-class DisableSerpentHunterUpgrade(Toggle):
-    """Disable upgrading the Serpent-Hunter greatspear (a niche base-randomizer balance
-    tweak). Applies whether or not the Enemy Randomizer is on."""
-    display_name = "Disable Serpent-Hunter Upgrade"
-
 class BellPhysickOption(Choice):
     """How to handle the Spirit Calling Bell and Flask of Wondrous Physick. Both are inert
     on their own -- the bell needs Spirit Ashes, the flask needs Crystal Tears -- so a random
@@ -677,69 +600,6 @@ class VanillaUpgrades(OptionSet):
 
 
 
-
-class DerandomizeQuestlines(Choice):
-    """De-randomize long NPC questlines whose chains gate only optional content.
-
-    Their link items are dead-weight 'progression' that crowds the priority/progression
-    fill and can drop junk-chain keys onto important locations. Locking the chains at
-    vanilla frees the fill and keeps important locations holding real progression.
-    Region- and goal-gating quest items are never touched (Drawing-Room Key, Haligtree
-    Secret Medallion, Hole-Laden Necklace).
-
-    - **Off:** questlines stay randomized.
-    - **Links Only:** lock the chain LINK items at vanilla; reward checks stay randomized
-      (good rewards like the Dark Moon Greatsword still appear shuffled). Pure fill relief.
-    - **Full:** also pull the good terminal rewards to vanilla and re-inject a shuffled
-      copy at the expense of one filler, so they're obtainable without doing the quest.
-    See SPEC-questline-derando.md."""
-    display_name = "De-randomize NPC Questlines"
-    option_off = 0
-    option_links_only = 1
-    option_full = 2
-    default = 0
-
-class ShopChecks(Toggle):  # [shop-checks]
-    """Randomize shop slots as AP checks. DEFAULT OFF (shops EXCLUDED) in the pure-runtime
-    model: the game world is vanilla, so a randomized shop slot is a blind buy -- you spend
-    runes without seeing the AP reward, which is worse UX than no check. With this OFF, shop
-    locations drop from the active check set (via _in_location_pool, the same curation lever
-    trimmed/lean use) and the shops just sell their vanilla wares.
-
-    Turn this ON to put shop slots back in the randomized pool (legacy behavior). Once shop
-    PREVIEWS ship (Option A of SPEC-shop-checks.md -- LocationScouts + ER shop-text hook), this
-    should become a DefaultOnToggle (default shops back ON), since a previewed shop is a real
-    decision again. See SPEC-shop-checks.md."""
-    display_name = "Shop Checks (randomize shop slots -- off = vanilla shops)"
-
-class SoftConsumableShop(Toggle):
-    """Sell Stonesword Keys and Dragon Hearts in unlimited supply at the Twin Maiden Husks
-    (Roundtable Hold) instead of scattering them through the world.
-
-    They gate imp-statue seals and the Dragon Communion shops but are otherwise 'progression'
-    only by classification, which drags them into the priority/progression fill. With this on
-    they leave the randomized pool, the key/heart logic gates are satisfied by the always-
-    reachable shop, and the latent nokey access gap on those checks is closed. REQUIRES the
-    baked Twin Maiden shop rows (patch_baker_soft_consumable_shop) -- don't enable without it."""
-    display_name = "Soft-Consumable Shop (Twin Maiden keys/hearts)"
-
-class KeyGatesMissable(DefaultOnToggle):  # [key-gates]
-    """Pure-runtime replacement for Soft-Consumable Shop's key handling. Stonesword Keys, Dragon
-    Hearts, and Imbued Sword Keys are 'progression' only because imp-statue seals, the Dragon
-    Communion incantation buys, and the Four Belfries teleports gate locations behind them -- which
-    forces you to hunt and hoard the keys. With this ON (default), everything behind those three
-    keys is flagged EXCLUDED (filler-only), the key/heart/imbued logic gates are dropped, and the
-    keys demote to ordinary filler. No baked shop rows needed (unlike Soft-Consumable Shop, which
-    required the bake step). Turn OFF to restore the keys-as-progression / key-sanity behavior."""
-    display_name = "Key Gates Missable (Stonesword/Dragon Heart/Imbued -> filler)"
-
-class DerandomizeGurranq(Toggle):
-    """De-randomize Gurranq's deathroot ladder -- 10 missable rewards behind a blind cumulative
-    deathroot gate. Locks the ladder at vanilla and re-injects the three keepers (Clawmark Seal,
-    Beastclaw Greathammer, Ancient Dragon Smithing Stone) into the shuffled pool so the good
-    rewards stay obtainable (and stop being missable) while Deathroot leaves the pool. The seven
-    mediocre beast incantations/AoW go vanilla. See SPEC-soft-consumables.md."""
-    display_name = "De-randomize Gurranq Deathroot Ladder"
 
 class TidyFunConsumables(Toggle):
     """Pull junk 'fun consumables' out of the randomized pool -- progression only by
@@ -868,14 +728,10 @@ class LocationPool(Choice):
     - **All:** every pickup (~3900). Big slice of the pool; lots of far-flung filler checks.
     - **Trimmed:** drops low-value filler pickups (golden runes, consumables, materials,
       cookbooks); keeps gear, upgrades, and all key/boss/important checks (~2150).
-    - **Lean:** only meaningful checks -- boss drops, key items, remembrances, flask upgrades
-      (seeds/tears), DLC blessings, plus anything holding a progression item (~500).
-      Recommended for multiworld syncs.
     """
     display_name = "Location Pool Size"
     option_all = 0
     option_trimmed = 1
-    option_lean = 2
     default = 0
 
 
@@ -953,13 +809,6 @@ class JunkRetentionStyle(Choice):
     option_uniform = 2
     default = 0
 
-
-class RandomizeEnia(DefaultOnToggle):
-    """Randomize the Roundtable / Enia (Finger Reader) slots -- Remembrance turn-ins and the
-    remembrance-boss gear shop. ON (default): those are AP checks. OFF: leave Enia vanilla
-    (turn in a Remembrance -> that boss's weapon, 1:1; gear sold normally), removing ~30+
-    'checks with extra steps'. The slots become locked-vanilla and the item pool shrinks to match."""
-    display_name = "Randomize Enia (Remembrance shop)"
 
 class RandomStartRegion(Choice):
     """Roll a random overworld region to start in instead of Limgrave / The First Step. The chosen
@@ -1055,18 +904,15 @@ class GlobalScadutreeBlessing(Choice):
 class EROptions(PerGameCommonOptions):
     ending_condition: EndingCondition
     world_logic: WorldLogic
-    region_boss_percent: RegionBossPercent
     soft_logic: RegionSoftLogic
     great_runes_required: GreatRunesRequired
     great_runes_final_boss: GreatRunesFinalBoss
     great_runes_mountaintops: GreatRunesMountaintops
-    deathless_routing: DeathlessRouting
     graces_per_region: GracesPerRegion
     grace_rando: GraceRando
     region_access: RegionAccessLogic
     num_regions: NumRegions
     num_regions_order: NumRegionsOrder
-    num_regions_rune_source: NumRegionsRuneSource
     num_regions_chain: NumRegionsChain
     dlc_only_chain: DLCOnlyChain
     completion_scaling: CompletionScaling
@@ -1087,12 +933,9 @@ class EROptions(PerGameCommonOptions):
     messmer_kindle_required: MessmerKindleRequired
     messmer_kindle_max: MessmerKindleMax
     dlc_timing: DLCTimingOption
-    enemy_rando: EnemyRando
-    material_rando: MaterialRando
     death_link: DeathLink
 
     random_start: RandomizeStartingLoadout
-    auto_equip: AutoEquipOption
     auto_upgrade: AutoUpgradeOption
     progressive_items: ProgressiveItems
     progressive_stone_bells: ProgressiveStoneBells
@@ -1102,7 +945,6 @@ class EROptions(PerGameCommonOptions):
     progressive_physick_count: ProgressivePhysickCount
 
     crafting_kit_option: CraftingKitOption
-    randomize_enia: RandomizeEnia
     map_option: MapOption
     smithing_bell_bearing_option: SmithingBellBearingOption
     merchant_bell_logic: MerchantBellLogic
@@ -1115,22 +957,12 @@ class EROptions(PerGameCommonOptions):
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
     dungeon_sweep: DungeonSweep
-    grace_sweep: GraceSweep
     no_weapon_requirements: NoWeaponRequirements
-    swap_multiboss: SwapMultiBoss
-    boss_runes_match: BossRunesMatchOriginal
-    impolite_enemies: ImpoliteEnemies
-    disable_serpent_hunter_upgrade: DisableSerpentHunterUpgrade
     bell_physick_option: BellPhysickOption
     torrent_start: TorrentStart
     vanilla_upgrades: VanillaUpgrades
     soft_progression: SoftProgression
     tidy_fun_consumables: TidyFunConsumables
-    soft_consumable_shop: SoftConsumableShop
-    key_gates_missable: KeyGatesMissable  # [key-gates]
-    shop_checks: ShopChecks  # [shop-checks]
-    derandomize_gurranq: DerandomizeGurranq
-    derandomize_questlines: DerandomizeQuestlines
     location_pool: LocationPool
     dlc_gear_curation: DLCGearCuration
     junk_retention: JunkRetention
@@ -1148,7 +980,6 @@ option_groups = [
     OptionGroup("Goal & World Logic", [
         EndingCondition,
         WorldLogic,
-        RegionBossPercent,
         RegionSoftLogic,
         RegionAccessLogic,
         ExtraRegionLocks,
@@ -1162,7 +993,6 @@ option_groups = [
         GracesPerRegion,
         NumRegions,
         NumRegionsOrder,
-        NumRegionsRuneSource,
         NumRegionsChain,
     ]),
     OptionGroup("Start", [
@@ -1193,14 +1023,8 @@ option_groups = [
         JunkRetention,
         JunkRetentionStyle,
         TidyFunConsumables,
-        SoftConsumableShop,
-        KeyGatesMissable,  # [key-gates]
-        ShopChecks,  # [shop-checks]
-        DerandomizeGurranq,
-        DerandomizeQuestlines,
         SoftProgression,
         NoSpiritAshes,
-        RandomizeEnia,
     ]),
     OptionGroup("Progressive Items", [
         ProgressiveItems,
@@ -1222,18 +1046,12 @@ option_groups = [
     ]),
     OptionGroup("Sweep", [
         DungeonSweep,
-        GraceSweep,
     ]),
     OptionGroup("Enemy Randomizer", [
-        EnemyRando,
-        SwapMultiBoss,
-        BossRunesMatchOriginal,
-        ImpoliteEnemies,
         CompletionScaling,
         CompletionScalingFloor,
     ]),
     OptionGroup("Equipment & QoL", [
-        AutoEquipOption,
         AutoUpgradeOption,
         NoWeaponRequirements,
         CraftingKitOption,
@@ -1241,7 +1059,6 @@ option_groups = [
         SmithingBellBearingOption,
         SpellShopSpellsOnly,
         EarlyLegacyDungeonsEarly,
-        MaterialRando,
         BellPhysickOption,
         DeathLink,
     ]),
@@ -1254,9 +1071,6 @@ option_groups = [
     OptionGroup("Advanced & Experimental", [
         GlobalScadutreeBlessing,
         CompletionScalingBasis,
-        DeathlessRouting,
         RoyalAccess,
-        DisableSerpentHunterUpgrade,
     ], start_collapsed=True),
 ]
-# [key-gates] feature added 2026-06-30 (KeyGatesMissable)
