@@ -199,3 +199,16 @@ _speedups.html
 .LSOverride
 Thumbs.db
 [Dd]esktop.ini
+
+# Custom 
+*.csv
+fuzz.py
+fuzz_output/
+worlds/sekiro/helper/
+worlds/sekiro/test/
+worlds/sekiro/.apignore
+item_location_count.py
+determinism.py
+/fuzz_input
+detect_rule_variable_capture_issues.py
+indirect_conditions.py
