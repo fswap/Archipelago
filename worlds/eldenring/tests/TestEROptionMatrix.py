@@ -78,7 +78,6 @@ class ERNumRegions4RuneDecoupling(WorldTestBase):
         "world_logic": "region_lock",
         "ending_condition": "capital",
         "num_regions": 4,
-        "num_regions_chain": True,
         "region_access": "warp",
         "accessibility": "minimal",
     }

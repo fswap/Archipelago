@@ -141,38 +141,6 @@ class NumRegions(Range):
     range_end = 9
     default = 0
 
-class NumRegionsOrder(Choice):
-    """How num_regions chooses which overworld majors to keep (only matters when num_regions > 0).
-
-    - **rolled** (default): roll N majors at random; reached by warp (forces region_access=warp).
-      The original num_regions behavior.
-    - **spine**: keep the fixed first-N steps of the spine toward Morgott (Limgrave, Weeping,
-      Stormveil, Liurnia, Caelid, Dragonbarrow, Altus, Volcano), reached geographically. This is
-      the old region_count option, folded in here.
-
-    Ignored unless num_regions > 0 (and, like num_regions, only under the Capital goal + lock
-    logic). Any rune deficit vs great_runes_required is pool-injected automatically."""
-    display_name = "Num Regions Order"
-    option_rolled = 0
-    option_spine = 1
-    default = 0
-
-class NumRegionsChain(Toggle):
-    """Chain the random num_regions Capital run into a linear lock breadcrumb so the difficulty
-    (and AP fill spheres) ramp 1..N instead of every region opening from sphere 1.
-
-    With this ON, the kept regions form a single line off the Limgrave hub: the first region's
-    lock is free, and every later region's lock is found on the PREVIOUS region's main boss --
-    so you clear region 1 to open region 2, clear region 2 to open region 3, and so on, up to
-    Altus -> Leyndell -> Morgott. Altus is always the last link before the capital. Sphere-ordered
-    completion scaling can then tier each region by its depth in the chain.
-
-    Only meaningful with `num_regions > 0`, the **Capital** ending condition, and region gating
-    (world_logic region_lock / region_lock_bosses); ignored otherwise. Off = the flat num_regions
-    roll (all kept regions reachable from sphere 1)."""
-    display_name = "Num Regions Chain (linear sphere ramp)"
-
-
 class DLCOnlyChain(Toggle):
     """Chain the DLC-only (Land of Shadow) run into a linear lock breadcrumb so the AP fill
     spheres (and completion scaling) ramp 1..N instead of every kept DLC region opening from
@@ -224,10 +192,6 @@ class ExtraRegionLocks(OptionSet):
       chokepoint_locks -- gate legacy-dungeon BACK halves on their mid-boss chokepoint, and
                           split that dungeon's sweep into before/after (Godskin Duo -> Farum
                           Azula Main, Loretta -> Elphael). Pure logic; see SPEC-chokepoint-locks.md
-      snowfield -- split Consecrated Snowfield (101 overworld checks / 130 with its minor
-                   dungeons) out of the Mountaintops/Rold cluster behind its own dedicated
-                   'Snowfield Lock', so it seals and opens independently (still reached via
-                   the Haligtree Secret Medallion route)
     """
     display_name = "Extra Region Locks"
     valid_keys = {"stormhill", "godrick", "castle_morne", "dlc_catacombs"}
@@ -238,7 +202,6 @@ class ExtraRegionLocks(OptionSet):
     valid_keys = valid_keys | {"liurnia_caves"}
     valid_keys = valid_keys | {"limgrave_caves"}
     valid_keys = valid_keys | {"chokepoint_locks"}
-    valid_keys = valid_keys | {"snowfield"}
 class EarlyLeveling(Toggle):
     """Grant the ability to Level Up at Sites of Grace from the start, skipping Melina's accord
     and her meeting cutscene entirely. Sets event flag 4680 (Level Up enable) + 951 (Melina
@@ -841,43 +804,15 @@ class StartRegionFreebie(Choice):
     option_to_limgrave = 1
     default = 1
 
-class CompletionScaling(Choice):
-    """Reshape Elden Ring's difficulty curve by seed-completion order rather than leave it vanilla.
-    The baker re-scales every enemy from its native (geographic = completion-order) tier along the
-    chosen curve. Inspired by FogMod's fog-gate-depth scaling. Runs with OR without enemy_rando -- a scale-only bake pass applies it when enemy rando is off.
-
-    - off:    vanilla scaling.
-    - flat:   identity (same as vanilla; confirms the pipeline ran).
-    - gentle: convex -- easier for longer, difficulty concentrated late.
-    - steep:  concave -- difficulty climbs fast, mid-game already punishing.
-    - smoothstep: S-curve -- gentle early on-ramp, steep mid-game, plateau into the cap."""
-    display_name = "Completion Scaling"
-    option_off = 0
-    option_flat = 1
-    option_gentle = 2
-    option_steep = 3
-    option_smoothstep = 4
-    default = 0
-
 class CompletionScalingFloor(Range):
-    """Minimum scaling tier as a PERCENT of the baker's MaxTier (0 = earliest tier can stay 1;
-    25 = nothing below ~a quarter of the curve). Only with completion_scaling on."""
+    """Minimum scaling tier as a PERCENT of the MaxTier (0 = earliest tier can stay 1; 25 =
+    nothing below ~a quarter of the curve). Completion scaling is always on (SPEC-region-
+    spine-surgery.md SS3b): the difficulty curve uses a hardcoded smoothstep S-curve ordered
+    by each region's AP fill sphere -- this is a tuning knob on that curve, not a mode
+    toggle."""
     display_name = "Completion Scaling Floor (% of MaxTier)"
     range_start = 0
     range_end = 50
-    default = 0
-
-class CompletionScalingBasis(Choice):
-    """How completion_scaling orders the tiers.
-    - geographic: by each enemy's native (vanilla) area tier. Start-UNAWARE -- a random start still
-      fights softened-but-mid-game enemies. Cheap; the v1 default.
-    - sphere: by each REGION's Archipelago fill SPHERE, so your rolled start region is sphere 1
-      (tier 1) and difficulty climbs with YOUR progression, not geography. Needs the baker bridge
-      (SPEC-sphere-ordered-scaling.md) to actually apply; the apworld emits the table + ER_SPHERE_TIERS.txt
-      either way for inspection."""
-    display_name = "Completion Scaling Basis"
-    option_geographic = 0
-    option_sphere = 1
     default = 0
 
 class GlobalScadutreeBlessing(Choice):
@@ -912,12 +847,8 @@ class EROptions(PerGameCommonOptions):
     grace_rando: GraceRando
     region_access: RegionAccessLogic
     num_regions: NumRegions
-    num_regions_order: NumRegionsOrder
-    num_regions_chain: NumRegionsChain
     dlc_only_chain: DLCOnlyChain
-    completion_scaling: CompletionScaling
     completion_scaling_floor: CompletionScalingFloor
-    completion_scaling_basis: CompletionScalingBasis
     global_scadutree_blessing: GlobalScadutreeBlessing
     random_start_region: RandomStartRegion
     start_region_freebie: StartRegionFreebie
@@ -992,8 +923,6 @@ option_groups = [
     OptionGroup("Short Runs (Capital)", [
         GracesPerRegion,
         NumRegions,
-        NumRegionsOrder,
-        NumRegionsChain,
     ]),
     OptionGroup("Start", [
         RandomStartRegion,
@@ -1048,7 +977,8 @@ option_groups = [
         DungeonSweep,
     ]),
     OptionGroup("Enemy Randomizer", [
-        CompletionScaling,
+        # CompletionScaling removed (region-spine surgery SS3b): scaling is hardcoded ON
+        # (smoothstep curve, sphere basis); only the floor tuning knob remains an option.
         CompletionScalingFloor,
     ]),
     OptionGroup("Equipment & QoL", [
@@ -1070,7 +1000,7 @@ option_groups = [
     ], start_collapsed=True),
     OptionGroup("Advanced & Experimental", [
         GlobalScadutreeBlessing,
-        CompletionScalingBasis,
+        # CompletionScalingBasis removed (region-spine surgery SS3b): sphere basis hardcoded.
         RoyalAccess,
     ], start_collapsed=True),
 ]

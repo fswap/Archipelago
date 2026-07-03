@@ -8,8 +8,10 @@ the CONSUMING side in the same CI pass. The emitting-side key contract is separa
 `ERSlotDataContract` in TestEROptionMatrix.py.
 
 The seed is FIXED so the fixture only changes when the slot_data content genuinely changes (keeps
-the submodule diff quiet). Options enable completion_scaling so the SWEEP H4 cross-check
-(non-empty regionSphereTargets whenever scaling is on) is exercised, and DLC so the map is big.
+the submodule diff quiet). Region-spine surgery (SPEC-region-spine-surgery.md SS3b) hardcodes
+smoothstep+sphere scaling unconditionally, so the SWEEP H4 cross-check (non-empty
+regionSphereTargets whenever scaling is on) is exercised on every seed with no options needed to
+arm it; DLC is enabled so the map is big.
 """
 import json
 import os
@@ -32,11 +34,12 @@ class TestSlotDataFixture(WorldTestBase):
     options = {
         "enable_dlc": True,
         "world_logic": "region_lock",
-        # CompletionScaling is a Choice (off/flat/gentle/steep/smoothstep), not a toggle.
-        # Any non-off curve arms the feature; sphere basis exercises the regionSphereTargets
-        # emission path that the Rust-side H4 cross-check consumes.
-        "completion_scaling": "gentle",
-        "completion_scaling_basis": "sphere",
+        # Region-spine surgery (SPEC-region-spine-surgery.md SS3b): completion_scaling /
+        # completion_scaling_basis are DELETED options -- __init__.py now hardcodes
+        # smoothstep + sphere basis unconditionally, so this world exercises the
+        # regionSphereTargets emission path (the Rust-side H4 cross-check consumer) on
+        # every seed with no options needed to arm it. Setting the old keys here would be
+        # an OptionError post-surgery.
     }
 
     def world_setup(self, *args, **kwargs):

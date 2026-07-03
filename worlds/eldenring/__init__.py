@@ -601,24 +601,23 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _all_regions |= set(region_order_dlc)
                 _all_locks = {n for n, d in item_table.items() if getattr(d, "lock", False)}
                 _active_caves = region_spine.active_cave_steps(self.options.extra_region_locks.value)
-                _spine_order = self.options.num_regions_order.value == 1  # option_spine (was region_count)
+                # num_regions single-mode (2026-07-02): order=rolled + rune_source=pool +
+                # chain=on are THE behavior (options removed). ONE scope computation -- the POOL
+                # sibling (random roll, warp reachability, runes injected, Roundtable-hub
+                # re-root). The old code ran the regions scope first, printed a "raised to"
+                # warning from the RUNE-FLOOR math, then threw it all away and re-ran pool --
+                # the misleading warning dies with it. Limgrave is an ordinary rollable step
+                # now (SPEC-region-spine-surgery.md SS3.1/P0): it has a first-class lock like
+                # every other spine step, so no exclusion survives here.
+                _pool_runes = True
                 try:
-                    if _spine_order:
-                        # spine: fixed first-N steps toward Morgott, reached geographically (the old
-                        # region_count). No random roll, no cave-bundle split, no forced warp.
-                        _kept_r, _sealed_r, _kept_l, _sealed_l, _eff = region_spine.compute_region_scope(
-                            self.options.num_regions.value,
-                            self.options.great_runes_required.value,
-                            _all_regions, _all_locks,
-                        )
-                    else:
-                        # random: roll N majors; reached by warp (forced below).
-                        _kept_r, _sealed_r, _kept_l, _sealed_l, _eff = region_spine.compute_num_regions_scope(
+                    _kept_r, _sealed_r, _kept_l, _sealed_l, _eff = \
+                        region_spine.compute_num_regions_scope_pool(
                             self.random,
                             self.options.num_regions.value,
-                            self.options.great_runes_required.value,
                             _all_regions, _all_locks,
                             _active_caves,
+                            True,  # chain_excludes_limgrave: chain is always on
                         )
                 except ValueError as _e:
                     raise OptionError(f"{self.player_name}: {_e}")
@@ -629,43 +628,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 self._spine_sealed_locations = {
                     loc.name for r in _sealed_r for loc in location_tables.get(r, [])
                 }
-                if not _spine_order and self.options.region_access.value != 1:
+                if self.options.region_access.value != 1:
                     self.options.region_access.value = 1
-                    warning(f"{self.player_name}: num_regions (random order) forces region_access=warp "
+                    warning(f"{self.player_name}: num_regions forces region_access=warp "
                             f"(a random non-contiguous region set needs warp reachability).")
                 if _eff != self.options.num_regions.value:
                     warning(f"{self.player_name}: num_regions {self.options.num_regions.value} "
-                            f"raised to {_eff} (Limgrave + Leyndell + Altus are the structural "
-                            f"minimum; great runes are pool-injected, never region-gated).")
-
-                # num_regions_rune_source == pool (SPEC-num-regions-pool-runes.md): decouple the
-                # great-rune floor from region selection. Re-run the scope with the POOL sibling
-                # (no rune floor, no Altus force, Limgrave rollable), then inject the deficit great
-                # runes back into the item pool so Leyndell's pure item-count gate is still met. The
-                # Roundtable-hub re-root (set after the _random_start_region reset below) makes the
-                # non-contiguous random set reachable by warp.
-                # rune_source option REMOVED 2026-07-02: pool is THE mode (flexible by
-                # design -- inject a rune when one is needed). order=spine override below.
-                _pool_runes = True
-                if _pool_runes and _spine_order:
-                    warning(f"{self.player_name}: num_regions_rune_source=pool is ignored under "
-                            f"num_regions_order=spine (pool rolls a random non-contiguous set).")
-                    _pool_runes = False
+                            f"raised to {_eff} (the mandatory Altus capstone-route slot rides on "
+                            f"top of the rolled count; great runes are pool-injected).")
                 if _pool_runes:
-                    _kept_r, _sealed_r, _kept_l, _sealed_l, _eff = \
-                        region_spine.compute_num_regions_scope_pool(
-                            self.random,
-                            self.options.num_regions.value,
-                            _all_regions, _all_locks,
-                            _active_caves,
-                            bool(self.options.num_regions_chain.value),
-                        )
-                    self._spine_sealed_regions = _sealed_r
-                    self._spine_sealed_locks = _sealed_l
-                    self._spine_effective_count = _eff
-                    self._spine_sealed_locations = {
-                        loc.name for r in _sealed_r for loc in location_tables.get(r, [])
-                    }
+                    pass  # pool is the only scope; rune injection below keys on _pool_runes
                     # Roundtable-hub re-root: arm the flag the existing random_start path keys on.
                     # Actually set self._random_start_region AFTER the unconditional reset below
                     # (it would otherwise be clobbered); record intent here.
@@ -748,7 +720,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 # tallies the "middle region(s) [...]" line across seeds.
                 warning(f"{self.player_name}: num_regions kept middle region(s) {sorted(_kept_r)}")
 
-                self._num_regions_chain = bool(self.options.num_regions_chain.value)
+                self._num_regions_chain = True  # chain is THE mode (option removed 2026-07-02)
                 if self._num_regions_chain:
                     _chain_order = region_spine.compute_num_regions_chain_order(self.random, _kept_l)
                     self._num_regions_chain_order = _chain_order
@@ -775,15 +747,42 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # filler. Count-neutral; each dead key's location stays a check. No-op when a region is kept.
         self._deadkey_swap_set = frozenset()
         self._deadkey_rune_queue = []
+        # Medallion unpool (SPEC-region-spine-surgery.md SS3.4/SS3.5/SS8): Rold Medallion and
+        # both Haligtree Secret Medallion halves are REMOVED FROM THE POOL ENTIRELY, always (not
+        # just under a num_regions seal) -- locks functionally replace them (Mountaintops Lock /
+        # Snowfield Lock), so a do-nothing medallion item is never shown to the player. Dectus
+        # Medallion (Left)/(Right) are UNAFFECTED -- they still gate Altus logically and stay a
+        # real pool item.
+        #
+        # MECHANISM: `.skip = True`, NOT `.inject` (inject defaults to False for every non-lock
+        # item already and is only consulted by the lock force-injection loop -- setting it here
+        # would be a no-op for items that are not lock=True). `.skip = True` is the proven
+        # mechanism for "pull this default vanilla-location item from the pool, location stays a
+        # check, backfilled with ordinary filler" (same pattern as Pureblood Knight's Medal /
+        # Imbued Sword Key / Flask of Wondrous Physick elsewhere in this file): create_items'
+        # per-location loop is `if item.skip: num_required_extra_items += 1 ... elif ...`, so
+        # skip short-circuits the dead-key-swap elif below and the medallion never enters
+        # local_itempool. `.inject = False` is ALSO set alongside (redundant with the class
+        # default, since these are not lock=True items) purely so the flag reads unambiguously
+        # next to `.skip = True` for anyone grepping either name.
+        for _mn in ("Rold Medallion", "Haligtree Secret Medallion (Left)",
+                    "Haligtree Secret Medallion (Right)"):
+            if _mn in item_table:
+                item_table[_mn].skip = True
+                item_table[_mn].inject = False
         if self.options.num_regions.value > 0 and getattr(self, "_spine_active", False):
             _sealed_rr = getattr(self, "_spine_sealed_regions", set())
             _sealed_lk = getattr(self, "_spine_sealed_locks", set())
             _injected = getattr(self, "_num_regions_pool_injected_runes", [])
+            # Rold Medallion / Haligtree Secret Medallion (Left)/(Right) dead-key-swap entries
+            # DELETED (SPEC-region-spine-surgery.md, medallion unpool above): now that the three
+            # are .skip=True UNCONDITIONALLY (every world_logic, not just a num_regions seal),
+            # their vanilla locations never reach this dead-key-swap elif branch in create_items
+            # (skip short-circuits the if/elif chain first) -- they could never appear in
+            # _deadkey_swap_set by the time it would matter, so the old entries were dead code.
+            # Dectus Medallion stays a REAL pool item (unaffected by the unpool), so its
+            # region_access==warp dead-swap entry is UNCHANGED.
             _dead = []
-            if "Mountaintops of the Giants" in _sealed_rr and "Consecrated Snowfield" in _sealed_rr:
-                _dead.append("Rold Medallion")
-            if "Elphael, Brace of the Haligtree" in _sealed_rr:
-                _dead += ["Haligtree Secret Medallion (Left)", "Haligtree Secret Medallion (Right)"]
             if self.options.region_access == "warp":
                 _dead += ["Dectus Medallion (Left)", "Dectus Medallion (Right)"]
             self._deadkey_swap_set = frozenset(k for k in _dead if k in item_table)
@@ -834,15 +833,21 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             _EXTRA_LOCK_KEYS["Spelunker's Beast-Repellent Torch"] = "mountaintops_caves"  # opt-in Mountaintops bundle
             _EXTRA_LOCK_KEYS["Spelunker's Torch"] = "limgrave_underground"  # opt-in Limgrave underground bundle
             _EXTRA_LOCK_KEYS["Spelunker's Ghostflame Torch"] = "liurnia_caves"  # opt-in Liurnia minor-dungeon bundle
-            _EXTRA_LOCK_KEYS["Snowfield Lock"] = "snowfield"  # opt-in: split Consecrated Snowfield off (dedicated lock)
+            # Snowfield Lock: opt-in de-pooling REMOVED (region-spine surgery SS3.5). It is
+            # an always-on first-class lock -- region_lock_data.py unconditionally emits
+            # add("Consecrated Snowfield", "Snowfield Lock") (+ Hidden Path). The "snowfield"
+            # extra_region_locks key was retired (options.py valid_keys), so listing it here
+            # made the guard permanently true and pulled Snowfield Lock from the pool, leaving
+            # the whole Consecrated Snowfield cluster unreachable in all-state. The generic
+            # lock=True injection loop above now keeps it in the pool, mirroring Haligtree Lock.
             for _lk, _key in _EXTRA_LOCK_KEYS.items():
                 if _lk in item_table and _key not in self.options.extra_region_locks.value:
                     item_table[_lk].inject = False
-            # Haligtree natural-key conversion (medallion split): Haligtree Lock is no longer a
-            # pool item -- Miquella's Haligtree is gated by the Right Haligtree Secret Medallion
-            # (vanilla key) and bloomed client-side via naturalKeyTriggers. De-inject always.
-            if "Haligtree Lock" in item_table:
-                item_table["Haligtree Lock"].inject = False
+            # Haligtree Lock (SPEC-region-spine-surgery.md SS3.6/SS8): reverted to an ordinary
+            # first-class lock -- the old inject=False de-pooling (medallion-as-lock conversion)
+            # is DELETED. Haligtree Lock is lock=True (Track A), so the generic lock-injection
+            # loop just above (`if item_table[item].lock: item_table[item].inject = True`)
+            # already injects it like every other region lock; no replacement needed here.
             # Region-count spine: seal regions past the count by pulling their lock items from the
             # pool (unobtainable -> the gated entrance can never open). Kept-step locks stay injected.
             if self._spine_active:
@@ -1092,19 +1097,23 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # only; off under dlc_only (Gravesite is already the fixed DLC hub) and under any spine seal
         # (capital/region_count/messmer/godrick reshape the kept set -- defer that combo).
         self._random_start_region = None
-        # Roundtable-hub re-root (SPEC-random-start-roundtable-hub.md): Limgrave Lock is a real region
-        # lock but only LIVE under random_start -- default it out of the pool so ordinary region_lock
-        # seeds don't carry a progression item that gates nothing. Re-enabled below when a start rolls.
-        if "Limgrave Lock" in item_table:
-            item_table["Limgrave Lock"].inject = False
-        # num_regions pool-mode Roundtable re-root (SPEC-num-regions-pool-runes.md): the line above
-        # just reset _random_start_region = None and Limgrave Lock inject = False. When num_regions
-        # rune-source == pool we WANT the Roundtable-hub re-root (Limgrave is a normal locked region
-        # reached by 'Warp To Limgrave'). Set the flag the re-root keys on (_random_start_region) to
-        # the always-open hub region and inject Limgrave Lock. _region_lock_warp_access / create_regions
-        # / the start-grace block all treat _random_start_region purely as a truthy re-root flag plus a
-        # REGION_GRACE_POINTS lookup that harmlessly returns [] for "Roundtable Hold". The standard
-        # random_start_region block below is skipped (its YAML option is 0 on num_regions seeds).
+        # Roundtable-hub re-root (SPEC-region-spine-surgery.md P0): Limgrave Lock is an ordinary
+        # lock=True item now (Track A: static REGION_LOCK_ITEM["Limgrave"] entry, always-on
+        # region_lock_data.add). The generic lock-injection loop further down this method
+        # (`if item_table[item].lock: item_table[item].inject = True`) and the generic
+        # spine-seal loop (`for _lk in self._spine_sealed_locks: ... inject = False`) already
+        # own its inject state exactly like every other region lock -- no reset, no re-enable
+        # dance needed here. (Deleted: the old unconditional inject=False default-out plus the
+        # num_regions-pool-reroot re-enable block, both provably redundant with the generic
+        # loops once Limgrave has a first-class lock -- see patch_spine_00_hub_reroot.py.)
+        # num_regions pool-mode Roundtable re-root (SPEC-num-regions-pool-runes.md): when
+        # num_regions rune-source == pool we WANT the Roundtable-hub re-root (Limgrave is a
+        # normal locked region reached by 'Warp To Limgrave'). Set the flag the re-root keys on
+        # (_random_start_region) to the always-open hub region. _region_lock_warp_access /
+        # create_regions / the start-grace block all treat _random_start_region purely as a
+        # truthy re-root flag plus a REGION_GRACE_POINTS lookup that harmlessly returns [] for
+        # "Roundtable Hold". The standard random_start_region block below is skipped (its YAML
+        # option is 0 on num_regions seeds).
         if getattr(self, "_num_regions_pool_reroot", False):
             # num_regions_chain: SPAWN in the chain's link-0 region (a randomly-rolled overworld
             # region whose lock pre_fill precollects) rather than at the Roundtable hub. Roundtable
@@ -1121,12 +1130,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     if _cand in REGION_GRACE_POINTS:
                         _ns_start = _cand
             self._random_start_region = _ns_start
-            # Inject Limgrave Lock ONLY when Limgrave is actually KEPT this seed. Under
-            # num_regions_chain Limgrave is excluded from the roll (no chain slot) -> sealed, and a
-            # sealed Limgrave must not get a loose lock (that was the off-chain 2nd start lock).
-            if "Limgrave Lock" in item_table:
-                item_table["Limgrave Lock"].inject = (
-                    "Limgrave" not in getattr(self, "_spine_sealed_regions", set()))
         _rsr_opt = self.options.random_start_region.value
         if _rsr_opt and self.options.world_logic.value in (0, 2) and not self.options.dlc_only:
             if getattr(self, "_spine_active", False):
@@ -1157,6 +1160,31 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 else:
                     warning(f"{self.player_name}: random_start_region found no legal start region "
                             f"under these settings; starting in Limgrave (vanilla).")
+        # P0 universal default (SPEC-region-spine-surgery.md SS3.1): every region-gating seed
+        # spawn-grants a start region via the SAME mechanism (start_graces / region_open_flags /
+        # the client tick_random_start_warp latch) -- num_regions pool-reroot and the opt-in
+        # random_start_region option roll something ELSE above; if neither fired, Limgrave is
+        # simply the default roll, with zero code-level special status beyond being the default.
+        # The rolled start's lock is precollected (inject=False + push_precollected), EXACTLY
+        # like the option-roll path above -- precollect is the logic-side mirror of the client
+        # spawn grant, keeping logic and physical reality in sync ("no special status" means
+        # Limgrave gets the SAME freebie any rolled start gets, not that the default seed
+        # starts with a Roundtable-only sphere 1 while the player physically stands in an
+        # open Limgrave).
+        if not getattr(self, "_random_start_region", None) and self.options.world_logic.value in (0, 2):
+            self._random_start_region = "Limgrave"
+            if "Limgrave Lock" in item_table:
+                item_table["Limgrave Lock"].inject = False
+                self.multiworld.push_precollected(self.create_item("Limgrave Lock"))
+        # The Roundtable re-root REQUIRES warp access-logic: the hub's only outgoing edges are
+        # the "Warp To {region}" entrances (warp_rules), so under region_access=geographic the
+        # entire graph would be unreachable from the root. Warp IS the model now (locks grant
+        # graces; medallions/lifts bypassed by design -- SPEC-region-spine-surgery.md SS3/SS5);
+        # the geographic enum is dead under region gating, pending option-surface removal.
+        if getattr(self, "_random_start_region", None) and self.options.region_access.value != 1:
+            self.options.region_access.value = 1
+            warning(f"{self.player_name}: Roundtable-hub re-root forces region_access=warp "
+                    f"(geographic access-logic cannot reach the hub-rooted graph).")
         exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
         using_table = item_table_vanilla
         if self.options.enable_dlc: using_table = item_table
@@ -1197,9 +1225,15 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             connection.connect(regions[to_region])
 
         regions["Menu"].exits.append(Entrance(self.player, "New Game", regions["Menu"]))
-        # Roundtable-hub re-root (SPEC-random-start-roundtable-hub.md): under random_start the
-        # hub/logic-root is Roundtable Hold (always-open interior), not Limgrave; Limgrave is reached
-        # via a lock-gated Warp To Limgrave (see _region_lock_warp_access). Normal seeds: unchanged.
+        # Roundtable-hub re-root (SPEC-region-spine-surgery.md P0): THE root for every
+        # region-gating seed (world_logic region_lock / region_lock_bosses) is Roundtable Hold
+        # (always-open interior) -- Limgrave is an ordinary lock-gated region reached via
+        # Warp To Limgrave like any other spine step (see _region_lock_warp_access), never a
+        # special free hub. generate_early's P0 default guarantees _random_start_region is
+        # always set under region-gating world_logic (Limgrave is simply the default roll when
+        # nothing else rolled a different start), so this check stays a truthy test but is no
+        # longer conditional on any opt-in feature. open_world (world_logic >= 3, no locks at
+        # all) has no lock/grace apparatus to spawn-grant, so it keeps the vanilla Limgrave root.
         _ng_root = "Roundtable Hold" if getattr(self, "_random_start_region", None) else "Limgrave"
         self.multiworld.get_entrance("New Game", self.player).connect(regions[_ng_root])
         
@@ -3492,12 +3526,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 region_graces.setdefault(_lock, []).extend(_chosen)
             for _lock in region_graces:
                 region_graces[_lock] = sorted(set(region_graces[_lock]))
-            # Limgrave Lock (random-start hub_only re-root): Limgrave is a normal LOCKED region but
-            # has NO REGION_GRACE_POINTS entry -- its graces normally ride the free-hub start grant
-            # (LIMGRAVE_START_GRACES, otherwise unused). Bundle those curated Limgrave/Stormhill warp-
-            # unlock graces onto Limgrave Lock so receiving it makes the region fully fast-travelable,
-            # same as every other region lock. Same gate as the _rli["Limgrave"] injection below.
-            if getattr(self, "_random_start_region", None) and self.options.start_region_freebie.value != 1 and not _limgrave_sealed:
+            # Limgrave Lock (SPEC-region-spine-surgery.md P0): Limgrave is a normal LOCKED region
+            # but has NO REGION_GRACE_POINTS entry (never captured there -- only the curated flat
+            # LIMGRAVE_START_GRACES list exists). Bundle those curated Limgrave/Stormhill
+            # warp-unlock graces onto Limgrave Lock UNCONDITIONALLY (any pool-found Limgrave Lock,
+            # not just the spawn freebie, must open the region for fast travel -- same as every
+            # other region lock's apparatus), same as every other lock's grace bundle: only a
+            # SEALED Limgrave (num_regions rolled it out) stays dark.
+            if not _limgrave_sealed:
                 region_graces["Limgrave Lock"] = sorted(set(
                     region_graces.get("Limgrave Lock", []) + list(LIMGRAVE_START_GRACES)))
             # Bundle-lock entrance graces (Liurnia Caves / Shadow Catacombs): these minor-dungeon
@@ -3523,15 +3559,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # Built by build_region_lock_slot_data() below and emitted as "regionOpenFlags" (existing client
         # path + baker call-site key).
         region_lock_sd = {"areaLockFlags": [], "lockOpenFlags": {}, "lockRevealFlags": {}}
-        # Roundtable-hub re-root: when a random start rolled with the hub_only freebie, Limgrave is a
-        # normal LOCKED region. Add it to the lock map HERE (scoped -- NOT in the static
-        # REGION_LOCK_ITEM, so ordinary seeds never lock Limgrave). Under to_limgrave (freebie==1)
-        # Limgrave stays OPEN. This emits Limgrave areaLockFlags (physical KICK) +
-        # lockOpenFlags["Limgrave Lock"] (-> regionOpenFlags -> baker retargets the KICK to
-        # Roundtable) + map reveal on unlock. See [[er-random-start-roundtable-hub]].
-        _rli = dict(REGION_LOCK_ITEM)
-        if getattr(self, "_random_start_region", None) and (self.options.start_region_freebie.value != 1 or _limgrave_sealed):
-            _rli["Limgrave"] = "Limgrave Lock"
+        # Roundtable-hub re-root (SPEC-region-spine-surgery.md P0): Limgrave is a normal LOCKED
+        # region in the STATIC REGION_LOCK_ITEM now (Track A), so no dynamic splice is needed --
+        # `_rli` is a plain alias, kept only so the unchanged code below (notify-item table)
+        # does not need touching. This emits Limgrave areaLockFlags (physical KICK) +
+        # lockOpenFlags["Limgrave Lock"] (-> regionOpenFlags) + map reveal on unlock, exactly
+        # like every other region lock.
+        _rli = REGION_LOCK_ITEM
         if self.options.world_logic < 3:
             region_lock_sd = build_region_lock_slot_data(_rli)
         # regionOpenFlags now carries the dedicated VALID open-state flags (was the dead 69M scheme).
@@ -3588,9 +3622,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # to the apparatus open flags (build_region_lock_slot_data only covers REGION_LOCK_ITEM
             # regions). Snowfield only on the NATURAL path (the opt-in dedicated snowfield lock
             # supplies its own areaLockFlags via REGIONS).
-            _NK_AREA = {"Mountaintops Lock": [(65000, 65000), (65001, 65001)]}
-            if "snowfield" not in self.options.extra_region_locks.value:
-                _NK_AREA["Snowfield Lock"] = [(65002, 65002)]
+            # Snowfield always uses the natural-key area apparatus now (SPEC-region-spine-
+            # surgery.md SS3.5/SS8): the `snowfield` extra_region_locks opt-in member is DELETED
+            # (Track A) -- there is no longer a dedicated-lock alternative path to guard against.
+            _NK_AREA = {"Mountaintops Lock": [(65000, 65000), (65001, 65001)],
+                        "Snowfield Lock": [(65002, 65002)]}
             _alf = region_lock_sd.setdefault("areaLockFlags", [])
             for _nlk, _ranges in _NK_AREA.items():
                 _of = _NK_OPEN.get(_nlk)
@@ -3607,16 +3643,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             _NK_NOTIFY = {"Mountaintops Lock": 8611, "Snowfield Lock": 8618}
             for _nlk, _ncode in _NK_NOTIFY.items():
                 lock_notify_items.setdefault(_nlk, _ncode | 0x40000000)
-            # Disjunctive natural triggers. Altus Lock is ADDITIVE (its item-receipt bloom from
-            # the standard apparatus stays); this adds the medallion / Magma-Wyrm-Makar /
-            # Drawing-Room-Key routes. A clause = ALL items received AND ALL flags set; ANY clause fires.
+            # Mountaintops/Snowfield vanilla-key bloom triggers DELETED (SPEC-region-spine-
+            # surgery.md SS3.4/SS3.5/SS8, "one sound mode": pool lock items are THE mechanism
+            # now, natural-key blooms are the retired alternate). The apparatus above (graces,
+            # open flags, areaLockFlags, reveal flags, notify tokens) is REUSED as ordinary lock
+            # apparatus -- it fires on item receipt through the standard slot_data path exactly
+            # like every other region lock, no client-side bloom-trigger consumer needed for
+            # these two locks anymore. Altus Lock keeps its ADDITIVE natural-key trigger (its
+            # item-receipt bloom from the standard apparatus stays; this is a genuinely separate,
+            # still-natural-key region -- out of this surgery's scope, SS8 "DO NOT APPLY the
+            # MT/SF bloom patches" while leaving Altus's own trigger untouched).
             natural_key_triggers = {
-                "Mountaintops Lock": {"anyOf": [
-                    {"items": ["Rold Medallion"], "flags": [11000800]},
-                ]},
-                "Snowfield Lock": {"anyOf": [
-                    {"items": ["Haligtree Secret Medallion (Left)"], "flags": [11000800]},
-                ]},
                 "Altus Lock": {"anyOf": [
                     {"items": ["Dectus Medallion (Left)", "Dectus Medallion (Right)"]},
                     {"flags": [39200800]},
@@ -3682,19 +3719,20 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             region_graces["Haligtree Lock"] = sorted(set(region_graces.get("Haligtree Lock", []) + [
                 71501, 71502, 71503, 71504, 71505, 71506, 71507, 71508]))
             region_open_flags["Haligtree Lock"] = 76964
-            natural_key_triggers["Haligtree Lock"] = {"anyOf": [
-                {"items": ["Haligtree Secret Medallion (Right)"]},
-            ]}
+            # Haligtree Lock trigger registration DELETED (SPEC-region-spine-surgery.md SS3.6/SS8,
+            # "Repoint onto ordinary item-receipt (remove Haligtree from natural_key_triggers;
+            # keep the graces/open-flag/area_ids wiring)"). Haligtree Lock is lock=True and
+            # ordinarily injected/found now (change A) -- the standard receipt path fires this
+            # apparatus directly, no vanilla-key bloom trigger needed.
             _alf3 = region_lock_sd.setdefault("areaLockFlags", [])
             for (_lo, _hi) in [(15000, 15000), (15001, 15001)]:
                 if [_lo, _hi, 76964] not in _alf3:
                     _alf3.append([_lo, _hi, 76964])
         # === end NATURAL_KEY_TRIGGERS_P3 ==================================================================
-        # snowfield split (extra_region_locks: "snowfield"): once Snowfield is a dedicated
-        # lock, drop its Haligtree-medallion natural trigger so the item-receipt bloom (using
-        # the grace/open apparatus already keyed by "Snowfield Lock") drives the in-game bloom.
-        if self.options.world_logic < 3 and "snowfield" in self.options.extra_region_locks.value:
-            natural_key_triggers.pop("Snowfield Lock", None)
+        # snowfield opt-in-split survival block DELETED (SPEC-region-spine-surgery.md SS8): the
+        # `snowfield` extra_region_locks member no longer exists (Track A) -- Snowfield Lock is
+        # always-on and never carries a natural_key_triggers entry to begin with (deleted above,
+        # change D2), so there is nothing left to pop().
         # --- OPEN-FLAG DISJOINTNESS GUARD (er-open-flag-collision-bug) -----------
         # Every lock owns a UNIQUE open-state flag. The computed band (OPEN_FLAG_BASE+i,
         # 76971+) and the hand-picked special/NK flags (below BASE, 76961-76967) must
@@ -3746,15 +3784,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # non-dlc_only region_lock / region_lock_bosses seeds. (patch_apworld_base_hub_startgraces.py)
         if not self.options.dlc_only and self.options.world_logic.value in (0, 2):
             start_graces = sorted(set(start_graces + [71190]))  # Roundtable Hold (always-open hub)
-            if getattr(self, "_random_start_region", None):
-                # random_start: Limgrave is a LOCKED region now -- do NOT grant The First Step
-                # (76101) or you'd warp into Limgrave for free. Light the ROLLED start region's
-                # graces instead (its precollected lock arrives name-unresolved -> on-receipt skips).
+            # P0: _random_start_region is always set under region-gating world_logic now (the
+            # generate_early default rolls "Limgrave" when nothing else did) -- light the ROLLED
+            # (or defaulted) start region's graces instead of The First Step (76101), since
+            # Limgrave is a LOCKED region like any other and 76101 would warp in for free.
+            # REGION_GRACE_POINTS has no "Limgrave" entry (curated flat LIMGRAVE_START_GRACES
+            # exists instead, [flag,...] not [[flag,x,z],...]) -- fall back to it by name.
+            if self._random_start_region == "Limgrave":
+                start_graces = sorted(set(start_graces + [int(f) for f in LIMGRAVE_START_GRACES]))
+            else:
                 start_graces = sorted(set(start_graces + [
                     int(_p[0]) for _p in REGION_GRACE_POINTS.get(self._random_start_region, [])]))
-            else:
-                # Limgrave is the free start hub -> light The First Step (76101) as a warp anchor.
-                start_graces = sorted(set(start_graces + [76101]))
         # Spectral Steed Whistle (Torrent): vanilla hands the mount over via Melina's accord at a
         # grace, but the region-lock / pre-lit-grace flow can skip that trigger -- leaving the player
         # mountless even though Bell + Physick were handed up front. Grace-based fast travel is built
@@ -3770,15 +3810,21 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # grace 0 -> baker skips the forced warp. SPEC-random-start-roundtable-hub.md.
         _rsr = getattr(self, "_random_start_region", None)
         _rsr_warp_grace = 0
+        # P0: Limgrave has no REGION_GRACE_POINTS entry (curated flat LIMGRAVE_START_GRACES
+        # exists instead, [flag,...] not [[flag,x,z],...] -- no coordinates to spread/center on).
+        _rsr_is_limgrave = (_rsr == "Limgrave")
         if _rsr and self.options.world_logic < 3:
             _RS_SKIP = frozenset({71240, 76422, 76508, 76509, 76852, 76853, 76930, 76931,
                                   73204, 73207, 76209, 76229, 76301, 76350, 76351, 76356})
-            _rs_pts = [p for p in REGION_GRACE_POINTS.get(_rsr, []) if p[0] not in _RS_SKIP]
+            _rs_pts = ([] if _rsr_is_limgrave else
+                       [p for p in REGION_GRACE_POINTS.get(_rsr, []) if p[0] not in _RS_SKIP])
             # grace_rando: light only this region's ONE freebie grace (like every other region) and
             # spawn at it; otherwise light the full start-region bundle (warp = centroid, below).
             _rsr_gr_on = bool(getattr(self.options, "grace_rando", None) and self.options.grace_rando.value)
             _rsr_fb = getattr(self, "_grace_rando_freebie_by_region", {}).get(_rsr, [])
-            if _rsr_gr_on and _rsr_fb:
+            if _rsr_is_limgrave:
+                _rs_g = [int(f) for f in LIMGRAVE_START_GRACES]
+            elif _rsr_gr_on and _rsr_fb:
                 _rs_g = [int(_rsr_fb[0])]
             else:
                 _rs_g = [int(p[0]) for p in _rs_pts]
@@ -3789,7 +3835,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             if self.options.start_region_freebie.value == 1 and not _limgrave_sealed:  # to_limgrave (only when Limgrave is kept)
                 _rs_g += [int(f) for f in LIMGRAVE_START_GRACES]
             start_graces = sorted(set(start_graces + _rs_g))
-            if _rsr_gr_on and _rsr_fb:
+            if _rsr_is_limgrave:
+                _rsr_warp_grace = 76101  # The First Step -- fixed anchor, no x/z data to center on
+            elif _rsr_gr_on and _rsr_fb:
                 _rsr_warp_grace = int(_rsr_fb[0])   # spawn at the lit freebie grace
             elif _rs_pts:
                 _cx = sum(p[1] for p in _rs_pts) / len(_rs_pts)
@@ -3865,10 +3913,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # inspection. get_spheres is heavy -> computed only on demand. Baker bridge that APPLIES this
         # is a follow-up (TODO #22); for now it's the inspectable table.
         region_sphere_targets = {}
-        if self.options.completion_scaling.value and self.options.completion_scaling_basis.value == 1:
-            import os as _csos
-            _cs_mode = self.options.completion_scaling.value
-            _cs_floor = self.options.completion_scaling_floor.value / 100.0
+        # Sphere-basis + smoothstep are THE behavior now (SPEC-region-spine-surgery.md SS3b):
+        # Track A deletes the CompletionScaling / CompletionScalingBasis Choice option classes
+        # (both hardcoded ON: smoothstep curve, sphere basis) but keeps completion_scaling_floor
+        # as a live tuning Range. This block is therefore unconditional now (was gated on
+        # `completion_scaling.value and completion_scaling_basis.value == 1`); _cs_mode is the
+        # smoothstep constant (was a Choice value; 4 == smoothstep in the old enum).
+        _cs_mode = 4
+        _cs_floor = self.options.completion_scaling_floor.value / 100.0
+        import os as _csos
+        if True:  # region_sphere_targets is always computed now (sphere basis is THE behavior)
             def _cs_curve(d):
                 if _cs_mode == 2:
                     return d ** 1.6
@@ -3902,6 +3956,34 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _df.write("\n".join(_lines))
             except Exception:
                 pass
+        # GRANT-ON-RECEIPT rider (SPEC-region-spine-surgery.md SS3.5, decided after the first
+        # Track D pass): the medallions are unpooled (change B above) but the client still needs
+        # to physically GRANT them in-game on the covering lock's receipt -- keeps the Grand Lift
+        # of Rold / of Dectus usable, fires medallion-triggered quest content (Ensha invasion,
+        # Latenna) at the natural moment, and the player never sees a do-nothing AP medallion
+        # item. {lock_name: [in-game item ids]}; consumed by the existing GrantFullID-style grant
+        # path (client wiring is P3, not this patch's job -- this only emits correct data).
+        # ENCODING: er_code | 0x40000000 (GOODS-category-packed FullID), matching startItems /
+        # lockNotifyItems / progressiveGrants -- every grant-style slot_data table in this file
+        # uses this exact convention (see the category_nibbles map earlier in this method:
+        # ERItemCategory.GOODS: 0x40000000). Looked up from item_table by name (not hardcoded
+        # literals) so a future items.py renumber stays correct automatically; .skip=True only
+        # affects pool participation, the ERItemData table entry (and its er_code) stays intact.
+        lock_grant_items: Dict[str, list] = {}
+        if self.options.world_logic < 3:
+            _LGI_SOURCE = {
+                "Mountaintops Lock": ["Rold Medallion"],
+                "Snowfield Lock": ["Haligtree Secret Medallion (Left)",
+                                   "Haligtree Secret Medallion (Right)"],
+            }
+            for _lgi_lock, _lgi_names in _LGI_SOURCE.items():
+                _lgi_ids = []
+                for _lgi_name in _lgi_names:
+                    _lgi_data = item_table.get(_lgi_name)
+                    if _lgi_data is not None and _lgi_data.er_code:
+                        _lgi_ids.append(_lgi_data.er_code | 0x40000000)
+                if _lgi_ids:
+                    lock_grant_items[_lgi_lock] = _lgi_ids
         slot_data = {
             # CONTRACT: options subkeys partially LIVE (2026-07-01 audit): the Rust client reads
             # death_link, auto_upgrade, global_scadutree_blessing, completion_scaling,
@@ -3914,7 +3996,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "world_logic": self.options.world_logic.value,
                 # Completion-percent scaling (SPEC-completion-scaling.md): mode + floor. The baker
                 # reshapes each enemy's native scaling tier by this curve/floor.
-                "completion_scaling": self.options.completion_scaling.value,
+                # completion_scaling is HARDCODED 4 (smoothstep) now (SPEC-region-spine-surgery.md
+                # SS3b): the CompletionScaling Choice option is deleted (Track A); the slot_data
+                # KEY NAME is preserved unchanged (the Rust client reads it by name) but the
+                # value is a constant instead of an option read.
+                "completion_scaling": 4,
                 "completion_scaling_floor": self.options.completion_scaling_floor.value,
                 "global_scadutree_blessing": self.options.global_scadutree_blessing.value,
                 "location_pool": self.options.location_pool.value,
@@ -4009,6 +4095,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Unlock-notify items: name the region in the native ticker on lock receipt.
             # CONTRACT: PORT-GAP (region-name ticker on lock receipt; er-logic grants.rs notify machinery exists unused)
             "lockNotifyItems": lock_notify_items,
+            # GRANT-ON-RECEIPT rider (SPEC-region-spine-surgery.md SS3.5): lock name -> [packed
+            # FullIDs] to physically grant in-game on that lock's receipt. Currently the two
+            # unpooled medallions (Rold -> Mountaintops Lock; both Secret Medallion halves ->
+            # Snowfield Lock). Empty outside region-gating world_logic. CONTRACT: PORT-GAP
+            # (client grant-on-receipt consumer is P3, not yet wired).
+            "lockGrantItems": lock_grant_items,
             # Natural-key disjunctive triggers (NATURAL_KEY_TRIGGERS_PATCH): lock name -> {"anyOf":[{items,flags}...]}.
             # Client blooms the region apparatus (graces/open-flag/reveal) when ANY clause is satisfied
             # (ALL items received AND ALL flags set). Apparatus-only regions (Mountaintops/Snowfield);
@@ -4045,7 +4137,10 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Sphere-ordered completion scaling (SPEC-sphere-ordered-scaling.md): basis + per-region
             # AP-sphere target table. {} / geographic unless completion_scaling on with basis=sphere.
             # The baker bridge that consumes regionSphereTargets is a follow-up (TODO #22).
-            "completionScalingBasis": self.options.completion_scaling_basis.value,
+            # completionScalingBasis is HARDCODED 1 (sphere) now (SPEC-region-spine-surgery.md
+            # SS3b): the CompletionScalingBasis Choice option is deleted (Track A); sphere is THE
+            # only basis (the geographic alternative no longer exists). Key name preserved.
+            "completionScalingBasis": 1,
             "regionSphereTargets": region_sphere_targets,
             # ER-stack ENCODING / slot_data contract version range (what decisions A–E
             # define), NOT any binary's release number. Enforced by BOTH the static

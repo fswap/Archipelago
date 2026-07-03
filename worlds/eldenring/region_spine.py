@@ -19,18 +19,23 @@ Design notes (see SPEC-region-count-morgott.md):
     Mt. Gelmir). Stormveil keeps its own lock as a milestone step (Godrick = a great rune).
   * Redmane is folded into Caelid (minor post-Radahn sub-area). Its existing "Redmane Lock" rides
     along in the Caelid step so it stays obtainable whenever Caelid is.
+  * Dragonbarrow is folded into Caelid too (spine surgery 2026-07-02): its former lock item is
+    retired and Dragonbarrow's regions ride the Caelid step under "Caelid Lock".
 """
 
 from typing import Dict, List, Optional, Set, Tuple
 
 
 # ---- The ordered spine. step (1-based) -> (label, locks owned, AP regions whose checks belong) ----
-# Step 1 (Limgrave) owns no lock: it is the free starting region. Every other step owns the lock(s)
+# Spine surgery 2026-07-02 (SPEC-region-spine-surgery.md): 12 steps. EVERY step owns the lock(s)
 # that gate its regions; keeping the step keeps those locks injectable, sealing it removes them.
+# The free hub is Roundtable Hold (ALWAYS_OPEN_REGIONS); the rolled start region's lock is
+# spawn-granted by __init__.py, so step 1 (Limgrave) owns "Limgrave Lock" like any other step
+# (Limgrave is merely the default/most-likely start roll -- no code-level special status).
 SPINE: List[Dict] = [
     {
         "name": "Limgrave",
-        "locks": set(),
+        "locks": {"Limgrave Lock"},
         "regions": [
             "Fringefolk Hero's Grave", "Limgrave", "Stormhill", "Coastal Cave",
             "Church of Dragon Communion", "Groveside Cave", "Stormfoot Catacombs",
@@ -70,18 +75,12 @@ SPINE: List[Dict] = [
         ],
     },
     {
-        "name": "Caelid",                     # Radahn -> great rune (+ Redmane folded in)
+        "name": "Caelid",                     # Radahn -> great rune (+ Redmane + Dragonbarrow folded in)
         "locks": {"Caelid Lock", "Redmane Lock"},
         "regions": [
             "Caelid", "Caelid Catacombs", "Gaol Cave", "Sellia Crystal Tunnel",
             "Abandoned Cave", "Minor Erdtree Catacombs", "Great-Jar", "Gale Tunnel",
             "Redmane Castle Post Radahn", "Wailing Dunes", "War-Dead Catacombs",
-        ],
-    },
-    {
-        "name": "Dragonbarrow",               # new lock (was Caelid-shared / bell-gated)
-        "locks": {"Dragonbarrow Lock"},
-        "regions": [
             "Dragonbarrow", "Dragonbarrow Cave", "Sellia Hideaway", "Divine Tower of Caelid",
         ],
     },
@@ -102,11 +101,53 @@ SPINE: List[Dict] = [
             "Volcano Manor Drawing Room", "Volcano Manor", "Volcano Manor Upper",
         ],
     },
+    {
+        "name": "Siofra/Nokron",              # underground branch A (ex-South East Underground)
+        "locks": {"Nokron Lock"},
+        "regions": [
+            # NOTE: "The Four Belfries (Nokron)" stays in the LIURNIA step (the belfry towers are
+            # physically in Liurnia; the portal merely lands in Nokron) -- listing it here too would
+            # break the step-region partition invariant (test_step_regions_partition).
+            "Siofra River", "Nokron, Eternal City Start", "Nokron, Eternal City",
+        ],
+    },
+    {
+        "name": "Ainsel/Nokstella",           # underground branch B (ex-North Underground; Lake of Rot folded in from the retired SW lock)
+        "locks": {"Nokstella Lock"},
+        "regions": [
+            "Ainsel River", "Ainsel River Main", "Deeproot Depths", "Deeproot Depths Upper",
+            "Deeproot Depths Boss", "Lake of Rot",
+        ],
+    },
+    {
+        "name": "Mountaintops",               # incl. Flame Peak + Forbidden Lands (SPEC 3.4)
+        "locks": {"Mountaintops Lock"},
+        "regions": [
+            "Mountaintops of the Giants", "Flame Peak", "Forbidden Lands",
+            "Giant-Conquering Hero's Grave", "Giants' Mountaintop Catacombs",
+            "Spiritcaller Cave",
+        ],
+    },
+    {
+        "name": "Consecrated Snowfield",      # incl. Hidden Path to the Haligtree (SPEC 3.5)
+        "locks": {"Snowfield Lock"},
+        "regions": [
+            "Consecrated Snowfield", "Hidden Path to the Haligtree",
+            "Consecrated Snowfield Catacombs", "Cave of the Forlorn", "Yelough Anix Tunnel",
+        ],
+    },
+    {
+        "name": "Haligtree",                  # Elphael is Loretta-gated interior of the same lock
+        "locks": {"Haligtree Lock"},
+        "regions": [
+            "Miquella's Haligtree", "Elphael, Brace of the Haligtree",
+        ],
+    },
 ]
 
 # 1-based spine indices whose region holds a great-rune mainboss. Used for the floor calc.
-RUNE_STEPS = {3, 4, 5, 8}        # Godrick, Rennala, Radahn, Rykard
-ALTUS_STEP = 7                   # the lowest count that physically reaches Leyndell
+RUNE_STEPS = {3, 4, 5, 7}        # Godrick, Rennala, Radahn, Rykard
+ALTUS_STEP = 6                   # the lowest count that physically reaches Leyndell
 MAX_PRE_LEYNDELL_RUNES = len(RUNE_STEPS)   # 4 great-rune bosses exist before the capital
 
 # Always kept (hub + the capstone). These have no spine lock; Leyndell is gated by great runes.
@@ -124,8 +165,8 @@ MORGOTT_GOAL_LOCATION = "LRC/QB: Remembrance of the Omen King - mainboss drop"
 def required_floor(great_runes_required: int) -> int:
     """Lowest region_count that keeps the Capital goal reachable, or raise ValueError if it can't be.
 
-    Need Altus (step 7) physically, AND great_runes_required rune-bosses in scope. Steps 1..7 cover
-    runes {Godrick, Rennala, Radahn} = 3; step 8 (Rykard) adds the 4th. More than 4 is impossible
+    Need Altus (step 6) physically, AND great_runes_required rune-bosses in scope. Steps 1..6 cover
+    runes {Godrick, Rennala, Radahn} = 3; step 7 (Rykard) adds the 4th. More than 4 is impossible
     because only 4 great-rune bosses exist before Leyndell.
     """
     if great_runes_required > MAX_PRE_LEYNDELL_RUNES:
@@ -135,7 +176,7 @@ def required_floor(great_runes_required: int) -> int:
         )
     floor = ALTUS_STEP
     if great_runes_required > len({s for s in RUNE_STEPS if s <= ALTUS_STEP}):
-        floor = max(floor, 8)     # need Rykard too
+        floor = max(floor, 7)     # need Rykard too
     return floor
 
 
@@ -179,31 +220,38 @@ def compute_region_scope(
 
 # ===== num_regions CHAIN order (SPEC-num-regions-chain.md  3 / 5) ========================
 # Track A: turn the kept num_regions middles into a linear lock-breadcrumb CHAIN so the AP
-# fill spheres become 1..N. Limgrave is the free sphere-1 hub (link 0). The rolled middle
-# majors are shuffled by the world rng, with Altus PINNED LAST among the middles (capstone
-# tail: Altus -> Capital Outskirts -> Leyndell; Leyndell is great-rune gated, has no lock and
-# is the terminus). __init__.py consumes this order: it precollects the first middle's lock and
-# breadcrumbs every later middle's lock onto the PRIOR middle's prominent boss drop.
+# fill spheres become 1..N. Sphere 1 is the Roundtable hub + the spawn-granted start region
+# (link 0). The rolled middle majors are shuffled by the world rng, with Altus PINNED LAST
+# among the middles (capstone tail: Altus -> Capital Outskirts -> Leyndell; Leyndell is
+# great-rune gated, has no lock and is the terminus). __init__.py consumes this order: it
+# precollects the first middle's lock and breadcrumbs every later middle's lock onto the PRIOR
+# middle's prominent boss drop.
 
 # Per (1-based) middle SPINE step: the region whose boss hosts the NEXT link's lock, and the
 # lock item this step contributes to the chain (the one gating its overworld region under
 # region_lock / REGION_LOCK_ITEM). The host REGION is resolved dynamically in __init__.py from
 # this region's actual locations (prefer a remembrance/prominent boss drop, then any
 # non-missable boss drop, then any non-missable check), so a region without a great-rune
-# remembrance (Weeping / Dragonbarrow / Altus) still gets a stable host. Only the LOCK NAME and
-# the candidate host-region NAMES are fixed here.
+# remembrance (Weeping / Altus / the 2026-07-02 spine-surgery steps 8..12) still gets a stable
+# host. Only the LOCK NAME and the candidate host-region NAMES are fixed here. Steps 13..16 are
+# the cave/torch bundle steps (see CAVE_BUNDLE_STEPS; renumbered from 9..12 when the spine grew
+# to 12 steps, spine surgery 2026-07-02).
 NUM_REGIONS_CHAIN_STEP_LOCK: Dict[int, str] = {
     2: "Weeping Lock",
     3: "Stormveil Lock",
     4: "Liurnia Lock",
     5: "Caelid Lock",
-    6: "Dragonbarrow Lock",
-    7: "Altus Lock",
-    8: "Mt. Gelmir Lock",
-    9: "Spelunker's Torch",                   # Limgrave Underground (limgrave_underground)
-    10: "Spelunker's Ghostflame Torch",       # Liurnia Caves (liurnia_caves)
-    11: "Spelunker's Steel-Wire Torch",       # Altus Caves (altus_caves)
-    12: "Spelunker's Beast-Repellent Torch",  # Mountaintops Caves (mountaintops_caves)
+    6: "Altus Lock",
+    7: "Mt. Gelmir Lock",
+    8: "Nokron Lock",
+    9: "Nokstella Lock",
+    10: "Mountaintops Lock",
+    11: "Snowfield Lock",
+    12: "Haligtree Lock",
+    13: "Spelunker's Torch",                   # Limgrave Underground (limgrave_underground)
+    14: "Spelunker's Ghostflame Torch",        # Liurnia Caves (liurnia_caves)
+    15: "Spelunker's Steel-Wire Torch",        # Altus Caves (altus_caves)
+    16: "Spelunker's Beast-Repellent Torch",   # Mountaintops Caves (mountaintops_caves)
 }
 
 # The overworld AP region(s) whose checks/bosses belong to each middle step, used by __init__.py
@@ -213,19 +261,23 @@ NUM_REGIONS_CHAIN_STEP_HOST_REGIONS: Dict[int, List[str]] = {
     2: ["Weeping Peninsula"],
     3: ["Stormveil Throne", "Stormveil Castle", "Stormveil Start"],
     4: ["Raya Lucaria Academy Library", "Raya Lucaria Academy", "Liurnia of The Lakes"],
-    5: ["Caelid"],  # no-wailing-dunes-host: NOT Wailing Dunes -- Radahn's drop is Altus-gated, a breadcrumb lock there deadlocks (Altus Lock <-> Wailing Dunes).
-    6: ["Dragonbarrow"],
-    7: ["Altus Plateau"],
-    8: ["Volcano Manor", "Mt. Gelmir"],
-    9: ["Stormfoot Catacombs", "Limgrave Tunnels", "Murkwater Catacombs", "Deathtouched Catacombs",
-        "Fringefolk Hero's Grave", "Coastal Cave", "Groveside Cave", "Murkwater Cave",
-        "Highroad Cave", "Church of Dragon Communion"],
-    10: ["Black Knife Catacombs", "Road's End Catacombs", "Cliffbottom Catacombs", "Stillwater Cave",
+    5: ["Caelid"],  # no-wailing-dunes-host: NOT Wailing Dunes -- Radahn's drop is Altus-gated, a breadcrumb lock there deadlocks (Altus Lock <-> Wailing Dunes). Dragonbarrow rides Caelid now; Caelid proper stays the host.
+    6: ["Altus Plateau"],
+    7: ["Volcano Manor", "Mt. Gelmir"],
+    8: ["Siofra River"],   # NOT Nokron: "Nokron, Eternal City Start" is Starscourge(Radahn)-gated; a breadcrumb there could deadlock when Caelid is sealed.
+    9: ["Ainsel River"],   # branch entry; Ainsel River Main / Nokstella sit behind quest-flavored interior gates.
+    10: ["Mountaintops of the Giants"],
+    11: ["Consecrated Snowfield"],
+    12: ["Miquella's Haligtree"],   # Elphael is Loretta-gated interior; the outer Haligtree hosts.
+    13: ["Stormfoot Catacombs", "Limgrave Tunnels", "Murkwater Catacombs", "Deathtouched Catacombs",
+         "Fringefolk Hero's Grave", "Coastal Cave", "Groveside Cave", "Murkwater Cave",
+         "Highroad Cave", "Church of Dragon Communion"],
+    14: ["Black Knife Catacombs", "Road's End Catacombs", "Cliffbottom Catacombs", "Stillwater Cave",
          "Lakeside Crystal Cave", "Academy Crystal Cave", "Raya Lucaria Crystal Tunnel",
          "Ruin-Strewn Precipice"],
-    11: ["Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto", "Sage's Cave",
+    15: ["Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto", "Sage's Cave",
          "Old Altus Tunnel", "Altus Tunnel"],
-    12: ["Giants' Mountaintop Catacombs", "Giant-Conquering Hero's Grave", "Spiritcaller Cave",
+    16: ["Giants' Mountaintop Catacombs", "Giant-Conquering Hero's Grave", "Spiritcaller Cave",
          "Consecrated Snowfield Catacombs", "Cave of the Forlorn", "Yelough Anix Tunnel"],
 }
 
@@ -246,25 +298,17 @@ def compute_num_regions_chain_order(rng, kept_locks: Set[str]) -> List[int]:
     rng        : world.random (reproducible per seed).
     kept_locks : the kept-lock set returned by compute_num_regions_scope.
 
-    Returns [m_1, m_2, ..., m_k] where the regions open in that order off the Limgrave hub:
+    Returns [m_1, m_2, ..., m_k] where the regions open in that order off the hub:
     m_1's lock is free (precollected), m_{i+1}'s lock is breadcrumbed onto m_i's boss. Altus
-    (step 7) is forced to the END (capstone tail). Dragonbarrow (step 6) is kept ADJACENT to and
-    IMMEDIATELY AFTER Caelid (step 5) when both are kept -- Dragonbarrow has no own hub warp
-    (absent from REGION_LOCK_ITEM); it is reached by warping to Caelid then walking in with the
-    Dragonbarrow Lock, so it must sit right behind Caelid in the chain to stay reachable. The
-    remaining middles are shuffled. (If Dragonbarrow is kept WITHOUT Caelid -- possible because
-    compute_num_regions_scope does not couple them -- it is ordered normally and flagged by the
-    caller; that combo needs a gen-test, see SPEC  9.)
+    (step 6) is forced to the END (capstone tail); every other kept middle is a plain shuffle.
+    (The old Dragonbarrow-after-Caelid adjacency special case is GONE -- the 2026-07-02 spine
+    surgery folded Dragonbarrow into the Caelid step, and every remaining middle has its own
+    hub warp via its lock, so no adjacency pinning is needed.)
     """
     middles = _kept_middle_steps(kept_locks)
     altus = ALTUS_STEP if ALTUS_STEP in middles else None
     rest = [s for s in middles if s != altus]
     rng.shuffle(rest)
-    # Keep Dragonbarrow (6) directly after Caelid (5) when both present.
-    if 6 in rest and 5 in rest:
-        rest = [s for s in rest if s != 6]
-        ci = rest.index(5)
-        rest.insert(ci + 1, 6)
     order = rest + ([altus] if altus is not None else [])
     return order
 
@@ -513,7 +557,7 @@ def compute_godrick_scope(
 # A short "reach Leyndell and kill Morgott" run like region_count, but the kept overworld majors
 # are a RANDOM subset instead of the deterministic first-N spine. Limgrave (the free sphere-1 hub)
 # and the Leyndell / Morgott capstone are ALWAYS kept and both count toward num_regions; the middle
-# majors (Weeping .. Mt. Gelmir) are rolled. A great-rune floor keeps enough great-rune bosses in
+# majors (Weeping .. Haligtree, SPINE steps 2..12) are rolled. A great-rune floor keeps enough great-rune bosses in
 # scope to open Leyndell. Reachability is by WARP (the caller forces region_access=warp), so a
 # non-contiguous random subset is still reachable from the Limgrave hub via each region's own lock.
 # Everything not kept is sealed exactly like a region_count seal (lock pulled, checks -> events).
@@ -521,7 +565,7 @@ def compute_godrick_scope(
 
 # 1-based SPINE indices that are "middle" overworld majors eligible for the random roll
 # (step 1 Limgrave is the always-kept free hub; the Leyndell capstone is the always-kept goal).
-NUM_REGIONS_MIDDLE_STEPS: List[int] = [2, 3, 4, 5, 6, 7, 8]   # Weeping, Stormveil, Liurnia, Caelid, Dragonbarrow, Altus, Mt. Gelmir
+NUM_REGIONS_MIDDLE_STEPS: List[int] = list(range(2, 13))   # Weeping .. Haligtree (steps 2..12; Dragonbarrow folded into Caelid, spine surgery 2026-07-02)
 
 
 def num_regions_floor(great_runes_required: int) -> int:
@@ -614,14 +658,16 @@ def compute_num_regions_scope(
 # ===== num_regions POOL rune-source (SPEC-num-regions-pool-runes.md) =====================
 # Sibling of compute_num_regions_scope for num_regions_rune_source == pool. The great-rune floor
 # is DROPPED (the runes are injected into the item pool by __init__.py, not kept as boss regions),
-# and Limgrave is NOT force-kept -- ALL eight overworld majors (Limgrave + the seven middles) are a
-# single rollable/sealable pool. The only always-kept content is the Roundtable hub + the Leyndell
-# capstone, so the content floor is 1 middle region. Reachability is by WARP from the Roundtable hub
-# (the caller forces region_access=warp and sets the Roundtable-hub re-root), so a non-contiguous
-# random subset -- including a sealed Limgrave / Altus -- is still reachable via each region's lock.
+# and Limgrave is NOT force-kept -- ALL twelve overworld majors (SPINE steps 1..12, Limgrave
+# through Haligtree) are ONE uniform rollable/sealable pool (the old "[1] + middles" special-
+# casing dissolved with the Roundtable hub re-root, spine surgery 2026-07-02). The only
+# always-kept content is the Roundtable hub + the Leyndell capstone, so the content floor is 1
+# rolled major. Reachability is by WARP from the Roundtable hub (the caller forces
+# region_access=warp and sets the Roundtable-hub re-root), so a non-contiguous random subset --
+# including a sealed Limgrave / Altus -- is still reachable via each region's lock.
 
-# Every overworld major step (1-based SPINE index) is rollable in pool mode -- including Limgrave (1).
-NUM_REGIONS_POOL_STEPS: List[int] = [1] + list(NUM_REGIONS_MIDDLE_STEPS)   # Limgrave + the seven middles
+# Every overworld major step (1-based SPINE index) is rollable in pool mode: steps 1..12 uniformly.
+NUM_REGIONS_POOL_STEPS: List[int] = list(range(1, len(SPINE) + 1))
 
 
 def compute_num_regions_scope_pool(
@@ -648,10 +694,12 @@ def compute_num_regions_scope_pool(
     _active_cave_dungeons = set()
     for _cs in _caves:
         _active_cave_dungeons |= set(CAVE_BUNDLE_STEPS[_cs]["regions"])
-    # chain mode: Limgrave (step 1) has no chain lock (NUM_REGIONS_CHAIN_STEP_LOCK starts at 2), so a
-    # rolled Limgrave cannot join the breadcrumb chain -- it leaks a loose off-chain start lock.
-    # Exclude it from the roll when chaining (Limgrave then seals; never a 2nd start lock).
-    _pool_steps = NUM_REGIONS_MIDDLE_STEPS if chain_excludes_limgrave else NUM_REGIONS_POOL_STEPS
+    # chain_excludes_limgrave is IGNORED (kept only for caller signature compatibility --
+    # __init__.py passes it positionally): with the Roundtable hub re-root (spine surgery
+    # 2026-07-02) Limgrave is an ordinary step -- its lock exists and the rolled start region
+    # is spawn-granted by __init__, so the old "rolled Limgrave cannot join the breadcrumb
+    # chain" exclusion is gone. Pool mode always rolls over steps 1..12.
+    _pool_steps = NUM_REGIONS_POOL_STEPS
     max_total = len(_pool_steps) + len(_caves)    # overworld majors + active caves
     effective = max(int(num_regions), 1)                    # floor of 1 rolled major is fine
     effective = min(effective, max_total)
@@ -701,7 +749,7 @@ NUM_REGIONS_STEP_GREAT_RUNE: Dict[int, str] = {
     3: "Godrick's Great Rune",          # Stormveil (Godrick)
     4: "Great Rune of the Unborn",      # Liurnia / Raya Lucaria (Rennala)
     5: "Radahn's Great Rune",           # Caelid (Radahn)
-    8: "Rykard's Great Rune",           # Mt. Gelmir / Volcano Manor (Rykard)
+    7: "Rykard's Great Rune",           # Mt. Gelmir / Volcano Manor (Rykard)
 }
 
 
@@ -709,33 +757,36 @@ NUM_REGIONS_STEP_GREAT_RUNE: Dict[int, str] = {
 # ===== Cave-bundle steps (chainable minor-dungeon clusters) ==============================
 # When a cave bundle's extra_region_locks key is active under num_regions, the cluster SPLITS
 # OUT of its parent overworld spine step into its own selectable + chainable step (synthetic
-# 1-based indices past len(SPINE)=8). It then COMPETES with the overworld majors for the
-# num_regions slots and, with num_regions_chain, can be any link in the chain -- reached by warp
-# (its torch lights the cluster's entrance graces; see grace_data.BUNDLE_LOCK_GRACES and the
-# _BUNDLE_WARP block in __init__). parent = the SPINE index whose regions list holds these
-# dungeons (None = not in SPINE, e.g. Mountaintops/Snowfield, so nothing to split out).
+# 1-based indices past len(SPINE)=12; renumbered 13..16 by the 2026-07-02 spine surgery). It
+# then COMPETES with the overworld majors for the num_regions slots and, with num_regions_chain,
+# can be any link in the chain -- reached by warp (its torch lights the cluster's entrance
+# graces; see grace_data.BUNDLE_LOCK_GRACES and the _BUNDLE_WARP block in __init__). parent =
+# the SPINE index whose regions list holds these dungeons; INFORMATIONAL ONLY (no code reads
+# it) -- the split-out governance in the compute functions is by region NAME, so
+# mountaintops_caves (whose dungeons now span SPINE steps 10 Mountaintops + 11 Consecrated
+# Snowfield) keeps parent=None and still splits correctly out of both.
 CAVE_BUNDLE_STEPS: Dict[int, Dict] = {
-    9: {
+    13: {
         "key": "limgrave_underground", "name": "Limgrave Underground",
         "lock": "Spelunker's Torch", "parent": 1,
         "regions": ["Fringefolk Hero's Grave", "Coastal Cave", "Church of Dragon Communion",
                     "Groveside Cave", "Stormfoot Catacombs", "Limgrave Tunnels", "Murkwater Cave",
                     "Murkwater Catacombs", "Highroad Cave", "Deathtouched Catacombs"],
     },
-    10: {
+    14: {
         "key": "liurnia_caves", "name": "Liurnia Caves",
         "lock": "Spelunker's Ghostflame Torch", "parent": 4,
         "regions": ["Stillwater Cave", "Lakeside Crystal Cave", "Academy Crystal Cave",
                     "Road's End Catacombs", "Black Knife Catacombs", "Cliffbottom Catacombs",
                     "Raya Lucaria Crystal Tunnel", "Ruin-Strewn Precipice"],
     },
-    11: {
+    15: {
         "key": "altus_caves", "name": "Altus Caves",
-        "lock": "Spelunker's Steel-Wire Torch", "parent": 7,
+        "lock": "Spelunker's Steel-Wire Torch", "parent": 6,
         "regions": ["Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto",
                     "Sage's Cave", "Old Altus Tunnel", "Altus Tunnel"],
     },
-    12: {
+    16: {
         "key": "mountaintops_caves", "name": "Mountaintops Caves",
         "lock": "Spelunker's Beast-Repellent Torch", "parent": None,
         "regions": ["Giant-Conquering Hero's Grave", "Giants' Mountaintop Catacombs",

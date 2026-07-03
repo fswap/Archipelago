@@ -90,8 +90,12 @@ def build_warp_rules(world) -> dict:
             continue
         edges.append(WarpEdge(name=f"Warp To {region}", target=region, rule=Has(lock)))
 
-    # --- random_start Limgrave warp (line 362-366) : Limgrave behaves like any locked region -----
-    if getattr(world, "_random_start_region", None) and present("Limgrave"):
+    # --- legacy random_start Limgrave warp (line 362-366) -- SUPERSEDED: Limgrave now has a
+    # static REGION_LOCK_ITEM entry (region-spine surgery SS3.1), so the per-region loop above
+    # already emits its warp edge. Guard prevents a DUPLICATE "Warp To Limgrave" entrance
+    # (entrance names must be unique per player).
+    if (getattr(world, "_random_start_region", None) and present("Limgrave")
+            and "Limgrave" not in REGION_LOCK_ITEM):
         edges.append(WarpEdge(name="Warp To Limgrave", target="Limgrave", rule=Has("Limgrave Lock")))
 
     # --- bundle-lock warps (line 371-394) : each bundled dungeon gated on the shared bundle lock,

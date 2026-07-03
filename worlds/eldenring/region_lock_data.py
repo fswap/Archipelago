@@ -93,6 +93,12 @@ def build_region_lock_rules(world) -> dict[str, Rule]:
     erl = _erl(world)
 
     # --- base locks (always, under non-region_bosses) : rules_mixin.py 399-457 -------------------
+    # Limgrave: always-on first-class lock (SPEC-region-spine-surgery.md SS3.1). The rolled
+    # start region's lock is spawn-granted (Track D / __init__.py), so this entrance clause
+    # never dead-locks the start -- Limgrave is either the spawn region (lock pre-granted) or
+    # an ordinary locked region reached later like any other.
+    add("Limgrave", "Limgrave Lock")
+
     add("Weeping Peninsula", "Weeping Lock")
 
     if "limgrave_underground" in erl:
@@ -123,21 +129,29 @@ def build_region_lock_rules(world) -> dict[str, Rule]:
         ):
             add(_r, "Spelunker's Ghostflame Torch")
 
-    add("Siofra River", "South East Underground Lock")
-    add("Nokron, Eternal City Start", "South East Underground Lock")
+    add("Siofra River", "Nokron Lock")
+    add("Nokron, Eternal City Start", "Nokron Lock")
 
-    add("Ainsel River", "North Underground Lock")
-    add("Ainsel River Main", "North Underground Lock")
-    add("Deeproot Depths", "North Underground Lock")
+    add("Ainsel River", "Nokstella Lock")
+    add("Ainsel River Main", "Nokstella Lock")
+    add("Deeproot Depths", "Nokstella Lock")
 
-    add("Lake of Rot", "South West Underground Lock")
+    add("Lake of Rot", "Nokstella Lock")
 
     add("Altus Plateau", "Altus Lock")
 
     add("Caelid", "Caelid Lock")
     add("Sellia Crystal Tunnel", "Caelid Lock")
     add("Redmane Castle Post Radahn", "Redmane Lock")
-    add("Dragonbarrow", "Dragonbarrow Lock")
+    add("Dragonbarrow", "Caelid Lock")  # folded into Caelid Lock; was its own Dragonbarrow Lock
+
+    # Mountaintops cluster: always-on first-class lock (SPEC-region-spine-surgery.md SS3.4).
+    # Flame Peak and Forbidden Lands ride the same lock (Flame Peak is Mountaintops past Fire
+    # Giant; Forbidden Lands is the start of the Mountaintops approach) -- reuses the NK
+    # apparatus (open flag 76965) that was previously trigger-gated.
+    add("Mountaintops of the Giants", "Mountaintops Lock")
+    add("Flame Peak", "Mountaintops Lock")
+    add("Forbidden Lands", "Mountaintops Lock")
 
     add("Altus Plateau", "Altus Lock")  # duplicate in legacy (line 459); idempotent Has & Has.
     add("Mt. Gelmir", "Mt. Gelmir Lock")
@@ -158,12 +172,11 @@ def build_region_lock_rules(world) -> dict[str, Rule]:
 
     # Miquella's Haligtree: an ITEM gate (Haligtree Secret Medallion (Right)) inside _region_lock
     # (line 476-477), not a REGION_LOCK_ITEM lock. Ported faithfully as a plain Has.
-    if present("Miquella's Haligtree"):
-        clause = Has("Haligtree Secret Medallion (Right)")
-        rules["Miquella's Haligtree"] = (
-            clause if "Miquella's Haligtree" not in rules
-            else rules["Miquella's Haligtree"] & clause
-        )
+    # Miquella's Haligtree: first-class lock (SPEC-region-spine-surgery.md SS3.6). Replaces
+    # the legacy Haligtree Secret Medallion (Right) item-gate clause -- the medallions are
+    # unpooled entirely (Track D / __init__.py inject=False), the lock functionally replaces
+    # them.
+    add("Miquella's Haligtree", "Haligtree Lock")
 
     # chokepoint_locks (line 483-488): gate a region's BACK half on reaching its choke-boss drop.
     # Pure logic -- ``self._can_get(state, loc)`` == predicate ``can_get(loc)``. Uses can_get so the
@@ -188,8 +201,12 @@ def build_region_lock_rules(world) -> dict[str, Rule]:
         ):
             add(_r, "Spelunker's Beast-Repellent Torch")
 
-    if "snowfield" in erl:
-        add("Consecrated Snowfield", "Snowfield Lock")
+    # Consecrated Snowfield: always-on first-class lock (SPEC-region-spine-surgery.md SS3.5).
+    # No longer opt-in -- the "snowfield" extra_region_locks member is retired (options.py).
+    add("Consecrated Snowfield", "Snowfield Lock")
+    # Hidden Path to the Haligtree: the Snowfield approach tunnel; rides Snowfield Lock (was
+    # medallion-halves gated).
+    add("Hidden Path to the Haligtree", "Snowfield Lock")
 
     # --- DLC locks (enable_dlc) : rules_mixin.py 505-529 -----------------------------------------
     if world.options.enable_dlc:

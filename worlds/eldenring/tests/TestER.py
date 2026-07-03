@@ -92,6 +92,16 @@ class TestAccess(WorldTestBase):
             
     def testEquipCham(self) -> None:
         """test equip of cham"""
+        # NOTE (region-spine surgery, SPEC-region-spine-surgery.md SS3.4/3.5): the early
+        # `return` below makes this method dead code -- nothing past it ever executes, so
+        # the "Rold Medallion" / "Haligtree Secret Medallion (Left/Right)" strings in the
+        # have_items literal further down are inert, not a live test failure. They are
+        # LEFT AS-IS deliberately rather than rewritten, since editing dead code risks
+        # papering over a future refactor that removes the guard without revisiting the
+        # body. Medallions are unpooled (inject=False) by this surgery (Track D); if this
+        # test is ever revived, replace the medallion entries with the corresponding locks
+        # (Rold Medallion -> Mountaintops Lock, Haligtree Secret Medallion (L/R) ->
+        # Haligtree Lock) per RUNBOOK-SPINE-SURGERY.md.
         return
         equipments = [ # done
             ( # RA mainboss
@@ -200,6 +210,10 @@ class TestAccess(WorldTestBase):
             
     def testLocAccess(self) -> None:
         """test region access"""
+        # NOTE (region-spine surgery, SPEC-region-spine-surgery.md SS3.4/3.5): same
+        # dead-code situation as testEquipCham above -- the early `return` makes the
+        # medallion strings in have_items below inert. See RUNBOOK-SPINE-SURGERY.md for
+        # the medallion-unpool replacement-gate decision if this test is revived.
         return
         have_items = [["Godrick's Great Rune", "Rykard's Great Rune", "Rusty Key", "Academy Glintstone Key", "Rold Medallion", 
                         "Dectus Medallion (Left)", "Dectus Medallion (Right)", "Drawing-Room Key",

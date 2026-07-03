@@ -67,7 +67,6 @@ def build_region_rules(world) -> dict[str, Rule]:
     if o.world_logic < 3:
         if o.soft_logic:
             add("Caelid", can_go_to("Altus Plateau"))
-            add("Consecrated Snowfield", Has("Rold Medallion"))
             add("Mohgwyn Palace", Has("Liurnia Lock"))
         add("Altus Plateau", HasAll("Dectus Medallion (Left)", "Dectus Medallion (Right)"))
 
@@ -86,11 +85,10 @@ def build_region_rules(world) -> dict[str, Rule]:
     add("Leyndell, Royal Capital", has_enough_great_runes(o.great_runes_required.value))
     add("Erdtree", has_enough_great_runes(o.great_runes_final_boss.value))
     add("Mountaintops of the Giants",
-        can_go_to("Forbidden Lands")
-        & Has("Rold Medallion")
-        & has_enough_great_runes(o.great_runes_mountaintops.value))
-    add("Hidden Path to the Haligtree",
-        HasAll("Haligtree Secret Medallion (Left)", "Haligtree Secret Medallion (Right)"))
+        has_enough_great_runes(o.great_runes_mountaintops.value))
+    # "Hidden Path to the Haligtree" medallion-halves gate DELETED 2026-07 (region-spine
+    # surgery): the medallions are unpooled; Hidden Path now rides Snowfield Lock's
+    # always-on entrance clause (region_lock_data.py, Track A).
 
     # --- smithing/somber bell-bearing gates (L209-219) ---
     if o.smithing_bell_bearing_option.value == 1 and not o.soft_progression.value:
@@ -112,19 +110,17 @@ def build_region_rules(world) -> dict[str, Rule]:
 
     # --- DLC (L227-290) ---
     if o.enable_dlc:
-        if o.dlc_timing == 2:
-            add("Gravesite Plain",
-                HasAll("Rold Medallion",
-                       "Haligtree Secret Medallion (Left)",
-                       "Haligtree Secret Medallion (Right)")
-                & can_get("MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                & can_get("CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-        else:
+        # Gravesite Plain geographic entry-condition machinery DELETED 2026-07 (region-spine
+        # surgery, spec SS3.5 audit rider): the dlc_timing==2 medallion+remembrance gate and
+        # the else-branch remembrance-only gate are both gone. Gravesite Plain's entry gate
+        # is its lock ALONE now (Gravesite Lock, added unconditionally in
+        # region_lock_data.py under enable_dlc -- Track A). The lock IS the timing; no
+        # medallion clause, no Mohg/Radahn remembrance entry gates. dlc_timing itself is
+        # NOT deleted here (a follow-up pass owns removing the option), but its
+        # Gravesite-Plain-gating effect is gone in both branches.
+        if o.dlc_timing != 2:
             add("Mohgwyn Palace",
                 Has("Pureblood Knight's Medal") | can_go_to("Consecrated Snowfield"))
-            add("Gravesite Plain",
-                can_get("MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                & can_get("CL/(WD): Remembrance of the Starscourge - mainboss drop"))
             if o.dlc_timing == 0:
                 add("Altus Plateau", Has("Pureblood Knight's Medal"))
                 add("Caelid", Has("Pureblood Knight's Medal"))

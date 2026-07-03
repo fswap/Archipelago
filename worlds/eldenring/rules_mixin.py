@@ -326,7 +326,15 @@ class EldenRingRules:
         World.set_rule does for cache registration, but AND-stacks onto any existing geographic clause
         instead of replacing it."""
         for region, rule in build_region_lock_rules(self).items():
-            entrance = self.multiworld.get_entrance(f"Go To {region}", self.player)
+            # Regions with no geographic "Go To" entrance (Limgrave: the star center is only
+            # ever ENTERED via its hub warp edge under the Roundtable re-root) carry their lock
+            # on the "Warp To {region}" edge instead (_region_lock_warp_access attaches
+            # edge.rule = Has(lock) there). Skipping here is correct, not lenient: there is no
+            # geographic entrance to gate. SPEC-region-spine-surgery.md SS3.1.
+            try:
+                entrance = self.multiworld.get_entrance(f"Go To {region}", self.player)
+            except KeyError:
+                continue
             resolved = rule.resolve(self)
             self.register_rule_dependencies(resolved)
             add_rule(entrance, resolved)
@@ -646,8 +654,9 @@ class EldenRingRules:
             "RH: Royal Remains Armor - Ensha's spot, after getting half of secret medallion",
             "RH: Royal Remains Gauntlets - Ensha's spot, after getting half of secret medallion",
             "RH: Royal Remains Greaves - Ensha's spot, after getting half of secret medallion"
-        ], lambda state: (state.has("Haligtree Secret Medallion (Left)", self.player) or
-                          state.has("Haligtree Secret Medallion (Right)", self.player)))
+        ], "Snowfield Lock")  # medallions unpooled (SPEC-region-spine-surgery.md SS3.5): both halves are
+        # granted IN-GAME on Snowfield Lock receipt (lockGrantItems), so the Ensha invasion fires
+        # exactly when the lock arrives -- the AP-logic gate follows the same item.
         
         # MARK: Sellen
         
@@ -725,7 +734,7 @@ class EldenRingRules:
         # MARK: Latenna
 
         self._add_location_rule([ "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus",
-        ], "Haligtree Secret Medallion (Right)") # might need the right medallion, having both kills her if not talked to
+        ], "Snowfield Lock") # medallions unpooled -- Right half granted in-game on Snowfield Lock receipt (lockGrantItems); gate follows the lock
         
         self._add_location_rule([ "CS/(AD): Somber Ancient Dragon Smithing Stone - summon Latenna at her sister and talk to her",
         ], lambda state: ( self._can_get(state, "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus"))

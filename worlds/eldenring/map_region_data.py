@@ -60,10 +60,34 @@ LIMGRAVE_START_GRACES = [
 # Base for the dedicated per-lock OPEN-STATE event flags. Kept SEPARATE from the 62xxx map-reveal flags
 # so that revealing maps (reveal_all_maps grant, or the tracker) never flips a region open -> maps + lock
 # are independent. Valid free flags in the grace-tail gap (grace max = 76960; 76970 = KICK flag, probe-
-# confirmed valid, so 76971+ are the same allocated group). Up to ~27 distinct locks => 76971..76997. Special/NK/extra locks (Morne,
-# Godrick, Mountaintops, Snowfield, Raya, Volcano, Haligtree) get hand-picked flags BELOW
-# base (76961-76967) in __init__.py, DISJOINT from this computed band.
+# confirmed valid, so 76971+ are the same allocated group).
+#
+# HAND_PICKED (SPEC-region-spine-surgery.md SS6): Mountaintops Lock / Snowfield Lock / Haligtree Lock
+# get flags BELOW the computed band, consulted before the band walk runs. This reuses the already-
+# minted natural-key apparatus (Mountaintops 76965, Snowfield 76961, Haligtree 76964), DISJOINT from
+# the 76971+ computed band. Limgrave Lock takes an ordinary band flag (76962/76963 are TAKEN by the
+# Raya Lucaria / Volcano NK2 apparatus in __init__.py -- no free hand-pick slot remains below band).
+#
+# RESERVED (never assigned by the band walk, and never collided with by HAND_PICKED): 76996 = the
+# client's DEATHLINK_KILL_FLAG (er-open-flag-collision-bug); 76970 = KICK; 76968/76969 = random-start;
+# 76967 = Godrick; 76966 = Morne; 76962 = Raya Lucaria NK2; 76963 = Volcano NK2; plus every
+# HAND_PICKED value (76965 MT, 76961 SF, 76964 Haligtree). The band walk skips all of these and takes the next free value instead, so no
+# lock open flag -- hand-picked or computed -- can ever collide with a reserved runtime flag. Every
+# assigned flag is asserted <= 76997 (the probe-confirmed valid group ceiling).
 OPEN_FLAG_BASE = 76971
+
+# Hand-picked open-state flags for locks that reuse pre-existing natural-key apparatus, or that
+# otherwise need a below-band flag. Consulted BEFORE the band walk in build_region_lock_slot_data.
+HAND_PICKED = {
+    "Mountaintops Lock": 76965,
+    "Snowfield Lock": 76961,
+    "Haligtree Lock": 76964,
+}
+
+# Runtime flags the band walk must never assign: 76996 = client DEATHLINK_KILL_FLAG,
+# 76970 = KICK, 76968/76969 = random-start, 76966 = Morne, 76967 = Godrick, plus every
+# HAND_PICKED value (so a computed-band lock can never collide with a hand-picked one).
+RESERVED_OPEN_FLAGS = {76996, 76970, 76968, 76969, 76966, 76967, 76962, 76963} | set(HAND_PICKED.values())
 
 # ---- THE dictionary: one entry per AP region ----
 REGIONS = {
@@ -83,8 +107,20 @@ REGIONS = {
     "Liurnia of The Lakes": {"area_ids": [(62000, 62999)], "reveal_flags": [62020, 62021, 62022]},
     "Altus Plateau":        {"area_ids": [(63000, 63000), (63002, 63003)], "reveal_flags": [62030]},   # CONFIRMED area=63000
     "Caelid":               {"area_ids": [(64000, 64000), (64002, 64002)], "reveal_flags": [62040]},  # CONFIRMED area=64000; Caelid + Dragonbarrow pillars
-    "Dragonbarrow":         {"area_ids": [(64001, 64001)], "reveal_flags": [62041]},  # split from Caelid (own lock); play_region 64001
+    "Dragonbarrow":         {"area_ids": [(64001, 64001)], "reveal_flags": [62041]},  # folded into Caelid Lock (SPEC-region-spine-surgery.md SS3.2); own map piece, shared open flag; play_region 64001
     "Mt. Gelmir":           {"area_ids": [(63001, 63001), (39200, 39200)], "reveal_flags": [62032]},                 # TBD area id (NOT 64xxx -- that's Caelid)
+
+    # ---- SPEC-region-spine-surgery.md SS3.4/3.5/3.6: Mountaintops/Snowfield/Haligtree cluster ----
+    # reveal_flags cross-checked against _NK_REVEAL in __init__.py (Mountaintops [62050,62051],
+    # Snowfield [62052]). area_ids RESOLVED STATICALLY 2026-07-02 from
+    # elden_ring_artifacts/REGION_ID_MAP.md (BonfireWarpParam.bonfireSubCategoryId == runtime
+    # play_region_id, verified against every empirically-confirmed capture).
+    "Mountaintops of the Giants": {"area_ids": [(65000, 65001)], "reveal_flags": [62050, 62051]},  # 65000 = MT West (Zamor/Castle Sol), 65001 = MT East (Fire Giant/Forge)
+    "Flame Peak":                 {"area_ids": [], "reveal_flags": []},  # play_region 65001, already inside the MotG range above (same Mountaintops Lock) -- no own entry needed
+    "Forbidden Lands":            {"area_ids": [], "reveal_flags": []},  # play_region 63003 is a SHARED bucket (E Altus / Divine Tower of East Altus / Rold corridor), keyed to Altus Lock via the Altus entry -- assigning it here would wrong-kick DToEA. Physical boundary is deliberately lenient; KICK begins at 65000/65002. Logic still gates the region on Mountaintops Lock.
+    "Consecrated Snowfield":      {"area_ids": [(65002, 65002)], "reveal_flags": [62052]},  # 65002 = Snowfield (Ordina, Yelough Anix) -- REGION_ID_MAP.md
+    "Hidden Path to the Haligtree": {"area_ids": [], "reveal_flags": []},  # graces bucket under shared 63003 (see Forbidden Lands note) -- lenient by design; rides Snowfield Lock in logic
+    "Miquella's Haligtree":       {"area_ids": [], "reveal_flags": []},  # area lock (15000 Elphael + 15001 Haligtree) emitted by the __init__ Haligtree apparatus block -- kept [] HERE to avoid duplicate areaLockFlags rows
 
     # ---- base-game legacy dungeons: own area-id scheme (TBD empirical) ----
     "Stormveil Castle":         {"area_ids": [(10000, 10000)], "reveal_flags": []},   # area=10000 CONFIRMED in-game 2026-06-17 (godrick playtest); whole Stormveil map -> walls the Margit gatehouse too (region-lock: Stormveil Lock = key in; softlock-safe, lock is at Roundtable)
@@ -94,9 +130,9 @@ REGIONS = {
 
     # ---- base-game undergrounds (m12): area id = tile-based 12BB0 (m12_BB), confirmed Siofra 12070 ----
     "Ainsel River":              {"area_ids": [(12010, 12010), (12012, 12019), (12040, 12049)], "reveal_flags": [62060]},  # m12_01, m12_04
-    "Lake of Rot":               {"area_ids": [(12011, 12011)], "reveal_flags": [62061]},  # VERIFY area id (sub of Ainsel m12? needs a data point)
+    "Lake of Rot":               {"area_ids": [(12011, 12011)], "reveal_flags": [62061]},  # 12011 CONFIRMED static (REGION_ID_MAP.md); 12012 Astel/Ainsel Depths sits in the Ainsel entry (same Nokstella Lock)
     "Siofra River":              {"area_ids": [(12020, 12029), (12070, 12089)], "reveal_flags": [62063]},  # m12_02, m12_07(=12070 confirmed), m12_08
-    "Nokron, Eternal City Start":{"area_ids": [], "reveal_flags": []},  # m12_09; no Nokron map pillar
+    "Nokron, Eternal City Start":{"area_ids": [], "reveal_flags": []},  # Nokron graces bucket = 12020 (Ancestral Woods / Night's Sacred Ground -- REGION_ID_MAP.md), already inside the Siofra River ranges above; same Nokron Lock, so no own entry needed
     "Deeproot Depths":           {"area_ids": [(12030, 12039)], "reveal_flags": [62064]},  # m12_03
     "Mohgwyn Palace":            {"area_ids": [(12050, 12059)], "reveal_flags": [62062]},  # m12_05
 
@@ -159,7 +195,22 @@ def build_region_lock_slot_data(region_lock_item):
     """
     # Dedicated per-lock OPEN-STATE flags (independent of the 62xxx map flags). Shared locks share one.
     locks = sorted({region_lock_item[r] for r in REGIONS if region_lock_item.get(r)})
-    lock_open = {lk: OPEN_FLAG_BASE + i for i, lk in enumerate(locks)}
+    # HAND_PICKED locks take their reserved below-band flag; everything else walks the
+    # computed band starting at OPEN_FLAG_BASE, skipping RESERVED_OPEN_FLAGS so a computed
+    # assignment can never collide with a hand-picked one or a runtime-reserved flag
+    # (SPEC-region-spine-surgery.md SS6; closes the 76996 deathlink-kill collision for real).
+    lock_open = {}
+    _next = OPEN_FLAG_BASE
+    for lk in locks:
+        if lk in HAND_PICKED:
+            lock_open[lk] = HAND_PICKED[lk]
+            continue
+        while _next in RESERVED_OPEN_FLAGS or _next in lock_open.values():
+            _next += 1
+        lock_open[lk] = _next
+        _next += 1
+    for _lk, _flag in lock_open.items():
+        assert _flag <= 76997, "lock open flag out of the probe-confirmed valid group: %s=%s" % (_lk, _flag)
     area_lock = []
     lock_reveal = {}
     for region, info in REGIONS.items():

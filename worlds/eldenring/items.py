@@ -2161,16 +2161,16 @@ _vanilla_items = [
     ERItemData("Godrick Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # godrick granularity
     ERItemData("Liurnia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Spelunker's Ghostflame Torch", 24050000, ERItemCategory.WEAPON, classification=ItemClassification.progression, lock=True),  # Liurnia minor-dungeon bundle (caves/catacombs/tunnel/precipice)    
-    ERItemData("South West Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("South East Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("North Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("South West Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=False),  # folded into Nokstella Lock
+    ERItemData("Nokron Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # was South East Underground Lock
+    ERItemData("Nokstella Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # was North Underground Lock; Lake of Rot folds in
     
     ERItemData("Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Spelunker's Steel-Wire Torch", 24020000, ERItemCategory.WEAPON, classification=ItemClassification.progression, lock=True),  # opt-in granularity (extra_region_locks: altus_caves)
     
     ERItemData("Caelid Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Redmane Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Dragonbarrow Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Dragonbarrow Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=False),  # folded into Caelid Lock
 
     ERItemData("Mt. Gelmir Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Volcano Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=False),  # folded into Mt. Gelmir Lock
@@ -2181,6 +2181,7 @@ _vanilla_items = [
     ERItemData("Farum Azula Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Ashen Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
+    ERItemData("Mountaintops Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # NEW: SPEC-region-spine-surgery.md; reuses NK apparatus (open flag 76965)
     ERItemData("Haligtree Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Spelunker's Beast-Repellent Torch", 24060000, ERItemCategory.WEAPON, classification=ItemClassification.progression, lock=True),  # opt-in granularity (extra_region_locks: mountaintops_caves)
 ]
@@ -2854,8 +2855,9 @@ _dlc_items = [
 for item in _dlc_items:
     item.is_dlc = True
 
-# Snowfield Lock: dedicated lock to split Consecrated Snowfield off the Mountaintops/Rold
-# cluster (opt-in via extra_region_locks: "snowfield"). Constructed AFTER _dlc_items so no
+# Snowfield Lock: dedicated lock for Consecrated Snowfield, always-on first-class region
+# lock (SPEC-region-spine-surgery.md; no longer opt-in -- the "snowfield" extra_region_locks
+# member is retired). Constructed AFTER _dlc_items so no
 # other item's auto ap_code shifts; appended to _vanilla_items so it is a BASE-game item.
 _snowfield_lock = ERItemData("Snowfield Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True)
 _vanilla_items.append(_snowfield_lock)
