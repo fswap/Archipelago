@@ -2899,6 +2899,46 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 f"-- relax exclusions (missable/excluded behavior, important_locations) or use "
                 f"a larger location_pool.")
 
+    def fill_hook(self, progitempool, usefulitempool, filleritempool, fill_locations) -> None:
+        """EXCLUDED-supply census at FILL time (2026-07-02). The pre_fill balancer
+        (_balance_excluded_junk) counts before distribute_early_items and before AP's
+        final classification bucketing, so on tight pools (trimmed + seal goals) its
+        census can drift a couple of items -> hard FillError at the excluded
+        remaining_fill. fill_hook gets the ACTUAL pools + locations the fill will
+        bucket, so this count is exact; SLACK covers per-location item_rule
+        rejections. Count-neutral useful -> Golden Rune [2] swap, mirrored into
+        multiworld.itempool; graceful OptionError if useful cannot cover it."""
+        from BaseClasses import LocationProgressType
+        from Options import OptionError
+        SLACK = 2
+        excluded = sum(1 for l in fill_locations
+                       if l.player == self.player and l.item is None
+                       and l.progress_type == LocationProgressType.EXCLUDED)
+        if not excluded:
+            return
+        own_filler = sum(1 for i in filleritempool if i.player == self.player)
+        deficit = excluded + SLACK - own_filler
+        if deficit <= 0:
+            return
+        own_useful = [i for i in usefulitempool if i.player == self.player]
+        swap = own_useful[:deficit]
+        for _it in swap:
+            usefulitempool.remove(_it)
+            self.multiworld.itempool.remove(_it)
+            _rune = self.create_item("Golden Rune [2]")
+            filleritempool.append(_rune)
+            self.multiworld.itempool.append(_rune)
+        if swap:
+            warning(f"{self.player_name}: fill-time excluded census swapped {len(swap)} "
+                    f"useful item(s) -> Golden Rune [2] (excluded={excluded}, "
+                    f"own filler was {own_filler}, slack={SLACK}).")
+        if len(swap) < deficit:
+            raise OptionError(
+                f"{self.player_name}: {excluded} excluded locations exceed the excludable "
+                f"supply by {deficit - len(swap)} at fill time even after swapping every "
+                f"useful item -- relax exclusions (missable/excluded behavior, "
+                f"important_locations) or use a larger location_pool.")
+
     def _can_get(self, state: CollectionState, location) -> bool:
         """Returns whether state can access the given location name."""
         return state.can_reach_location(location, self.player)

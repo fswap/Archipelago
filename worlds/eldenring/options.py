@@ -151,7 +151,7 @@ class NumRegionsOrder(Choice):
       the old region_count option, folded in here.
 
     Ignored unless num_regions > 0 (and, like num_regions, only under the Capital goal + lock
-    logic). num_regions_rune_source: pool is ignored under spine (pool rolls a random set)."""
+    logic). Any rune deficit vs great_runes_required is pool-injected automatically."""
     display_name = "Num Regions Order"
     option_rolled = 0
     option_spine = 1
