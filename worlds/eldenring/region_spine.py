@@ -237,6 +237,7 @@ def compute_region_scope(
 # the cave/torch bundle steps (see CAVE_BUNDLE_STEPS; renumbered from 9..12 when the spine grew
 # to 12 steps, spine surgery 2026-07-02).
 NUM_REGIONS_CHAIN_STEP_LOCK: Dict[int, str] = {
+    1: "Limgrave Lock",   # LIMGRAVE_ROLL 2026-07-03: ordinary chain-capable middle (HANDOFF-LIMGRAVE-ROLL A)
     2: "Weeping Lock",
     3: "Stormveil Lock",
     4: "Liurnia Lock",
@@ -258,6 +259,7 @@ NUM_REGIONS_CHAIN_STEP_LOCK: Dict[int, str] = {
 # to find a breadcrumb HOST location. First name is the primary (where the prominent boss lives);
 # the rest are fallbacks searched in order if the primary has no usable host.
 NUM_REGIONS_CHAIN_STEP_HOST_REGIONS: Dict[int, List[str]] = {
+    1: ["Limgrave", "Stormhill"],  # LIMGRAVE_ROLL: no mainboss -- field bosses host via the picker's non-missable-boss fallback
     2: ["Weeping Peninsula"],
     3: ["Stormveil Throne", "Stormveil Castle", "Stormveil Start"],
     4: ["Raya Lucaria Academy Library", "Raya Lucaria Academy", "Liurnia of The Lakes"],
@@ -667,7 +669,14 @@ def compute_num_regions_scope(
 # including a sealed Limgrave / Altus -- is still reachable via each region's lock.
 
 # Every overworld major step (1-based SPINE index) is rollable in pool mode: steps 1..12 uniformly.
-NUM_REGIONS_POOL_STEPS: List[int] = list(range(1, len(SPINE) + 1))
+# Underground (step 8 Siofra/Nokron = Nokron Lock, step 9 Ainsel/Nokstella = Nokstella Lock)
+# DROPPED from num_regions for v0.1: the underground map layer will not reveal on AP unlock
+# (see STATUS-UNDERGROUND-MAP.md). Excluding them here seals them in every num_regions seed
+# (checks -> events, lock pulled) so the player is never routed to a region whose map won't
+# open. Re-add 8, 9 to re-enable once the map-enable flag/mechanism is solved.
+_UNDERGROUND_STEPS_DROPPED_V01 = {8, 9}
+NUM_REGIONS_POOL_STEPS: List[int] = [s for s in range(1, len(SPINE) + 1)
+                                     if s not in _UNDERGROUND_STEPS_DROPPED_V01]
 
 
 def compute_num_regions_scope_pool(
@@ -806,3 +815,90 @@ def active_cave_steps(extra_region_locks) -> Set[int]:
     if "limgrave_caves" in keys:
         keys.add("limgrave_underground")
     return {idx for idx, d in CAVE_BUNDLE_STEPS.items() if d["key"] in keys}
+
+
+# ===== BOSS_LOCKS_PATCH: per-boss sweep locks (SPEC-boss-locks.md, v0.1 sweep-gate model) =====
+# v0.1 pivot (Alaric 2026-07-03): there is NO physical boss-arena enforcement yet -- nothing
+# stops the player walking into the boss room. The boss lock instead gates the group's DUNGEON
+# SWEEP (the client holds the sweep until the lock is in its received-items set, re-checked
+# every flag-poll tick so a lock received AFTER the boss kill fires the sweep retroactively)
+# plus the group's TRIGGER drop location in AP logic. Pre-boss checks stay on the region lock
+# only -- the escape hatch is emergent from fill, exactly as the spec argues. No event flags
+# are allocated: the 76971+ open-flag band is full and there is no fog wall to key off one.
+ENABLE_BOSS_LOCKS = True  # internal kill-switch for debugging; NO player option (spec: always-on)
+
+# The legacy dungeon-sweep region groups, hoisted VERBATIM out of
+# EldenRingWorld._compute_dungeon_sweeps so BOSS_LOCKS keys off the same object and the two can
+# never drift (the recording block in _compute_dungeon_sweeps raises on a group with no entry).
+# group[0] doubles as the group key.
+LEGACY_SWEEP_GROUPS: List[List[str]] = [
+    ["Stormveil Start", "Stormveil Castle", "Stormveil Throne"],
+    ["Raya Lucaria Academy", "Raya Lucaria Academy Main",
+     "Raya Lucaria Academy Chest", "Raya Lucaria Academy Library"],
+    ["Volcano Manor", "Volcano Manor Entrance", "Volcano Manor Upper",
+     "Volcano Manor Dungeon", "Volcano Manor Drawing Room"],
+    ["Leyndell, Royal Capital", "Leyndell, Royal Capital Unmissable",
+     "Leyndell, Royal Capital Throne"],
+    ["Leyndell, Ashen Capital", "Leyndell, Ashen Capital Throne"],
+    ["Farum Azula", "Farum Azula Main"],
+    ["Miquella's Haligtree", "Elphael, Brace of the Haligtree"],
+    ["Mohgwyn Palace"],
+    # DLC
+    ["Belurat", "Belurat Swamp"],
+    ["Castle Ensis"],
+    ["Shadow Keep", "Shadow Keep Storehouse", "Shadow Keep Storehouse Back",
+     "Shadow Keep, West Rampart", "Shadow Keep, Church District",
+     "Shadow Keep, Church District Lower"],
+    ["Midra's Manse"],
+    ["Stone Coffin Fissure"],
+    ["Enir Ilim"],
+    # DLC ruins that ARE their own regions and whose deepest boss
+    # drops a remembrance, so they qualify for the legacy rule as-is
+    # (trigger = the remembrance). Finger Ruins -> Metyr, Mother of
+    # Fingers; Rauh ruins -> Romina, Saint of the Bud. Overworld ruins
+    # folded into a parent region (most of them) do NOT belong here --
+    # see SPEC-ruins-sweep.md for the ruinsboss-tag route for those.
+    ["Finger Ruins of Miyr", "Finger Ruins of Rhia", "Finger Ruins of Dheo"],
+    ["Ancient Ruins of Rauh", "Rauh Ruins Limited"],
+]
+
+# The Shaded Castle shares the Altus Plateau AP region (its sweep is the NAME-based SCIG/SCR
+# block in _compute_dungeon_sweeps), so it cannot appear in LEGACY_SWEEP_GROUPS; explicit key.
+SHADED_CASTLE_GROUP_KEY = "The Shaded Castle"
+
+# group key (group[0] / SHADED_CASTLE_GROUP_KEY) -> boss lock ITEM name. One lock per major
+# sweep group. "Godrick Lock" is the pre-existing godrick-granularity item folded in rather
+# than duplicated (the spec's precedent); every other value is a new items.py lock=True entry.
+# NOTE Castle Morne has NO sweep group today (the spec's example was stale), so Leonine
+# Misbegotten gets no lock in v0.1 -- add a Castle Morne group first if he should.
+BOSS_LOCKS: Dict[str, str] = {
+    "Stormveil Start": "Godrick Lock",
+    "Raya Lucaria Academy": "Rennala Lock",
+    "Volcano Manor": "Rykard Lock",
+    "Leyndell, Royal Capital": "Morgott Lock",
+    "Leyndell, Ashen Capital": "Hoarah Loux Lock",
+    "Farum Azula": "Maliketh Lock",
+    "Miquella's Haligtree": "Malenia Lock",
+    "Mohgwyn Palace": "Mohg Lock",
+    "Belurat": "Divine Beast Lock",
+    "Castle Ensis": "Rellana Lock",
+    "Shadow Keep": "Messmer Lock",
+    "Midra's Manse": "Midra Lock",
+    "Stone Coffin Fissure": "Putrescent Lock",
+    "Enir Ilim": "Promised Consort Lock",
+    "Finger Ruins of Miyr": "Metyr Lock",
+    "Ancient Ruins of Rauh": "Romina Lock",
+    SHADED_CASTLE_GROUP_KEY: "Elemer Lock",
+}
+
+# Group keys whose regions only exist with the DLC enabled.
+BOSS_LOCK_DLC_KEYS: Set[str] = {
+    "Belurat", "Castle Ensis", "Shadow Keep", "Midra's Manse",
+    "Stone Coffin Fissure", "Enir Ilim", "Finger Ruins of Miyr", "Ancient Ruins of Rauh",
+}
+
+# group key -> regions used by the generate_early presence prediction (inject the lock iff any
+# group region is unsealed this seed). The Shaded Castle rides the shared Altus Plateau region.
+BOSS_LOCK_GROUP_REGIONS: Dict[str, List[str]] = {g[0]: list(g) for g in LEGACY_SWEEP_GROUPS}
+BOSS_LOCK_GROUP_REGIONS[SHADED_CASTLE_GROUP_KEY] = ["Altus Plateau"]
+# ===== end BOSS_LOCKS_PATCH ==================================================================

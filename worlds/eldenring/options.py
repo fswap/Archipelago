@@ -31,6 +31,7 @@ class EndingCondition(Choice):
     option_capital = 4
     option_messmer = 5
     option_godrick = 6
+    default = 4  # The Shattering default (Alaric 2026-07-03): Capital run pairs with num_regions
 
 class WorldLogic(Choice):
     """World Logic options
@@ -139,7 +140,7 @@ class NumRegions(Range):
     display_name = "Num Regions (Capital run)"
     range_start = 0
     range_end = 9
-    default = 0
+    default = 3  # The Shattering default (Alaric 2026-07-03): structural minimum -- Limgrave + Altus + Leyndell
 
 class DLCOnlyChain(Toggle):
     """Chain the DLC-only (Land of Shadow) run into a linear lock breadcrumb so the AP fill
@@ -400,8 +401,10 @@ class MerchantBellLogic(Choice):
 class SpellShopSpellsOnly(Toggle):
     """Constrain randomized spell-shop slots (sorcery and incantation vendors) to hold
     only spells, so caster builds can still count on spell vendors stocking castable
-    spells instead of arbitrary randomized items."""
+    spells instead of arbitrary randomized items. Default ON; the eligible pool mixes
+    both schools (a sorcery may stock an incantation vendor and vice versa)."""
     display_name = "Spell Shop Spells Only"
+    default = 1  # default ON (Alaric 2026-07-03, original ask)
     
 class EarlyLegacyDungeonsEarly(Toggle):
     """Route logic through the early legacy dungeons first: progression into Liurnia
@@ -530,7 +533,7 @@ class DungeonSweep(Choice):
     option_minidungeons = 1
     option_all = 2
     option_bosses = 3
-    default = 0
+    default = 2  # The Shattering default (Alaric 2026-07-03): boss locks activate at >= all
 
 class BellPhysickOption(Choice):
     """How to handle the Spirit Calling Bell and Flask of Wondrous Physick. Both are inert
@@ -791,19 +794,6 @@ class RandomStartRegion(Choice):
     option_any_major = 2
     default = 0
 
-class StartRegionFreebie(Choice):
-    """How much comes free with the rolled start region. The start region is always reachable with
-    zero items (its lock is pre-collected); this controls whether Limgrave (Roundtable / early
-    services / Torrent hand-off area) is also lit at load.
-
-    - hub_only:    just the start region's graces + open flag.
-    - to_limgrave: also light Limgrave's start graces so services are never stranded behind a lock
-                   you happened not to start near (recommended)."""
-    display_name = "Start Region Freebie"
-    option_hub_only = 0
-    option_to_limgrave = 1
-    default = 1
-
 class CompletionScalingFloor(Range):
     """Minimum scaling tier as a PERCENT of the MaxTier (0 = earliest tier can stay 1; 25 =
     nothing below ~a quarter of the curve). Completion scaling is always on (SPEC-region-
@@ -851,7 +841,6 @@ class EROptions(PerGameCommonOptions):
     completion_scaling_floor: CompletionScalingFloor
     global_scadutree_blessing: GlobalScadutreeBlessing
     random_start_region: RandomStartRegion
-    start_region_freebie: StartRegionFreebie
     royal_access: RoyalAccess
     early_leveling: EarlyLeveling
     extra_region_locks: ExtraRegionLocks
@@ -926,7 +915,6 @@ option_groups = [
     ]),
     OptionGroup("Start", [
         RandomStartRegion,
-        StartRegionFreebie,
         EarlyLeveling,
         RandomizeStartingLoadout,
         TorrentStart,

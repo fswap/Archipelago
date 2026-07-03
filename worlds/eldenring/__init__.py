@@ -822,6 +822,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                                "Ancient Ruins of Rauh"}
             if _belfry_targets <= _sealed_rr2:
                 item_table["Imbued Sword Key"].skip = True
+        # Grace items are inject=True at construction (items.py) so grace_rando can place
+        # them; the grace_rando gate elsewhere guards only PLACEMENT, not injection. With
+        # grace_rando OFF they must NOT enter the pool -- pull them from the injectable set
+        # (else they leak into filler via _all_injectable_items). (playtest 2026-07-03)
+        if not (getattr(self.options, "grace_rando", None) and self.options.grace_rando.value):
+            for _gi in item_table.values():
+                if getattr(_gi, "grace", False):
+                    _gi.inject = False
         if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject keys
             for item in item_table:
                 if item_table[item].lock:
@@ -862,6 +870,31 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 for _lk in getattr(self, "_num_regions_chain_managed_locks", ()):  # free + breadcrumb
                     if _lk in item_table:
                         item_table[_lk].inject = False
+            # === BOSS_LOCKS_PATCH: per-boss sweep-gate locks (SPEC-boss-locks.md v0.1) ========
+            # Runs AFTER the generic lock=True injection, the spine/godrick seal pull and the
+            # num_regions chain pull, and OVERRIDES them for boss locks: injected iff the
+            # Shattering config is on (region_lock* + dungeon_sweep >= 2) AND the lock's sweep
+            # group is predicted present this seed (some group region unsealed; DLC groups need
+            # enable_dlc; base groups die under dlc_only). "Godrick Lock" is special-cased
+            # ON-only: its OFF path stays owned by the godrick extra_region_locks key above.
+            _bl_active = (getattr(region_spine, "ENABLE_BOSS_LOCKS", False)
+                          and self.options.dungeon_sweep >= 2)
+            _bl_sealed = getattr(self, "_spine_sealed_regions", set())
+            for _bl_key, _bl_name in region_spine.BOSS_LOCKS.items():
+                if _bl_name not in item_table:
+                    continue
+                _bl_present = any(_r not in _bl_sealed
+                                  for _r in region_spine.BOSS_LOCK_GROUP_REGIONS.get(_bl_key, ()))
+                if _bl_key in region_spine.BOSS_LOCK_DLC_KEYS:
+                    _bl_present = _bl_present and bool(self.options.enable_dlc)
+                else:
+                    _bl_present = _bl_present and not self.options.dlc_only
+                if _bl_name == "Godrick Lock":
+                    if _bl_active and _bl_present:
+                        item_table[_bl_name].inject = True
+                else:
+                    item_table[_bl_name].inject = bool(_bl_active and _bl_present)
+            # === end BOSS_LOCKS_PATCH =========================================================
             # num_regions / spine seal: the smithing-bell entrance gate (Altus / Capital Outskirts /
             # Flame Peak / Farum requiring Miner's Bell Bearings) is fabricated -- vanilla ER never
             # gates area access on bell bearings -- and in a tiny sealed pool it force-places ~15
@@ -1121,15 +1154,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # truthy, not its value). Resolve link 0 via SPINE (canonical region name); require it be
             # grace-mapped so the start-grace bundle + WarpPlayer target resolve. Fall back to the
             # Roundtable spawn when chain is off or link 0 isn't grace-mapped. SPEC + HANDOFF-num-regions-random-start.md.
-            _ns_start = "Roundtable Hold"
-            _chain_ord = getattr(self, "_num_regions_chain_order", None)
-            if getattr(self, "_num_regions_chain", False) and _chain_ord:
-                _step0 = _chain_ord[0]
-                if 1 <= _step0 <= len(region_spine.SPINE):
-                    _cand = region_spine.SPINE[_step0 - 1].get("name")
-                    if _cand in REGION_GRACE_POINTS:
-                        _ns_start = _cand
-            self._random_start_region = _ns_start
+            # LIMGRAVE_ROLL (Alaric 2026-07-03): Roundtable IS the start -- no physical
+            # spawn in the link-0 region (the old resolve below this comment is DELETED).
+            # Sphere 1 = the Roundtable hub + link-0's precollected lock + that region's
+            # grace bundle; the player spawns at the hub and warps out. Limgrave chains like
+            # any middle now (NUM_REGIONS_CHAIN_STEP_LOCK[1]), so link 0 can be ANY rolled
+            # region, Limgrave included -- or Limgrave can roll sealed; no special status.
+            self._random_start_region = "Roundtable Hold"
         _rsr_opt = self.options.random_start_region.value
         if _rsr_opt and self.options.world_logic.value in (0, 2) and not self.options.dlc_only:
             if getattr(self, "_spine_active", False):
@@ -1962,6 +1993,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 _it.classification = ItemClassification.progression_skip_balancing
 
         # Add items to itempool
+        # Crash guard: cap slot-expanding uniques (Talisman Pouch / Memory Stone) to their
+        # GAME limit. ER hard-caps them; extra copies granted past the cap crash the game
+        # (playtest 2026-07-03). pool_builder's uplift injects them on top of the base pool
+        # without subtracting existing copies, so the total can exceed UPLIFT_UNIQUE_CAPS.
+        # Trim the excess to filler here (count-neutral), whatever the source.
+        for _cap_name, _cap_n in UPLIFT_UNIQUE_CAPS.items():
+            _dupes = [_it for _it in self.local_itempool if _it.name == _cap_name]
+            for _it in _dupes[_cap_n:]:
+                self.local_itempool.remove(_it)
+                self.local_itempool.append(self.create_item(self.get_filler_item_name()))
         self.multiworld.itempool += self.local_itempool
 
         # grace_rando placement MOVED here from pre_fill (2026-06-26): keeps multiworld.itempool
@@ -3211,6 +3252,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         dungeon_sweep is off. SPEC-dungeon-sweep.md."""
         dungeon_sweeps: Dict[str, List[int]] = {}
         groups = []
+        # BOSS_LOCKS_PATCH: {trigger location name: (trigger apLocId, boss lock item name)},
+        # rebuilt on every call (set_rules / hints / slot_data all call this method).
+        self._sweep_lock_gates_by_trigger = {}
         if self.options.dungeon_sweep != 0:
             regions_to_locs: Dict[str, List[ERLocation]] = {}
             for location in self._get_our_locations():
@@ -3239,36 +3283,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # this seed (e.g. DLC off) silently drop out. (bosses == 3 is a superset of all == 2;
             # the overworld tiers come from the C# sweep_flags in apconfig.json.)
             if self.options.dungeon_sweep >= 2:
-                legacy_groups = [
-                    ["Stormveil Start", "Stormveil Castle", "Stormveil Throne"],
-                    ["Raya Lucaria Academy", "Raya Lucaria Academy Main",
-                     "Raya Lucaria Academy Chest", "Raya Lucaria Academy Library"],
-                    ["Volcano Manor", "Volcano Manor Entrance", "Volcano Manor Upper",
-                     "Volcano Manor Dungeon", "Volcano Manor Drawing Room"],
-                    ["Leyndell, Royal Capital", "Leyndell, Royal Capital Unmissable",
-                     "Leyndell, Royal Capital Throne"],
-                    ["Leyndell, Ashen Capital", "Leyndell, Ashen Capital Throne"],
-                    ["Farum Azula", "Farum Azula Main"],
-                    ["Miquella's Haligtree", "Elphael, Brace of the Haligtree"],
-                    ["Mohgwyn Palace"],
-                    # DLC
-                    ["Belurat", "Belurat Swamp"],
-                    ["Castle Ensis"],
-                    ["Shadow Keep", "Shadow Keep Storehouse", "Shadow Keep Storehouse Back",
-                     "Shadow Keep, West Rampart", "Shadow Keep, Church District",
-                     "Shadow Keep, Church District Lower"],
-                    ["Midra's Manse"],
-                    ["Stone Coffin Fissure"],
-                    ["Enir Ilim"],
-                    # DLC ruins that ARE their own regions and whose deepest boss
-                    # drops a remembrance, so they qualify for the legacy rule as-is
-                    # (trigger = the remembrance). Finger Ruins -> Metyr, Mother of
-                    # Fingers; Rauh ruins -> Romina, Saint of the Bud. Overworld ruins
-                    # folded into a parent region (most of them) do NOT belong here --
-                    # see SPEC-ruins-sweep.md for the ruinsboss-tag route for those.
-                    ["Finger Ruins of Miyr", "Finger Ruins of Rhia", "Finger Ruins of Dheo"],
-                    ["Ancient Ruins of Rauh", "Rauh Ruins Limited"],
-                ]
+                # BOSS_LOCKS_PATCH: hoisted to region_spine.LEGACY_SWEEP_GROUPS so the
+                # boss-lock table keys off the same object (drift guard in the recording
+                # block below; see SPEC-ruins-sweep.md for the ruinsboss-tag route that keeps
+                # overworld ruins OUT of this list).
+                legacy_groups = region_spine.LEGACY_SWEEP_GROUPS
                 # Boss chokepoint sweep split (extra_region_locks: chokepoint_locks): carve a
                 # dungeon's BEFORE-half onto its choke boss drop, leaving the AFTER-half on the
                 # mainboss remembrance. Makes the choke its own sub-reward. SPEC-chokepoint-locks.md.
@@ -3292,6 +3311,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     if not rem_locs: continue
                     trigger = next((l for l in rem_locs if l.data.prominent), rem_locs[0])
                     add_sweep(trigger, locs)
+                    # BOSS_LOCKS_PATCH: record this group's sweep gate (only when the sweep
+                    # actually registered). Drift guard: a legacy group without a BOSS_LOCKS
+                    # entry fails generation LOUDLY rather than shipping an ungated sweep.
+                    if str(trigger.address) in dungeon_sweeps:
+                        _bl_gate = region_spine.BOSS_LOCKS.get(group[0])
+                        if _bl_gate is None and getattr(region_spine, "ENABLE_BOSS_LOCKS", False):
+                            raise Exception(
+                                "[ER boss-locks] legacy sweep group %r has no BOSS_LOCKS entry; "
+                                "add one in region_spine.BOSS_LOCKS (drift guard)" % (group[0],))
+                        if _bl_gate:
+                            self._sweep_lock_gates_by_trigger[trigger.name] = (trigger.address, _bl_gate)
 
             # The Shaded Castle: sweep every castle check on the Elemer of the Briar
             # boss drop. NAME-based (area code SCIG/SCR) -- the castle shares the Altus
@@ -3307,6 +3337,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                                      if getattr(l.data, "boss", False) and "boss drop" in l.name), None)
                     if _sc_trig is not None:
                         add_sweep(_sc_trig, _sc)
+                        # BOSS_LOCKS_PATCH: Shaded Castle sweep gate (explicit key -- the castle
+                        # shares the Altus AP region so it can't ride LEGACY_SWEEP_GROUPS).
+                        if str(_sc_trig.address) in dungeon_sweeps:
+                            _bl_sc = region_spine.BOSS_LOCKS.get(region_spine.SHADED_CASTLE_GROUP_KEY)
+                            if _bl_sc:
+                                self._sweep_lock_gates_by_trigger[_sc_trig.name] = (_sc_trig.address, _bl_sc)
         return dungeon_sweeps, groups
 
     def extend_hint_information(self, hint_data):
@@ -3448,6 +3484,22 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # check when it fires. Logic deliberately does NOT model this (early arrivals are safe).
         dungeon_sweeps, _ = self._compute_dungeon_sweeps()
 
+        # BOSS_LOCKS_PATCH (SPEC-boss-locks.md v0.1): {trigger apLocId(str): boss lock item
+        # name}. The client HOLDS a gated group's sweep until the named lock is in its
+        # received-items set -- evaluated every flag-poll tick, so a lock received after the
+        # boss kill fires the sweep retroactively. Only locks actually in this seed's pool are
+        # emitted; everything else (minidungeon + chokepoint-carve sweeps) stays ungated.
+        sweep_lock_gates: Dict[str, str] = {}
+        if (getattr(region_spine, "ENABLE_BOSS_LOCKS", False)
+                and (self.options.world_logic == "region_lock"
+                     or self.options.world_logic == "region_lock_bosses")
+                and self.options.dungeon_sweep >= 2):
+            for _sg_name, (_sg_addr, _sg_lock) in getattr(self, "_sweep_lock_gates_by_trigger", {}).items():
+                _sg_data = item_table.get(_sg_lock)
+                if _sg_addr is None or _sg_data is None or not getattr(_sg_data, "inject", False):
+                    continue
+                sweep_lock_gates[str(_sg_addr)] = _sg_lock
+
         # Chokepoint boss attribution (extra_region_locks: chokepoint_locks): in bosses mode the
         # static randomizer's geometric sweep lumps a whole legacy dungeon onto its single
         # lowest-id boss (all Farum Azula -> Maliketh, all Haligtree -> Malenia), which would let
@@ -3526,6 +3578,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 region_graces.setdefault(_lock, []).extend(_chosen)
             for _lock in region_graces:
                 region_graces[_lock] = sorted(set(region_graces[_lock]))
+            # Underground map-layer guarantee (belt-and-suspenders, RE 2026-07-03): the
+            # underground map only becomes selectable once the player holds an underground
+            # GRACE flag (71270 "Siofra River Well Depths" alone flipped the layer on). The
+            # _spread bundle above already puts underground graces on Nokron/Nokstella Lock,
+            # but graces_per_region/_spread could drop them, so force one guaranteed grace per
+            # underground lock. Same shape as the DLC map flag 82001 bundled onto Gravesite
+            # Plain's lock below. Harmless if the lock is sealed/absent (only set on receipt).
+            for _ulock, _ugrace in (("Nokron Lock", 71270), ("Nokstella Lock", 71211)):
+                if _ulock in item_table:
+                    region_graces[_ulock] = sorted(set(region_graces.get(_ulock, []) + [_ugrace]))
             # Limgrave Lock (SPEC-region-spine-surgery.md P0): Limgrave is a normal LOCKED region
             # but has NO REGION_GRACE_POINTS entry (never captured there -- only the curated flat
             # LIMGRAVE_START_GRACES list exists). Bundle those curated Limgrave/Stormhill
@@ -3832,8 +3894,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             _rs_of = region_open_flags.get(REGION_LOCK_ITEM.get(_rsr))
             if _rs_of:
                 _rs_g.append(int(_rs_of))
-            if self.options.start_region_freebie.value == 1 and not _limgrave_sealed:  # to_limgrave (only when Limgrave is kept)
-                _rs_g += [int(f) for f in LIMGRAVE_START_GRACES]
             start_graces = sorted(set(start_graces + _rs_g))
             if _rsr_is_limgrave:
                 _rsr_warp_grace = 76101  # The First Step -- fixed anchor, no x/z data to center on
@@ -3956,6 +4016,40 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _df.write("\n".join(_lines))
             except Exception:
                 pass
+        # SCALING_WIRE_PATCH (er-completion-scaling P1): the client resolves the PLAYER's
+        # play_region_id/100 (the same sub-id bucket areaLockFlags uses); the name-keyed table
+        # above was never client-parseable, so the sphere bridge was dead at the wire ("enemy
+        # scaling left VANILLA" every session). Emit RANGE-keyed integer targets
+        # [[lo_sub, hi_sub, int(frac*10000)], ...] from map_region_data.REGIONS area_ids plus
+        # the NK-interior ids REGIONS deliberately leaves empty. AP sub-regions without their
+        # own area_ids ride the covering major's range (e.g. Stormveil Throne rides 10000).
+        # Unmapped play regions resolve to the floor tier client-side (under-scale = safe).
+        region_sphere_target_ranges = []
+        if region_sphere_targets:
+            _SW_EXTRA_RANGES = {
+                # Emitted by the __init__ areaLockFlags apparatus, kept [] in REGIONS to avoid
+                # duplicate kick rows: Haligtree 15000/15001, Raya Lucaria 14000, Volcano 16000.
+                "Miquella's Haligtree": [(15001, 15001)],   # 15001 = outer Haligtree
+                "Elphael, Brace of the Haligtree": [(15000, 15000)],  # 15000 = Elphael (deeper sphere)
+                "Raya Lucaria Academy": [(14000, 14000)],
+                "Volcano Manor": [(16000, 16000)],
+                # Leyndell (REGION_ID_MAP.md static resolve, 2026-07-03): 11000 Royal Capital,
+                # 11050 Ashen Capital. SCALING ONLY -- deliberately NOT added to REGIONS
+                # area_ids, so no new KICK rows (Ashen physical kick = separate decision).
+                "Leyndell, Royal Capital": [(11000, 11000)],
+                "Leyndell, Ashen Capital": [(11050, 11050)],
+            }
+            from .map_region_data import REGIONS as _SW_REGIONS
+            _sw_seen = set()
+            for _sw_name, _sw_frac in region_sphere_targets.items():
+                _sw_ranges = list((_SW_REGIONS.get(_sw_name) or {}).get("area_ids") or [])
+                _sw_ranges += _SW_EXTRA_RANGES.get(_sw_name, [])
+                for (_sw_lo, _sw_hi) in _sw_ranges:
+                    if (_sw_lo, _sw_hi) in _sw_seen:
+                        continue  # first (shallowest-sphere) owner of a shared range wins
+                    _sw_seen.add((_sw_lo, _sw_hi))
+                    region_sphere_target_ranges.append(
+                        [int(_sw_lo), int(_sw_hi), int(round(_sw_frac * 10000))])
         # GRANT-ON-RECEIPT rider (SPEC-region-spine-surgery.md SS3.5, decided after the first
         # Track D pass): the medallions are unpooled (change B above) but the client still needs
         # to physically GRANT them in-game on the covering lock's receipt -- keeps the Grand Lift
@@ -4063,6 +4157,10 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Optional; only present when dungeon_sweep != none. Consumed by the runtime
             # client only — the static randomizer ignores it.
             "dungeonSweeps": dungeon_sweeps,
+            # BOSS_LOCKS_PATCH: sweep gates -- trigger apLocId -> boss lock item name that must
+            # be in the client's received set before that trigger's sweep fires. Runtime client
+            # only; re-checked every flag-poll tick (late lock => retroactive sweep).
+            "sweepLockGates": sweep_lock_gates,
             # Chokepoint boss attribution (extra_region_locks: chokepoint_locks):
             # { chokeBossDefeatFlag : [before-half apLocId,...] }. The baker re-homes these off
             # the end-boss lump onto the choke boss in bosses mode. Empty unless chokepoint_locks
@@ -4142,6 +4240,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # only basis (the geographic alternative no longer exists). Key name preserved.
             "completionScalingBasis": 1,
             "regionSphereTargets": region_sphere_targets,
+            # SCALING_WIRE_PATCH: the client-parseable form -- [[lo_sub, hi_sub, target/10000]]
+            # in play_region/100 space. The name-keyed table above stays for inspection only.
+            "regionSphereTargetRanges": region_sphere_target_ranges,
             # ER-stack ENCODING / slot_data contract version range (what decisions A–E
             # define), NOT any binary's release number. Enforced by BOTH the static
             # randomizer at bake AND the runtime client at connect, each checking its

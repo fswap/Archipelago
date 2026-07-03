@@ -260,6 +260,41 @@ class EldenRingRules:
                 self._add_location_rule("Victory", lambda state: self._can_get_all(state, self.location_name_groups["Boss Reward"]))
                 self.multiworld.completion_condition[self.player] = lambda state: self._can_get(state, "Victory")
         
+        # SPELL_SHOP_FILL_PATCH (spell_shop_spells_only, SPEC-boss-locks.md spell-shop
+        # section): pure-runtime enforcement lives in FILL now -- the old bake-side C#
+        # restriction has no live consumer (confirmed 2026-07-03), so the option was inert
+        # end-to-end. Every shop slot tagged sorceries/incantations may only hold one of OUR
+        # spells, drawn from the UNION pool (sorceries 4000-8000 + incantations
+        # 2004000-2008000): an incantation may stock Sellen, a sorcery may stock Corhyn.
+        # Feasibility is structural: each constrained slot's vanilla item IS a spell, so the
+        # pool always carries at least as many spells as there are constrained slots (caveat:
+        # aggressive filler-replacement of spells could in principle starve it; fuzz watches).
+        if self.options.spell_shop_spells_only:
+            from . import _is_spell_code
+            from .items import ERItemCategory as _SSItemCategory
+
+            def _spell_shop_rule(item, _p=self.player):
+                if item.player != _p:
+                    return False
+                _d = getattr(item, "data", None)
+                return (_d is not None
+                        and _d.category == _SSItemCategory.GOODS
+                        and _is_spell_code(_d.er_code))
+
+            _ss_slots = 0
+            for _ss_loc in self._get_our_locations():
+                if _ss_loc.address is None:
+                    continue
+                _ss_d = _ss_loc.data
+                if getattr(_ss_d, "shop", False) and (getattr(_ss_d, "sorceries", False)
+                                                      or getattr(_ss_d, "incantations", False)):
+                    add_item_rule(_ss_loc, _spell_shop_rule)
+                    _ss_slots += 1
+            if _ss_slots:
+                from logging import warning
+                warning(f"{self.player_name}: spell_shop_spells_only: {_ss_slots} shop "
+                        f"slot(s) restricted to the mixed sorcery+incantation pool.")
+
         # dungeon_sweep reachability modeling (patch_dungeon_sweep_logic 2026-07-02): runs
         # AFTER every other rule attachment so the OR wraps each member's final rule.
         self._apply_dungeon_sweep_logic()

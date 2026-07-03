@@ -251,4 +251,25 @@ def build_region_lock_location_rules(world) -> dict[str, Rule]:
     if "godrick" in _erl(world):
         # Faithful to _add_location_rule(GODRICK_GOAL_LOCATION, "Godrick Lock") -> Has("Godrick Lock").
         rules[region_spine.GODRICK_GOAL_LOCATION] = Has("Godrick Lock")
+    # --- BOSS_LOCKS_PATCH (SPEC-boss-locks.md v0.1): gate each major sweep TRIGGER drop -------
+    # Client-side the group's sweep only fires while the boss lock is held (slot_data
+    # sweepLockGates); logic mirrors that by AND-gating the trigger drop location on Has(lock).
+    # Members keep their own geographic rules (still reachable by hand without the lock), and
+    # the sweep-OR in _apply_dungeon_sweep_logic wraps the trigger's FINAL rule, so it inherits
+    # this clause -- fill can never expect a sweep before the lock. Locks not in this seed's
+    # pool (sealed/absent groups) gate nothing. Escape hatch: the lock gates ONLY the trigger
+    # drop, so fill can always place it (or another region's lock) in the region-lock-only
+    # sphere; a self-gated placement would fail accessibility and re-roll.
+    if (getattr(region_spine, "ENABLE_BOSS_LOCKS", False)
+            and (world.options.world_logic == "region_lock"
+                 or world.options.world_logic == "region_lock_bosses")
+            and world.options.dungeon_sweep >= 2):
+        world._compute_dungeon_sweeps()  # (re)records _sweep_lock_gates_by_trigger
+        _bl_items = world.item_table
+        for _bl_trig, (_bl_addr, _bl_lock) in getattr(world, "_sweep_lock_gates_by_trigger", {}).items():
+            _bl_data = _bl_items.get(_bl_lock)
+            if _bl_data is None or not getattr(_bl_data, "inject", False):
+                continue
+            _bl_clause = Has(_bl_lock)
+            rules[_bl_trig] = _bl_clause if _bl_trig not in rules else (rules[_bl_trig] & _bl_clause)
     return rules

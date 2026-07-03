@@ -2184,6 +2184,28 @@ _vanilla_items = [
     ERItemData("Mountaintops Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # NEW: SPEC-region-spine-surgery.md; reuses NK apparatus (open flag 76965)
     ERItemData("Haligtree Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Spelunker's Beast-Repellent Torch", 24060000, ERItemCategory.WEAPON, classification=ItemClassification.progression, lock=True),  # opt-in granularity (extra_region_locks: mountaintops_caves)
+
+    #MARK: Boss Lock Items (BOSS_LOCKS_PATCH, SPEC-boss-locks.md v0.1)
+    # One synthetic sweep-gate lock per major dungeon-sweep group (region_spine.BOSS_LOCKS).
+    # "Godrick Lock" above is reused for the Stormveil group. Injected ONLY when world_logic is
+    # region_lock/region_lock_bosses AND dungeon_sweep >= 2 (generate_early override); the
+    # inject=False default keeps them out of every other configuration.
+    ERItemData("Rennala Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Raya Lucaria Academy sweep
+    ERItemData("Rykard Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Volcano Manor sweep
+    ERItemData("Morgott Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Leyndell, Royal Capital sweep
+    ERItemData("Hoarah Loux Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Leyndell, Ashen Capital sweep
+    ERItemData("Maliketh Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Farum Azula sweep
+    ERItemData("Malenia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Haligtree/Elphael sweep
+    ERItemData("Mohg Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Mohgwyn Palace sweep
+    ERItemData("Elemer Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # The Shaded Castle sweep (SCIG/SCR name-based group)
+    ERItemData("Divine Beast Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Belurat sweep
+    ERItemData("Rellana Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Castle Ensis sweep
+    ERItemData("Messmer Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Shadow Keep sweep
+    ERItemData("Midra Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Midra's Manse sweep
+    ERItemData("Putrescent Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Stone Coffin Fissure sweep
+    ERItemData("Promised Consort Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Enir Ilim sweep
+    ERItemData("Metyr Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Finger Ruins sweep
+    ERItemData("Romina Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Rauh ruins sweep
 ]
 
 #MARK: DLC Items
