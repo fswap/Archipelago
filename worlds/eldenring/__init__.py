@@ -92,14 +92,28 @@ _FILLER_RUNE_WEIGHTS = {
     "Golden Rune [13]": 2,
 }
 _FILLER_STONE_WEIGHTS = {
-    "Smithing Stone [1]": 2, "Smithing Stone [2]": 3, "Smithing Stone [3]": 3,
-    "Smithing Stone [4]": 3, "Smithing Stone [5]": 3, "Smithing Stone [6]": 3,
-    "Smithing Stone [7]": 2, "Smithing Stone [8]": 2,
-    "Somber Smithing Stone [1]": 1, "Somber Smithing Stone [2]": 2,
-    "Somber Smithing Stone [3]": 2, "Somber Smithing Stone [4]": 2,
-    "Somber Smithing Stone [5]": 2, "Somber Smithing Stone [6]": 2,
-    "Somber Smithing Stone [7]": 1, "Somber Smithing Stone [8]": 1,
+    # Uniform across every stone tier (Alaric 2026-07-04): each named
+    # smithing stone is equally likely in filler_replacement stones+runes
+    # mode. Previously mid-tier weighted; flattened so no tier is favored.
+    "Smithing Stone [1]": 1,
+    "Smithing Stone [2]": 1,
+    "Smithing Stone [3]": 1,
+    "Smithing Stone [4]": 1,
+    "Smithing Stone [5]": 1,
+    "Smithing Stone [6]": 1,
+    "Smithing Stone [7]": 1,
+    "Smithing Stone [8]": 1,
+    "Ancient Dragon Smithing Stone": 1,
+    "Somber Smithing Stone [1]": 1,
+    "Somber Smithing Stone [2]": 1,
+    "Somber Smithing Stone [3]": 1,
+    "Somber Smithing Stone [4]": 1,
+    "Somber Smithing Stone [5]": 1,
+    "Somber Smithing Stone [6]": 1,
+    "Somber Smithing Stone [7]": 1,
+    "Somber Smithing Stone [8]": 1,
     "Somber Smithing Stone [9]": 1,
+    "Somber Ancient Dragon Smithing Stone": 1,
 }
 _FILLER_STONE_RUNE_SPLIT = 0.65  # P(pick a stone) in stones_and_runes mode
 
@@ -1841,6 +1855,8 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             _swappable.sort(key=self._bad_gear_drop_rank)  # worst tier (F) first
             _ladder = self._uplift_inject_names(len(_swappable))
             _n = min(len(_ladder), len(_swappable))
+            # count pool_builder juice kept local (surfaced in ER_COUNTS)
+            self._pool_builder_local_count = getattr(self, "_pool_builder_local_count", 0) + _n
             for _name in _swappable[_n:]:                 # keep any un-funded rest in pool
                 self.local_itempool.append(self.create_item(_name))
             for _name in _ladder[:_n]:
@@ -2460,13 +2476,23 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         for _name, _cap in UPLIFT_UNIQUE_CAPS.items():
             if _name in item_table:
                 uniques += [_name] * _cap
+        # Dragon Hearts: seed a small handful so the (optional) Dragon Communion
+        # shop is fundable even when pool_builder scrubs base-game filler
+        # (Alaric 2026-07-04). Added post-dedup so copies survive; NOT capped globally.
+        if "Dragon Heart" in item_table:
+            uniques += ["Dragon Heart"] * 3
         self.random.shuffle(uniques)
         if len(uniques) >= budget:
             return uniques[:budget]
         buckets = {
+            # runes inject cap (Alaric 2026-07-04): floor 5000 + cap at Hero's Rune [1]
+            # (15000) excludes Hero's Rune [2]-[5] and Lord's Rune, which felt overtuned
+            # for base game. Keeps Golden [10]-[13], Numen's, Hero's [1]. Remembrances untouched.
             "runes": [n for n in item_table
                       if not item_table[n].is_dlc
-                      and (getattr(item_table[n], "runes", 0) or 0) >= UPLIFT_RUNE_MIN_VALUE],
+                      and UPLIFT_RUNE_MIN_VALUE <= (getattr(item_table[n], "runes", 0) or 0)
+                      <= (item_table["Hero's Rune [1]"].runes
+                          if "Hero's Rune [1]" in item_table else 15000)],
             "seeds_tears": _base(UPLIFT_SEEDS_TEARS),
             # smithing/somber/ancient-dragon smithing stones: stackable upgrade mats, the
             # fill-safe juice (goods, placeable anywhere). Matches every 'Smithing Stone' name.
@@ -3543,6 +3569,28 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                             _bl_sc = region_spine.BOSS_LOCKS.get(region_spine.SHADED_CASTLE_GROUP_KEY)
                             if _bl_sc:
                                 self._sweep_lock_gates_by_trigger[_sc_trig.name] = (_sc_trig.address, _bl_sc)
+            # SWEEP_CAELID_SUBAREAS (patch_caelid_subarea_sweeps.py): overworld sub-area
+            # sweeps for Caelid's Sellia + Swamp of Aeonia. Like the Shaded Castle these
+            # clusters share the single Caelid AP region, so a region group would over-sweep
+            # ALL of Caelid -- gate by AREA CODE instead. Sellia (Town of Sorcery, STS) sweeps
+            # on the Nox Duo drop (Nox Flowing Sword); the Swamp of Aeonia (Shore Beacon SASB +
+            # Inner Aeonia IA) sweeps on Commander O'Neill (Commander's Standard). Plain sweeps.
+            if self.options.dungeon_sweep >= 2:
+                def _sweep_area_code(_l):
+                    return _l.name.split(":", 1)[0].split("/")[-1].strip("()")
+                for _sub_codes, _sub_trig in (
+                    (("STS",), "Nox Flowing Sword"),
+                    (("SASB", "IA"), "Commander's Standard"),
+                ):
+                    _sub_cluster = [_l for _l in self._get_our_locations()
+                                    if _l.address is not None
+                                    and _sweep_area_code(_l) in _sub_codes]
+                    if not _sub_cluster:
+                        continue
+                    _sub_trigger = next((_l for _l in _sub_cluster
+                                         if _sub_trig in _l.name and "boss drop" in _l.name), None)
+                    if _sub_trigger is not None:
+                        add_sweep(_sub_trigger, _sub_cluster)
         return dungeon_sweeps, groups
 
     def extend_hint_information(self, hint_data):
@@ -3575,6 +3623,16 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
     def fill_slot_data(self) -> Dict[str, object]:
         item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
         slot_data: Dict[str, object] = {}
+        # Generate-output counts summary (surfaced by build.ps1; "The Shattering").
+        # Post-fill: progression = real checks holding an advancement item; pool_builder
+        # local-kept = juice pool_builder swapped in and forced local (create_items swap).
+        _cnt_locs = [loc for loc in self.multiworld.get_locations(self.player)
+                     if loc.address is not None]
+        _cnt_prog = sum(1 for loc in _cnt_locs
+                        if loc.item is not None and loc.item.advancement)
+        _cnt_pbl = getattr(self, "_pool_builder_local_count", 0)
+        print("ER_COUNTS player=%d seed=%s checks=%d progression=%d pool_builder_local=%d"
+              % (self.player, self.multiworld.seed_name, len(_cnt_locs), _cnt_prog, _cnt_pbl))
         # Once all clients support overlapping item IDs, adjust the ER AP item IDs to encode the
         # in-game ID as well as the count so that we don't need to send this information at all.
         #
