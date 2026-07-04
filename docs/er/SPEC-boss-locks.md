@@ -283,3 +283,102 @@ Known gaps / deviations, deliberate:
   goal-send unaffected). Watch fill pressure in tiny num_regions pools.
 - Spell-shop mixed pool: implemented in the C# randomizer fork (Permutation.cs union test);
   the apworld never enforced it (option is bake-side), confirmed 2026-07-03.
+
+---
+
+## Lock placement: scatter vs in-region (DECIDED 2026-07-03 -- scatter)
+
+A boss lock could be placed two ways: **pinned in its own region** (the lock that arms the
+Haligtree sweep lives somewhere in Haligtree/Elphael), or **scattered** as an ordinary AP pool
+item that fill can drop anywhere reachable -- another region, or another player's world entirely.
+v0.1 does the latter (it falls out of the escape-hatch design: the boss lock gates only the
+sweep + trigger drop, so fill treats it as a free progression item). Example: in seed
+`54217224666568160356` the Malenia Lock (Haligtree/Elphael sweep) landed in **Mt. Gelmir, Gelmir
+Hero's Grave** -- verified reachable (Mt. Gelmir is a kept shard on the critical path; GHG hangs
+off it ungated).
+
+**Decision: keep scattering the default.** Rationale, and the tradeoff, because it's a real one:
+
+- **Scatter is the AP-native move and serves the marquee thesis.** A lock pinned in its own
+  region is nearly inert as an Archipelago item -- a local fetch that never enters the sphere
+  economy and never travels to another player. Scattering makes "a lock found in my volcano armed
+  the sweep in my snowfield (or in someone else's game)" the actual archipelago loop. It also
+  keeps fill flexible and preserves the escape hatch: because the lock never gates region entry,
+  fill can place it among any region's pre-boss checks without a self-lock. Pinning forfeits both.
+- **The cost is legibility, and it lands on the notification layer.** When the lock is behind some
+  pots in Gelmir Hero's Grave, nothing in the world tells the player that check controls the
+  Haligtree sweep. The geography no longer carries the meaning, so the `"<Boss> Lock -- <group>
+  sweep armed"` messaging (the notif / "X from Y" work) has to. This is the tax scatter pays and
+  the reason boss-lock notif text is load-bearing, not polish. See [[er-notify-item-source]] /
+  [[er-notif-ticker-runtime-port]].
+
+Net: randomized is correct for a mode whose thesis is "turn the Lands Between into an
+archipelago," **provided the notification layer spells out what each lock just unlocked.**
+
+## `boss_lock_placement` option -- host boss locks on boss drops (SPEC, not v0.1)
+
+Give boss locks the same treatment the num_regions chain breadcrumb already uses: instead of
+letting fill drop a boss lock behind some pots, **host it on a boss drop** via the proven
+`_num_regions_chain_host` machinery (prefer a boss location -> reachability filter -> degrade
+gracefully). Through-line: **bosses drop the keys that arm other bosses' sweeps.** Bonus: a lock
+on a boss drop is a memorable moment, so it *reduces* (never removes) the notif-text burden that
+scatter placement leans on (see the Lock-placement section above).
+
+**Option shape.** `boss_lock_placement`, a Choice, default **`scatter`** (today's v0.1 behavior --
+ordinary pool item, may land in another region or another player's world):
+
+- `scatter` (default) -- general fill; maximum AP travel (only mode that can cross to another
+  player's world), minimum legibility.
+- `own_region` -- pre_fill-host each boss lock on a non-trigger boss drop **in its own sweep-group
+  region**. Maximum legibility ("the region's mini-boss holds the key to its own sweep"); the lock
+  stays in the player's world.
+- `any_boss` -- pre_fill-host on **any reachable** non-trigger boss drop, region-agnostic. The
+  "bosses gate bosses" flavor; still in the player's world, but spread across regions.
+
+**The one load-bearing invariant: never host on a sweep TRIGGER drop** (its own or any other
+group's). The trigger drop carries `Has(<that group> Lock)`, so hosting a boss lock there (a)
+self-locks if it's its own trigger, (b) puts the lock behind a *second* boss lock -> violates the
+escape hatch (a boss lock must be reachable from the region-lock-only sphere) and can form a
+boss-lock <-> boss-lock cycle -> the exact unsatisfiable fill we kept backing out of. Restrict
+hosts to **non-missable, non-trigger boss drops** (mini/chokepoint bosses: Loretta, Red Wolf,
+Godskin Duo, Leonine, ...). Those are reachable with just the region lock, so they can never
+strand the lock or cycle.
+
+**Why `own_region` is nearly free (the key simplification):** with `chokepoint_locks` OFF (the
+default), a region's interior shares its one region lock -- Elphael is "Loretta-gated interior *of
+the same lock*" (region_spine.py:140), nothing sub-gates it -- so once you hold the region lock the
+whole region and every boss arena in it is reachable. Any non-trigger boss is therefore a valid
+host with no ordering, no precollect dance, no per-lock reachability solve. A boss lock is NOT a
+chain link, so none of the chain's fragility applies.
+
+**Reachability guard (scaled to the mode):**
+
+- `own_region`: a **cheap** `can_reach` filter, needed only to cover `chokepoint_locks: ON`, which
+  gates a region's back half on reaching the choke drop (Malenia behind Loretta, region_spine.py:
+  510-515). No-ops entirely when the option is off. Reuse the chain's filter as-is.
+- `any_boss`: the **full** `can_reach` filter (as the chain uses), because a cross-region host may
+  sit behind another region's lock not yet held; confirm each candidate is reachable from the
+  region-lock sphere without this boss lock.
+
+**Preference + fallback (mirror `_num_regions_chain_host`):** among eligible candidates, pick the
+first non-missable non-trigger boss drop, deterministic by name; the chain picker's tier-1
+(remembrance / "mainboss drop") is intentionally skipped here because that IS the trigger. On no
+eligible host (`own_region` region has only its trigger boss, or `any_boss` finds nothing
+reachable), **fall back to `scatter`** -- return None like the chain host and let general fill
+place it. Never fail gen for a placement miss (the lesson from the chain fill fight).
+
+**Chain interaction.** Chain breadcrumb locks and boss locks compete for the same non-trigger boss
+slots (e.g. Loretta is a seed's chain host AND Haligtree's natural boss-lock host). Order the
+pre_fill passes: **chain first** (progression-critical, ordered), boss locks into the remaining
+boss slots, then scatter fallback. One item per location; the boss lock yields to the chain.
+
+**Multiworld honesty.** Both hosted modes place into the player's OWN world in pre_fill, so
+neither preserves cross-*world* travel -- only `scatter` can send a boss lock to another player.
+`any_boss` buys cross-*region* spread within the world (the bosses-gate-bosses feel); `own_region`
+keeps it local and legible. State this in the option help so nobody expects a hosted lock to show
+up in a partner's game.
+
+**Status:** spec only; default `scatter` keeps v0.1 behavior-neutral until a player opts in.
+Depends only on `BOSS_LOCK_GROUP_REGIONS`, the existing non-trigger/boss location tags, and the
+already-built `_num_regions_chain_host` reachability filter (generalize it, or clone the
+parameterized `_dlc_chain_host` cousin).

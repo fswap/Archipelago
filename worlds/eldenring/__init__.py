@@ -358,6 +358,29 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _cand = sorted(_cand, key=lambda l: l.name)[:_allowed]
             for l in _cand:
                 self.all_priority_locations.update({l.name})
+        # --- curated_fill: big-ticket routing (v1, patch_curated_fill.py) -------------------
+        # Concentrate multiworld progression on the meaningful big-ticket locations by marking
+        # them AP PRIORITY, and keep a share of our own filler LOCAL (filler_local_pct) so ER
+        # stops flooding a small multiworld. v1 does NOT hard-exclude filler locations (that can
+        # FillError when big-ticket slots are scarcer than progression + locks + injected runes);
+        # priority is a soft concentration that cannot over-constrain the fill. Mirrors the
+        # important_locations enumeration above (same _is_location_available + _PRIO_HEADROOM,
+        # and counts locations already made priority so the region never drops below headroom).
+        if self.options.curated_fill.value:
+            for _cf_region, _cf_locs in location_tables.items():
+                _cf_avail = [l for l in _cf_locs
+                             if self._is_location_available(l)
+                             and l.name not in self.all_excluded_locations]
+                _cf_already = sum(1 for l in _cf_avail if l.name in self.all_priority_locations)
+                _cf_cand = [l for l in _cf_avail
+                            if self._curated_is_big_ticket(l)
+                            and l.name not in self.all_priority_locations]
+                _cf_allowed = max(0, len(_cf_avail) - _PRIO_HEADROOM - _cf_already)
+                if len(_cf_cand) > _cf_allowed:
+                    _cf_cand = sorted(_cf_cand, key=lambda l: l.name)[:_cf_allowed]
+                for l in _cf_cand:
+                    self.all_priority_locations.update({l.name})
+        # --- end curated_fill ---------------------------------------------------------------
         # do_not_randomize categories are vanilla-locked, so they must NOT also be priority
         # (overrides important_locations / the above for the affected classes).
         _vu = self.options.vanilla_upgrades.value
@@ -1240,6 +1263,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     if _cat_key is not None and _cat_key not in exclude_local_item_only_lowercase:
                         self.options.local_items.value.add(item.name)
 
+        # curated_fill filler_foreign_pct: carve this % of the localized filler back OUT of
+        # local_items (leave it UNCONSTRAINED = 'may take/give foreign filler if that helps the
+        # multiworld, else stays home'). Runs whether or not local_item_option ran (empty set =
+        # no-op). Name-based, so it is ~pct of localized filler by distinct type.
+        if self.options.curated_fill.value and self.options.filler_foreign_pct.value > 0:
+            _ff_local = sorted(self.options.local_items.value)
+            if _ff_local:
+                _ff_k = (len(_ff_local) * self.options.filler_foreign_pct.value) // 100
+                for _ff_name in self.random.sample(_ff_local, min(_ff_k, len(_ff_local))):
+                    self.options.local_items.value.discard(_ff_name)
+
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
@@ -1810,7 +1844,13 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             for _name in _swappable[_n:]:                 # keep any un-funded rest in pool
                 self.local_itempool.append(self.create_item(_name))
             for _name in _ladder[:_n]:
-                self.local_itempool.append(self._create_uplift_item(_name))
+                # pool_builder is a filler-quality upgrade -- everything it injects is treated
+                # as FILLER regardless of the item's native class (upgraded trash, not a useful/
+                # progression logic item). filler == 0 is falsy, so set it post-construction.
+                _pb_new = self._create_uplift_item(_name)
+                _pb_new.classification = ItemClassification.filler
+                self.options.local_items.value.add(_name)  # keep pool_builder juice at home
+                self.local_itempool.append(_pb_new)
 
         # progressive bell GUARANTEE (dlc_only, Alaric 2026-06-21): seat the FULL
         # progressive_bell_count copies of EACH stone bell, funded by a COUNT-NEUTRAL swap that
@@ -1998,6 +2038,29 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # (playtest 2026-07-03). pool_builder's uplift injects them on top of the base pool
         # without subtracting existing copies, so the total can exceed UPLIFT_UNIQUE_CAPS.
         # Trim the excess to filler here (count-neutral), whatever the source.
+        # curated_fill filler_upgrade_pct: replace this % of the LOCAL filler pool with ranked
+        # pool_builder juice (worst tier first), reusing the uplift ladder. Generalizes the
+        # scrub from low-tier-gear-only to ANY filler. Count-neutral; spares the junk_retention
+        # comedy set. Runs before the UPLIFT_UNIQUE_CAPS trim below so injected uniques are capped.
+        if self.options.curated_fill.value and self.options.filler_upgrade_pct.value > 0:
+            _fu_spared = getattr(self, '_spared_comedy_junk', set())
+            _fu_filler = [it for it in self.local_itempool
+                          if it.classification == ItemClassification.filler
+                          and it.name not in _fu_spared]
+            _fu_filler.sort(key=lambda it: self._bad_gear_drop_rank(it.name))
+            _fu_k = (len(_fu_filler) * self.options.filler_upgrade_pct.value) // 100
+            _fu_targets = _fu_filler[:_fu_k]
+            _fu_juice = self._uplift_inject_names(len(_fu_targets))
+            _fu_n = min(len(_fu_juice), len(_fu_targets))
+            for _fu_it, _fu_name in zip(_fu_targets[:_fu_n], _fu_juice[:_fu_n]):
+                self.local_itempool.remove(_fu_it)
+                _fu_new = self.create_item(_fu_name)
+                # keep the juice FILLER-classified so it places exactly like the trash it
+                # replaces (useful/progression juice breaks fill under excluded/priority-heavy
+                # configs). filler == 0 is falsy, so this must be set post-construction.
+                _fu_new.classification = ItemClassification.filler
+                self.local_itempool.append(_fu_new)
+
         for _cap_name, _cap_n in UPLIFT_UNIQUE_CAPS.items():
             _dupes = [_it for _it in self.local_itempool if _it.name == _cap_name]
             for _it in _dupes[_cap_n:]:
@@ -2265,6 +2328,24 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         """Drop-order key for skippable bad gear: worst tier first (F=0, D=1, C=2)."""
         return {"F": 0, "D": 1, "C": 2}.get(ITEM_TIERS.get(name), 3)
 
+    def _curated_is_big_ticket(self, loc) -> bool:
+        """curated_fill: True if a location should carry multiworld progression (big-ticket).
+        Source-exact ERLocationData flags: the pre-computed `prominent` umbrella (all boss
+        families + church/seedtree/basin/map/fragment/cross/revered) OR remembrance/keyitem OR
+        the boss types prominent omits (night/miniboss/evergaol). Never route onto an event or a
+        permanently-missable check. `loc` is a raw ERLocationData from location_tables."""
+        if getattr(loc, "default_item_name", None) is None:
+            return False
+        if getattr(loc, "missable", False):
+            return False
+        if getattr(loc, "prominent", False) or getattr(loc, "remembrance", False) \
+                or getattr(loc, "keyitem", False):
+            return True
+        if getattr(loc, "night", False) or getattr(loc, "miniboss", False) \
+                or getattr(loc, "evergaol", False):
+            return True
+        return False
+
     def _pool_builder_defer_native(self, name: str) -> bool:
         """pool_builder: True for a native LOW-TIER pickup to scrub from the pool and fund the
         all-game ladder swap -- C/D/F base gear, armor-set non-representative pieces (set
@@ -2275,10 +2356,28 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         _d = self.item_table.get(name)  # per-world overlay
         if _d is None or _d.classification == ItemClassification.progression:
             return False
-        return (name in CURATION_DROP_BASE_GEAR
+        if (name in CURATION_DROP_BASE_GEAR
                 or name in ARMOR_SET_NONREP
                 or name in TRIM_CUT_NAMES
-                or name in JUNK_GOODS)   # crafting mats/cookbooks/greases -> recompose to juice
+                or name in JUNK_GOODS):   # crafting mats/cookbooks/greases -> recompose to juice
+            return True
+        _intensity = self.options.pool_builder_intensity.value  # 0 normal, 1 high, 2 max
+        if _intensity >= 1:
+            # high: broad low-value GOODS (cheap consumables / crafting mats), but never the
+            # goods we WANT as juice (stones, seeds/tears, juicy runes).
+            if (_d.category == ERItemCategory.GOODS
+                    and _d.classification == ItemClassification.filler
+                    and (getattr(_d, "runes", 0) or 0) < UPLIFT_RUNE_MIN_VALUE
+                    and "Smithing Stone" not in name
+                    and name not in UPLIFT_SEEDS_TEARS
+                    and not _is_spell_code(getattr(_d, "er_code", None))):  # spells aren't trash
+                return True
+        if _intensity >= 2:
+            # max: also B-tier base gear.
+            if (_d.category in (ERItemCategory.WEAPON, ERItemCategory.ARMOR)
+                    and ITEM_TIERS.get(name) == "B"):
+                return True
+        return False
 
     def _drop_for_no_ashes(self, name: str) -> bool:
         """no_spirit_ashes: True for a spirit summon or the Spirit Calling Bell. Summons are
@@ -2337,7 +2436,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         all crystal tears, capped memory stones / talisman pouches), then weighted
         stackables (juicy runes, seeds/tears) to fill the remaining budget."""
         item_table = self.item_table  # per-world overlay (patch_per_world_item_table)
-        if not (self.options.dlc_only or self.options.pool_builder.value) or budget <= 0:
+        if not (self.options.dlc_only or self.options.pool_builder.value or self.options.curated_fill.value) or budget <= 0:
             return []
         # pool_builder_dlc_gear was removed (Part 2): the all-game ladder injects base juice only
         # (use dlc_gear_curation for DLC gear).
@@ -2369,6 +2468,10 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                       if not item_table[n].is_dlc
                       and (getattr(item_table[n], "runes", 0) or 0) >= UPLIFT_RUNE_MIN_VALUE],
             "seeds_tears": _base(UPLIFT_SEEDS_TEARS),
+            # smithing/somber/ancient-dragon smithing stones: stackable upgrade mats, the
+            # fill-safe juice (goods, placeable anywhere). Matches every 'Smithing Stone' name.
+            "stones": [n for n in item_table
+                       if "Smithing Stone" in n and not item_table[n].is_dlc],
         }
         keys = [k for k in UPLIFT_STACKABLE_WEIGHTS if buckets.get(k)]
         if not keys:
@@ -2883,7 +2986,104 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             warning(f"{self.player_name}: priority reach-prune demoted {len(_pruned)} unreachable "
                     f"PRIORITY location(s) to DEFAULT (e.g. {_pruned[0]}).")
 
+    def _place_boss_locks_hosted(self):
+        """BOSS_LOCK_PLACEMENT_PATCH (SPEC-boss-locks.md 'boss_lock_placement'): host each active
+        boss lock on a NON-TRIGGER boss drop instead of pure scatter. own_region -> a boss in the
+        lock's own sweep-group region; any_boss -> any reachable non-trigger boss. Runs at the top
+        of pre_fill and best-effort RESERVES the num_regions chain's boss hosts so the chain (which
+        places afterward, filtering item-less locations) keeps its slots. A lock with no eligible
+        host is left in the pool (scatter fallback). Default 'scatter' (0) -> no-op. Never fails gen:
+        boss locks gate only sweep+trigger, so a non-trigger boss host is always region-lock
+        reachable and the escape hatch is preserved."""
+        mode = getattr(getattr(self.options, "boss_lock_placement", None), "value", 0)
+        if not mode:
+            return
+        gates = getattr(self, "_sweep_lock_gates_by_trigger", {}) or {}
+        if not gates:
+            return
+        trigger_names = set(gates.keys())
+        active_locks = {_lk for (_a, _lk) in gates.values()}
+        if not active_locks:
+            return
+        # lock name -> its sweep group's regions (own_region scoping).
+        _lock_regions = {}
+        for _gk, _lk in region_spine.BOSS_LOCKS.items():
+            if _lk in active_locks:
+                _lock_regions[_lk] = set(region_spine.BOSS_LOCK_GROUP_REGIONS.get(_gk, ()))
+
+        def _missable(l):
+            return bool(getattr(getattr(l, "data", None), "missable", False))
+
+        def _is_boss(l):
+            _d = getattr(l, "data", None)
+            return bool(getattr(_d, "boss", False) or getattr(_d, "remembrance", False))
+
+        # Reserve the chain's boss hosts (the chain places after this and should win the contest).
+        reserved = set()
+        if getattr(self, "_num_regions_chain", False):
+            _order = getattr(self, "_num_regions_chain_order", []) or []
+            for _i in range(1, len(_order)):
+                try:
+                    _h = self._num_regions_chain_host(_order[_i - 1])
+                except Exception:
+                    _h = None
+                if _h is not None:
+                    reserved.add(_h.name)
+
+        # Region-lock reachability proxy (same idiom as _num_regions_chain_host). A non-trigger
+        # boss's region-lock clause is satisfiable in max-state, so this never depends on a boss lock.
+        _cs = None
+        try:
+            _cs = CollectionState(self.multiworld)
+            _cs.sweep_for_advancements()
+        except Exception as _e:
+            warning(f"{self.player_name}: boss_lock_placement reach filter skipped ({_e}).")
+
+        def _reachable(l):
+            if _cs is None:
+                return True
+            try:
+                return l.can_reach(_cs)
+            except Exception:
+                return False
+
+        eligible = [l for l in self.multiworld.get_locations(self.player)
+                    if getattr(l, "address", None) is not None
+                    and getattr(l, "item", None) is None
+                    and _is_boss(l) and not _missable(l)
+                    and l.name not in trigger_names
+                    and l.name not in reserved
+                    and _reachable(l)]
+        if mode == 2:  # any_boss: spread reproducibly across regions
+            self.random.shuffle(eligible)
+        else:          # own_region: deterministic by name within the group
+            eligible.sort(key=lambda l: l.name)
+
+        _used = set()
+        _hosted = 0
+        for _lock in sorted(active_locks):
+            _item = next((i for i in self.multiworld.itempool
+                          if i.player == self.player and i.name == _lock), None)
+            if _item is None:
+                continue  # already placed / precollected -> nothing to host
+            if mode == 1:  # own_region
+                _regions = _lock_regions.get(_lock, set())
+                _host = next((l for l in eligible if l.name not in _used
+                              and getattr(l.parent_region, "name", None) in _regions), None)
+            else:          # any_boss
+                _host = next((l for l in eligible if l.name not in _used), None)
+            if _host is None:
+                continue  # scatter fallback: leave the lock in the pool
+            self.multiworld.itempool.remove(_item)
+            _host.place_locked_item(_item)
+            _used.add(_host.name)
+            _hosted += 1
+        if _hosted:
+            warning(f"{self.player_name}: boss_lock_placement hosted {_hosted}/"
+                    f"{len(active_locks)} boss lock(s) on boss drops (mode={mode}); rest scatter.")
+
     def pre_fill(self) -> None: #MARK: Pre-fill
+        self._place_boss_locks_hosted()
         # dlc_only_chain (SPEC-dlc-only-chain.md, Phase 1): breadcrumb the messmer kept-set DLC
         # locks into a linear chain off the free Gravesite hub. Each gated link's lock is placed
         # on the PRIOR link's boss drop (Gravesite hosts link 1). Locks were pulled from the
@@ -3715,13 +3915,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # item-receipt bloom from the standard apparatus stays; this is a genuinely separate,
             # still-natural-key region -- out of this surgery's scope, SS8 "DO NOT APPLY the
             # MT/SF bloom patches" while leaving Altus's own trigger untouched).
-            natural_key_triggers = {
-                "Altus Lock": {"anyOf": [
-                    {"items": ["Dectus Medallion (Left)", "Dectus Medallion (Right)"]},
-                    {"flags": [39200800]},
-                    {"flags": [400072]},
-                ]},
-            }
+            # ALTUS NATURAL KEY RETIRED (2026-07-03, "Academy Glintstone Key sole
+            # natural lock"): Altus Lock is a real pool lock (lock=True), so its
+            # apparatus blooms on ordinary item receipt like MT/SF. The additive
+            # Dectus/Rold natural trigger is dropped -- Raya is now the only natural key.
+            natural_key_triggers = {}
         # === end NATURAL_KEY_TRIGGERS_PATCH ================================================================
         # === NATURAL_KEY_TRIGGERS_P2: natural-key apparatus + triggers (Raya Lucaria + Volcano Manor) =======
         # Two more natural-key regions, EXTENDING the P1 apparatus above (natural_key_triggers,
@@ -3732,44 +3930,45 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # can bloom them; the triggers are vanilla key items / the Drawing-Room obtained-flag.
         # Gated to region-gating modes (world_logic < 3), same as P1.
         if self.options.world_logic < 3:
+            # RAYA LUCARIA = SOLE NATURAL KEY (2026-07-03). The vanilla Academy Glintstone
+            # Key IS the Raya Lucaria lock; there is no pool-item analogue, so it stays
+            # natural. VOLCANO NATURAL KEY RETIRED: Volcano Lock is lock=False ("folded into
+            # Mt. Gelmir Lock"), so its interior apparatus folds onto Mt. Gelmir Lock --
+            # Volcano Manor blooms when Mt. Gelmir Lock is received via the ordinary path.
             _NK2_GRACES = {
                 # Raya Lucaria Academy interior (m14_00_00 grace_flags.tsv warpUnlockFlags).
                 "Raya Lucaria Lock": [71400, 71402, 71403],  # 71401 Debate Parlor EXCLUDED: Red Wolf of Radagon arena (warp drops you behind the fog)
-                # Volcano Manor interior (m16_00_00); 71600 EXCLUDED -- already owned by
-                # BUNDLE_LOCK_GRACES["Spelunker's Torch"] (Murkwater Cave shares the m16 tile id).
-                "Volcano Lock":      [71601, 71602, 71603, 71604, 71605, 71606, 71607],
             }
-            _NK2_OPEN = {"Raya Lucaria Lock": 76962, "Volcano Lock": 76963}
+            _NK2_OPEN = {"Raya Lucaria Lock": 76962}
             for _n2k, _n2fs in _NK2_GRACES.items():
                 region_graces[_n2k] = sorted(set(region_graces.get(_n2k, []) + list(_n2fs)))
             for _n2k, _n2of in _NK2_OPEN.items():
                 region_open_flags[_n2k] = _n2of
-            # Raya 14000 + Volcano 16000 KICK enforcement (decision A: Volcano owns 16000).
-            _NK2_AREA = {"Raya Lucaria Lock": [(14000, 14000)], "Volcano Lock": [(16000, 16000)]}
+            # Volcano Manor interior graces (m16_00_00; 71600 EXCLUDED -- already owned by
+            # BUNDLE_LOCK_GRACES["Spelunker's Torch"], Murkwater Cave shares the m16 tile id)
+            # FOLD onto Mt. Gelmir Lock. Natural-key blocks run AFTER the graces_per_region
+            # spread-trim, so this appends raw (no trimming) -- all seven bloom on receipt.
+            _VOLCANO_GRACES = [71601, 71602, 71603, 71604, 71605, 71606, 71607]
+            region_graces["Mt. Gelmir Lock"] = sorted(set(
+                region_graces.get("Mt. Gelmir Lock", []) + _VOLCANO_GRACES))
+            # KICK enforcement: Raya 14000 on its own open flag 76962; Volcano 16000 folded
+            # onto Mt. Gelmir Lock's computed open flag (region_open_flags = lockOpenFlags).
             _alf2 = region_lock_sd.setdefault("areaLockFlags", [])
-            for _n2k, _ranges in _NK2_AREA.items():
-                _of = _NK2_OPEN.get(_n2k)
-                if _of is not None:
-                    for (_lo, _hi) in _ranges:
-                        if [_lo, _hi, _of] not in _alf2:
-                            _alf2.append([_lo, _hi, _of])
-            # No map pillars: Raya/Volcano are interiors with no dedicated map fragment, so no
-            # lockRevealFlags are added. Notify falls back to the map-less token (2900, packed),
-            # matching the apworld's _NOTIFY_TOKEN; setdefault leaves any existing token in place
-            # (Volcano Lock already has the 2900 token from the lock_notify_items loop above).
-            for _n2k in ("Raya Lucaria Lock", "Volcano Lock"):
-                lock_notify_items.setdefault(_n2k, 2900 | 0x40000000)
-            # Disjunctive natural triggers (EXTEND, do not overwrite). A clause = ALL items
-            # received AND ALL flags set; ANY clause fires the bloom.
+            _NK2_AREA = [(14000, 14000, 76962)]
+            _mg_of = region_open_flags.get("Mt. Gelmir Lock")
+            if _mg_of is not None:
+                _NK2_AREA.append((16000, 16000, _mg_of))
+            for (_lo, _hi, _of) in _NK2_AREA:
+                if [_lo, _hi, _of] not in _alf2:
+                    _alf2.append([_lo, _hi, _of])
+            # Raya is a map-less interior: the 2900 packed token names nothing special
+            # (matches the apworld _NOTIFY_TOKEN). Volcano rides Mt. Gelmir Lock's notify.
+            lock_notify_items.setdefault("Raya Lucaria Lock", 2900 | 0x40000000)
+            # Sole disjunctive natural trigger: the Academy Glintstone Key opens Raya Lucaria.
             natural_key_triggers.update({
                 "Raya Lucaria Lock": {"anyOf": [
                     {"items": ["Academy Glintstone Key"]},
                     {"items": ["Academy Glintstone Key (Thops)"]},
-                ]},
-                "Volcano Lock": {"anyOf": [
-                    {"flags": [400072]},                  # Drawing-Room Key obtained-flag (join Volcano Manor)
-                    {"items": ["Academy Glintstone Key"]},  # Abductor Virgin route via Raya Lucaria
-                    {"items": ["Mt. Gelmir Lock"]},         # walk-down from Mt. Gelmir
                 ]},
             })
         # === end NATURAL_KEY_TRIGGERS_P2 ===================================================================
@@ -4125,7 +4324,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "map_option": self.options.map_option.value,
                 "smithing_bell_bearing_option": self.options.smithing_bell_bearing_option.value,
                 "merchant_bell_logic": self.options.merchant_bell_logic.value,
-                "spell_shop_spells_only": self.options.spell_shop_spells_only.value,
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
                 "local_item_option": self.options.local_item_option.value,
                 "exclude_local_item_only": self.options.exclude_local_item_only.value,
@@ -4152,8 +4350,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             "slot": self.multiworld.player_name[self.player],  # to connect to server
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
-            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
-            "locationIdsToKeys": location_ids_to_keys,
             # Optional; only present when dungeon_sweep != none. Consumed by the runtime
             # client only — the static randomizer ignores it.
             "dungeonSweeps": dungeon_sweeps,
@@ -4161,12 +4357,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # be in the client's received set before that trigger's sweep fires. Runtime client
             # only; re-checked every flag-poll tick (late lock => retroactive sweep).
             "sweepLockGates": sweep_lock_gates,
-            # Chokepoint boss attribution (extra_region_locks: chokepoint_locks):
-            # { chokeBossDefeatFlag : [before-half apLocId,...] }. The baker re-homes these off
-            # the end-boss lump onto the choke boss in bosses mode. Empty unless chokepoint_locks
-            # + dungeon_sweep are on. Consumed by the static randomizer (sweep_flags), not the client.
-            # CONTRACT: PORT-GAP (bosses-mode chokepoint sweep re-homing; ex-baker sweep_flags input)
-            "chokepointSweeps": chokepoint_sweeps,
             # Locations whose full completion = goal, for ending_condition 2/3 (empty
             # otherwise). Consumed by the runtime client only.
             # CONTRACT: PORT-GAP (goal send -- SPEC-goal-send-20260701.md)
@@ -4174,7 +4364,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Region-fusion grace bundle: lock-item name -> grace warp flags to enable on
             # receipt (region gating only; empty otherwise). Runtime client only. TODO #13.
             "regionGraces": region_graces,
-            # CONTRACT: PORT-GAP (grace-rando warp-flag grant on item receipt; SPEC-grace-rando.md B never ported to Rust)
+            # CONTRACT: LIVE (consumed by region.rs::tick_grace_items; SPEC-grace-rando.md B ported to Rust)
             "graceItems": getattr(self, "_grace_items_placed", {}),
             # Region-open flags (physical enforcement, SPEC-region-fog-gates.md): lock-item name
             # -> one reserved event flag the client sets on receipt; baked border fog gates gate
@@ -4190,14 +4380,11 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             "areaLockFlags": region_lock_sd["areaLockFlags"],
             # Map-reveal/open flags per lock (cosmetic under reveal_all_maps; correct for map gating).
             "lockRevealFlags": region_lock_sd["lockRevealFlags"],
-            # Unlock-notify items: name the region in the native ticker on lock receipt.
-            # CONTRACT: PORT-GAP (region-name ticker on lock receipt; er-logic grants.rs notify machinery exists unused)
-            "lockNotifyItems": lock_notify_items,
             # GRANT-ON-RECEIPT rider (SPEC-region-spine-surgery.md SS3.5): lock name -> [packed
             # FullIDs] to physically grant in-game on that lock's receipt. Currently the two
             # unpooled medallions (Rold -> Mountaintops Lock; both Secret Medallion halves ->
-            # Snowfield Lock). Empty outside region-gating world_logic. CONTRACT: PORT-GAP
-            # (client grant-on-receipt consumer is P3, not yet wired).
+            # Snowfield Lock). Empty outside region-gating world_logic. CONTRACT: LIVE
+            # (consumed by region.rs::first_open_grants + hook_impl.rs).
             "lockGrantItems": lock_grant_items,
             # Natural-key disjunctive triggers (NATURAL_KEY_TRIGGERS_PATCH): lock name -> {"anyOf":[{items,flags}...]}.
             # Client blooms the region apparatus (graces/open-flag/reveal) when ANY clause is satisfied
@@ -4210,8 +4397,6 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # Random/rolled starting region: rolled hub region name + its central warp grace, for the
             # baked WarpPlayer (ApplyRandomStartEntry). "" / 0 when off (-> baker skips the warp).
             "startRegion": getattr(self, "_random_start_region", None) or "",
-            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
-            "startWarpGrace": getattr(self, "_rsr_warp_grace", 0),
             # Random-start auto-entry latch (the runtime client mirrors dlcEntryWarpFlag): warp flag
             # (MUST match RegionFogGates.RANDOM_START_FLAG), the Chapel area id the client watches, and
             # a persistent done-guard so it fires once per save. 0 when not a random-start seed.
@@ -4313,37 +4498,9 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             slot_data["checkItemIds"] = []
             slot_data["checkItemFlags"] = {}
             print(f"[p2-check-items] WARN could not build check items: {_p2_e}")
-        # [shop-preview] emit the set of ACTIVE shop AP location ids (SPEC-shop-preview-hook.md
-        # Part 1 / SPEC-shop-slot-map.md). The runtime client, on shop-open, scouts ONLY these
-        # ids (CreateAsHint::No) instead of all ~4295 active checks, then maps each open
-        # ShopLineupParam row -> AP location via the static `key` in locationIdsToKeys.
-        #
-        # Why a LIST and not a {ShopLineupParam_row_id: ap_loc_id} map: the ShopLineupParam ROW
-        # ID is NOT derivable on the Python side. A location's `key` (e.g.
-        # "111000,0:0000000000:101898:") identifies a shop PLACEMENT GROUP (base shop id + its
-        # eventFlag_forStock list), not a single row -- e.g. 51 distinct Enia bell-bearing
-        # locations share that one key. The concrete per-row ShopLineupParam.ID is assigned by
-        # the C# static randomizer (PermutationWriter.cs) at bake time and never reaches Python.
-        # So we ship the shop-location-id SET; the client resolves row<->location client-side
-        # from locationIdsToKeys + the live lineup rows. Empty when shop_checks is OFF (the
-        # shipping default), since shop slots are then not active checks at all.
-        try:
-            # Subset of location_ids_to_keys (built above from filled locations) that are shop
-            # slots. Deriving from that map GUARANTEES every emitted id has a resolvable `key`
-            # in locationIdsToKeys -- the client needs the key to identify the shop placement.
-            _shop_ids = set()
-            for _sp_loc in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
-                _sp_data = getattr(_sp_loc, "data", None)
-                if _sp_data is None or _sp_loc.address is None:
-                    continue
-                if (getattr(_sp_data, "shop", False) and getattr(_sp_data, "key", None)
-                        and _sp_loc.address in location_ids_to_keys):
-                    _shop_ids.add(_sp_loc.address)
-            # CONTRACT: DEAD (baker-era, no consumer 2026-07-01)
-            slot_data["shopLocationIds"] = sorted(_shop_ids)
-        except Exception as _sp_e:
-            slot_data["shopLocationIds"] = []
-            print(f"[shop-preview] WARN could not build shop location ids: {_sp_e}")
+        # [shop-preview] REMOVED 2026-07-03: the baker shop-preview contract (locationIdsToKeys +
+        # shopLocationIds) is dead. Pure-runtime shops resolve via shopRowFlags / locationFlags
+        # (below); the baker -- their only consumer -- was retired 2026-07-01.
         # [shop-detect] pure-runtime shop-check detection (see shop_row_flags.json + shop_flags.rs).
         # Gated on shop_checks. loc_row_flags -> client rewrites the row's eventFlag_forStock to this
         # flag (emit as shopRowFlags). loc_extra_flags -> slot has a vanilla stock flag missing from the

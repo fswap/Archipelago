@@ -75,7 +75,7 @@ class KeyGatesOn(_KeyBase):
 
 # ---- key_gates ON + shops ON: Dragon Communion buys are now checks and must be EXCLUDED ----
 class KeyGatesOnShopsOn(_KeyBase):
-    options = {"enable_dlc": False, "world_logic": "region_lock", "shop_checks": True}
+    options = {"enable_dlc": False, "world_logic": "region_lock", "shop_checks": True, "num_regions": 0}
 
     def test_dragon_communion_excluded(self):
         present = self._present_checks(DRAGON_GATED)

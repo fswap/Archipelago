@@ -603,6 +603,7 @@ UPLIFT_RUNE_MIN_VALUE = 5000
 UPLIFT_STACKABLE_WEIGHTS = {
     "runes": 60,
     "seeds_tears": 40,
+    "stones": 80,   # Alaric 2026-07-03: crank upgrade-material (smithing stone) juice; tunable
 }
 
 # --- NPC questline de-randomization (SPEC-questline-derando.md) --------------------

@@ -63,7 +63,7 @@ class GreatRunesRequired(Range):
     higher values are rejected at generation."""
     display_name = "Leyndell Great Runes Required"
     range_start = 1
-    range_end = 7
+    range_end = 4
     default = 2
     
 class GreatRunesFinalBoss(Range):
@@ -71,7 +71,7 @@ class GreatRunesFinalBoss(Range):
     Radagon / Elden Beast). 0 means no additional great-rune requirement."""
     display_name = "Final Boss Great Runes Required"
     range_start = 0
-    range_end = 7
+    range_end = 4
     default = 0
 
 class GreatRunesMountaintops(Range):
@@ -79,7 +79,7 @@ class GreatRunesMountaintops(Range):
     in addition to the Rold Medallion. 0 means no great-rune requirement."""
     display_name = "Mountaintops Great Runes Required"
     range_start = 0
-    range_end = 7
+    range_end = 4
     default = 0
 
 
@@ -404,7 +404,7 @@ class SpellShopSpellsOnly(Toggle):
     spells instead of arbitrary randomized items. Default ON; the eligible pool mixes
     both schools (a sorcery may stock an incantation vendor and vice versa)."""
     display_name = "Spell Shop Spells Only"
-    default = 1  # default ON (Alaric 2026-07-03, original ask)
+    default = 0  # default OFF (Alaric 2026-07-03: not important on reflection). The real fill fix is pool_builder no longer scrubbing spells; this is optional.
     
 class EarlyLegacyDungeonsEarly(Toggle):
     """Route logic through the early legacy dungeons first: progression into Liurnia
@@ -534,6 +534,27 @@ class DungeonSweep(Choice):
     option_all = 2
     option_bosses = 3
     default = 2  # The Shattering default (Alaric 2026-07-03): boss locks activate at >= all
+
+class BossLockPlacement(Choice):
+    """Where a boss lock -- the item that arms a dungeon's boss SWEEP (Dungeon Sweep: All/Bosses)
+    -- gets placed. See SPEC-boss-locks.md.
+
+    - **Scatter:** an ordinary randomized item; can land in any region or, in a
+      multiworld, in another player's world. Maximum shuffle, least legible.
+    - **Own Region:** (default) hosted on a non-trigger boss drop inside the lock's own sweep-group region
+      (e.g. Malenia Lock on Loretta in the Haligtree). Most legible; stays in your world.
+    - **Any Boss:** hosted on any reachable non-trigger boss drop, region-agnostic -- bosses drop
+      the keys that arm other bosses' sweeps. Stays in your world.
+
+    Own Region and Any Boss hand-place into YOUR world, so unlike Scatter they never travel to
+    another player. A lock with no eligible boss host falls back to Scatter. No effect unless boss
+    locks exist this seed (region_lock world logic + Dungeon Sweep: All or Bosses).
+    """
+    display_name = "Boss Lock Placement"
+    option_scatter = 0
+    option_own_region = 1
+    option_any_boss = 2
+    default = 1  # own_region (Alaric 2026-07-03): host boss locks in-region by default
 
 class BellPhysickOption(Choice):
     """How to handle the Spirit Calling Bell and Flask of Wondrous Physick. Both are inert
@@ -825,6 +846,53 @@ class GlobalScadutreeBlessing(Choice):
     option_scaled = 2
     default = 0
 
+class CuratedFill(Toggle):
+    """Curated fill (big-ticket routing). Concentrate multiworld progression on the meaningful
+    "big-ticket" locations -- bosses, remembrances, key items, churches, seedtrees, maps, etc. --
+    via AP priority, so Elden Ring stops dominating a small multiworld. v1 does NOT hard-exclude
+    filler locations (that can FillError when big-ticket slots are scarcer than progression +
+    region locks + injected runes); priority is a soft concentration that cannot over-constrain
+    the fill. Shape the filler mix with filler_upgrade_pct (upgrade local filler to juice) and
+    filler_foreign_pct (open some to incoming foreign). See CURATED-FILL-SPEC-20260703.md."""
+    display_name = "Curated Fill (big-ticket routing)"
+
+class FillerUpgradePct(Range):
+    """Curated fill: percent of your LOCAL filler pool to replace with ranked pool_builder juice
+    (worst tier first). Generalizes pool_builder's scrub from low-tier-gear-only to any filler.
+    Count-neutral; spares the junk_retention comedy set. Only takes effect when curated_fill is
+    on. 0 = leave filler as-is, 100 = upgrade all of it."""
+    display_name = "Curated Fill: Filler Upgraded to Juice (%)"
+    range_start = 0
+    range_end = 100
+    default = 0  # v4: fill-unsafe at >0 (bulk juice breaks category-restricted locations);
+                 # pool_builder already upgrades trash safely. Opt-in only.
+
+class FillerForeignPct(Range):
+    """Curated fill: percent of your localized filler to open to INCOMING foreign filler -- i.e.
+    carve this share back out of local_items and leave it unconstrained, so the multiworld fill
+    may backfill those slots with other players' filler where that helps (and mostly keeps yours
+    home otherwise, since ER holds most locations). A propensity, not a hard rule. Only takes
+    effect when curated_fill is on. 0 = keep all filler local, 100 = fully open."""
+    display_name = "Curated Fill: Filler Open to Foreign (%)"
+    range_start = 0
+    range_end = 100
+    default = 15
+
+class PoolBuilderIntensity(Choice):
+    """How aggressively pool_builder scrubs the pool to fund the all-game juice ladder. Only
+    matters when pool_builder is on.
+
+    - **Normal:** C/D/F gear + armor dupes + curated junk (today's behavior).
+    - **High:** also scrub broad low-value goods (cheap consumables / crafting mats) -- bigger
+      budget, more juice + stones.
+    - **Max:** also scrub B-tier base gear on top.
+    """
+    display_name = "Pool Builder Intensity"
+    option_normal = 0
+    option_high = 1
+    option_max = 2
+    default = 0
+
 @dataclass
 class EROptions(PerGameCommonOptions):
     ending_condition: EndingCondition
@@ -868,7 +936,6 @@ class EROptions(PerGameCommonOptions):
     map_option: MapOption
     smithing_bell_bearing_option: SmithingBellBearingOption
     merchant_bell_logic: MerchantBellLogic
-    spell_shop_spells_only: SpellShopSpellsOnly
     early_legacy_dungeons:EarlyLegacyDungeonsEarly
     local_item_option: LocalItemOnly
     exclude_local_item_only: ExcludeLocalItemOnly
@@ -877,6 +944,7 @@ class EROptions(PerGameCommonOptions):
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
     dungeon_sweep: DungeonSweep
+    boss_lock_placement: BossLockPlacement
     no_weapon_requirements: NoWeaponRequirements
     bell_physick_option: BellPhysickOption
     torrent_start: TorrentStart
@@ -894,6 +962,10 @@ class EROptions(PerGameCommonOptions):
     progressive_flask_count: ProgressiveFlaskCount
     progressive_glovewort_bells: ProgressiveGlovewortBells
     pool_builder: PoolBuilder
+    pool_builder_intensity: PoolBuilderIntensity
+    curated_fill: CuratedFill
+    filler_upgrade_pct: FillerUpgradePct
+    filler_foreign_pct: FillerForeignPct
 
 # option_groups: progressive_items merge by patch_apworld_progressive_items_options -- see docs/er/SPEC-options-consolidation.md
 option_groups = [
@@ -935,6 +1007,10 @@ option_groups = [
     OptionGroup("Pool & Curation", [
         LocationPool,
         PoolBuilder,
+        PoolBuilderIntensity,
+        CuratedFill,
+        FillerUpgradePct,
+        FillerForeignPct,
         DLCGearCuration,
         FillerReplacement,
         JunkRetention,
@@ -975,7 +1051,6 @@ option_groups = [
         CraftingKitOption,
         MapOption,
         SmithingBellBearingOption,
-        SpellShopSpellsOnly,
         EarlyLegacyDungeonsEarly,
         BellPhysickOption,
         DeathLink,

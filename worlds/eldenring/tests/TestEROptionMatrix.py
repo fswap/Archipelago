@@ -44,12 +44,13 @@ class ERSlotDataContract(WorldTestBase):
     options = {
         "enable_dlc": True,
         "world_logic": "region_lock",
+        "num_regions": 0,
     }
 
     def test_required_keys_and_versions(self):
         sd = self.world.fill_slot_data()
         for key in ("options", "seed", "slot", "apIdsToItemIds", "itemCounts",
-                    "locationIdsToKeys", "versions"):
+                    "versions"):
             self.assertIn(key, sd)
         # Lockstep contract range, checked by BOTH the randomizer at bake and the client at connect.
         self.assertEqual(sd["versions"], ">=0.1.0-beta.4 <0.1.0-beta.5")
@@ -61,10 +62,6 @@ class ERSlotDataContract(WorldTestBase):
         for k, v in sd["apIdsToItemIds"].items():
             int(k)                              # key must parse as an integer
             self.assertIsInstance(v, int)
-        # locationIdsToKeys: stringified-int keys -> scope-key strings.
-        for k, v in sd["locationIdsToKeys"].items():
-            int(k)
-            self.assertIsInstance(v, str)
 
 class ERNumRegions4RuneDecoupling(WorldTestBase):
     """Rune/region decoupling (2026-07-02): num_regions 4 must be honored EXACTLY

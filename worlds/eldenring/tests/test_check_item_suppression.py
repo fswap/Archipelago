@@ -24,7 +24,7 @@ class _SlotDataBase(WorldTestBase):
 
 class CheckItemSuppressionArmed(_SlotDataBase):
     """region_lock + enable_dlc:false -- the config LocalItemsOff / the spine-surgery playtest use."""
-    options = {"enable_dlc": False, "world_logic": "region_lock"}
+    options = {"enable_dlc": False, "world_logic": "region_lock", "num_regions": 0}
 
     def test_suppression_table_armed(self):
         sd = self._sd()

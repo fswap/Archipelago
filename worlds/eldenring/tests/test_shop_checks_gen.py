@@ -13,7 +13,7 @@ TWIN_MAIDEN_SLOT = "RH: Dagger - Twin maiden shop"
 
 class ShopsAlwaysOn_BaseGame(WorldTestBase):
     game = "EldenRing"
-    options = {"enable_dlc": False, "world_logic": "region_lock",
+    options = {"enable_dlc": False, "world_logic": "region_lock", "num_regions": 0,
                "merchant_bell_logic": "logic_only"}
 
     def test_shop_slots_are_checks(self):
@@ -25,7 +25,7 @@ class ShopsAlwaysOn_BaseGame(WorldTestBase):
 
 class ShopsAlwaysOn_DLC(WorldTestBase):
     game = "EldenRing"
-    options = {"enable_dlc": True, "world_logic": "region_lock"}
+    options = {"enable_dlc": True, "world_logic": "region_lock", "num_regions": 0}
 
     def test_shop_slots_are_checks(self):
         names = {l.name for l in self.multiworld.get_locations(self.player)

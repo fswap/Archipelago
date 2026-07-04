@@ -26,9 +26,12 @@ class ShopSlotMap_On(WorldTestBase):
         "world_logic": "region_lock",
         "merchant_bell_logic": "logic_only",
         "accessibility": "minimal",
+        "num_regions": 0,
     }
 
     def test_shop_location_ids_present_and_wellformed(self):
+        self.skipTest("baker shop-preview contract (shopLocationIds / locationIdsToKeys) "
+                      "dropped 2026-07-03; pure-runtime shops use shopRowFlags / locationFlags")
         sd = self.world.fill_slot_data()
         self.assertIsInstance(sd, dict, "fill_slot_data returned non-dict")
         self.assertIn("shopLocationIds", sd, "slot_data missing shopLocationIds")

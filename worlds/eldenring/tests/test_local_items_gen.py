@@ -31,6 +31,7 @@ from test.bases import WorldTestBase
 class _LocalItemsBase(WorldTestBase):
     game = "EldenRing"
     auto_construct = True
+    options = {"enable_dlc": False, "world_logic": "region_lock", "num_regions": 0}
 
     def _local_items(self):
         return self.world.options.local_items.value
@@ -55,7 +56,7 @@ class _LocalItemsBase(WorldTestBase):
 
 class LocalItemsOnDefault(_LocalItemsBase):
     """local_item_option defaults ON; the default excludes leave only GOODS to localize."""
-    options = {"enable_dlc": False, "world_logic": "region_lock"}
+    options = {"enable_dlc": False, "world_logic": "region_lock", "num_regions": 0}
 
     def test_goods_localized_in_bulk(self):
         n = len(self._local_items())
@@ -72,7 +73,7 @@ class LocalItemsOnDefault(_LocalItemsBase):
 
 class LocalItemsOff(_LocalItemsBase):
     """local_item_option OFF: the localizing loop must not run at all."""
-    options = {"enable_dlc": False, "world_logic": "region_lock", "local_item_option": False}
+    options = {"enable_dlc": False, "world_logic": "region_lock", "local_item_option": False, "num_regions": 0}
 
     def test_local_items_stay_empty(self):
         n = len(self._local_items())
@@ -83,7 +84,7 @@ class LocalItemsOff(_LocalItemsBase):
 class LocalItemsExcludeGoods(_LocalItemsBase):
     """Excluding Goods on top of the default four categories leaves nothing to localize --
     strictly fewer entries than LocalItemsOnDefault (<100 here vs >1000 there)."""
-    options = {"enable_dlc": False, "world_logic": "region_lock",
+    options = {"enable_dlc": False, "world_logic": "region_lock", "num_regions": 0,
                "exclude_local_item_only": ["Weapon", "Armor", "Accessory", "AshofWar", "Goods"]}
 
     def test_goods_exclusion_shrinks_local_set(self):
@@ -111,7 +112,7 @@ class LocalItemsExcludeGoods(_LocalItemsBase):
 
 class LocalItemsNoExclude(_LocalItemsBase):
     """Excluding nothing localizes all five categories -- the largest possible set."""
-    options = {"enable_dlc": False, "world_logic": "region_lock", "exclude_local_item_only": []}
+    options = {"enable_dlc": False, "world_logic": "region_lock", "exclude_local_item_only": [], "num_regions": 0}
 
     def test_all_categories_localized(self):
         n = len(self._local_items())
