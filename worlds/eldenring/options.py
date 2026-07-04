@@ -297,6 +297,12 @@ class RandomizeStartingLoadout(DefaultOnToggle):
 class AutoUpgradeOption(Toggle):
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
+
+class FlattenRegularUpgrades(Toggle):
+    """Flatten regular (non-somber) weapon upgrade costs so every smithing-stone
+    step needs only one stone. Somber weapons keep their vanilla curve. Applied at
+    runtime by the client (EquipMtrlSetParam edit)."""
+    display_name = "Flatten Regular Upgrade Costs"
     
 class ProgressiveItems(OptionSet):
     """Consolidated front-end for the progressive upgrade-item families. Each key replaces
@@ -925,6 +931,7 @@ class EROptions(PerGameCommonOptions):
 
     random_start: RandomizeStartingLoadout
     auto_upgrade: AutoUpgradeOption
+    flatten_regular_upgrades: FlattenRegularUpgrades
     progressive_items: ProgressiveItems
     progressive_stone_bells: ProgressiveStoneBells
     progressive_bell_count: ProgressiveBellCount

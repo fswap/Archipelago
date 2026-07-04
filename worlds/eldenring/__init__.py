@@ -4374,6 +4374,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                 "death_link": self.options.death_link.value,
                 "random_start": self.options.random_start.value,
                 "auto_upgrade": self.options.auto_upgrade.value,
+                "flatten_regular_upgrades": self.options.flatten_regular_upgrades.value,
                 "progressive_stone_bells": self.options.progressive_stone_bells.value,
                 "progressive_physick": self.options.progressive_physick.value,
                 "progressive_bell_count": self.options.progressive_bell_count.value,
