@@ -4977,7 +4977,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
     "Bonny Gaol":[ # scadualtus_gaol                                      done
         ERLocationData("SA/(BG): Hefty Cracked Pot - NE jail cell after first pot drop", "Hefty Cracked Pot", key="410100,0:0000066930::"),
-        ERLocationData("SA/(BG): Curseblade Meera - boss drop", "Curseblade Meera", key="410100,0:0000520760::", altboss=True, minidungeonboss=True, gaolboss=True, scadualtus_boss =True),
+        ERLocationData("SA/(BG): Curseblade Meera - boss drop", "Curseblade Meera", key="410100,0:0000520760::", altboss=True, minidungeonboss=True, gaolboss=True),
         ERLocationData("SA/(BG): Bolt x10 - room across from starting ramp", "Bolt x10", key="410100,0:0041017010::"),
         ERLocationData("SA/(BG): Stalwart Horn Charm +2 - NE after wooden chute drop, up ladder", "Stalwart Horn Charm +2", key="410100,0:0041017020::"),
         ERLocationData("SA/(BG): Frozen Maggot x8 - jail cell bottom right of starting ramp", "Frozen Maggot x8", key="410100,0:0041017030::"),
