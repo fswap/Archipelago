@@ -556,9 +556,10 @@ class ERExcludeLocations(ExcludeLocations):
     - **Blizzard**: The hard to see area of snowfield.
     - **Scarab**: Scarabs that drop items.
     - **Furnace Golem**: DLC Furnace Golems.
-    - **Out of the Way**: Items that take a bit to get."""
+    - **Out of the Way**: Items that take a bit to get.
+    - **Drop**: One time drop items from enemies."""
     default = frozenset({"Hidden"})
-    valid_keys = {"dlc", "hidden", "blizzard", "scarab", "furnace Golem", "out of the way"} # testing "All Locations"
+    valid_keys = {"dlc", "hidden", "blizzard", "scarab", "furnace golem", "out of the way", "drop"} # testing "All Locations"
     valid_keys_casefold = True
     
     unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names

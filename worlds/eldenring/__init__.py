@@ -301,15 +301,15 @@ class EldenRing(World):
         
         if self.settings.disable_extreme_options:
             if not self.options.local_item_option:
-                raise OptionError(f"EldenRing disable_extreme_options Error:"
-                                  f"Player {self.player_name} has local_item_option false."
+                raise OptionError(f"EldenRing disable_extreme_options Error: "
+                                  f"Player {self.player_name} has local_item_option false. "
                                   f"This being false means over 3.5k checks come from this world.")
             elif "goods" in exclude_local_item_only_lowercase:
-                raise OptionError(f"EldenRing disable_extreme_options Error:"
-                                  f"Player {self.player_name} has goods enabled in exclude_local_item_only."
+                raise OptionError(f"EldenRing disable_extreme_options Error: "
+                                  f"Player {self.player_name} has goods enabled in exclude_local_item_only. "
                                   f"This being here means over 3.5k checks come from this world and it bypasses local_item_option.")
             elif all(boss in self._goal_bosses() for boss in all_bosses): # idk if this is needed but I feel like it should be here
-                warning(f"EldenRing disable_extreme_options waring:"
+                warning(f"EldenRing disable_extreme_options waring: "
                         f"Player {self.player_name} has goal option set to all bosses.")
         
         if self.options.enable_dlc:
@@ -763,7 +763,7 @@ class EldenRing(World):
             if self.settings.disable_extreme_options:
                 raise OptionError(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
             else:
-                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can disable this with disable_extreme_options in host.yaml")
+                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can disable this with disable_extreme_options in host.yaml.")
 
         times_duped = {}
         new_code = len(location_dictionary)
