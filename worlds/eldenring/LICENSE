@@ -1,0 +1,41 @@
+MIT License
+
+This Elden Ring Archipelago world is a derivative work. It descends from the
+Elden Ring apworld originally authored by lBedrockl (GitHub: fswap), which is
+itself distributed under the MIT License as part of the Archipelago project.
+The original copyright notice is retained below, alongside the notice for
+subsequent modifications.
+
+Copyright (c) 2017 LLCoolDave
+Copyright (c) 2025 Berserker66
+Copyright (c) 2022 CaitSith2
+Copyright (c) 2021 LegendaryLinux
+    -- Archipelago core / world scaffolding, per the repository-root LICENSE
+Copyright (c) 2024-2025 lBedrockl (fswap)
+    -- original Elden Ring apworld (item/location definitions, base world logic)
+Copyright (c) 2025-2026 Alaric
+    -- num_regions / region-spine, boss locks, client contract, and subsequent
+       modifications
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------------------
+Note: This license covers the Python source of this Archipelago world only.
+It does not grant any rights to FromSoftware's Elden Ring game assets, which
+are the property of FromSoftware / Bandai Namco and are not redistributed here.
