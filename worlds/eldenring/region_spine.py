@@ -669,14 +669,11 @@ def compute_num_regions_scope(
 # including a sealed Limgrave / Altus -- is still reachable via each region's lock.
 
 # Every overworld major step (1-based SPINE index) is rollable in pool mode: steps 1..12 uniformly.
-# Underground (step 8 Siofra/Nokron = Nokron Lock, step 9 Ainsel/Nokstella = Nokstella Lock)
-# DROPPED from num_regions for v0.1: the underground map layer will not reveal on AP unlock
-# (see STATUS-UNDERGROUND-MAP.md). Excluding them here seals them in every num_regions seed
-# (checks -> events, lock pulled) so the player is never routed to a region whose map won't
-# open. Re-add 8, 9 to re-enable once the map-enable flag/mechanism is solved.
-_UNDERGROUND_STEPS_DROPPED_V01 = {8, 9}
-NUM_REGIONS_POOL_STEPS: List[int] = [s for s in range(1, len(SPINE) + 1)
-                                     if s not in _UNDERGROUND_STEPS_DROPPED_V01]
+# Underground steps 8 (Siofra/Nokron = Nokron Lock) and 9 (Ainsel/Nokstella = Nokstella Lock)
+# RE-ENABLED 2026-07-04: the underground map now paints via the client's underground map
+# VIEW-unlock flag 82001 (patch_underground_map_unlock.py; memory er-underground-map-quadrant-flags).
+# All 12 spine steps are rollable in pool mode again.
+NUM_REGIONS_POOL_STEPS: List[int] = list(range(1, len(SPINE) + 1))
 
 
 def compute_num_regions_scope_pool(

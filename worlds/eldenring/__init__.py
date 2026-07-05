@@ -658,6 +658,19 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                         )
                 except ValueError as _e:
                     raise OptionError(f"{self.player_name}: {_e}")
+                # DLC ride-along (num_regions + enable_dlc): keep the DLC regions LIVE instead
+                # of sealing them. num_regions rolls the base SPINE only; with this the full DLC
+                # rides alongside as ordinary region-lock gates -- each DLC region warps in on
+                # its OWN lock (REGION_LOCK_ITEM already covers them, so build_warp_rules emits
+                # the "Warp To {region}" edges under region_access=warp, which num_regions
+                # forces). Gravesite Plain (= Gravesite Lock) has its own hub warp, so the DLC
+                # does NOT depend on the base Mohgwyn->Gravesite chain num_regions may seal.
+                if self.options.enable_dlc:
+                    _dlc_ra_regions = set(region_order_dlc)
+                    _dlc_ra_locks = {n for n, d in item_table.items()
+                                     if getattr(d, "lock", False) and getattr(d, "is_dlc", False)}
+                    _sealed_r -= _dlc_ra_regions
+                    _sealed_l -= _dlc_ra_locks
                 self._spine_active = True
                 self._spine_sealed_regions = _sealed_r
                 self._spine_sealed_locks = _sealed_l
@@ -3294,7 +3307,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             and not (
                 self.options.map_option.value == 1
                 and data.map
-                and self.options.world_logic >= 3  # region_lock: pillars ARE checks (progressive reveal); exclude only under all-at-spawn give
+                # BIRD2 (2026-07-04): the "and world_logic >= 3" clause was REMOVED so map
+                # pillars are NEVER checks under give (any world_logic). A pillar's detection flag
+                # IS the 62xxx map-reveal flag, so under region_lock+give the reveal_all_maps
+                # spawn flag-set auto-fired every pillar check and dumped its item on connect
+                # (base AND underground 62060-64). give == all maps at spawn, no pillar checks;
+                # region locks are named by the overlay console, so no progressive-reveal naming lost.
             )
             # no_spirit_ashes: these two seal checks are gated on a spirit ash + the Spirit
             # Calling Bell (both removed by no_spirit_ashes), so with no opener they'd be
@@ -4238,12 +4256,14 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         if self.options.early_leveling:
             start_graces = sorted(set(start_graces + [4680, 951]))
             # (Torrent for early_leveling is now handled by the unified torrent_start block above.)
-        # dlc_only skips the base-game opening where you'd normally pick up the starting
-        # flasks, so grant them at load-in (GOODS-packed FullIDs, like Torrent above):
+        # QoL (patch_start_with_flasks.py): always grant the two sacred flasks at load-in.
+        # The mod unlocks the Limgrave start graces so you can warp straight out of the Chapel
+        # of Anticipation, but that skips the base-game opening where vanilla hands you your
+        # flasks -- leaving no way to heal. Grant them unconditionally (GOODS-packed FullIDs,
+        # like Torrent above); unconditional covers dlc_only, which always did this.
         #   Flask of Crimson Tears = EquipParamGoods 1001, Flask of Cerulean Tears = 1051.
-        if self.options.dlc_only:
-            start_items.append(1001 | 0x40000000)
-            start_items.append(1051 | 0x40000000)
+        start_items.append(1001 | 0x40000000)
+        start_items.append(1051 | 0x40000000)
         # Quick Start (dlc_only): the DLC start skips the entire base-game rune-earning curve, so
         # optionally hand over enough runes to reach ~Runelevel 120 immediately. RL120 from a fresh
         # level-1 character costs 3,506,749 runes total (Fextralife Level table); 71 Lord's Runes
