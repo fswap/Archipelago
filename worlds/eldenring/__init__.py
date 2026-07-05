@@ -23,7 +23,7 @@ from Options import OptionError
 
 from .item_tiers import ITEM_TIERS, BAD_TIERS, TIER_KEEP_PREFIXES, REMOTE_THRESHOLD
 from .questline_locations import QUESTLINE_ALL
-from .curation import COMEDY_JUNK, TRIM_CUT_NAMES, ARMOR_SET_NONREP, UPLIFT_SPIRITS_TOP, UPLIFT_TALISMANS_S, UPLIFT_GLOVEWORT_BELLS, UPLIFT_REMEMBRANCES, UPLIFT_UNIQUE_CAPS, UPLIFT_SEEDS_TEARS, UPLIFT_RUNE_MIN_VALUE, UPLIFT_STACKABLE_WEIGHTS, UPLIFT_KEEP_DLC, QUESTLINE_DERANDO, QUESTLINE_REWARD_INJECT
+from .curation import COMEDY_JUNK, TRIM_CUT_NAMES, ARMOR_SET_NONREP, UPLIFT_SPIRITS_TOP, UPLIFT_TALISMANS_S, UPLIFT_GLOVEWORT_BELLS, UPLIFT_REMEMBRANCES, UPLIFT_UNIQUE_CAPS, UPLIFT_SEEDS_TEARS, UPLIFT_RUNE_MIN_VALUE, UPLIFT_STACKABLE_WEIGHTS, UPLIFT_CONSUMABLES, UPLIFT_KEEP_DLC, QUESTLINE_DERANDO, QUESTLINE_REWARD_INJECT
 
 # --- dlc_gear_curation: opt-in item-pool gear curation (see options.py) -------
 # Built once from the PvE tier data (ITEM_TIERS) joined with item_table's
@@ -2461,7 +2461,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             return [n for n in names if n in item_table and not item_table[n].is_dlc]
         uniques: List[str] = []
         uniques += [n for n, t in ITEM_TIERS.items()
-                    if t == "S" and n in item_table and (_allow_dlc_juice or not item_table[n].is_dlc)]
+                    if t in ("S", "A") and n in item_table and (_allow_dlc_juice or not item_table[n].is_dlc)]
         if not self.options.no_spirit_ashes.value:
             uniques += list(UPLIFT_SPIRITS_TOP)
         uniques += list(UPLIFT_TALISMANS_S)
@@ -2485,19 +2485,24 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         if len(uniques) >= budget:
             return uniques[:budget]
         buckets = {
-            # runes inject cap (Alaric 2026-07-04): floor 5000 + cap at Hero's Rune [1]
-            # (15000) excludes Hero's Rune [2]-[5] and Lord's Rune, which felt overtuned
-            # for base game. Keeps Golden [10]-[13], Numen's, Hero's [1]. Remembrances untouched.
+            # runes inject cap (patch_pool_builder_consumables.py): floor 5000 + cap at Golden
+            # Rune [13] (10000) -- drops Numen's + Hero's [1]-[5] + Lord's Rune so HIGH golden
+            # runes get rare. Keeps Golden [10]-[13]. Weight also cut (60->25). Remembrances
+            # (their own uniques) untouched.
             "runes": [n for n in item_table
                       if not item_table[n].is_dlc
                       and UPLIFT_RUNE_MIN_VALUE <= (getattr(item_table[n], "runes", 0) or 0)
-                      <= (item_table["Hero's Rune [1]"].runes
-                          if "Hero's Rune [1]" in item_table else 15000)],
+                      <= (item_table["Golden Rune [13]"].runes
+                          if "Golden Rune [13]" in item_table else 10000)],
             "seeds_tears": _base(UPLIFT_SEEDS_TEARS),
             # smithing/somber/ancient-dragon smithing stones: stackable upgrade mats, the
             # fill-safe juice (goods, placeable anywhere). Matches every 'Smithing Stone' name.
             "stones": [n for n in item_table
                        if "Smithing Stone" in n and not item_table[n].is_dlc],
+            # pool_builder consumables (patch_pool_builder_consumables.py): even-split
+            # Nightreign-style pickups + Stonesword Key / Rune Arc / Larval Tear. Base-game only.
+            "consumables": [n for n in UPLIFT_CONSUMABLES
+                            if n in item_table and not item_table[n].is_dlc],
         }
         keys = [k for k in UPLIFT_STACKABLE_WEIGHTS if buckets.get(k)]
         if not keys:
@@ -3591,6 +3596,24 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                                          if _sub_trig in _l.name and "boss drop" in _l.name), None)
                     if _sub_trigger is not None:
                         add_sweep(_sub_trigger, _sub_cluster)
+            # CASTLE_MORNE_SWEEP (patch_castle_morne_sweep_lock.py): Castle Morne is its own AP
+            # region, but Leonine Misbegotten drops a WEAPON (Grafted Blade Greatsword), not a
+            # remembrance, so it can't ride LEGACY_SWEEP_GROUPS (that path needs a remembrance
+            # trigger). Sweep by area code CM on the Leonine boss drop, gated by the Leonine boss
+            # lock (explicit CASTLE_MORNE_GROUP_KEY, like the Shaded Castle). Mirrors Caelid blocks.
+            if self.options.dungeon_sweep >= 2 and getattr(region_spine, "CASTLE_MORNE_GROUP_KEY", None):
+                _cm = [_l for _l in self._get_our_locations()
+                       if _l.address is not None
+                       and _l.name.split(":", 1)[0].split("/")[-1].strip("()") == "CM"]
+                if _cm:
+                    _cm_trig = next((_l for _l in _cm
+                                     if getattr(_l.data, "boss", False) and "boss drop" in _l.name), None)
+                    if _cm_trig is not None:
+                        add_sweep(_cm_trig, _cm)
+                        if str(_cm_trig.address) in dungeon_sweeps:
+                            _bl_cm = region_spine.BOSS_LOCKS.get(region_spine.CASTLE_MORNE_GROUP_KEY)
+                            if _bl_cm:
+                                self._sweep_lock_gates_by_trigger[_cm_trig.name] = (_cm_trig.address, _bl_cm)
         return dungeon_sweeps, groups
 
     def extend_hint_information(self, hint_data):
@@ -4188,6 +4211,12 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                     _fl_g.append(int(_fl_of))
             start_graces = sorted(set(start_graces + [int(_f) for _f in _fl_g]))
         start_items: List[int] = []
+        # QoL (patch_start_with_torch.py): always start with a Torch so a dark cave/catacomb
+        # is navigable -- you can't fast-travel out of a dungeon until you reach its grace, and
+        # the vanilla opening gives no light. Grants the GAME item id, NOT the 'Spelunker's
+        # Torch' region-lock AP item (locks key off the received-item NAME set, not inventory),
+        # so it opens nothing. Weapons pack with a 0x0 nibble, so the FullID is just the id.
+        start_items.append(24000000)  # Torch (+0)
         # Torrent (Spectral Steed Whistle) start-grant, DECOUPLED from the flask/bell start grant
         # into its own torrent_start knob. auto = grant when the normal Melina hand-off is
         # bypassed (bell_physick start_with OR progressive_physick); on = always; off = never.
@@ -4324,7 +4353,7 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         if self.options.world_logic < 3:
             _LGI_SOURCE = {
                 "Mountaintops Lock": ["Rold Medallion"],
-                "Snowfield Lock": ["Haligtree Secret Medallion (Left)",
+                "Haligtree Lock": ["Haligtree Secret Medallion (Left)",
                                    "Haligtree Secret Medallion (Right)"],
             }
             for _lgi_lock, _lgi_names in _LGI_SOURCE.items():

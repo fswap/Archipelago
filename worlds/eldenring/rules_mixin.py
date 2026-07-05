@@ -1612,6 +1612,27 @@ class EldenRingRules:
 
         if self.options.excluded_location_behavior == "allow_useful":
             self.options.exclude_locations.value.clear()
+
+        # WEAPON_SHOP_SLOT_GUARD (patch_shop_weapon_slots.py): a shop slot whose VANILLA ware is
+        # a WEAPON must hold an OWN-WORLD ER weapon. The client rewrites own-world weapon->weapon
+        # shop rows natively & safely, so the slot DISPLAYS the real reward and never hits the
+        # SHOP_CTD_GUARD crash (weapon row -> own-world NON-weapon reward CTDs the purchase --
+        # 2026-07-04 Longsword->Festering Bloody Finger crash; Finger Seal showed vanilla). 76
+        # weapon shop slots vs 513 ER weapons = ample supply. No-op when shop checks are off.
+        from .items import ERItemCategory as _WSG_CAT
+        for _wsg_loc in self._get_our_locations():
+            _wsg_d = getattr(_wsg_loc, "data", None)
+            if _wsg_d is None or getattr(_wsg_loc, "address", None) is None:
+                continue
+            if not (getattr(_wsg_d, "shop", False) or getattr(_wsg_d, "raceshop", False)):
+                continue
+            _wsg_van = getattr(_wsg_d, "default_item_name", None)
+            _wsg_it = self.item_table.get(_wsg_van) if _wsg_van else None
+            if _wsg_it is None or _wsg_it.category != _WSG_CAT.WEAPON:
+                continue
+            add_item_rule(_wsg_loc, lambda item, _p=self.player, _cat=_WSG_CAT.WEAPON: (
+                item.player == _p and self.item_table.get(item.name) is not None
+                and self.item_table[item.name].category == _cat))
             
     def _content_in_scope(self, data) -> bool:
         """Whether a location's content belongs in the check pool.

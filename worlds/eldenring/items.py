@@ -2198,6 +2198,7 @@ _vanilla_items = [
     ERItemData("Malenia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Haligtree/Elphael sweep
     ERItemData("Mohg Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Mohgwyn Palace sweep
     ERItemData("Elemer Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # The Shaded Castle sweep (SCIG/SCR name-based group)
+    ERItemData("Leonine Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # Castle Morne sweep (CM area-code group; Leonine Misbegotten drops a weapon, not a remembrance)
     ERItemData("Divine Beast Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Belurat sweep
     ERItemData("Rellana Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Castle Ensis sweep
     ERItemData("Messmer Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Shadow Keep sweep
@@ -2926,6 +2927,25 @@ for _gr_region in sorted(_GR_RGP):
                                        classification=ItemClassification.filler,
                                        inject=True, grace=True))
         GRACE_FLAG_TO_ITEM[_gr_flag] = _gr_name
+
+# pool_builder consumables (patch_pool_builder_consumables.py): finished throwing pots granted
+# as one-time consumables (Nightreign-style) rather than the reusable Cracked Pot crafting tool.
+# Ordinary GOODS with vanilla in-game ids -> the client grants them via the generic goods gib
+# (no RE, no client change). Constructed HERE, after the grace items, so no existing item's auto
+# ap_code shifts; appended to _vanilla_items (base-game). Not filler=True and no location default,
+# so they only ever enter the pool via the pool_builder ladder.
+_pb_pots = [
+    ERItemData("Fire Pot", 300, ERItemCategory.GOODS),
+    ERItemData("Lightning Pot", 320, ERItemCategory.GOODS),
+    ERItemData("Fetid Pot", 330, ERItemCategory.GOODS),
+    ERItemData("Holy Water Pot", 350, ERItemCategory.GOODS),
+    ERItemData("Freezing Pot", 360, ERItemCategory.GOODS),
+    ERItemData("Poison Pot", 370, ERItemCategory.GOODS),
+    ERItemData("Volcano Pot", 600, ERItemCategory.GOODS),
+    ERItemData("Sleep Pot", 640, ERItemCategory.GOODS),
+    ERItemData("Rancor Pot", 650, ERItemCategory.GOODS),
+]
+_vanilla_items.extend(_pb_pots)
 
 _all_items = _vanilla_items + _dlc_items + _grace_items
 

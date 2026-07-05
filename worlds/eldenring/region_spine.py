@@ -869,8 +869,12 @@ SHADED_CASTLE_GROUP_KEY = "The Shaded Castle"
 # group key (group[0] / SHADED_CASTLE_GROUP_KEY) -> boss lock ITEM name. One lock per major
 # sweep group. "Godrick Lock" is the pre-existing godrick-granularity item folded in rather
 # than duplicated (the spec's precedent); every other value is a new items.py lock=True entry.
-# NOTE Castle Morne has NO sweep group today (the spec's example was stale), so Leonine
-# Misbegotten gets no lock in v0.1 -- add a Castle Morne group first if he should.
+# Castle Morne is its own AP region, but Leonine Misbegotten drops a WEAPON (Grafted
+# Blade Greatsword), NOT a remembrance, so it can't ride LEGACY_SWEEP_GROUPS (that path
+# requires a remembrance trigger). Its sweep is the NAME-based CM area-code block in
+# _compute_dungeon_sweeps (like the Shaded Castle), so it gets an explicit group key
+# plus a base-game boss lock.
+CASTLE_MORNE_GROUP_KEY = "Castle Morne"
 BOSS_LOCKS: Dict[str, str] = {
     "Stormveil Start": "Godrick Lock",
     "Raya Lucaria Academy": "Rennala Lock",
@@ -889,6 +893,7 @@ BOSS_LOCKS: Dict[str, str] = {
     "Finger Ruins of Miyr": "Metyr Lock",
     "Ancient Ruins of Rauh": "Romina Lock",
     SHADED_CASTLE_GROUP_KEY: "Elemer Lock",
+    CASTLE_MORNE_GROUP_KEY: "Leonine Lock",
 }
 
 # Group keys whose regions only exist with the DLC enabled.
@@ -901,4 +906,5 @@ BOSS_LOCK_DLC_KEYS: Set[str] = {
 # group region is unsealed this seed). The Shaded Castle rides the shared Altus Plateau region.
 BOSS_LOCK_GROUP_REGIONS: Dict[str, List[str]] = {g[0]: list(g) for g in LEGACY_SWEEP_GROUPS}
 BOSS_LOCK_GROUP_REGIONS[SHADED_CASTLE_GROUP_KEY] = ["Altus Plateau"]
+BOSS_LOCK_GROUP_REGIONS[CASTLE_MORNE_GROUP_KEY] = ["Castle Morne"]
 # ===== end BOSS_LOCKS_PATCH ==================================================================

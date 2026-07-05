@@ -547,6 +547,24 @@ UPLIFT_TALISMANS_S = frozenset({
     "Dragoncrest Greatshield Talisman",
     "Crimson Amber Medallion +2",
     "Blessed Dew Talisman",
+    # A-tier (patch_pool_builder_consumables.py): accessories aren't in the item_tiers pipeline,
+    # so these are hand-added to dip the talisman juice from S-only down to S+A.
+    "Green Turtle Talisman",
+    "Dragoncrest Shield Talisman",
+    "Bull-Goat's Talisman",
+    "Great-Jar's Arsenal",
+    "Winged Sword Insignia",
+    "Rotten Winged Sword Insignia",
+    "Claw Talisman",
+    "Carian Filigreed Crest",
+    "Lord of Blood's Exultation",
+    "Kindred of Rot's Exultation",
+    "Prosthesis-Wearer Heirloom",
+    "Erdtree's Favor +1",
+    "Assassin's Crimson Dagger",
+    "Assassin's Cerulean Dagger",
+    "Curved Sword Talisman",
+    "Spear Talisman",
 })
 
 # Glovewort bell bearings -- unlock spirit-ash upgrade mats at the merchant so injected
@@ -601,10 +619,34 @@ UPLIFT_RUNE_MIN_VALUE = 5000
 
 # Weighted distribution for the stackable remainder once all uniques are placed.
 UPLIFT_STACKABLE_WEIGHTS = {
-    "runes": 60,
-    "seeds_tears": 40,
-    "stones": 80,   # Alaric 2026-07-03: crank upgrade-material (smithing stone) juice; tunable
+    # patch_pool_builder_consumables.py: cut runes+seeds so high Golden Runes / seeds+tears get
+    # rarer, add the even-split "consumables" bucket (Nightreign-style pickups). All tunable.
+    "runes": 25,
+    "seeds_tears": 15,
+    "stones": 60,
+    "consumables": 40,
 }
+
+# pool_builder consumables bucket (patch_pool_builder_consumables.py). Even split (uniform pick)
+# of base-game one-time-use pickups, Nightreign-inspired: buff foods/flesh, throwables, greases,
+# finished throwing pots (added to items.py), plus the Stonesword Key / Rune Arc / Larval Tear
+# utility trio folded in. Injected as FILLER by the ladder (upgraded trash). Base-game only; the
+# DLC variants (hefty pots, two-headed turtle, well-pickled turtle neck) are intentionally out.
+UPLIFT_CONSUMABLES = frozenset({
+    # foods / flesh
+    "Gold-Pickled Fowl Foot", "Silver-Pickled Fowl Foot", "Pickled Turtle Neck",
+    "Exalted Flesh", "Boiled Crab", "Warming Stone", "Bewitching Branch",
+    # throwables
+    "Throwing Dagger", "Bone Dart", "Poisonbone Dart", "Crystal Dart", "Kukri", "Fan Daggers",
+    # greases
+    "Fire Grease", "Lightning Grease", "Magic Grease", "Holy Grease", "Blood Grease",
+    "Poison Grease", "Freezing Grease", "Rot Grease", "Dragonwound Grease", "Soporific Grease",
+    # finished throwing pots (new base items, ids from Paramdex EquipParamGoods)
+    "Fire Pot", "Lightning Pot", "Fetid Pot", "Holy Water Pot", "Freezing Pot",
+    "Poison Pot", "Volcano Pot", "Sleep Pot", "Rancor Pot",
+    # utility trio
+    "Stonesword Key", "Rune Arc", "Larval Tear",
+})
 
 # --- NPC questline de-randomization (SPEC-questline-derando.md) --------------------
 # UNIQUE quest LINK items that gate only optional locations (never a region or a goal).
