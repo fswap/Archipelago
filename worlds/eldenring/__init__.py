@@ -3920,8 +3920,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
             # loop above grants them nothing. Grant each bundled dungeon's ENTRANCE grace on receipt
             # of the bundle lock so fast-travel into the dungeons unlocks with the key. Gated on the
             # lock actually being injected (opt-in option on / always-on Liurnia); inert otherwise.
+            # patch_bundle_lock_graces_chain: a bundle lock that is a num_regions/dlc CHAIN-
+            # managed lock is precollected (free start link) or breadcrumbed (inject=False) yet
+            # very much IN PLAY -- its kept region is part of the seal scope. The old inject-only
+            # gate skipped it, so a kept cave-bundle (Spelunker torch) got an EMPTY grace bundle:
+            # a link-0 cave start spawned with no cave graces (can't rest / fast-travel) and a
+            # breadcrumb cave lock lit nothing on receipt. Include chain-managed bundle locks too.
+            _chain_mgd_bundles = (getattr(self, "_num_regions_chain_managed_locks", set())
+                                  | getattr(self, "_dlc_chain_managed_locks", set()))
             for _blk, _bflags in BUNDLE_LOCK_GRACES.items():
-                if _blk in item_table and getattr(item_table[_blk], "inject", False):
+                if _blk in item_table and (getattr(item_table[_blk], "inject", False)
+                                           or _blk in _chain_mgd_bundles):
                     region_graces[_blk] = sorted(set(region_graces.get(_blk, []) + list(_bflags)))
             # DLC map: the Land of Shadow map is a SINGLE flag (82001, Hexinton CT) -- no per-region
             # DLC map flags exist. Bundle it onto the DLC entry region (Gravesite Plain) so reaching
