@@ -1325,7 +1325,7 @@ class EldenRing(World):
             if self.options.enemy_rando and not self.options.rykard_encounter:
                 self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop"))
                 self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop"))
-                self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
+                self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
                 self._add_entrance_rule("Abyssal Woods", lambda state: self._can_get(state, "RR/(DC): Barbed Staff-Spear - boss drop"))
                 self._add_entrance_rule("Enir Ilim", lambda state: self._can_get(state, "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop"))
             
@@ -2629,7 +2629,7 @@ class EldenRing(World):
             ),
             (
                 "SV/SKBG mainboss", #"Commander Gaius", # boss
-                "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", # a drop from boss, so we can do 'can get' check
+                "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", # a drop from boss, so we can do 'can get' check
                 [   # items
                     "Gaius's Helm", 
                     "Gaius's Armor",

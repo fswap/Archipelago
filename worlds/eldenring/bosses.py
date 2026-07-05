@@ -1217,15 +1217,15 @@ dlc_bosses = [
             "SK/SKMG: Scadutree Fragment x2 - boss drop"
         ]
     ),
-    ERBossInfo("Commander Gaius (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2049480800, allow_rykard=True,
+    ERBossInfo("Commander Gaius (ScV)", ["Shadow Keep", "DLC Remembrance"], 0, 2049480800, allow_rykard=True,
         locations=[
-            "SV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"
+            "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"
         ]
     ),
-    ERBossInfo("Scadutree Avatar (SK)", ["Shadow Keep", "DLC Remembrance"], 0, 2050480800, allow_rykard=True,
+    ERBossInfo("Scadutree Avatar (SB)", ["Shadow Keep", "DLC Remembrance"], 0, 2050480800, allow_rykard=True,
         locations=[
-            "SK/TWS: Remembrance of the Shadow Sunflower - mainboss drop",
-            "SK/TWS: Miquella's Great Rune - mainboss drop"
+            "SB/TWS: Remembrance of the Shadow Sunflower - mainboss drop",
+            "SB/TWS: Miquella's Great Rune - mainboss drop"
         ]
     ),
     
