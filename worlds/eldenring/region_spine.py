@@ -889,6 +889,7 @@ BOSS_LOCKS: Dict[str, str] = {
     "Enir Ilim": "Promised Consort Lock",
     "Finger Ruins of Miyr": "Metyr Lock",
     "Ancient Ruins of Rauh": "Romina Lock",
+    "Jagged Peak": "Bayle Lock",                # DLC: Bayle the Dread (optional superboss); gates the Jagged Peak sweep
     SHADED_CASTLE_GROUP_KEY: "Elemer Lock",
     CASTLE_MORNE_GROUP_KEY: "Leonine Lock",
 }
@@ -897,6 +898,7 @@ BOSS_LOCKS: Dict[str, str] = {
 BOSS_LOCK_DLC_KEYS: Set[str] = {
     "Belurat", "Castle Ensis", "Shadow Keep", "Midra's Manse",
     "Stone Coffin Fissure", "Enir Ilim", "Finger Ruins of Miyr", "Ancient Ruins of Rauh",
+    "Jagged Peak",
 }
 
 # group key -> regions used by the generate_early presence prediction (inject the lock iff any

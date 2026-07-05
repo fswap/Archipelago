@@ -2207,6 +2207,7 @@ _vanilla_items = [
     ERItemData("Promised Consort Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Enir Ilim sweep
     ERItemData("Metyr Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Finger Ruins sweep
     ERItemData("Romina Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Rauh ruins sweep
+    ERItemData("Bayle Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),  # DLC: Jagged Peak sweep (Bayle the Dread -- optional superboss)
 ]
 
 #MARK: DLC Items
