@@ -3632,6 +3632,24 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
                             _bl_cm = region_spine.BOSS_LOCKS.get(region_spine.CASTLE_MORNE_GROUP_KEY)
                             if _bl_cm:
                                 self._sweep_lock_gates_by_trigger[_cm_trig.name] = (_cm_trig.address, _bl_cm)
+            # JAGGED_PEAK_SWEEP (Bayle): Bayle drops "Heart of Bayle" (a Dragon Communion
+            # consumable), NOT a remembrance, so Jagged Peak can't ride LEGACY_SWEEP_GROUPS. It
+            # owns its regions but spans several sub-area codes (JPS/JPM/FJP/DPT/GADC), all under
+            # the "JP" name prefix (first token) -- gate on that on the Bayle mainboss drop.
+            # Explicit JAGGED_PEAK_GROUP_KEY, like the Shaded Castle / Castle Morne blocks.
+            if self.options.dungeon_sweep >= 2 and getattr(region_spine, "JAGGED_PEAK_GROUP_KEY", None):
+                _jp = [_l for _l in self._get_our_locations()
+                       if _l.address is not None
+                       and _l.name.split(":", 1)[0].split("/")[0].strip() == "JP"]
+                if _jp:
+                    _jp_trig = next((_l for _l in _jp
+                                     if getattr(_l.data, "boss", False) and "boss drop" in _l.name), None)
+                    if _jp_trig is not None:
+                        add_sweep(_jp_trig, _jp)
+                        if str(_jp_trig.address) in dungeon_sweeps:
+                            _bl_jp = region_spine.BOSS_LOCKS.get(region_spine.JAGGED_PEAK_GROUP_KEY)
+                            if _bl_jp:
+                                self._sweep_lock_gates_by_trigger[_jp_trig.name] = (_jp_trig.address, _bl_jp)
         return dungeon_sweeps, groups
 
     def extend_hint_information(self, hint_data):
@@ -4240,10 +4258,17 @@ class EldenRing(EldenRingRules, CachedRuleBuilderWorld):
         # bypassed (bell_physick start_with OR progressive_physick); on = always; off = never.
         # early_leveling force-grants regardless (it suppresses her hand-off via flag 951).
         _ts = self.options.torrent_start.value
+        # patch_torrent_regionlock_start.py: auto (_ts==0) ALSO grants Torrent when a rolled/
+        # random start region is in effect (_rsr set, incl. the Roundtable re-root). The region-
+        # lock flow pre-lights start graces and BYPASSES Melina's first-meeting Torrent hand-off
+        # (rest fires her camera pan, but she never spawns to give the whistle) -> mountless.
+        # Confirmed via playtester seed (num_regions, randomize bell). Narrow to Roundtable-only
+        # by swapping `_rsr is not None` for `_rsr == "Roundtable Hold"`.
         _grant_torrent = (
             _ts == 1
             or (_ts == 0 and (self.options.bell_physick_option.value == 0
-                              or self._progressive_physick_active()))
+                              or self._progressive_physick_active()
+                              or _rsr is not None))
             or bool(self.options.early_leveling)
         )
         if _grant_torrent:

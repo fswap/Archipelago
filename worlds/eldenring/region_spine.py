@@ -872,6 +872,12 @@ SHADED_CASTLE_GROUP_KEY = "The Shaded Castle"
 # _compute_dungeon_sweeps (like the Shaded Castle), so it gets an explicit group key
 # plus a base-game boss lock.
 CASTLE_MORNE_GROUP_KEY = "Castle Morne"
+
+# JAGGED_PEAK_GROUP_KEY (Bayle): drops "Heart of Bayle" (a Dragon Communion consumable), NOT a
+# remembrance, so Jagged Peak can't ride LEGACY_SWEEP_GROUPS (needs a remembrance trigger). Its
+# sweep is the NAME-based "JP" area-prefix block in _compute_dungeon_sweeps (like Castle Morne),
+# so it gets an explicit group key + a DLC boss lock.
+JAGGED_PEAK_GROUP_KEY = "Jagged Peak"
 BOSS_LOCKS: Dict[str, str] = {
     "Stormveil Start": "Godrick Lock",
     "Raya Lucaria Academy": "Rennala Lock",
@@ -889,16 +895,16 @@ BOSS_LOCKS: Dict[str, str] = {
     "Enir Ilim": "Promised Consort Lock",
     "Finger Ruins of Miyr": "Metyr Lock",
     "Ancient Ruins of Rauh": "Romina Lock",
-    "Jagged Peak": "Bayle Lock",                # DLC: Bayle the Dread (optional superboss); gates the Jagged Peak sweep
     SHADED_CASTLE_GROUP_KEY: "Elemer Lock",
     CASTLE_MORNE_GROUP_KEY: "Leonine Lock",
+    JAGGED_PEAK_GROUP_KEY: "Bayle Lock",  # DLC: Bayle the Dread (optional superboss); name-based JP sweep
 }
 
 # Group keys whose regions only exist with the DLC enabled.
 BOSS_LOCK_DLC_KEYS: Set[str] = {
     "Belurat", "Castle Ensis", "Shadow Keep", "Midra's Manse",
     "Stone Coffin Fissure", "Enir Ilim", "Finger Ruins of Miyr", "Ancient Ruins of Rauh",
-    "Jagged Peak",
+    JAGGED_PEAK_GROUP_KEY,
 }
 
 # group key -> regions used by the generate_early presence prediction (inject the lock iff any
@@ -906,4 +912,5 @@ BOSS_LOCK_DLC_KEYS: Set[str] = {
 BOSS_LOCK_GROUP_REGIONS: Dict[str, List[str]] = {g[0]: list(g) for g in LEGACY_SWEEP_GROUPS}
 BOSS_LOCK_GROUP_REGIONS[SHADED_CASTLE_GROUP_KEY] = ["Altus Plateau"]
 BOSS_LOCK_GROUP_REGIONS[CASTLE_MORNE_GROUP_KEY] = ["Castle Morne"]
+BOSS_LOCK_GROUP_REGIONS[JAGGED_PEAK_GROUP_KEY] = ["Jagged Peak", "Jagged Peak Foot"]
 # ===== end BOSS_LOCKS_PATCH ==================================================================

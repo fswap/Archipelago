@@ -41,7 +41,7 @@ class TestBossLocks(unittest.TestCase):
             self.assertTrue(_ITEM_LOCK_FLAGS[name], "%s: %r must be lock=True" % (key, name))
 
     def test_keys_match_sweep_groups_exactly(self):
-        want = {g[0] for g in spine.LEGACY_SWEEP_GROUPS} | {spine.SHADED_CASTLE_GROUP_KEY, spine.CASTLE_MORNE_GROUP_KEY}
+        want = {g[0] for g in spine.LEGACY_SWEEP_GROUPS} | {spine.SHADED_CASTLE_GROUP_KEY, spine.CASTLE_MORNE_GROUP_KEY, spine.JAGGED_PEAK_GROUP_KEY}
         self.assertEqual(set(spine.BOSS_LOCKS), want)
 
     def test_dlc_keys_subset(self):
