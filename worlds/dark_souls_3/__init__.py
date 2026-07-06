@@ -718,7 +718,11 @@ class DarkSouls3World(World):
 
         self._add_location_rule([
             "FS: Morne's Great Hammer - Eygon",
-            "FS: Moaning Shield - Eygon"
+            "FS: Moaning Shield - Eygon",
+            "FS: Morne's Helm - shop after killing Eygon or LC boss",
+            "FS: Morne's Armor - shop after killing Eygon or LC boss",
+            "FS: Morne's Gauntlets - shop after killing Eygon or LC boss",
+            "FS: Morne's Leggings - shop after killing Eygon or LC boss"
         ], lambda state: (
             self._can_get(state, "LC: Soul of Dragonslayer Armour") and
             self._can_get(state, "FK: Soul of the Blood of the Wolf")
