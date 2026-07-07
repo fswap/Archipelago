@@ -290,7 +290,7 @@ class EldenRing(World):
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         self.all_priority_locations.update(self.options.priority_location_groups.value)
         self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
-        exclude_local_item_only_lowercase = [key.lower() for key in self.options.exclude_local_item_only.value]
+        local_item_only_lowercase = [key.lower() for key in self.options.local_item_only.value]
         
         if self.options.important_at_priority_only and len(self.all_priority_locations) == 0: 
             raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but no priority locations. Add groups to priority_location_groups.")
@@ -300,14 +300,10 @@ class EldenRing(World):
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
         if self.settings.disable_extreme_options:
-            if not self.options.local_item_option:
+            if "filler" not in local_item_only_lowercase or "goods" not in local_item_only_lowercase:
                 raise OptionError(f"EldenRing disable_extreme_options Error: "
-                                  f"Player {self.player_name} has local_item_option false. "
-                                  f"This being false means over 3.5k checks come from this world.")
-            elif "goods" in exclude_local_item_only_lowercase:
-                raise OptionError(f"EldenRing disable_extreme_options Error: "
-                                  f"Player {self.player_name} has goods enabled in exclude_local_item_only. "
-                                  f"This being here means over 3.5k checks come from this world and it bypasses local_item_option.")
+                                  f"Player {self.player_name} has filler or goods missing from local_item_only. "
+                                  f"This being here means the itempool will be flooded with lots of filler items.")
             elif all(boss in self._goal_bosses() for boss in all_bosses): # idk if this is needed but I feel like it should be here
                 warning(f"EldenRing disable_extreme_options waring: "
                         f"Player {self.player_name} has goal option set to all bosses.")
@@ -351,31 +347,30 @@ class EldenRing(World):
         if self.base_enabled: using_table.update(item_table_vanilla)
         if self.options.enable_dlc: using_table.update(item_table_dlc)
         for item in using_table.values(): # loop of whole item table
-            if self.options.local_item_option:
-                if (item.is_important(self.options) != ItemClassification.progression 
-                    and item.is_important(self.options) != ItemClassification.progression_deprioritized
-                    and item.is_important(self.options) != ItemClassification.useful):
-                    match item.category:
-                        case ERItemCategory.GOODS:
-                            if 'goods' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.WEAPON:
-                            if 'weapon' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ARMOR:
-                            if 'armor' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ACCESSORY:
-                            if 'accessory' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
-                        case ERItemCategory.ASHOFWAR:
-                            if 'ashofwar' not in exclude_local_item_only_lowercase:
-                                self.options.local_items.value.add(item.name)
-                            break
+            if item.is_important(self.options) not in (ItemClassification.progression ,ItemClassification.progression_deprioritized ,ItemClassification.useful):
+                match item.category:
+                    case ERItemCategory.GOODS:
+                        if (('goods' in local_item_only_lowercase) 
+                            or ('filler' in local_item_only_lowercase and item.replacable)
+                            or ('non-filler' in local_item_only_lowercase and not item.replacable)):
+                            self.options.local_items.value.add(item.name)
+                        break
+                    case ERItemCategory.WEAPON:
+                        if 'weapon' in local_item_only_lowercase:
+                            self.options.local_items.value.add(item.name)
+                        break
+                    case ERItemCategory.ARMOR:
+                        if 'armor' in local_item_only_lowercase:
+                            self.options.local_items.value.add(item.name)
+                        break
+                    case ERItemCategory.ACCESSORY:
+                        if 'accessory' in local_item_only_lowercase:
+                            self.options.local_items.value.add(item.name)
+                        break
+                    case ERItemCategory.ASHOFWAR:
+                        if 'ashofwar' in local_item_only_lowercase:
+                            self.options.local_items.value.add(item.name)
+                        break
 
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
@@ -3273,8 +3268,7 @@ class EldenRing(World):
                 "smooth_rune_items": self.options.smooth_rune_items.value,
                 "spell_shop_spells_only": self.options.spell_shop_spells_only.value,
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
-                "local_item_option": self.options.local_item_option.value,
-                "exclude_local_item_only": self.options.exclude_local_item_only.value,
+                "local_item_only": self.options.local_item_only.value,
                 "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
                 "important_at_priority_early": self.options.important_at_priority_early.value,

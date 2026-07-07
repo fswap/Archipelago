@@ -527,26 +527,23 @@ class RemembrancesAtPriority(Toggle):
     display_name = "Remembrances at Priority"
 
 # MARK: Excludes and Behavior
-
-class LocalItemOnly(DefaultOnToggle):
-    """Only progression or useful items will show up in other players games.
-    Used with ExcludeLocalItemOnly option."""
-    display_name = "Local Item Option"
     
-class ExcludeLocalItemOnly(OptionList):
-    """If LocalItemOnly is true then these item categories will show up in other players games.
+class LocalItemOnly(OptionList):
+    """Which categories should be local only, useful and progression excluded.
     - [Items] **Item Group**
     - [~600] **Weapon**: All Weapons and Ammo.
     - [621] **Armor**: All Armors.
     - [154] **Accessory**: All Talismans.
     - [105] **AshofWar**: All Ashes of War.
-    - [~3700] **Goods**: All Goods.
+    - [~3700] **Goods**: The two below
+    - **Filler**: All Crafting Mats.
+    - **Non-Filler**: Smithing stones, Spells and Spirit ashes.
     
-    Goods should always be local only.
+    Filler should always be local only, it floods the itempool with useless items.
     """
-    display_name = "Exclude Local Item Only"
-    default = ["Weapon", "Armor", "Accessory", "AshofWar"]
-    valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods"]
+    display_name = "Local Item Only"
+    default = ["Filler"]
+    valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods", "filler", "non-filler"]
     valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
 
 class ERExcludeLocations(ExcludeLocations):
@@ -671,8 +668,7 @@ class EROptions(PerGameCommonOptions):
     smooth_rune_items: SmoothRuneItems
     spell_shop_spells_only: SpellShopSpellsOnly
     early_legacy_dungeons: EarlyLegacyDungeonsEarly
-    local_item_option: LocalItemOnly
-    exclude_local_item_only: ExcludeLocalItemOnly
+    local_item_only: LocalItemOnly
     priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
     important_at_priority_early: ERImportantAtPriorityEarly
@@ -761,7 +757,6 @@ option_groups = [
         SpellShopSpellsOnly,
         EarlyLegacyDungeonsEarly,
         LocalItemOnly,
-        ExcludeLocalItemOnly,
         ERExcludeLocations,
         ExcludedLocationBehaviorOption,
         MissableLocationBehaviorOption,
