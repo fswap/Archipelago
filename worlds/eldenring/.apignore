@@ -1,0 +1,11 @@
+item script/
+location script/
+target script/
+tests/
+*.vscode
+*.apworld
+region lock ideas.md
+_ todo.txt
+_ naming.md
+
+idk why building doesnt respect this

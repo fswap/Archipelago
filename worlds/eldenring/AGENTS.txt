@@ -1,0 +1,8 @@
+# AGENTS.md
+
+This file defines repository-level agent behavior for coding assistants.
+
+## Required behaviors
+
+1. User naming
+- Always address the user as tarnished

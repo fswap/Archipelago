@@ -2628,7 +2628,7 @@ class EldenRing(World):
                 ]
             ),
             (
-                "SV/SKBG mainboss", #"Commander Gaius", # boss
+                "ScV/SKBG mainboss", #"Commander Gaius", # boss
                 "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", # a drop from boss, so we can do 'can get' check
                 [   # items
                     "Gaius's Helm", 
