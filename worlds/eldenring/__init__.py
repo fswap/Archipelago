@@ -3220,6 +3220,7 @@ class EldenRing(World):
                 "great_runes_required_erdtree": self.options.great_runes_required_erdtree.value,
                 "royal_access": self.options.royal_access.value,
                 "use_master_key": self.options.use_master_key.value,
+                
                 "enable_dlc": self.options.enable_dlc.value,
                 "dlc_start": self.options.dlc_start.value,
                 "dlc_starting_items": self.options.dlc_starting_items.value,
