@@ -194,7 +194,7 @@ class EldenRing(World):
     This is the description of the game that will be displayed on the AP website.
     """
 
-    game = "EldenRing"
+    game = "Elden Ring"
     options: EROptions
     options_dataclass = EROptions
     web = EldenRingWeb()
@@ -3243,6 +3243,7 @@ class EldenRing(World):
                 "boss_scaling_percent": self.options.boss_scaling_percent.value,
                 "disable_gargoyle_poison_cloud_damage": self.options.disable_gargoyle_poison_cloud_damage.value,
                 "night_bosses": self.options.night_bosses.value,
+                "dungeon_sweep": self.options.dungeon_sweep.value,
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 

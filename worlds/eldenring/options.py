@@ -279,6 +279,10 @@ class NightBosses(Choice):
     # option_require_item = 2
     default = 0
 
+class DungeonSweep(Toggle):
+    """After killing the boss of a dungeon collect all remaining items within that dungeon automatically."""
+    display_name = "Dungeon Sweep"
+
 class RandomEnemyPresetOption(OptionDict):
     """The YAML preset for the static enemy randomizer.
 
@@ -661,6 +665,7 @@ class EROptions(PerGameCommonOptions):
     boss_scaling_percent: BossScalingPercent
     disable_gargoyle_poison_cloud_damage: DisableGargoylePoisonCloudDamage
     night_bosses: NightBosses
+    dungeon_sweep: DungeonSweep
     random_enemy_preset: RandomEnemyPresetOption
     material_rando: MaterialRando
     death_link: DeathLink
@@ -724,6 +729,7 @@ option_groups = [
         BossScalingPercent,
         DisableGargoylePoisonCloudDamage,
         NightBosses,
+        DungeonSweep,
         RandomEnemyPresetOption,
         MaterialRando,
     ]),
