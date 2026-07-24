@@ -5,7 +5,7 @@ Run       python generate.py   need yaml in players
 Or        python launcher.py   so you can gen template options
 fuzzer    python fuzz.py -r 50 -j 16 -g eldenring -n 1
 
-python launcher.py "Build APWorlds" -- "EldenRing" 
+python launcher.py "Build APWorlds" -- "Elden Ring" 
 
 
 
@@ -34,12 +34,7 @@ boss region lock using bosses.py
 
 Ideas
 
-gracesanity, graces are checks
 option to turn off healing item randomization / start with
-scadutree options, start with, not random, only within dlc, anywhere
-
-"This dungeon is not on the path." or "This dungeon is on the path of the Elden Lord."
-using ground messages or the small stones with text on them
 
 
 Art that will be needed probs

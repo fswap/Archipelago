@@ -5433,7 +5433,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DB/(BS): Gurranq's Beast Claw - Gurranq, deathroot reward 8", "Gurranq's Beast Claw", key="605143,0:0000400231::", missable=True, targets=('lot:102311')),
         ERLocationData("DB/(BS): Beastclaw Greathammer - Gurranq, deathroot reward 7", "Beastclaw Greathammer", key="605143,0:0000400232::", missable=True, targets=('lot:102312')),
         ERLocationData("DB/(BS): Stone of Gurranq - Gurranq, deathroot reward 6", "Stone of Gurranq", key="605143,0:0000400233::", missable=True, targets=('lot:102313')),
-        ERLocationData("DB/(BS): Beast Claw - Gurranq, deathroot reward 5", "Beast Claw", key="605143,0:0000400234::", missable=True, targets=('lot:102314')),
+        ERLocationData("DB/(BS): Beast Claw (Incantation) - Gurranq, deathroot reward 5", "Beast Claw (Incantation)", key="605143,0:0000400234::", missable=True, targets=('lot:102314')),
         ERLocationData("DB/(BS): Ash of War: Beast's Roar - Gurranq, deathroot reward 4", "Ash of War: Beast's Roar", key="605143,0:0000400235::", missable=True, targets=('lot:102300')),
         ERLocationData("DB/(BS): Bestial Vitality - Gurranq, deathroot reward 3", "Bestial Vitality", key="605143,0:0000400236::", missable=True, targets=('lot:102301')),
         ERLocationData("DB/(BS): Bestial Sling - Gurranq, deathroot reward 2", "Bestial Sling", key="605143,0:0000400237::", missable=True, targets=('lot:102302')),

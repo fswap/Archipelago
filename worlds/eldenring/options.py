@@ -354,6 +354,14 @@ class ExampleTrapWeight(BaseTrapWeight):
     Example Trap: Description
     """
     display_name = "Example Trap Weight"
+    visibility = Visibility.none
+    
+class NGPlusTrapWeight(BaseTrapWeight):
+    """
+    NG+ Trap: Sets the game to NG+7 until the player dies.
+    """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
+    display_name = "NG+ Trap Weight"
+    visibility = Visibility.none
     
 # Traps that need dlc stuff to work
     
@@ -491,7 +499,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Achievement Boss", "Seedtree", "Map", "Church", "Cross", "Overworld Boss"]
+    default = ["Achievement Boss", "Seedtree", "Map", "Church"]
     valid_keys = ["chest", "scarab", "seedtree", "basin", "church", "map", "key items",
         "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
         "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
@@ -671,9 +679,8 @@ class EROptions(PerGameCommonOptions):
     death_link: DeathLink
     
     trap_fill_percentage: TrapFillPercentage
-    example_trap_weight: ExampleTrapWeight
+    ngplus_trap_weight: NGPlusTrapWeight
     
-    example_dlc_trap_weight: ExampleDLCTrapWeight
     blindness_trap_weight: BlindnessTrapWeight
 
     random_start: RandomizeStartingLoadout
@@ -768,10 +775,9 @@ option_groups = [
     ]),
     OptionGroup("Traps", [
         TrapFillPercentage,
-        ExampleTrapWeight,
+        NGPlusTrapWeight,
     ]),
     OptionGroup("DLC Traps", [
-        ExampleDLCTrapWeight,
         BlindnessTrapWeight
     ]),
     OptionGroup("Item & Location Options", [

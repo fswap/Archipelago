@@ -1965,7 +1965,7 @@ class EldenRing(World):
             self._add_location_rule(["DB/(BS): Ash of War: Beast's Roar - Gurranq, deathroot reward 4",
             ], lambda state: ( state.has("Deathroot", self.player, 4)))
             
-            self._add_location_rule(["DB/(BS): Beast Claw - Gurranq, deathroot reward 5",
+            self._add_location_rule(["DB/(BS): Beast Claw (Incantation) - Gurranq, deathroot reward 5",
             ], lambda state: ( state.has("Deathroot", self.player, 5)))
             
             self._add_location_rule(["DB/(BS): Stone of Gurranq - Gurranq, deathroot reward 6",
@@ -3248,9 +3248,8 @@ class EldenRing(World):
                 "death_link": self.options.death_link.value,
                 
                 "trap_fill_percentage": self.options.trap_fill_percentage.value,
-                "example_trap_weight": self.options.example_trap_weight.value,
+                "ngplus_trap_weight": self.options.ngplus_trap_weight.value,
                 
-                "example_dlc_trap_weight": self.options.example_dlc_trap_weight.value,
                 "blindness_trap_weight": self.options.blindness_trap_weight.value,
                 
                 "random_start": self.options.random_start.value,
