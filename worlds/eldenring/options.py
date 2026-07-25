@@ -356,7 +356,7 @@ class ExampleTrapWeight(BaseTrapWeight):
     display_name = "Example Trap Weight"
     visibility = Visibility.none
     
-class NGPlusTrapWeight(BaseTrapWeight):
+class NGPlusTrapWeight(BaseTrapWeight): # https://github.com/borgCode/TarnishedTool used this tool to test it, could figure out how to implement it from here
     """
     NG+ Trap: Sets the game to NG+7 until the player dies.
     """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool

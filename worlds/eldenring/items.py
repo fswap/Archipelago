@@ -2944,6 +2944,7 @@ _dlc_items = [
 
 vanilla_traps = [
     ERItemData("Example Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("NG+ Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
 dlc_traps = [

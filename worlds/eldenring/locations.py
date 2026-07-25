@@ -758,7 +758,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/RT: Ash of War: Storm Assault - jump off raise part of outer wall to NW, scarab after breakable platform", "Ash of War: Storm Assault", key="100000,0:0000540170::", scarab=True, targets=('lot:40170')),
         ERLocationData("SV/SeC: Ash of War: Stormcaller - scarab to SW", "Ash of War: Stormcaller", key="100000,0:0000540172::", scarab=True, targets=('lot:40172')),
         ERLocationData("SV/LC: Rancorcall - shortcut door to W, scarab at bottom to S", "Rancorcall", key="100000,0:0000540174::", scarab=True, targets=('lot:40174')),
-        ERLocationData("SV/LC: \"Prophecy\" Painting - in a room to S", "\"Prophecy\" Painting", key="100000,0:0000580040::", painting=True),
+        ERLocationData("SV/LC: \"Prophecy\" Painting - in a room to S", "\"Prophecy\" Painting", key="100000,0:0000580040::", painting=True, targets=('lot:80040')),
         ERLocationData("SV/LC: Wooden Greatshield - in wooden structure NE side of massive courtyard", "Wooden Greatshield", key="100000,0:0010007005::", targets=('lot:10000005')),
         ERLocationData("SV/RT: Hawk Crest Wooden Shield - shortcut elevator to SE, to N through door, behind imp statue", "Hawk Crest Wooden Shield", key="100000,0:0010007015::", targets=('lot:10000015')), # 1
         ERLocationData("SV/RT: Miséricorde - shortcut elevator to SE, to N through door, behind imp statue", "Miséricorde", key="100000,0:0010007025::", targets=('lot:10000025')), # 1
@@ -1015,7 +1015,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/SR: Slumbering Egg - to E on ruin", "Slumbering Egg", key="604335,0:1043357030::", targets=('lot:1043350030')),
         ERLocationData("LG/SR: Ash of War: Gravitas - enemy drop lower beach to NW", "Ash of War: Gravitas", key="604335,0:1043357500::", targets=('lot:360010000')),
         ERLocationData("LG/DBR: Dragon Heart - boss drop N of DBR", "Dragon Heart", key="604336,0:0000530110::", altboss=True, dragonboss=True, overworldboss=True, targets=('lot:30110')),
-        ERLocationData("LG/SR: Incantation Scarab - \"Homing Instinct\" Painting reward to NW", "Incantation Scarab", key="604336,0:0000580300::"),
+        ERLocationData("LG/SR: Incantation Scarab - \"Homing Instinct\" Painting reward to NW", "Incantation Scarab", key="604336,0:0000580300::", targets=('lot:80300')),
         ERLocationData("LG/(DBR): Stonesword Key - within ruined building", "Stonesword Key", key="604336,0:1043367010::", targets=('lot:1043360010')),
         ERLocationData("LG/(DBR): Golden Rune [2] - within ruins", "Golden Rune [2]", key="604336,0:1043367020::", targets=('lot:1043360020')),
         ERLocationData("LG/(DBR): Crab Eggs - within ruins", "Crab Eggs", key="604336,0:1043367040::", targets=('lot:1043360040')),
@@ -1073,7 +1073,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/MR: Sacrificial Twig - W of MR", "Sacrificial Twig", key="604437,0:1044377020::", targets=('lot:1044370020')),
         ERLocationData("LG/WR: Gold-Pickled Fowl Foot - NW of WR", "Gold-Pickled Fowl Foot", key="604437,0:1044377200::", targets=('lot:1044372000')),
         ERLocationData("LG/AS: Somber Smithing Stone [1] - scarab W of AS", "Somber Smithing Stone [1]", key="604438,0:0000540142::", scarab=True, targets=('lot:40142')),
-        ERLocationData("LG/(AS): \"Homing Instinct\" Painting - painting", "\"Homing Instinct\" Painting", key="604438,0:0000580000::", painting=True),
+        ERLocationData("LG/(AS): \"Homing Instinct\" Painting - painting", "\"Homing Instinct\" Painting", key="604438,0:0000580000::", painting=True, targets=('lot:80000')),
         ERLocationData("LG/(AS): Smithing Stone [1] - on corpse", "Smithing Stone [1]", key="604438,0:1044387010::", targets=('lot:1044380010')),
         ERLocationData("LG/MCO: Poisonbloom x2 - NE of MCO", "Poisonbloom x2", key="604438,0:1044387040::", targets=('lot:1044380040')),
         ERLocationData("LG/SB: Golden Rune [1] - past bridge to SE", "Golden Rune [1]", key="604438,0:1044387100::", targets=('lot:1044380100')),
@@ -1726,7 +1726,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LL/ELLS: Smithing Stone [3] x3 - to SW on chair by group of enemies", "Smithing Stone [3] x3", key="603844,0:1038447030::", targets=('lot:1038440030')),
         ERLocationData("LL/ELLS: Land Squirt Ashes - to S on grave in middle of massive group of enemies", "Land Squirt Ashes", key="603844,0:1038447040::", targets=('lot:1038440040')),
         ERLocationData("LL/AS: Dragon Cult Prayerbook - enemy drop S of AS", "Dragon Cult Prayerbook", key="603844,0:1038447500::", targets=('lot:435320006')),
-        ERLocationData("LL/(AS): \"Resurrection\" Painting - painting", "\"Resurrection\" Painting", key="603845,0:0000580010::", painting=True),
+        ERLocationData("LL/(AS): \"Resurrection\" Painting - painting", "\"Resurrection\" Painting", key="603845,0:0000580010::", painting=True, targets=('lot:80010')),
         ERLocationData("LL/ET: Smoldering Butterfly x8 - to SW in camp item 1", "Smoldering Butterfly x8", key="603845,0:1038457000::", targets=('lot:1038450000')),
         ERLocationData("LL/ET: Flame, Cleanse Me - to SW in camp item 2", "Flame, Cleanse Me", key="603845,0:1038457010::", targets=('lot:1038450010')),
         ERLocationData("LL/AS: Smithing Stone [4] - NE of AS in chair", "Smithing Stone [4]", key="603845,0:1038457020::", targets=('lot:1038450020')),
@@ -1932,7 +1932,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("TSC/SCIG: Perfumer's Cookbook [2] - top of upper NW tower", "Perfumer's Cookbook [2]", key="603954,0:0000067850::", targets=('lot:1039540190')),
         ERLocationData("TSC/SCIG: Marais Executioner's Sword - boss drop", "Marais Executioner's Sword", key="603954,0:0000510820::", achievement=True, boss=True, targets=('lot:10820')),
         ERLocationData("TSC/SCIG: Briar Greatshield - boss drop", "Briar Greatshield", key="603954,0:0000510820::", boss=True, achievement=True, targets=('lot:10821')),
-        ERLocationData("TSC/SCR: \"Champion's Song\" Painting - follow E wall, painting in wood structure down in pit", "\"Champion's Song\" Painting", key="603954,0:0000580020::", painting=True),
+        ERLocationData("TSC/SCR: \"Champion's Song\" Painting - follow E wall, painting in wood structure down in pit", "\"Champion's Song\" Painting", key="603954,0:0000580020::", painting=True, targets=('lot:80020')),
         ERLocationData("AP/SCR: Golden Rune [3] - to SW outside castle, follow outer wall into a cubby", "Golden Rune [3]", key="603954,0:1039547010::", targets=('lot:1039540010')),
         ERLocationData("TSC/SCR: Smithing Stone [5] - from SW inner swamp, follow outer wall to E, at end", "Smithing Stone [5]", key="603954,0:1039547020::", targets=('lot:1039540020')),
         ERLocationData("TSC/SCR: Poisonbloom x4 - to S on outer wall", "Poisonbloom x4", key="603954,0:1039547030::", targets=('lot:1039540030')),
@@ -2025,7 +2025,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/RP: Golden Rune [6] - to S down SE path in graveyard, near entrance", "Golden Rune [6]", key="604151,0:1041517010::", targets=('lot:1041510010')),
         ERLocationData("AP/RP: Silver-Pickled Fowl Foot - to S down SE path in graveyard, S of spirtsping", "Silver-Pickled Fowl Foot", key="604151,0:1041517020::", targets=('lot:1041510020')),
         ERLocationData("AP/AHJ: Gravity Stone Chunk x2 - to SE in NE gravity craters", "Gravity Stone Chunk x2", key="604151,0:1041517030::", targets=('lot:1041510030')),
-        ERLocationData("AP/RP: Harp Bow - \"Champion's Song\" Painting reward to S top of grave steps", "Harp Bow", key="604152,0:0000580320::"),
+        ERLocationData("AP/RP: Harp Bow - \"Champion's Song\" Painting reward to S top of grave steps", "Harp Bow", key="604152,0:0000580320::", targets=('lot:80320')),
         ERLocationData("AP/RP: Golden Rune [8] - graveyard to N", "Golden Rune [8]", key="604152,0:1041527000::", targets=('lot:1041520000')),
         ERLocationData("AP/RP: Golden Rune [6] - graveyard to N", "Golden Rune [6]", key="604152,0:1041527010::", targets=('lot:1041520010')),
         ERLocationData("AP/RP: Golden Rune [4] - graveyard to N", "Golden Rune [4]", key="604152,0:1041527020::", targets=('lot:1041520020')),
@@ -2056,7 +2056,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/RP: Lightning Greatbolt x3 - to NE by flipped catapults", "Lightning Greatbolt x3", key="604253,0:1042537000::", targets=('lot:1042530000')),
         ERLocationData("AP/RP: Somber Smithing Stone [5] - to N in lower ruin chair", "Somber Smithing Stone [5]", key="604253,0:1042537010::", targets=('lot:1042530010')),
         ERLocationData("AP/RP: Larval Tear - enemy drop to N in upper ruin", "Larval Tear", key="604253,0:1043537100::", targets=('lot:1043530100')),
-        ERLocationData("AP/(DMV): Fire's Deadly Sin - \"Flightless Bird\" Painting reward S from boss", "Fire's Deadly Sin", key="604254,0:0000580350::"),
+        ERLocationData("AP/(DMV): Fire's Deadly Sin - \"Flightless Bird\" Painting reward S from boss", "Fire's Deadly Sin", key="604254,0:0000580350::", targets=('lot:80350')),
         ERLocationData("AP/VW: Four-Toed Fowl Foot x3 - to S by cart", "Four-Toed Fowl Foot x3", key="604254,0:1042547000::", targets=('lot:1042540000')),
         ERLocationData("AP/(DWV): Golden Rune [5] - first area in left stable behind boxes", "Golden Rune [5]", key="604254,0:1042547010::", targets=('lot:1042540010')),
         ERLocationData("AP/(DWV): Holyproof Dried Liver - right of second area", "Holyproof Dried Liver", key="604254,0:1042547020::", targets=('lot:1042540020')),
@@ -2089,7 +2089,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LRC|LAC/RC: Corhyn's Robe - kill Brother Corhyn", "Corhyn's Robe", key="110000,0:0000400370::", missable=True, death=True, targets=('lot:103702', 'lot:113702')),
         #not random ERLocationData("LRC: Corhyn's Bell Bearing - kill Brother Corhyn", "Corhyn's Bell Bearing", key="110000,0:0000400370::", missable=True, death=True),
         ERLocationData("LRC/AB: Ash of War: Thunderbolt - scarab down stairs to NW, over left railing before dragon wing", "Ash of War: Thunderbolt", key="110000,0:0000540372::", scarab=True, targets=('lot:40372')),
-        ERLocationData("LRC/FMFF: \"Flightless Bird\" Painting - by grace", "\"Flightless Bird\" Painting", key="110000,0:0000580050::", painting=True),
+        ERLocationData("LRC/FMFF: \"Flightless Bird\" Painting - by grace", "\"Flightless Bird\" Painting", key="110000,0:0000580050::", painting=True, targets=('lot:80050')),
         ERLocationData("LRC/AB: Alberich's Pointed Hat - up stairs, to SW in old RH, middle of lower carpet", "Alberich's Pointed Hat", key="110000,0:0011007005::", targets=('lot:11000005')),
         ERLocationData("LRC/AB: Alberich's Robe - up stairs, to SW in old RH, middle of lower carpet", "Alberich's Robe", key="110000,0:0011007005::", targets=('lot:11000006')),
         ERLocationData("LRC/AB: Alberich's Bracers - up stairs, to SW in old RH, middle of lower carpet", "Alberich's Bracers", key="110000,0:0011007005::", targets=('lot:11000007')),
@@ -3785,7 +3785,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/MGP: Leda's Rune - on Leda's body after invading her alongside Hornsent", "Leda's Rune", key="210000,0:0000400594::", missable=True, exclusive=True),
         ERLocationData("SK/MGP: Ash of War: Swift Slash - on Leda's body after invading her alongside Hornsent", "Ash of War: Swift Slash", key="210000,0:0000400594::", missable=True, exclusive=True),
         ERLocationData("SK/SKMG: Scadutree Fragment x2 - boss drop", "Scadutree Fragment x2", key="210000,0:0000510440::", boss=True, enemyfragment=True),
-        ERLocationData("SK/MGP: \"Domain of Dragons\" Painting - painting to SE, to right at top of stairs, down ladder, under waterfall", "\"Domain of Dragons\" Painting", key="210000,0:0000580120::", painting=True),
+        ERLocationData("SK/MGP: \"Domain of Dragons\" Painting - painting to SE, to right at top of stairs, down ladder, under waterfall", "\"Domain of Dragons\" Painting", key="210000,0:0000580120::", painting=True, targets=('lot:80120')),
         ERLocationData("SK/MGP: Festive Grease - to NW after first stairs", "Festive Grease", key="210000,0:0021007000::"),
         ERLocationData("SK/MGP: Smithing Stone [1] x6 - to NW, to right halfway up wooden stairs", "Smithing Stone [1] x6", key="210000,0:0021007010::"),
         ERLocationData("SK/MGP: Main-gauche - to NW, to right halfway up wooden stairs, in next room", "Main-gauche", key="210000,0:0021007020::"),
@@ -3848,41 +3848,41 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/(PT): Outer God Heirloom - in chest top of PT, inside shrine", "Outer God Heirloom", key="614541,0:2045417800::", talisman=True, chest=True),
         ERLocationData("GP/PT: Larval Tear - blue graves E of PT, near kindred npc", "Larval Tear (DLC)", key="614541,0:2045417900::", bluegraves=True),
         ERLocationData("GP/(PT): Bloodfiend's Arm - enemy drop upper level", "Bloodfiend's Arm", key="614541,0:2045417950::"),
-        ERLocationData("GP/PPC: Deadly Poison Perfume Bottle - Thiollier / Moore Shop", "Deadly Poison Perfume Bottle", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Poison Grease x5 - Thiollier / Moore Shop", "Poison Grease x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Drawstring Poison Grease x5 - Thiollier / Moore Shop", "Drawstring Poison Grease x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Poisonbone Dart x20 - Thiollier / Moore Shop", "Poisonbone Dart x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Poisoned Stone x10 - Thiollier / Moore Shop", "Poisoned Stone x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Poisoned Stone Clump x5 - Thiollier / Moore Shop", "Poisoned Stone Clump x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Miranda Powder x10 - Thiollier / Moore Shop", "Miranda Powder x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Poisonbloom x10 - Thiollier / Moore Shop", "Poisonbloom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Trina's Lily x3 - Thiollier / Moore Shop", "Trina's Lily x3", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Altus Bloom x20 - Thiollier / Moore Shop", "Altus Bloom x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Toxic Mushroom x10 - Thiollier / Moore Shop", "Toxic Mushroom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/PPC: Toxic Mossling x5 - Thiollier / Moore Shop", "Toxic Mossling x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True), #Thiollier #Moore
-        ERLocationData("GP/MGC: Rune Arc x3 - Moore Shop", "Rune Arc x3", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Spellproof Pickled Liver x2 - Moore Shop", "Spellproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Fireproof Pickled Liver x2 - Moore Shop", "Fireproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Lightningproof Pickled Liver x2 - Moore Shop", "Lightningproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Holyproof Pickled Liver x2 - Moore Shop", "Holyproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Well-Pickled Turtle Neck - Moore Shop", "Well-Pickled Turtle Neck", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Note: Sealed Spiritsprings - Moore Shop", "Note: Sealed Spiritsprings", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Rada Fruit x10 - Moore Shop", "Rada Fruit x10", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Redflesh Mushroom x8 - Moore Shop", "Redflesh Mushroom x8", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Whiteflesh Mushroom x6 - Moore Shop", "Whiteflesh Mushroom x6", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Knot Resin x5 - Moore Shop", "Knot Resin x5", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Black Pyrefly x8 - Moore Shop", "Black Pyrefly x8", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
-        ERLocationData("GP/MGC: Sanguine Amaryllis x4 - Moore Shop", "Sanguine Amaryllis x4", key="614542,0:0000000000:102250:", raceshop=True, shop=True), #Moore
+        ERLocationData("GP/PPC: Deadly Poison Perfume Bottle - Thiollier / Moore Shop", "Deadly Poison Perfume Bottle", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102270')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Poison Grease x5 - Thiollier / Moore Shop", "Poison Grease x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102271')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Drawstring Poison Grease x5 - Thiollier / Moore Shop", "Drawstring Poison Grease x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102272')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Poisonbone Dart x20 - Thiollier / Moore Shop", "Poisonbone Dart x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102273')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Poisoned Stone x10 - Thiollier / Moore Shop", "Poisoned Stone x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102274')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Poisoned Stone Clump x5 - Thiollier / Moore Shop", "Poisoned Stone Clump x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102275')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Miranda Powder x10 - Thiollier / Moore Shop", "Miranda Powder x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102277')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Poisonbloom x10 - Thiollier / Moore Shop", "Poisonbloom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102278')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Trina's Lily x3 - Thiollier / Moore Shop", "Trina's Lily x3", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102281')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Altus Bloom x20 - Thiollier / Moore Shop", "Altus Bloom x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102278')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Toxic Mushroom x10 - Thiollier / Moore Shop", "Toxic Mushroom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102279')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Toxic Mossling x5 - Thiollier / Moore Shop", "Toxic Mossling x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102280')), #Thiollier #Moore
+        ERLocationData("GP/MGC: Rune Arc x3 - Moore Shop", "Rune Arc x3", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102250')), #Moore
+        ERLocationData("GP/MGC: Spellproof Pickled Liver x2 - Moore Shop", "Spellproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102260')), #Moore
+        ERLocationData("GP/MGC: Fireproof Pickled Liver x2 - Moore Shop", "Fireproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102261')), #Moore
+        ERLocationData("GP/MGC: Lightningproof Pickled Liver x2 - Moore Shop", "Lightningproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102262')), #Moore
+        ERLocationData("GP/MGC: Holyproof Pickled Liver x2 - Moore Shop", "Holyproof Pickled Liver x2", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102263')), #Moore
+        ERLocationData("GP/MGC: Well-Pickled Turtle Neck - Moore Shop", "Well-Pickled Turtle Neck", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102264')), #Moore
+        ERLocationData("GP/MGC: Note: Sealed Spiritsprings - Moore Shop", "Note: Sealed Spiritsprings", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102255')), #Moore
+        ERLocationData("GP/MGC: Rada Fruit x10 - Moore Shop", "Rada Fruit x10", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102256')), #Moore
+        ERLocationData("GP/MGC: Redflesh Mushroom x8 - Moore Shop", "Redflesh Mushroom x8", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102257')), #Moore
+        ERLocationData("GP/MGC: Whiteflesh Mushroom x6 - Moore Shop", "Whiteflesh Mushroom x6", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102258')), #Moore
+        ERLocationData("GP/MGC: Knot Resin x5 - Moore Shop", "Knot Resin x5", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102259')), #Moore
+        ERLocationData("GP/MGC: Black Pyrefly x8 - Moore Shop", "Black Pyrefly x8", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102265')), #Moore
+        ERLocationData("GP/MGC: Sanguine Amaryllis x4 - Moore Shop", "Sanguine Amaryllis x4", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102266')), #Moore
         ERLocationData("GP/MGC: Forager Brood Cookbook [7] - given by Moore after healing kindred npc, so long as moore is happy", "Forager Brood Cookbook [7]", key="614542,0:0000068830::", missable=True, cookbook=True), #Moore
         ERLocationData("GP/MGC: Black Syrup - given by Moore after speaking with Thiollier", "Black Syrup", key="614542,0:0000400642::", missable=True), #Moore
         ERLocationData("GP/MGC: Smithing Stone [3] x3 - to SE, on cliffroad to CRT", "Smithing Stone [3] x3", key="614542,0:2045427000::"),
         ERLocationData("GP/MGC: Scadutree Fragment - by cross", "Scadutree Fragment", key="614542,0:2045427700::", cross=True),
-        ERLocationData("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Thiollier's Concoction", key="614542,3:0000000000:102250,102270,2045429331:", missable=True, shop=True), #Thiollier
+        ERLocationData("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Thiollier's Concoction", key="614542,3:0000000000:102250,102270,2045429331:", missable=True, shop=True, targets=('shop:102282', 'lot:106300')), #Thiollier
         #inf ERLocationData("GP/MGC: Arrow - Moore Shop", "Arrow", key="614542,3:0000000000:102250:", missable=True, shop=True), #Moore
         #inf ERLocationData("GP/MGC: Great Arrow - Moore Shop", "Great Arrow", key="614542,3:0000000000:102250:", missable=True, shop=True), #Moore
         #inf ERLocationData("GP/MGC: Bolt - Moore Shop", "Bolt", key="614542,3:0000000000:102250:", missable=True, shop=True), #Moore
         #inf ERLocationData("GP/MGC: Ballista Bolt - Moore Shop", "Ballista Bolt", key="614542,3:0000000000:102250:", missable=True, shop=True), #Moore
-        ERLocationData("GP/BG: Serpent Crest Shield - painting reward SE of BG", "Serpent Crest Shield", key="614543,0:0000580400::", missable=True),
+        ERLocationData("GP/BG: Serpent Crest Shield - painting reward SE of BG", "Serpent Crest Shield", key="614543,0:0000580400::", missable=True, targets=('lot:80400')),
         ERLocationData("GP/BG: Shadow Realm Rune [1] - S of BG, in front of arch", "Shadow Realm Rune [1]", key="614543,0:2045437000::"),
         ERLocationData("GP/GN: Ash of War: Savage Lion's Claw - to SW, in makeshift campsite", "Ash of War: Savage Lion's Claw", key="614543,0:2045437700::"),
         ERLocationData("GP/BG: Dragon Heart - boss drop E of BG", "Dragon Heart", key="614544,0:0000530860::", altboss=True, dragonboss=True, overworldboss=True),
@@ -3891,7 +3891,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/BG: Great Katana - E of BG, in middle of lake", "Great Katana", key="614544,0:2045447010::"),
         ERLocationData("GP/BG: Gravebird Armor - NW of BG, in front of arch", "Gravebird Armor", key="614544,0:2045447020::"),
         ERLocationData("GP/AS: Greater Potentate's Cookbook [5] - NW of AS, on W cliffside", "Greater Potentate's Cookbook [5]", key="614640,0:0000068610::", cookbook=True),
-        ERLocationData("GP/(AS): \"Incursion\" Painting - painting", "\"Incursion\" Painting", key="614640,0:0000580100::", painting=True),
+        ERLocationData("GP/(AS): \"Incursion\" Painting - painting", "\"Incursion\" Painting", key="614640,0:0000580100::", painting=True, targets=('lot:80100')),
         ERLocationData("GP/CB: Pata - NE of CB, overlooking drop", "Pata", key="614640,0:2046407000::"),
         ERLocationData("GP/CB: Oathseeker Knight Helm - NE of CB, overlooking drop", "Oathseeker Knight Helm", key="614640,0:2046407001::"),
         ERLocationData("GP/CB: Oathseeker Knight Armor - NE of CB, overlooking drop", "Oathseeker Knight Armor", key="614640,0:2046407002::"),
@@ -3939,7 +3939,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/(SR): Blade of Mercy - in chest behind door atop SR", "Blade of Mercy", key="614741,0:2047417800::", chest=True),
         ERLocationData("GP/SR: Silver Horn Tender - enemy drop NE of SR, near graves", "Silver Horn Tender", key="614741,0:2047417995::", enemyfragment=True),
         ERLocationData("GP/SR: Scadutree Fragment - enemy drop NE of SR, near graves", "Scadutree Fragment", key="614741,0:2047417995::", enemyfragment=True),
-        ERLocationData("GP/SR: \"The Sacred Tower\" Painting - painting to NE in cave", "\"The Sacred Tower\" Painting", key="614742,0:0000580110::", painting=True),
+        ERLocationData("GP/SR: \"The Sacred Tower\" Painting - painting to NE in cave", "\"The Sacred Tower\" Painting", key="614742,0:0000580110::", painting=True, targets=('lot:80110')),
         ERLocationData("GP/TPC: Grave Glovewort [3] - to E by grave", "Grave Glovewort [3]", key="614742,0:2047427000::"),
         ERLocationData("GP/SR: Backhand Blade - N of SR, in tomb near spiral pillars", "Backhand Blade", key="614742,0:2047427700::"),
         ERLocationData("GP/CF: Grave Glovewort [5] - up E path, NE of left camp on ledge", "Grave Glovewort [5]", key="614743,0:2047437000::"),
@@ -4842,7 +4842,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("WP/OR: Starlight Shards - E of OR", "Starlight Shards", key="604533,0:1045337000::", targets=('lot:1045330000')),
         ERLocationData("WP/BCPG: Stonesword Key - head far N", "Stonesword Key", key="604534,0:1045347000::", targets=('lot:1045340000')),
         
-        ERLocationData("WP/CP: Warhawk Ashes - \"Prophecy\" Painting reward to N", "Warhawk Ashes", key="604235,0:0000580340::"),
+        ERLocationData("WP/CP: Warhawk Ashes - \"Prophecy\" Painting reward to N", "Warhawk Ashes", key="604235,0:0000580340::", targets=('lot:80340')),
         ERLocationData("WP/CP: Sliver of Meat - lower cliff NW of CP", "Sliver of Meat", key="604235,0:1042357020::", targets=('lot:1042350020')),
         ERLocationData("WP/CP: Bewitching Branch x3 - lower cliff NW of CP", "Bewitching Branch x3", key="604235,0:1042357030::", targets=('lot:1042350030')),
         ERLocationData("WP/(DHFR): Arteria Leaf x2 - within N ruins", "Arteria Leaf x2", key="604334,0:1043347000::", targets=('lot:1043340000')),        
@@ -5174,9 +5174,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LL/(SR): Nepheli Loux Puppet - on Seluvis's body", "Nepheli Loux Puppet", key="603550,0:0000400149::", missable=True, exclusive=True, targets=('lot:101496')),
         ERLocationData("LL/(CM): Dolores the Sleeping Arrow Puppet - dropped by Pidia after Seluvis dies", "Dolores the Sleeping Arrow Puppet", key="603550,0:0000400149::", missable=True, exclusive=True, targets=('lot:101491')),
         ERLocationData("LL/(RGE): Meteorite - boss drop Evergaol", "Meteorite", key="603650,0:0000530255::", altboss=True, evergaol=True, targets=('lot:30255')),
-        ERLocationData("LL/BCM: Juvenile Scholar Cap - \"Resurrection\" Painting reward to S by graves", "Juvenile Scholar Cap", key="603650,0:0000580310::"),
-        ERLocationData("LL/BCM: Juvenile Scholar Robe - \"Resurrection\" Painting reward to S by graves", "Juvenile Scholar Robe", key="603650,0:0000580310::"),
-        ERLocationData("LL/BCM: Larval Tear - \"Resurrection\" Painting reward to S by graves", "Larval Tear", key="603650,0:0000580310::"),
+        ERLocationData("LL/BCM: Juvenile Scholar Cap - \"Resurrection\" Painting reward to S by graves", "Juvenile Scholar Cap", key="603650,0:0000580310::", targets=('lot:80310')),
+        ERLocationData("LL/BCM: Juvenile Scholar Robe - \"Resurrection\" Painting reward to S by graves", "Juvenile Scholar Robe", key="603650,0:0000580310::", targets=('lot:80311')),
+        ERLocationData("LL/BCM: Larval Tear - \"Resurrection\" Painting reward to S by graves", "Larval Tear", key="603650,0:0000580310::", targets=('lot:80312')),
         ERLocationData("LL/BCM: Golden Rune [3] - to SE by group of enemies", "Golden Rune [3]", key="603650,0:1036507010::", targets=('lot:1036500010')),
         ERLocationData("LL/BCM: Thawfrost Boluses - to SE on tip of rock", "Thawfrost Boluses", key="603650,0:1036507020::", targets=('lot:1036500020')),
         ERLocationData("LL/BCM: Albinauric Ashes - to S by graves", "Albinauric Ashes", key="603650,0:1036507030::", targets=('lot:1036500030')),
@@ -5425,7 +5425,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DB/FF: Golden Rune [9] - enemy drop SE of FF", "Golden Rune [9]", key="605139,0:1051397990::", targets=('lot:420141010')),
         ERLocationData("DB/MEE: Opaline Hardtear - boss drop", "Opaline Hardtear", key="605140,0:0000065110::", altboss=True, overworldboss=True, targets=('lot:30415')),
         ERLocationData("DB/MEE: Stonebarb Cracked Tear - boss drop", "Stonebarb Cracked Tear", key="605140,0:0000065260::", altboss=True, overworldboss=True, targets=('lot:30416')),
-        ERLocationData("DB/MEE: Ash of War: Rain of Arrows - \"Redmane\" Painting reward down hidden cliff E of MEE", "Ash of War: Rain of Arrows", key="605140,0:0000580360::"),
+        ERLocationData("DB/MEE: Ash of War: Rain of Arrows - \"Redmane\" Painting reward down hidden cliff E of MEE", "Ash of War: Rain of Arrows", key="605140,0:0000580360::", targets=('lot:80360')),
         ERLocationData("DB/MEE: Rune Arc - down hidden cliff E of MEE", "Rune Arc", key="605140,0:1051407040::", targets=('lot:1051400040')),
         ERLocationData("DB/LR: Bestial Constitution - scarab W of LR", "Bestial Constitution", key="605141,0:0000540420::", scarab=True, targets=('lot:40420')),
         ERLocationData("DB/FG: Somber Smithing Stone [9] - scarab to W", "Somber Smithing Stone [9]", key="605142,0:0000540428::", scarab=True, targets=('lot:40428')),
@@ -5512,7 +5512,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         #inf ERLocationData("MotG: Lightning Greatbolt - Hermit Merchant S of SL up spiritsping above to W of ASVR grace", "Lightning Greatbolt", key="605156,3:0000000000:100900:", shop=True),
         ERLocationData("MotG/(CS): Haligtree Secret Medallion (Left) - after boss", "Haligtree Secret Medallion (Left)", key="605158,0:1051587800::", keyitem=True, targets=('lot:1051580800')),
         ERLocationData("MotG/(CS): Veteran's Prosthesis - mainboss drop", "Veteran's Prosthesis", key="605157,0:0000510840::", boss=True, achievement=True, targets=('lot:10840')),
-        ERLocationData("MotG/(CS): \"Sorcerer\" Painting - painting NW of main gate, inside up ladder, follow SW path across bridge, down ladder", "\"Sorcerer\" Painting", key="605157,0:0000580030::", painting=True),
+        ERLocationData("MotG/(CS): \"Sorcerer\" Painting - painting NW of main gate, inside up ladder, follow SW path across bridge, down ladder", "\"Sorcerer\" Painting", key="605157,0:0000580030::", painting=True, targets=('lot:80030')),
         ERLocationData("MotG/(CS): Freezing Grease x5 - NE of main gate on NW end of wooden platform ", "Freezing Grease x5", key="605157,0:1051577000::", targets=('lot:1051570000')),
         ERLocationData("MotG/(CS): Golden Rune [10] - SE of main gate in corner", "Golden Rune [10]", key="605157,0:1051577010::", targets=('lot:1051570010')),
         ERLocationData("MotG/(CS): Smithing Stone [5] - E of main gate under wood platform", "Smithing Stone [5]", key="605157,0:1051577020::", targets=('lot:1051570020')),
@@ -5761,7 +5761,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RB/(NNM): Iron Rivet Gauntlets - boss drop", "Iron Rivet Gauntlets", key="614645,0:0000530900::", altboss=True, namelessmausoleum=True, overworldboss=True),
         ERLocationData("RB/(NNM): Iron Rivet Greaves - boss drop", "Iron Rivet Greaves", key="614645,0:0000530900::", altboss=True, namelessmausoleum=True, overworldboss=True),
         ERLocationData("RB/(NNM): Fang Helm - boss drop", "Fang Helm", key="614645,0:0000530900::", altboss=True, namelessmausoleum=True, overworldboss=True),
-        ERLocationData("RB/NNM: Spiraltree Seal - \"The Sacred Tower\" Painting reward SW of NNM", "Spiraltree Seal", key="614645,0:0000580410::", missable=True),
+        ERLocationData("RB/NNM: Spiraltree Seal - \"The Sacred Tower\" Painting reward SW of NNM", "Spiraltree Seal", key="614645,0:0000580410::", missable=True, targets=('lot:80410')),
     ],
     "Cerulean Coast":[ # cerulean                                         done by MartyredG
         ERLocationData("CC/CCW: Grave Keeper's Cookbook [1] - to E by giant tree", "Grave Keeper's Cookbook [1]", key="614638,0:0000068940::", cookbook=True),
@@ -5982,15 +5982,15 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/BV: Broken Rune - to SE on pot", "Broken Rune", key="615044,0:2050447090::"),
         ERLocationData("SA/(BV): Kukri x5 - on front step W side of broken bridge", "Kukri x5", key="615044,0:2050447100::"),
         ERLocationData("SA/(BV): Revered Spirit Ash - NW end of crevice", "Revered Spirit Ash", key="615044,0:2050447500::", revered=True),
-        ERLocationData("SA/(CMM): Glintstone Nail - Ymir shop after ringing one of the hanging bells", "Glintstone Nail", key="615045,0:0000000000:102300,2051459206:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Glintstone Nails - Ymir shop after ringing one of the hanging bells", "Glintstone Nails", key="615045,0:0000000000:102300,2051459206:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Glintstone Pebble - Ymir shop", "Glintstone Pebble", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Great Glintstone Shard - Ymir shop", "Great Glintstone Shard", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Glintblade Phalanx - Ymir shop", "Glintblade Phalanx", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Carian Phalanx - Ymir shop", "Carian Phalanx", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Carian Retaliation - Ymir shop", "Carian Retaliation", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Miriam's Vanishing - Ymir shop", "Miriam's Vanishing", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True),
-        ERLocationData("SA/(CMM): Fleeting Microcosm - Ymir shop after ringing both hanging bells", "Fleeting Microcosm", key="615045,0:0000000000:9440,102300:", sorceries=True, missable=True, shop=True),
+        ERLocationData("SA/(CMM): Glintstone Nail - Ymir shop after ringing one of the hanging bells", "Glintstone Nail", key="615045,0:0000000000:102300,2051459206:", sorceries=True, missable=True, shop=True, targets=('shop:102301')),
+        ERLocationData("SA/(CMM): Glintstone Nails - Ymir shop after ringing one of the hanging bells", "Glintstone Nails", key="615045,0:0000000000:102300,2051459206:", sorceries=True, missable=True, shop=True, targets=('shop:102302')),
+        ERLocationData("SA/(CMM): Glintstone Pebble - Ymir shop", "Glintstone Pebble", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102304')),
+        ERLocationData("SA/(CMM): Great Glintstone Shard - Ymir shop", "Great Glintstone Shard", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102305')),
+        ERLocationData("SA/(CMM): Glintblade Phalanx - Ymir shop", "Glintblade Phalanx", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102306')),
+        ERLocationData("SA/(CMM): Carian Phalanx - Ymir shop", "Carian Phalanx", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102307')),
+        ERLocationData("SA/(CMM): Carian Retaliation - Ymir shop", "Carian Retaliation", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102308')),
+        ERLocationData("SA/(CMM): Miriam's Vanishing - Ymir shop", "Miriam's Vanishing", key="615045,0:0000000000:102300:", sorceries=True, missable=True, shop=True, targets=('shop:102300')),
+        ERLocationData("SA/(CMM): Fleeting Microcosm - Ymir shop after ringing both hanging bells", "Fleeting Microcosm", key="615045,0:0000000000:9440,102300:", sorceries=True, missable=True, shop=True, targets=('shop:102303')),
         ERLocationData("SA/(CMM): Hole-Laden Necklace - given by Ymir on first meeting", "Hole-Laden Necklace", key="615045,0:0000400660::", keyitem=True),
         ERLocationData("SA/(CMM): Ruins Map - given by Ymir on first meeting", "Ruins Map", key="615045,0:0000400660::", keyitem=True),
         ERLocationData("SA/(CMM): Beloved Stardust - given by Ymir after ringing the hanging bell in FRR", "Beloved Stardust", key="615045,0:0000400661::", missable=True),
@@ -6100,9 +6100,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("JP/GADC: Dragon Communion Harpoon - to W on lower wing", "Dragon Communion Harpoon", key="614938,0:2049387010::"),
         ERLocationData("JP/GADC: Dragon Communion Grease - to SE on otherside of giant dragons corpse by smaller corpse", "Dragon Communion Grease", key="614938,0:2049387020::"),
         ERLocationData("JP/GADC: Dragon Communion Harpoon - to W on wing, left item", "Dragon Communion Harpoon", key="614938,0:2049387030::"),
-        ERLocationData("JP/GADC: Bayle's Tyranny - Dragon Communion, Heart of Bayle", "Bayle's Tyranny", key="614939,0:0000000000:102350:", missable=True, incantations=True, premium=True, shop=True),
-        ERLocationData("JP/GADC: Bayle's Flame Lightning - Dragon Communion, Heart of Bayle", "Bayle's Flame Lightning", key="614939,0:0000000000:102350:", missable=True, incantations=True, premium=True, shop=True),
-        ERLocationData("JP/GADC: Ghostflame Breath - Grand Dragon Communion", "Ghostflame Breath", key="614939,0:0000000000:102355:", incantations=True, nokey=True, premium=True, shop=True),
+        ERLocationData("JP/GADC: Bayle's Tyranny - Dragon Communion, Heart of Bayle", "Bayle's Tyranny", key="614939,0:0000000000:102350:", missable=True, incantations=True, premium=True, shop=True, targets=('shop:102350')),
+        ERLocationData("JP/GADC: Bayle's Flame Lightning - Dragon Communion, Heart of Bayle", "Bayle's Flame Lightning", key="614939,0:0000000000:102350:", missable=True, incantations=True, premium=True, shop=True, targets=('shop:102351')),
+        ERLocationData("JP/GADC: Ghostflame Breath - Grand Dragon Communion", "Ghostflame Breath", key="614939,0:0000000000:102355:", incantations=True, nokey=True, premium=True, shop=True, targets=('shop:102355')),
         ERLocationData("JP/GADC: Igon's Cookbook [1] - to N in ruined tower", "Igon's Cookbook [1]", key="614939,0:0000068810::", cookbook=True),
         ERLocationData("JP/GADC: Ancient Dragon Florissax - admit to putting Florissax to sleep with Thiollier's Concoction", "Ancient Dragon Florissax", key="614939,0:0000400700::", missable=True, exclusive=True),
         ERLocationData("JP/GADC: Dragonbolt of Florissax - given by Florissax if you gave her Thiollier's Concoction before JP mainboss", "Dragonbolt of Florissax", key="614939,0:0000400702::", missable=True, exclusive=True),
@@ -6123,7 +6123,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("JP/FJP: Igon's Loincloth - to E on Igon's corpse after JP mainboss", "Igon's Loincloth", key="614842,0:0000400712::", missable=True),
         # not random ERLocationData("JP/FJP: Igon's Bell Bearing - to E on Igon's corpse after JP mainboss", "Igon's Bell Bearing", key="614842,0:0000400712::", missable=True),
         # random dupe ERLocationData("JP/FJP: Igon's Greatbow - to E on Igon's corpse after JP mainboss", "Igon's Greatbow", key="614842,0:0000400712::", missable=True),
-        ERLocationData("JP/JPM: Rock Heart - \"Domain of Dragons\" Painting reward, after first spirit spring head down return path", "Rock Heart", key="615339,0:0000580420::", missable=True),
+        ERLocationData("JP/JPM: Rock Heart - \"Domain of Dragons\" Painting reward, after first spirit spring head down return path", "Rock Heart", key="615339,0:0000580420::", missable=True, targets=('lot:80420')),
         ERLocationData("JP/JPM: Somber Ancient Dragon Smithing Stone - up second spirit sping, to N down below", "Somber Ancient Dragon Smithing Stone", key="615339,0:2053397010::"),
         ERLocationData("JP/FJP: Scadutree Fragment - under where the boulder spawns", "Scadutree Fragment", key="615339,0:2053397020::", fragment=True),
         ERLocationData("JP/FJP: Red Fulgurbloom x8 - to E after 2 spirit spings", "Red Fulgurbloom x8", key="615340,0:2053407000::"),
