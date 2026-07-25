@@ -14,7 +14,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, vanilla_traps, dlc_traps
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, all_traps
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
 from Options import OptionError
@@ -730,11 +730,10 @@ class EldenRing(World):
             self._create_dupe_locations()
             num_required_extra_items += len(self.all_duplicate_locations)
         
-        trap_pool = self._add_traps(num_required_extra_items)
         self.itempool.extend(self.create_item(self.get_filler_item_name()) for _ in range(
-            (len(self.multiworld.get_unfilled_locations(self.player))) - len(self.itempool + trap_pool)))
+            (len(self.multiworld.get_unfilled_locations(self.player))) - len(self.itempool)))
         
-        self.multiworld.itempool += self.itempool + trap_pool
+        self.multiworld.itempool += self.itempool
         
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations."""
@@ -850,17 +849,21 @@ class EldenRing(World):
             if self.options.use_master_key.value == 1: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
             elif self.options.use_master_key.value == 2: all_injectable_items += [item_table["Stonesword Master Key"]]
         
+        all_injectable_items += self._add_traps()
+        
         injectable_mandatory = [
             item for item in all_injectable_items
             if (item.is_important(self.options) == ItemClassification.progression 
                 or item.is_important(self.options) == ItemClassification.useful 
-                or item.is_important(self.options) == ItemClassification.progression_deprioritized)
+                or item.is_important(self.options) == ItemClassification.progression_deprioritized
+                or item.is_important(self.options) == ItemClassification.trap)
         ]
         injectable_optional = [
             item for item in all_injectable_items
             if (item.is_important(self.options) != ItemClassification.progression 
                 and item.is_important(self.options) != ItemClassification.useful 
-                and item.is_important(self.options) != ItemClassification.progression_deprioritized)
+                and item.is_important(self.options) != ItemClassification.progression_deprioritized
+                and item.is_important(self.options) != ItemClassification.trap)
         ]
 
         number_to_inject = min(num_required_extra_items, len(all_injectable_items))
@@ -874,23 +877,35 @@ class EldenRing(World):
                 k=max(0, number_to_inject - len(injectable_mandatory))
             )
         )
+    
+        cant_find = 0
+        while number_to_inject < len(injectable_mandatory): # prune itempool if to many mandatory injects
+            item:ERItem = self.random.choice(self.itempool)
+            if item.data.replacable: # try to remove filler items first
+                self.itempool.remove(item)
+                number_to_inject += 1
+                cant_find = 0
+            cant_find += 1
+            
+            if cant_find > 1000: # didn't find filler to replace, remove traps
+                removing = self.random.choice([i for i in inj_items if i.data.classification == ItemClassification.trap])
+                inj_items.remove(removing)
+                number_to_inject += 1
+            elif cant_find > 2000: # uh oh, to many mandatory items, add to inventory
+                self._add_to_inventory(self.create_item(self.random.choice(inj_items)))
+                number_to_inject += 1
 
         return [self.create_item(item) for item in inj_items]
 
-    def _add_traps(self, total_filler_count: int):
-        trap_weights = []
-        trap_weights += (["Example Vanilla Trap"] * self.options.example_trap_weight.value)
+    def _add_traps(self): # MARK: Traps
+        traps = []
+        # base
+        traps += ([item_table["NG+ Trap"]] * self.options.ngplus_trap_count.value)
+        traps += ([item_table["Status Trap"]] * self.options.status_trap_count.value)
+        # dlc
         if self.options.enable_dlc:
-            trap_weights += (["Example DLC Trap"] * self.options.example_dlc_trap_weight.value)
-            trap_weights += (["Blindness Trap"] * self.options.blindness_trap_weight.value)
-        
-        trap_count = 0 if (len(trap_weights) == 0) else math.ceil(total_filler_count * (self.options.trap_fill_percentage.value / 100.0))
-        
-        trap_pool = []
-        for i in range(trap_count):
-            trap_item = self.random.choice(trap_weights)
-            trap_pool.append(self.create_item(trap_item))
-        return trap_pool
+            traps += ([item_table["Blindness Trap"]] * self.options.blindness_trap_count.value)
+        return traps
 
     def _fill_local_items(self) -> None:
         """Removes certain items from the item pool and manually places them in the local world.
@@ -3247,10 +3262,10 @@ class EldenRing(World):
                 "material_rando": self.options.material_rando.value,
                 "death_link": self.options.death_link.value,
                 
-                "trap_fill_percentage": self.options.trap_fill_percentage.value,
-                "ngplus_trap_weight": self.options.ngplus_trap_weight.value,
+                "ngplus_trap_count": self.options.ngplus_trap_count.value,
+                "status_trap_count": self.options.status_trap_count.value,
                 
-                "blindness_trap_weight": self.options.blindness_trap_weight.value,
+                "blindness_trap_count": self.options.blindness_trap_count.value,
                 
                 "random_start": self.options.random_start.value,
                 "randomize_starting_keepsakes": self.options.randomize_starting_keepsakes.value,

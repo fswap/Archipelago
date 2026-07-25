@@ -328,55 +328,51 @@ class MaterialRando(DefaultOnToggle):
     display_name = "Material Randomizer"
 
 # MARK: Traps
-
-class TrapFillPercentage(Range):
+    
+class BaseTrapCount(Range):
     """
-    Replace a percentage of filler items in the item pool with random traps.
+    Base Class for Trap Count
     """
-    display_name = "Trap Fill Percentage"
     range_start = 0
-    range_end = 100
+    range_end = 10
     default = 0
     
-class BaseTrapWeight(Choice):
-    """
-    Base Class for Trap Weights
-    """
-    option_none = 0
-    option_low = 1
-    option_medium = 2
-    option_high = 4
-    default = 2
-    # visibility = Visibility.none
-    
-class ExampleTrapWeight(BaseTrapWeight):
+class ExampleTrapCount(BaseTrapCount):
     """
     Example Trap: Description
     """
-    display_name = "Example Trap Weight"
-    visibility = Visibility.none
+    display_name = "Example Trap Count"
     
-class NGPlusTrapWeight(BaseTrapWeight): # https://github.com/borgCode/TarnishedTool used this tool to test it, could figure out how to implement it from here
+class NGPlusTrapCount(BaseTrapCount): # https://github.com/borgCode/TarnishedTool used this tool to test it, could figure out how to implement it from here
     """
     NG+ Trap: Sets the game to NG+7 until the player dies.
     """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
-    display_name = "NG+ Trap Weight"
+    display_name = "NG+ Trap Count"
+    visibility = Visibility.all
+    
+class StatusTrapCount(BaseTrapCount): 
+    """
+    Status Trap: Applies a random status to the player.
+    """ # excluding deathblight... or keep it for the funny clips
+    # maybe add a 1/10 chance to add an additional effect that stacks, so a 1/1000 for 4 effects lol
+    display_name = "Status Trap Count"
     visibility = Visibility.none
+    
+# game speed trap, speeds game up by 25% - 50%
     
 # Traps that need dlc stuff to work
     
-class ExampleDLCTrapWeight(BaseTrapWeight):
+class ExampleDLCTrapCount(BaseTrapCount):
     """
     Example DLC Trap: Description
     """
-    display_name = "Example DLC Trap Weight"
-    visibility = Visibility.none
+    display_name = "Example DLC Trap Count"
     
-class BlindnessTrapWeight(BaseTrapWeight):
+class BlindnessTrapCount(BaseTrapCount):
     """
     Blindness Trap: Blinds the player for a short time.
     """
-    display_name = "Blindness Trap Weight"
+    display_name = "Blindness Trap Count"
     visibility = Visibility.none
     
 
@@ -678,10 +674,10 @@ class EROptions(PerGameCommonOptions):
     material_rando: MaterialRando
     death_link: DeathLink
     
-    trap_fill_percentage: TrapFillPercentage
-    ngplus_trap_weight: NGPlusTrapWeight
+    ngplus_trap_count: NGPlusTrapCount
+    status_trap_count: StatusTrapCount
     
-    blindness_trap_weight: BlindnessTrapWeight
+    blindness_trap_count: BlindnessTrapCount
 
     random_start: RandomizeStartingLoadout
     randomize_starting_keepsakes: RandomizeStartingKeepsakes
@@ -774,11 +770,11 @@ option_groups = [
         DLCInitialRuneLevel,
     ]),
     OptionGroup("Traps", [
-        TrapFillPercentage,
-        NGPlusTrapWeight,
+        NGPlusTrapCount,
+        StatusTrapCount,
     ]),
     OptionGroup("DLC Traps", [
-        BlindnessTrapWeight
+        BlindnessTrapCount
     ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,
