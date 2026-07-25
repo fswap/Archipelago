@@ -882,15 +882,16 @@ class EldenRing(World):
             replacables = [r for r in self.itempool if r.data.replacable]
             while number_to_inject < len(injectable_mandatory): # prune itempool if to many mandatory injects
                 if replacables: # try to remove filler items first
-                    item:ERItem = self.random.choice(replacables)
+                    item = self.random.choice(replacables)
                     self.itempool.remove(item)
                     replacables.remove(item)
                 else: # no replacables left, remove traps
                     traps = [i for i in inj_items if i.data.classification == ItemClassification.trap]
-                    if traps: 
-                        inj_items.remove(self.random.choice(traps))
+                    if traps: inj_items.remove(self.random.choice(traps))
                     else: # no traps left, add to inventory
-                        self._add_to_inventory(self.create_item(self.random.choice(inj_items))) 
+                        to_inv = self.random.choice(inj_items)
+                        self._add_to_inventory(self.create_item(to_inv))
+                        inj_items.remove(to_inv)
                 number_to_inject += 1
 
         return [self.create_item(item) for item in inj_items]
