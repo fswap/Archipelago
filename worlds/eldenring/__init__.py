@@ -17,6 +17,7 @@ from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_ryk
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, all_traps
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
+from .presets import er_options_presets
 from Options import OptionError
 
 # Settings
@@ -30,6 +31,7 @@ class EldenRingWeb(WebWorld):
     rich_text_options_doc = True
     theme = "stone"
     option_groups = option_groups
+    options_presets = er_options_presets
     item_descriptions = item_descriptions
     
 class _LocationStatus(Enum):

@@ -696,7 +696,6 @@ class EROptions(PerGameCommonOptions):
     smooth_rune_items: SmoothRuneItems
     spell_shop_spells_only: SpellShopSpellsOnly
     early_legacy_dungeons: EarlyLegacyDungeonsEarly
-    local_item_only: LocalItemOnly
     priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
     important_at_priority_early: ERImportantAtPriorityEarly
@@ -707,6 +706,7 @@ class EROptions(PerGameCommonOptions):
     cracked_tears_at_priority: CrackedTearsAtPriority
     memory_stones_at_priority: MemoryStonesAtPriority
     remembrances_at_priority: RemembrancesAtPriority
+    local_item_only: LocalItemOnly
     exclude_locations: ERExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
