@@ -31,27 +31,12 @@ class WorldLogic(Choice):
     """World Logic options
     
     **Region Lock:** Each region will require a 'Special item'.
-    **Region Bosses:** Each region will require % of bosses in that region to be defeated.
-    **Region Lock Bosses:** Each region will require % of bosses in that region to be defeated and a 'Special item'.
     **Open World:** No region locking."""
     display_name = "World Logic"
     option_region_lock = 0
-    option_region_bosses = 1
-    option_region_lock_bosses = 2
-    option_open_world = 3
-    default = 3
+    option_open_world = 1
+    default = 1
     # visibility = Visibility.none
-    
-class RegionBossPercent(Range):
-    """The % of bosses in a region to unlock the next."""
-    display_name = "Region Boss Percent"
-    range_start = 1
-    range_end = 100
-    default = 50
-    
-class RegionBossType(Toggle):
-    """Remove cave and catacombs type bosses from region bosses."""
-    display_name = "Region Boss Type"
     
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid."""
@@ -495,7 +480,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Achievement Boss", "Seedtree", "Map", "Church"]
+    default = ["Achievement Boss", "Seedtree", "Map", "Church", "Key Items"]
     valid_keys = ["chest", "scarab", "seedtree", "basin", "church", "map", "key items",
         "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
         "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
@@ -551,7 +536,7 @@ class MemoryStonesAtPriority(Toggle):
     display_name = "Memory Stones at Priority"
 
 class RemembrancesAtPriority(Toggle):
-    "Should remembrances be randomized to important priority locations."
+    "Should remembrances be randomized to important locations."
     display_name = "Remembrances at Priority"
 
 # MARK: Excludes and Behavior
@@ -638,8 +623,6 @@ class EROptions(PerGameCommonOptions):
     goal: GoalOption
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
-    region_boss_percent: RegionBossPercent
-    region_boss_type: RegionBossType
     soft_logic: RegionSoftLogic
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
     great_runes_required_mountain: GreatRunesRequiredMountain
@@ -716,8 +699,6 @@ option_groups = [
         GoalOption,
         ExcludeDungeonBosses,
         WorldLogic,
-        RegionBossPercent,
-        RegionBossType,
         RegionSoftLogic,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,

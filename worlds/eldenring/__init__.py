@@ -14,7 +14,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups, all_traps
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
 from .presets import er_options_presets
@@ -817,7 +817,7 @@ class EldenRing(World):
             or (item.is_dlc and self.options.enable_dlc))
         ]
         
-        if self.options.world_logic == "region_lock" or self.options.world_logic == "region_lock_bosses": # inject region lock items
+        if self.options.world_logic == "region_lock": # inject region lock items
             for item_name in item_table:
                 if ((self.base_enabled and item_table[item_name].lock and not item_table[item_name].is_dlc) 
                 or (self.options.enable_dlc and item_table[item_name].lock and item_table[item_name].is_dlc
@@ -1038,6 +1038,7 @@ class EldenRing(World):
         if self.options.enable_dlc: candidate_filler.extend(filler_item_names_dlc)
         return self.random.choice(candidate_filler)
 
+
     def set_rules(self) -> None: #MARK: Rules
         
         self._dragon_communion_rules()
@@ -1045,9 +1046,7 @@ class EldenRing(World):
         self._add_equipment_of_champions_rules()
         self._add_npc_rules()
         self._add_allow_useful_location_rules()
-        
-        if self.options.world_logic < 3:
-            self._region_lock()
+        self._region_lock()
         
         # MARK: Base Game Rules
         if self.base_enabled:
@@ -1064,7 +1063,7 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
-            if self.options.world_logic not in ("region_lock", "region_lock_bosses"):
+            if self.options.world_logic == "open_world":
                 if self.options.soft_logic:
                     self._add_entrance_rule("Caelid", 
                         lambda state: self._can_go_to(state, "Altus Plateau")
@@ -1167,7 +1166,7 @@ class EldenRing(World):
             
             self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
                 marker_requirement=ERReq.item("Caelid Lock")
-                if self.options.world_logic in ("region_lock", "region_lock_bosses")
+                if self.options.world_logic == "region_lock"
                 else ERReq.all())
             
             self._add_entrance_rule("Deeproot Depths Upper", lambda state: self._can_go_to(state, "Frenzied Flame Proscription"))
@@ -1401,7 +1400,7 @@ class EldenRing(World):
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
-        if self.options.world_logic != "region_bosses":
+        if self.options.world_logic == "region_lock":
             if self.base_enabled:
                 # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
                 # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
@@ -1459,9 +1458,6 @@ class EldenRing(World):
                 self._add_entrance_rule("Recluses' River", "Recluses' Lock")
                 self._add_entrance_rule("Abyssal Woods", "Abyssal Lock")
                 self._add_entrance_rule("Ancient Ruins of Rauh", "Ancient Ruins Lock")
-        
-        if self.options.world_logic != "region_lock" and False: # redo whole thing to use bosses.py
-            "todo"
             
     def _key_rules(self) -> None: # MARK: SSK Rules
         # in order from early game to late game each rule needs to include the last count for an area
@@ -2888,7 +2884,7 @@ class EldenRing(World):
     # MARK: Marker rules
     
     def _uses_region_lock_logic(self) -> bool:
-        return self.options.world_logic in ("region_lock", "region_lock_bosses")
+        return self.options.world_logic == "region_lock"
     
     def _has_haligtree_secret_medallion_access(self, state: CollectionState) -> bool:
         return all([state.has("Haligtree Secret Medallion (Left)", self.player), state.has("Haligtree Secret Medallion (Right)", self.player)])
@@ -3228,8 +3224,6 @@ class EldenRing(World):
             "options": {
                 "exclude_dungeon": self.options.exclude_dungeon.value,
                 "world_logic": self.options.world_logic.value,
-                "region_boss_percent": self.options.region_boss_percent.value,
-                "region_boss_type": self.options.region_boss_type.value,
                 "soft_logic": self.options.soft_logic.value,
                 "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,

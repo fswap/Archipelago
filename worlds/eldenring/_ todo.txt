@@ -12,18 +12,7 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 TODO
 
-
-
-preset Ideas
-
-shortest at the top
-
-great rune hunt: find 2-7 great runes to access leyndell and goal on morgott
-dlc only: start in dlc and goal on consort
-base game: goal on elden beast
-base + dlc: goal on eb and consort
-
-same as above but region lock
+remove markers
 
 
 
