@@ -609,6 +609,9 @@ class ERLocationData:
         if self.basin: names.append("Basin")
         if self.fragment: names.append("Fragment")
         if self.revered: names.append("Revered")
+        
+        if self.region_value >= len(region_order) - 21 and self.region_value <= len(region_order):
+            names.append("Post Leyndell")
 
         default_item = item_table[cast(str, self.default_item_name)]
         names.append({
@@ -6303,6 +6306,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Ash of war": set(),
     #"Upgraded Weapons": set(),
     
+    "Post Leyndell": set(),
     # testing 
     "All Locations": set(),
 }

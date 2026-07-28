@@ -14,11 +14,10 @@ TODO
 
 remove markers
 
-
+i think UT might have issues with some soft logic, make a hidden option that disables all soft logic? or smth else idk
 
 after release stuff
 
-boss region lock using bosses.py
 
 
 Ideas

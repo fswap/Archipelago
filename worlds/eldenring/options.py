@@ -495,8 +495,10 @@ class ERImportantAtPriorityOnly(Toggle):
 class ERImportantAtPriorityEarly(Range):
     """
     Needs Important at Priority Only On.
+    Does nothing if there are tons of Priority Locations.
     
     Make extra generated locations appear more early game (Limgrave, Weeping, Liurnia, Stormveil and Raya Lucaria).
+    If starting in DLC (Grave, Belurat, Dragon Pit and Ensis).
     
     1: Normal.
     2+: Multiplied odds of early game locations.
@@ -569,7 +571,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **Out of the Way**: Items that take a bit to get.
     - **Drop**: One time drop items from enemies."""
     default = frozenset({"Hidden"})
-    valid_keys = {"dlc", "hidden", "blizzard", "scarab", "furnace golem", "out of the way", "drop"} # testing "All Locations"
+    valid_keys = {"dlc", "hidden", "blizzard", "scarab", "furnace golem", "out of the way", "drop", "post leyndell"} # testing "All Locations"
     valid_keys_casefold = True
     
     unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names

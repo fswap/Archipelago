@@ -197,9 +197,9 @@ great_rune_hunt = {
     "exclude_dungeon":                      ExcludeDungeonBosses.default,
     "world_logic":                          WorldLogic.option_open_world,
     "soft_logic":                           RegionSoftLogic.option_true,
-    "great_runes_required_leyndell":        2,
-    "great_runes_required_mountain":        4,
-    "great_runes_required_erdtree":         7,
+    "great_runes_required_leyndell":        3,
+    "great_runes_required_mountain":        -1,
+    "great_runes_required_erdtree":         0,
     "royal_access":                         RoyalAccess.option_true,
     "use_master_key":                       StoneswordMasterKey.option_vanilla,
     
@@ -263,7 +263,7 @@ great_rune_hunt = {
     # "memory_stones_at_priority":            MemoryStonesAtPriority,
     # "remembrances_at_priority":             RemembrancesAtPriority,
     "local_item_only":                      LocalItemOnly.default,
-    "exclude_locations":                    ERExcludeLocations.default,
+    "exclude_locations":                    ["Hidden", "Post Leyndell"],
     "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_forbid_useful,
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }

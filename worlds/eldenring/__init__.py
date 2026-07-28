@@ -748,6 +748,11 @@ class EldenRing(World):
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc]
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc]
         early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44] # lim, storm, weep, liurnia, raya
+        early_dlc = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc 
+                    and location_dictionary[loc].region_value <= len(region_order) + 9 and location_dictionary[loc].region_value > len(region_order)] # grave, belurat, dragon pit, ensis
+        
+        if self.base_enabled or self.options.dlc_start == 0 and self.options.enable_dlc: early_dlc = [] # start not in dlc, no early dlc
+        else: early_base = [] # base off or dlc start, no early base
         
         loc_needed = len([i for i in important_items if not i.data.is_dlc]) - len(base_priority)
         dlc_loc_needed = len([i for i in important_items if i.data.is_dlc and self.base_enabled or not self.base_enabled]) - len(dlc_priority)
@@ -767,7 +772,7 @@ class EldenRing(World):
             if loc_needed > 0:
                 location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
             elif dlc_loc_needed > 0:
-                location = self.random.choice(sorted(dlc_priority))
+                location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
             
             found = False
             for region in self.multiworld.get_regions(self.player):
