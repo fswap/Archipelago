@@ -233,6 +233,7 @@ class EldenRing(World):
     This is used to determine where the Serpent-Hunter can be placed.
     """
     
+    soft_logic_enabled: bool = None
     base_enabled: bool = None
     all_excluded_locations: Set[str] = set()
     all_priority_locations: Set[str] = set()
@@ -282,6 +283,7 @@ class EldenRing(World):
         self.region_marker_requirement_cache: Dict[str, ERReq] = {}
         self.ignored_marker_entrance_rules: Set[str] = set()
         self.explicit_indirect_conditions = False
+        self.soft_logic_enabled = True
 
     def generate_early(self) -> None:
         for region in location_tables: # make sure table has all values
@@ -337,6 +339,8 @@ class EldenRing(World):
                             self.rykard_location = boss
                         if serpent_data.startswith(boss.name):
                             self.serpent_location = boss
+                            
+                self.soft_logic_enabled = False # turn off soft logic with UT
 
         # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
         elif self.options.enemy_rando:
@@ -1069,7 +1073,7 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
             if self.options.world_logic == "open_world":
-                if self.options.soft_logic:
+                if self.options.soft_logic and self.soft_logic_enabled:
                     self._add_entrance_rule("Caelid", 
                         lambda state: self._can_go_to(state, "Altus Plateau")
                         ,marker_requirement=ERReq.all())
@@ -1081,14 +1085,14 @@ class EldenRing(World):
             
             # Custom Rules
             
-            if not self.options.enemy_rando: # boss rules
+            if not self.options.enemy_rando and self.soft_logic_enabled: # boss rules
                 self._add_entrance_rule("Stormveil Start", "Margit's Shackle", marker_requirement=False)
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player)
                                         , marker_requirement=False)
                 if not self.options.rykard_encounter:
                     self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
                                             "Serpent-Hunter")
-            elif not self.options.rykard_encounter:
+            elif not self.options.rykard_encounter and self.soft_logic_enabled:
                 # places blocked by bosses, if rykard or serpent is here the place requires serpent-hunter
                 self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
                 self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop"))
@@ -1193,11 +1197,12 @@ class EldenRing(World):
             if self.options.great_runes_required_mountain.value >= 0:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
                                         marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
-                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
-                                                                    marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
+                if self.options.soft_logic and self.soft_logic_enabled: 
+                    self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
+                        marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
             else:
                 self._add_entrance_rule("Mountaintops of the Giants", "Rold Medallion",)
-                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
+                if self.options.soft_logic and self.soft_logic_enabled: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
             
             self._add_entrance_rule("Hidden Path to the Haligtree", self._has_haligtree_secret_medallion_access,
                 marker_requirement=self._haligtree_secret_medallion_marker_requirement())
@@ -1232,7 +1237,7 @@ class EldenRing(World):
                         lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True),
                     marker_requirement=False)
             
-            if self.options.early_legacy_dungeons:
+            if self.options.early_legacy_dungeons and self.soft_logic_enabled:
                 self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key", marker_requirement=False)
                 self._add_entrance_rule("Caelid", "Rusty Key", marker_requirement=False)
                 self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key", marker_requirement=False)
@@ -1337,7 +1342,7 @@ class EldenRing(World):
                     ], "Ancient Ruins of Rauh Spiritspring Stone")
                 
             # rykard
-            if self.options.enemy_rando and not self.options.rykard_encounter:
+            if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
                 self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop"))
                 self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop"))
                 self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
@@ -1390,7 +1395,7 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Rykard and Serpent Rule
-        if self.options.enemy_rando and not self.options.rykard_encounter:
+        if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
             self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             

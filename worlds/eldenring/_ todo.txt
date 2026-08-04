@@ -10,22 +10,20 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 
 
-TODO
+- TODO -
 
-remove markers
+remove markers, if needed
 
-i think UT might have issues with some soft logic, make a hidden option that disables all soft logic? or smth else idk
-
-after release stuff
+- After release stuff -
 
 
 
-Ideas
+- Ideas -
 
 option to turn off healing item randomization / start with
 
 
-Art that will be needed probs
+- Art that will be needed probs -
 
 modified main menu with arch text
 a apitem item sprite for pickups and shop
@@ -83,4 +81,4 @@ people who want to be pinged for playtesting
 @bokyubi @journair @dezinator @animubot
 @stressoexpresso @jasler7 @garfunkelton @syrknightnight
 @moroccan7755 @markrk @seesaweffectt @cerbion
-@tyrsniper @lucyfer0903 @noobpvper
+@tyrsniper @lucyfer0903 @noobpvper @diegosm2216

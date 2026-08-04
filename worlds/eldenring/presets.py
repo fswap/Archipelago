@@ -264,7 +264,7 @@ great_rune_hunt = {
     # "remembrances_at_priority":             RemembrancesAtPriority,
     "local_item_only":                      LocalItemOnly.default,
     "exclude_locations":                    ["Hidden", "Post Leyndell"],
-    "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_forbid_useful,
+    "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_omit,
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
