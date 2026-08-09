@@ -768,7 +768,7 @@ class EldenRing(World):
             if self.settings.disable_extreme_options:
                 raise OptionError(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
             else:
-                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can disable this with disable_extreme_options in host.yaml.")
+                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can prevent this genning with disable_extreme_options in host.yaml.")
 
         times_duped = {}
         new_code = len(location_dictionary)

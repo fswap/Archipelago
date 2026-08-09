@@ -488,9 +488,14 @@ class ERPriorityLocationGroups(PriorityLocations):
     
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
+    
+    Creates extra locations at priority locations to contain all important items.
+    
     Generator likes to fail if there is to little priority locations, add more if it fails."""
     display_name = "Important at Priority Only"
     # visibility = Visibility.none # likes to fill error depending on how many priority locations there are
+    
+    # This also means all progression items will spawn at priority locations and should be used for short multiworlds.
     
 class ERImportantAtPriorityEarly(Range):
     """
