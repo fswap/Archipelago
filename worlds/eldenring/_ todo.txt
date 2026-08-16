@@ -22,7 +22,7 @@ remove markers, if needed
 
 option to turn off healing item randomization / start with
 
-for in-game poptracker idea, have each map marker just check a flag that the client sets, so logic doesn't have to be in-game
+for in-game poptracker idea, have each map marker just check a flag that the client sets, so logic doesn't have to be in-gamelemme
 
 
 - Art that will be needed probs -

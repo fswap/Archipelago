@@ -489,29 +489,12 @@ a_very_fun_template = { # todo, make super troll template
     
 }
 
-great_rune_hunt_region = great_rune_hunt
-great_rune_hunt_region["world_logic"] = WorldLogic.option_region_lock
-base_game_region = base_game
-base_game_region["world_logic"] = WorldLogic.option_region_lock
-dlc_only_region = dlc_only
-dlc_only_region["world_logic"] = WorldLogic.option_region_lock
-dlc_region = dlc
-dlc_region["world_logic"] = WorldLogic.option_region_lock
-
-all_bosses_region = all_bosses
-all_bosses_region["world_logic"] = WorldLogic.option_region_lock
-
 er_options_presets: Dict[str, Dict[str, Any]] = {
     "[Random] All Random": all_random_options,
     "[Short] Great Rune Hunt": great_rune_hunt,
-    "[Short RL] Great Rune Hunt": great_rune_hunt_region,
     "[Medium] Base Game": base_game,
-    "[Medium RL] Base Game": base_game_region,
     "[Short] DLC Only": dlc_only,
-    "[Short RL] DLC Only": dlc_only_region,
     "[Long] Base + DLC": dlc,
-    "[Long RL] Base + DLC": dlc_region,
     "[Very Long] All Bosses": all_bosses,
-    "[Very Long RL] All Bosses": all_bosses_region,
     # "Very Fun Template": a_very_fun_template
 }

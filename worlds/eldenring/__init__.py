@@ -196,13 +196,13 @@ class EldenRing(World):
     This is the description of the game that will be displayed on the AP website.
     """
 
-    game = "Elden Ring"
+    game = "EldenRing"
     options: EROptions
     options_dataclass = EROptions
     web = EldenRingWeb()
     settings: typing.ClassVar[EldenRingSettings]
     base_id = 69000
-    required_client_version = (0, 6, 6)
+    required_client_version = (0, 6, 7)
     topology_present = True
     priority_marker_flag_base = 79000
     item_name_to_id = {data.name: data.ap_code for data in item_table.values() if data.ap_code is not None}
@@ -232,6 +232,8 @@ class EldenRing(World):
     
     This is used to determine where the Serpent-Hunter can be placed.
     """
+    spiritspring_locations: Dict[str, str] = {}
+    """Spring location name, Seal location name"""
     
     soft_logic_enabled: bool = None
     base_enabled: bool = None
@@ -254,10 +256,18 @@ class EldenRing(World):
                 cant_reach.append(loc)
         warning(f"cant reach: {cant_reach}")
         
-    def pre_fill(self) -> None:
-        ":)"
+    def pre_fill(self):
+        ""
         # self.test_state()
         # self.visualize_world()
+
+    def post_fill(self):
+        if self.options.important_at_priority_only:
+            for loc in self.multiworld.get_filled_locations(self.player):
+                if loc.progress_type != LocationProgressType.PRIORITY and loc.item.classification == ItemClassification.progression and not loc.locked: # not preplaced
+                    "a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen"
+                    raise OptionError(f"A progression item was placed on a non-priority location: {loc.name}, you most likely have to little priority locations.")
+        return super().post_fill()
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
@@ -339,16 +349,27 @@ class EldenRing(World):
                             self.rykard_location = boss
                         if serpent_data.startswith(boss.name):
                             self.serpent_location = boss
+                
+                if self.multiworld.re_gen_passthrough["Elden Ring"]["options"]["spiritspring_stones"]:
+                    self.spiritspring_locations = self.multiworld.re_gen_passthrough["Elden Ring"]["spiritspring_stone_locations"]
                             
                 self.soft_logic_enabled = False # turn off soft logic with UT
-
-        # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
-        elif self.options.enemy_rando:
-            self.rykard_location = self.random.choice(
-                [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
-            self.serpent_location = self.random.choice(
-                [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
-            
+        else:
+            # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
+            if self.options.enemy_rando:
+                self.rykard_location = self.random.choice(
+                    [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
+                self.serpent_location = self.random.choice(
+                    [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
+                
+            # Randomize stones between stones
+            if self.options.spiritspring_stones:
+                seal_locations = ["GP/(EH): Spiritspring Stone to NW", "SA/(MR): Spiritspring Stone to SE", "SA/(RR): Spiritspring Stone to S", 
+                                  "RB/(TTR): Spiritspring Stone to E", "ARR/CBME: Spiritspring Stone, drop to E till cliff then up ledge to N"]
+                for loc in ["Fort of Reprimand", "Scadu Altus", "Rabbath's Rise", "Northern Nameless Mausoleum", "Ancient Ruins of Rauh"]:
+                    self.spiritspring_locations[loc] = self.random.choice(seal_locations)
+                    seal_locations.remove(self.spiritspring_locations[loc])
+        
         using_table = {}
         if self.base_enabled: using_table.update(item_table_vanilla)
         if self.options.enable_dlc: using_table.update(item_table_dlc)
@@ -380,8 +401,11 @@ class EldenRing(World):
 
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
-        if not boss.allow_rykard and self.options.restrictive_bosses or not self.options.enable_dlc and boss.dlc or not self.base_enabled and not boss.dlc: return False
+        if not boss.allow_rykard and self.options.restrictive_bosses: return False 
         else: return True
+        
+        # removed base / dlc restriction, so dlc only doesnt have both rykard and serpent in it everytime
+        # or not self.options.enable_dlc and boss.dlc or not self.base_enabled and not boss.dlc
 
     def create_regions(self) -> None: #MARK: Connections
         # Create Vanilla Regions
@@ -758,10 +782,14 @@ class EldenRing(World):
         if self.base_enabled or self.options.dlc_start == 0 and self.options.enable_dlc: early_dlc = [] # start not in dlc, no early dlc
         else: early_base = [] # base off or dlc start, no early base
         
-        loc_needed = len([i for i in important_items if not i.data.is_dlc]) - len(base_priority)
-        dlc_loc_needed = len([i for i in important_items if i.data.is_dlc and self.base_enabled or not self.base_enabled]) - len(dlc_priority)
+        loc_needed = len([i for i in important_items if not i.data.is_dlc and not i.found_in_dlc]) - len(base_priority)
+        dlc_loc_needed = len([i for i in important_items if (i.data.is_dlc or i.found_in_dlc) and self.options.enable_dlc]) - len(dlc_priority)
         
-        if not dlc_priority and dlc_loc_needed: 
+        if not self.base_enabled: # if base injected in dlc only, make them dlc
+            dlc_loc_needed += loc_needed
+            loc_needed = 0
+        
+        if not dlc_priority and dlc_loc_needed and (self.options.dlc_messmer_kindle or self.options.dlc_scadutree_fragments) and self.options.enable_dlc: 
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
 
         if loc_needed + dlc_loc_needed < 0 and self.multiworld.players != 1:
@@ -769,7 +797,8 @@ class EldenRing(World):
                 raise OptionError(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
             else:
                 warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can prevent this genning with disable_extreme_options in host.yaml.")
-
+            return # don't need to dupe since enough exist
+        
         times_duped = {}
         new_code = len(location_dictionary)
         while loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
@@ -1326,20 +1355,20 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Shadow Keep, Church District"), self.get_entrance("Go To Shadow Keep Storehouse"))
             
             if self.options.spiritspring_stones:
-                self._add_entrance_rule("Scadu Altus", lambda state: state.has("Fort of Reprimand Spiritspring Stone") 
+                self._add_entrance_rule("Scadu Altus", lambda state: self._can_get(state, self.spiritspring_locations["Fort of Reprimand"]) 
                     or self._can_get(state, "CE/CLC: Remembrance of the Twin Moon Knight - mainboss drop")
-                    , marker_requirement=ERReq.any(ERReq.item("Fort of Reprimand Spiritspring Stone")
+                    , marker_requirement=ERReq.any(ERReq.location(self.spiritspring_locations["Fort of Reprimand"])
                     , ERReq.location("CE/CLC: Remembrance of the Twin Moon Knight - mainboss drop")))
-                self._add_location_rule("SA/SC: Scadutree Fragment - by cross", "Scadu Altus Spiritspring Stone")
-                self._add_location_rule("SA/(RR): Rabbath's Cannon - in chest top of rise", "Rabbath's Rise Spiritspring Stone")
+                self._add_location_rule("SA/SC: Scadutree Fragment - by cross", lambda state: self._can_get(state, self.spiritspring_locations["Scadu Altus"]))
+                self._add_location_rule("SA/(RR): Rabbath's Cannon - in chest top of rise", lambda state: self._can_get(state, self.spiritspring_locations["Rabbath's Rise"]))
                 self._add_location_rule([
                     "RB/(NNM): Red Bear's Claw - boss drop", "RB/(NNM): Iron Rivet Armor - boss drop", "RB/(NNM): Iron Rivet Gauntlets - boss drop", 
                     "RB/(NNM): Iron Rivet Greaves - boss drop", "RB/(NNM): Fang Helm - boss drop", "RB/NNM: Spiraltree Seal - \"The Sacred Tower\" Painting reward SW of NNM"
-                    ], "Northern Nameless Mausoleum Spiritsping Stone")
+                    ], lambda state: self._can_get(state, self.spiritspring_locations["Northern Nameless Mausoleum"]))
                 self._add_location_rule([
-                    "ARR/CBME: Beast Horn x2 - up sealed spiritspring, on SW pillar walkway ,seal is to N downstairs, outside to left",
+                    "ARR/CBME: Beast Horn x2 - up sealed spiritspring, on SW pillar walkway, seal is to N downstairs, outside to left",
                     "ARR/CBME: Mottled Necklace +2 - in chest up sealed spiritspring, top of stairs, seal is to N downstairs, outside to left"
-                    ], "Ancient Ruins of Rauh Spiritspring Stone")
+                    ], lambda state: self._can_get(state, self.spiritspring_locations["Ancient Ruins of Rauh"]))
                 
             # rykard
             if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
@@ -1396,8 +1425,10 @@ class EldenRing(World):
         
         # Rykard and Serpent Rule
         if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
-            self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
-            self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+            if self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled:
+                self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+            if self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled:
+                self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
@@ -1405,6 +1436,18 @@ class EldenRing(World):
                 og_location = dupe_location[dupe_location.find(":")+2:]
                 self._add_location_rule(dupe_location, lambda state, og_location=og_location: self._can_get(state, og_location))
             
+        # if more then 1 world exists stop prio placing outside of prio
+        if self.options.important_at_priority_only:
+            if self.multiworld.players != 1: # more then 1 eldenring
+                for world in [self.multiworld.worlds[w] for w in self.multiworld.worlds]:
+                    # if important_at_priority_only is off or game isn't eldenring add restriction rules
+                    if world.game == "EldenRing" and not world.options.important_at_priority_only or world.game != "EldenRing":
+                        # Make non-priority locations exclude progression items.
+                        for loc in self.multiworld.get_unfilled_locations(self.player):
+                            if loc.progress_type != LocationProgressType.PRIORITY:
+                                self._add_item_rule(loc.name, lambda item: item.classification != ItemClassification.progression)
+                        break
+        
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     
@@ -3317,6 +3360,7 @@ class EldenRing(World):
                 if self.serpent_location != default_serpent_location
                 else None
             ),
+            "spiritspring_stone_locations": self.spiritspring_locations,
             "goal": [boss.flag for boss in self.goal_bosses],
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,

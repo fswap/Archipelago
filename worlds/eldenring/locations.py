@@ -3828,6 +3828,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/CDE: Crab Eggs x2 - down right on first roof", "Crab Eggs x2", key="210000,0:0021007420::"),
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
+        ERLocationData("GP/(EH): Spiritspring Stone to NW", None),
+        
         ERLocationData("GP/TPC: Cross Map - given by Hornsent at TPC or HC", "Cross Map", key="210100,0:0000400610::", missable=True), #Hornsent
         ERLocationData("GP/TPC: Furnace Visage x3 - given by Hornsent after giving Scorpion Stew", "Furnace Visage x3", key="210100,0:0000400612::", missable=True), #Hornsent
         ERLocationData("GP/PT: Ghost Glovewort [4] - W of PT, in front of gravestone", "Ghost Glovewort [4]", key="614441,0:2044417000::"),
@@ -3973,7 +3975,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/CF: Grave Glovewort [6] - up E path, by big right grave", "Grave Glovewort [6]", key="614843,0:2048437030::"),
         ERLocationData("GP/PPC: Scadutree Fragment - by cross", "Scadutree Fragment", key="614843,0:2048437700::", cross=True),
         ERLocationData("GP/(EH): Talisman of the Dread - in hovel", "Talisman of the Dread", key="614942,0:2049427000::"),
-        ERLocationData("GP/CF: Greater Potentate's Cookbook [7] - to E in lower swamp area, in last poison swamp before sealed spirit spring", "Greater Potentate's Cookbook [7]", key="614943,0:0000068630::", cookbook=True),
+        ERLocationData("GP/CF: Greater Potentate's Cookbook [7] - to E in lower swamp area, in last poison swamp before sealed spiritspring", "Greater Potentate's Cookbook [7]", key="614943,0:0000068630::", cookbook=True),
     ],
     "Shadow Keep Storehouse Back":[ # storehouse_back                     done
         ERLocationData("ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop", "Remembrance of the Wild Boar Rider", key="614948,0:0000510640::", boss=True, remembrance=True),
@@ -5642,6 +5644,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
 
     # MARK: More DLC
     "Ancient Ruins of Rauh":[ # rauhruins                                 done, some done by Layka
+        ERLocationData("ARR/CBME: Spiritspring Stone, drop to E till cliff then up ledge to N", None),
+        
         ERLocationData("ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop", "Remembrance of the Saint of the Bud", key="614445,0:0000510600::", boss=True, remembrance=True),
         ERLocationData("ARR/RARW: Scadutree Fragment - to W up stairs, by NW monument", "Scadutree Fragment", key="614445,0:2044457000::", fragment=True),
         ERLocationData("ARR/CBME: Four-Toed Fowl Foot x3 - to N downstairs, outside to S, drop right of elevator, forward 2 down 1", "Four-Toed Fowl Foot x3", key="614445,0:2044457010::"),
@@ -5704,7 +5708,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("ARR/VMT: Golden Horn Tender - to N, behind entrance building to E", "Golden Horn Tender", key="614747,0:2047477010::"),
         ERLocationData("ARR/VMT: Spirit Calculus - to SE on pillar behind elevator", "Spirit Calculus", key="614747,0:2047477020::"),
         
-        ERLocationData("ARR/CBME: Beast Horn x2 - up sealed spiritspring, on SW pillar walkway ,seal is to N downstairs, outside to left", "Beast Horn x2", key="614546,0:2045467000::"),
+        ERLocationData("ARR/CBME: Beast Horn x2 - up sealed spiritspring, on SW pillar walkway, seal is to N downstairs, outside to left", "Beast Horn x2", key="614546,0:2045467000::"),
         ERLocationData("ARR/CBME: Mottled Necklace +2 - in chest up sealed spiritspring, top of stairs, seal is to N downstairs, outside to left", "Mottled Necklace +2", key="614546,0:2045467900::", talisman=True, chest=True),
         
         ERLocationData("ARR/RARE: Crimson-Sapping Cracked Tear - furnace golem to SE", "Crimson-Sapping Cracked Tear", key="614546,0:0000065420::", furnacegolem=True),
@@ -5712,6 +5716,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("ARR/VMT: Fine Crucible Feather Talisman - down W hall from giant room second floor, right at intersection, up on roots", "Fine Crucible Feather Talisman", key="614548,0:2045487000::", talisman=True),
     ],
     "Rauh Base":[ # rauhbase                                              done
+        ERLocationData("RB/(TTR): Spiritspring Stone to E", None),
+        
         ERLocationData("RB/SRC: Greater Potentate's Cookbook [8] - N of SRC on pile of brown", "Greater Potentate's Cookbook [8]", key="614447,0:0000068680::", cookbook=True),
         ERLocationData("RB/RN: Roar of Rugalea - boss drop to NW", "Roar of Rugalea", key="614447,0:0000530905::", altboss=True, overworldboss=True),
         ERLocationData("RB/SRC: Ghost Glovewort [2] - just N of SRC", "Ghost Glovewort [2]", key="614447,0:2044477000::"),
@@ -5860,6 +5866,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/ARR: Verdigris Discus - NE side of imbued sword key area by altar", "Verdigris Discus", key="614647,0:2046477720::", talisman=True),
     ],
     "Scadu Altus":[ # scadualtus                                          done
+        ERLocationData("SA/(MR): Spiritspring Stone to SE", None),
+        ERLocationData("SA/(RR): Spiritspring Stone to S", None),
+        
         ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True),
         
         ERLocationData("SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her", "Lacerating Crossed-Tree", key="120500,0:0000400590::", missable=True, exclusive=True),
@@ -6019,7 +6028,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/CDH: Greasemonger's Bell Bearing - hanging pot to S", "Greasemonger's Bell Bearing", key="615146,0:2051467500::", hangingpot=True),
         ERLocationData("SA/(RR): Rabbath's Cannon - in chest top of rise", "Rabbath's Cannon", key="615146,0:2051467900::", chest=True, rise=True),
         
-        # up the sealed spirtsping
+        # up the sealed spirtspring
         ERLocationData("SA/SC: Scadutree Fragment - by cross", "Scadutree Fragment", key="615043,0:2050437500::", cross=True),
     ],
     "Castle Ensis":[ # ensis                                              done
