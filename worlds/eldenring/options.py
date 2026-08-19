@@ -39,7 +39,8 @@ class WorldLogic(Choice):
     # visibility = Visibility.none
     
 class RegionSoftLogic(DefaultOnToggle):
-    """You will always get Altus access before needing to go to Caelid."""
+    """You will always get Altus access before needing to go to Caelid.
+    Consecrated Snowfield also requires the same items as Mountaintops."""
     display_name = "Region Soft Logic"
 
 class GreatRunesRequiredLeyndell(Range):

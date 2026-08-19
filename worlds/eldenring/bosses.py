@@ -32,6 +32,9 @@ class ERBossInfo:
     locations: list[str] = field(default_factory=list)
     """Locations the boss blocks so we can do can_get location."""
 
+# soldier, dane and gilika have no items behind, dane is missable
+# don't have patches
+
 # https://github.com/vawser/Smithbox/blob/main/src/Smithbox.Data/Assets/Aliases/ER/EventFlags.json for flag id
 base_bosses = [
     # MARK: Limgrave

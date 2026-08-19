@@ -22,9 +22,23 @@ from Options import OptionError
 
 # Settings
 class EldenRingSettings(settings.Group):
-    class DisableExtremeOptions(str):
-        """Disables extreme options."""
-    disable_extreme_options: typing.Union[DisableExtremeOptions, bool] = False
+    class ImportantAtPriorityOnlySafeGuard(settings.Bool):
+        """Stops gen if there are too many Priority locations, since most if not all progression items would go to Elden Ring."""
+    
+    class ForceFillerLocal(settings.Bool):
+        """Filler items are forced local only."""
+    
+    class ForceRegionLock(settings.Bool):
+        """Disables open world option, since sphere 1 would have ~2.1k checks."""
+    
+    class GoalBossesAllowed(int):
+        """How many Goal Bosses can Elden Ring have.
+        There are 207 Bosses total in Base + DLC, and 165 in Base game."""
+    
+    important_at_priority_only_safe_guard: typing.Union[ImportantAtPriorityOnlySafeGuard, bool] = True
+    force_filler_local: typing.Union[ForceFillerLocal, bool] = True
+    force_region_lock: typing.Union[ForceRegionLock, bool] = True
+    goal_bosses_allowed: typing.Union[GoalBossesAllowed, int] = 100
 
 # Web stuff
 class EldenRingWeb(WebWorld):
@@ -313,14 +327,17 @@ class EldenRing(World):
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
-        if self.settings.disable_extreme_options:
-            if "filler" not in local_item_only_lowercase or "goods" not in local_item_only_lowercase:
-                raise OptionError(f"EldenRing disable_extreme_options Error: "
-                                  f"Player {self.player_name} has filler or goods missing from local_item_only. "
-                                  f"This being here means the itempool will be flooded with lots of filler items.")
-            elif all(boss in self._goal_bosses() for boss in all_bosses): # idk if this is needed but I feel like it should be here
-                warning(f"EldenRing disable_extreme_options waring: "
-                        f"Player {self.player_name} has goal option set to all bosses.")
+        if self.settings.force_filler_local and "filler" not in local_item_only_lowercase and "goods" not in local_item_only_lowercase:
+            raise OptionError(f"EldenRing host.yaml force_filler_local Error: "
+                                f"Player {self.player_name} has filler or goods missing from local_item_only. "
+                                f"This being here means the itempool will be flooded with lots of filler items.")
+        elif len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
+            raise OptionError(f"EldenRing host.yaml goal_bosses_allowed Error: "
+                            f"Player {self.player_name} has Goal Bosses count set higher then allowed amount. "
+                            f"Current amount: {len(self._goal_bosses())}, allowed amount: {self.settings.goal_bosses_allowed}.")
+        elif self.settings.force_region_lock and self.options.world_logic == "open_world":
+                raise OptionError(f"EldenRing host.yaml force_region_lock Error: "
+                                f"Player {self.player_name} has world logic set to open world, this means sphere 1 would be ~2.1k checks *ignoring soft logic*.")
         
         if self.options.enable_dlc:
             if "dlc" not in self.options.exclude_locations.excluded_groups(): # if dlc is excluded, exclude bosses too
@@ -340,18 +357,18 @@ class EldenRing(World):
             
         # Inform Universal Tracker where Rykard is being randomized to.
         if hasattr(self.multiworld, "re_gen_passthrough"):
-            if "Elden Ring" in self.multiworld.re_gen_passthrough:
-                if self.multiworld.re_gen_passthrough["Elden Ring"]["options"]["enemy_rando"]:
-                    rykard_data = self.multiworld.re_gen_passthrough["Elden Ring"]["rykard"]
-                    serpent_data = self.multiworld.re_gen_passthrough["Elden Ring"]["serpent"]
+            if "EldenRing" in self.multiworld.re_gen_passthrough:
+                if self.multiworld.re_gen_passthrough["EldenRing"]["options"]["enemy_rando"]:
+                    rykard_data = self.multiworld.re_gen_passthrough["EldenRing"]["rykard"]
+                    serpent_data = self.multiworld.re_gen_passthrough["EldenRing"]["serpent"]
                     for boss in all_bosses:
                         if rykard_data.startswith(boss.name):
                             self.rykard_location = boss
                         if serpent_data.startswith(boss.name):
                             self.serpent_location = boss
                 
-                if self.multiworld.re_gen_passthrough["Elden Ring"]["options"]["spiritspring_stones"]:
-                    self.spiritspring_locations = self.multiworld.re_gen_passthrough["Elden Ring"]["spiritspring_stone_locations"]
+                if self.multiworld.re_gen_passthrough["EldenRing"]["options"]["spiritspring_stones"]:
+                    self.spiritspring_locations = self.multiworld.re_gen_passthrough["EldenRing"]["spiritspring_stone_locations"]
                             
                 self.soft_logic_enabled = False # turn off soft logic with UT
         else:
@@ -445,7 +462,7 @@ class EldenRing(World):
             create_connection("Limgrave", "Highroad Cave")
             create_connection("Limgrave", "Deathtouched Catacombs")
             
-            create_connection("Limgrave", "Sellia Crystal Tunnel") # in caelid
+            
             create_connection("Coastal Cave", "Church of Dragon Communion")
             
 
@@ -498,7 +515,7 @@ class EldenRing(World):
             # Caelid
             create_connection("Caelid", "Caelid Catacombs")
             create_connection("Caelid", "Gaol Cave")
-
+            create_connection("Caelid", "Sellia Crystal Tunnel")
             create_connection("Caelid", "Abandoned Cave")
             create_connection("Caelid", "Great-Jar")
             create_connection("Caelid", "Minor Erdtree Catacombs")
@@ -793,10 +810,12 @@ class EldenRing(World):
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
 
         if loc_needed + dlc_loc_needed < 0 and self.multiworld.players != 1:
-            if self.settings.disable_extreme_options:
-                raise OptionError(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
+            if self.settings.important_at_priority_only_safe_guard:
+                raise OptionError(f"EldenRing host.yaml important_at_priority_only_safe_guard Error: "
+                                f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, "
+                                f"this \"can\" make all progression items be in their world.")
             else:
-                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world. You can prevent this genning with disable_extreme_options in host.yaml.")
+                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
             return # don't need to dupe since enough exist
         
         times_duped = {}
@@ -1094,7 +1113,7 @@ class EldenRing(World):
             # indirect connections
 
             self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Wailing Dunes"))
-            self.multiworld.register_indirect_condition(self.get_region("Caelid"), self.get_entrance("Go To Sellia Crystal Tunnel"))
+            self.multiworld.register_indirect_condition(self.get_region("Limgrave"), self.get_entrance("Go To Sellia Crystal Tunnel"))
             self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths Upper"), self.get_entrance("Go To Deeproot Depths"))
             self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Ainsel River Main"))
             self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Leyndell, Royal Capital"))
@@ -1102,7 +1121,7 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
             
             if self.options.world_logic == "open_world":
-                if self.options.soft_logic and self.soft_logic_enabled:
+                if self.options.soft_logic:
                     self._add_entrance_rule("Caelid", 
                         lambda state: self._can_go_to(state, "Altus Plateau")
                         ,marker_requirement=ERReq.all())
@@ -1226,12 +1245,12 @@ class EldenRing(World):
             if self.options.great_runes_required_mountain.value >= 0:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
                                         marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
-                if self.options.soft_logic and self.soft_logic_enabled: 
+                if self.options.soft_logic: 
                     self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
                         marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
             else:
                 self._add_entrance_rule("Mountaintops of the Giants", "Rold Medallion",)
-                if self.options.soft_logic and self.soft_logic_enabled: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
+                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
             
             self._add_entrance_rule("Hidden Path to the Haligtree", self._has_haligtree_secret_medallion_access,
                 marker_requirement=self._haligtree_secret_medallion_marker_requirement())
@@ -1266,7 +1285,7 @@ class EldenRing(World):
                         lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True),
                     marker_requirement=False)
             
-            if self.options.early_legacy_dungeons and self.soft_logic_enabled:
+            if self.options.early_legacy_dungeons:
                 self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key", marker_requirement=False)
                 self._add_entrance_rule("Caelid", "Rusty Key", marker_requirement=False)
                 self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key", marker_requirement=False)
@@ -1309,7 +1328,7 @@ class EldenRing(World):
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
                         and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
                     marker_requirement=ERReq.all(self._region_marker_requirement("Wailing Dunes"), self._region_marker_requirement("Mohgwyn Palace")))
-                    if self.options.dlc_timing == 0 and self.options.missable_location_behavior <= 1: # Early medal
+                    if self.options.dlc_timing == 0 and self.options.missable_location_behavior <= 1 and self.soft_logic_enabled: # Early medal
                         self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player),
                                                 marker_requirement=False)
                         self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player),
@@ -3027,10 +3046,9 @@ class EldenRing(World):
         for name in self.options.goal:
             assert name.endswith(" Boss")
             goal_type = name[:-len(" Boss")]
-            boss = next(boss for boss in iter(all_bosses) if goal_type in boss.type)
+            boss = [boss for boss in all_bosses if goal_type in boss.type and boss.flag != None]
             assert boss
-            assert boss.flag
-            result.append(boss)
+            result += boss
         return result
     
     def _is_complete(self, state: CollectionState) -> bool:
