@@ -82,6 +82,13 @@ class StoneswordMasterKey(Choice):
     option_regional_keys = 1
     option_single_key = 2
 
+# MARK: Tarnished Pack
+
+class EnableTarnishedPack(Toggle):
+    """Enable Tarnished Pack"""
+    display_name = "Enable Tarnished Pack"
+    visibility = Visibility.none
+
 # MARK: DLC
 
 class EnableDLC(Toggle):
@@ -492,11 +499,10 @@ class ERImportantAtPriorityOnly(Toggle):
     
     Creates extra locations at priority locations to contain all important items.
     
-    Generator likes to fail if there is to little priority locations, add more if it fails."""
+    Generator likes to fail if there is to little priority locations, add more if it fails.
+    For big syncs PLEASE test your yaml if this is on, there is a warning if there is to many priority locations set, you will need this warning to stop to bring this to big syncs."""
     display_name = "Important at Priority Only"
     # visibility = Visibility.none # likes to fill error depending on how many priority locations there are
-    
-    # This also means all progression items will spawn at priority locations and should be used for short multiworlds.
     
 class ERImportantAtPriorityEarly(Range):
     """
@@ -638,6 +644,7 @@ class EROptions(PerGameCommonOptions):
     royal_access: RoyalAccess
     use_master_key: StoneswordMasterKey
     
+    enable_tp_dlc: EnableTarnishedPack
     enable_dlc: EnableDLC
     dlc_start: DLCStart
     dlc_starting_items: DLCStartingItems
@@ -740,6 +747,7 @@ option_groups = [
         DeathLink
     ]),
     OptionGroup("DLC", [
+        EnableTarnishedPack,
         EnableDLC,
         MessmerKindle,
         MessmerKindleRequired,

@@ -327,15 +327,16 @@ class EldenRing(World):
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
-        if self.settings.force_filler_local and "filler" not in local_item_only_lowercase and "goods" not in local_item_only_lowercase:
-            raise OptionError(f"EldenRing host.yaml force_filler_local Error: "
-                                f"Player {self.player_name} has filler or goods missing from local_item_only. "
-                                f"This being here means the itempool will be flooded with lots of filler items.")
-        elif len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
-            raise OptionError(f"EldenRing host.yaml goal_bosses_allowed Error: "
-                            f"Player {self.player_name} has Goal Bosses count set higher then allowed amount. "
-                            f"Current amount: {len(self._goal_bosses())}, allowed amount: {self.settings.goal_bosses_allowed}.")
-        elif self.settings.force_region_lock and self.options.world_logic == "open_world":
+        if self.multiworld.players != 1: # this only applies when not solo
+            if self.settings.force_filler_local and "filler" not in local_item_only_lowercase and "goods" not in local_item_only_lowercase:
+                raise OptionError(f"EldenRing host.yaml force_filler_local Error: "
+                                    f"Player {self.player_name} has filler or goods missing from local_item_only. "
+                                    f"This being here means the itempool will be flooded with lots of filler items.")
+            elif len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
+                raise OptionError(f"EldenRing host.yaml goal_bosses_allowed Error: "
+                                f"Player {self.player_name} has Goal Bosses count set higher then allowed amount. "
+                                f"Current amount: {len(self._goal_bosses())}, allowed amount: {self.settings.goal_bosses_allowed}.")
+            elif self.settings.force_region_lock and self.options.world_logic == "open_world":
                 raise OptionError(f"EldenRing host.yaml force_region_lock Error: "
                                 f"Player {self.player_name} has world logic set to open world, this means sphere 1 would be ~2.1k checks *ignoring soft logic*.")
         
@@ -790,11 +791,11 @@ class EldenRing(World):
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
         
-        dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc]
-        base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc]
-        early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44] # lim, storm, weep, liurnia, raya
-        early_dlc = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc 
-                    and location_dictionary[loc].region_value <= len(region_order) + 9 and location_dictionary[loc].region_value > len(region_order)] # grave, belurat, dragon pit, ensis
+        dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
+        base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and self.base_enabled]
+        early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44 and self.base_enabled] # lim, storm, weep, liurnia, raya
+        early_dlc = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and location_dictionary[loc].region_value <= len(region_order) + 9 
+                     and location_dictionary[loc].region_value > len(region_order) and self.options.enable_dlc] # grave, belurat, dragon pit, ensis
         
         if self.base_enabled or self.options.dlc_start == 0 and self.options.enable_dlc: early_dlc = [] # start not in dlc, no early dlc
         else: early_base = [] # base off or dlc start, no early base
@@ -809,14 +810,19 @@ class EldenRing(World):
         if not dlc_priority and dlc_loc_needed and (self.options.dlc_messmer_kindle or self.options.dlc_scadutree_fragments) and self.options.enable_dlc: 
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
 
-        if loc_needed + dlc_loc_needed < 0 and self.multiworld.players != 1:
-            if self.settings.important_at_priority_only_safe_guard:
+        if self.multiworld.players != 1 and self.settings.important_at_priority_only_safe_guard:
+            minimum_prio = 25
+            if len(base_priority) + len(dlc_priority) < minimum_prio:
+                raise OptionError(f"EldenRing host.yaml important_at_priority_only_safe_guard Error: "
+                                f"Player {self.player_name} has {len(base_priority) + len(dlc_priority)} Priority locations, "
+                                f"This should be more then {minimum_prio}.")
+            elif loc_needed + dlc_loc_needed < 0:
                 raise OptionError(f"EldenRing host.yaml important_at_priority_only_safe_guard Error: "
                                 f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, "
                                 f"this \"can\" make all progression items be in their world.")
-            else:
-                warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
-            return # don't need to dupe since enough exist
+        if loc_needed + dlc_loc_needed < 0:
+            warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
+            return # don't need to dupe since enough exist 
         
         times_duped = {}
         new_code = len(location_dictionary)
@@ -1242,6 +1248,13 @@ class EldenRing(World):
             
             self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value),
                                     marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_leyndell.value))
+            
+            # MARK: TARNISHED DLC
+            # if self.options.enable_tp_dlc:
+            #     self._add_location_rule([ # new leyndell invader requires law to be used
+            #             ""
+            #         ], "Law of Regression")
+            
             if self.options.great_runes_required_mountain.value >= 0:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
                                         marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
@@ -3279,11 +3292,13 @@ class EldenRing(World):
         # locations.
         location_ids_to_keys: Dict[int, str] = {}
         location_ids_to_targets: Dict[int, list[str]] = {}
+        location_ids_to_name: Dict[int, str] = {}
         for location in cast(List[ERLocation], self.multiworld.get_filled_locations(self.player)):
             # Skip events and only look at this world's locations
             if (location.address is not None and location.item.code is not None
                     and location.data.key):
                 location_ids_to_keys[location.address] = location.data.key
+                location_ids_to_name[location.address] = location.data.name
                 if location.data.targets:
                     if isinstance(location.data.targets, str):
                         location.data.targets = [location.data.targets]
@@ -3302,6 +3317,7 @@ class EldenRing(World):
                 "royal_access": self.options.royal_access.value,
                 "use_master_key": self.options.use_master_key.value,
                 
+                "enable_tp_dlc": self.options.enable_tp_dlc.value,
                 "enable_dlc": self.options.enable_dlc.value,
                 "dlc_start": self.options.dlc_start.value,
                 "dlc_starting_items": self.options.dlc_starting_items.value,
@@ -3382,6 +3398,7 @@ class EldenRing(World):
             "goal": [boss.flag for boss in self.goal_bosses],
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
+            "locationIdsToName": location_ids_to_name,
             "locationIdsToKeys": location_ids_to_keys,
             "locationIdsToTargets ": location_ids_to_targets,
             "priorityMarkerFlags": priority_marker_flags,

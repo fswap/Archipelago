@@ -299,6 +299,9 @@ class ERLocationData:
 
     dlc: bool = False
     """Whether this location is only accessible if the DLC is enabled."""
+    
+    tp_dlc: bool = False
+    """Whether this location is only accessible if the TP DLC is enabled."""
 
     npc: bool = False
     """"""
@@ -535,6 +538,8 @@ class ERLocationData:
         return (
             self.dlc and not options.enable_dlc.value
         ) or (
+            self.tp_dlc and not options.enable_tp_dlc.value
+        )or (
             (self.omit if isinstance(self.omit, bool) else self.omit(self, options))
             and self.name not in all_boss_locations
             and item_table[self.default_item_name].is_important(options) not in 
@@ -652,6 +657,10 @@ def disable_base(self: ERLocationData, options: EROptions) -> bool:
 def disable_dlc(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when DLC is disabled."""
     return not options.enable_dlc.value
+
+def disable_tp_dlc(self: ERLocationData, options: EROptions) -> bool:
+    """A utility function for locations that are omitted when TP DLC is disabled."""
+    return not options.enable_tp_dlc.value
 
 def missable_capital(self: ERLocationData, options: EROptions) -> bool:
     return not options.royal_access.value
@@ -6248,7 +6257,10 @@ for i, region in enumerate(region_order + region_order_dlc):
 
 for region in region_order:
     for location in location_tables[region]:
-        location.omit = disable_base
+        if location.tp_dlc: 
+            location.omit = disable_tp_dlc
+        else:
+            location.omit = disable_base
 
 for region in region_order_dlc:
     for location in location_tables[region] + location_tables["Roundtable Hold DLC Only"]:
