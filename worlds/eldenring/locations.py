@@ -539,7 +539,7 @@ class ERLocationData:
             self.dlc and not options.enable_dlc.value
         ) or (
             self.tp_dlc and not options.enable_tp_dlc.value
-        )or (
+        ) or (
             (self.omit if isinstance(self.omit, bool) else self.omit(self, options))
             and self.name not in all_boss_locations
             and item_table[self.default_item_name].is_important(options) not in 

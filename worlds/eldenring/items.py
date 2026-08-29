@@ -35,6 +35,9 @@ class ERItemData:
 
     is_dlc: bool = False
     """Whether this item is only found in DLC."""
+    
+    is_tp_dlc: bool = False
+    """Whether this item is only found in TP DLC."""
 
     count: int = 1
     """The number of copies of this item included in each drop."""
@@ -2943,6 +2946,45 @@ _dlc_items = [
     # ERItemData("Ancient Ruins of Rauh Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
 ]
 
+# MARK: TP DLC
+
+_tarnished_items = [
+    ERItemData("Spectral Steed Regalia: Tree Sentinel", 2009600, ERItemCategory.GOODS),
+    ERItemData("Spectral Steed Regalia: Carian Silver", 2009610, ERItemCategory.GOODS),
+    ERItemData("Spectral Steed Regalia: Funereal Night", 2009620, ERItemCategory.GOODS),
+    
+    ERItemData("Golden Order Flail", 13510000, ERItemCategory.WEAPON),
+    ERItemData("Broken Gold Mask", 5340000, ERItemCategory.ARMOR),
+    ERItemData("Gold Tattoo (Chest)", 5340100, ERItemCategory.ARMOR),
+    ERItemData("Gold Tattoo (Arm)", 5340200, ERItemCategory.ARMOR),
+    ERItemData("Gold Tattoo (Leg)", 5340300, ERItemCategory.ARMOR),
+    
+    ERItemData("Idus Sword", 67530000, ERItemCategory.WEAPON),
+    ERItemData("Silver Grooved Shield", 31540000, ERItemCategory.WEAPON),
+    ERItemData("Silver Grooved Helm", 5350000, ERItemCategory.ARMOR),
+    ERItemData("Silver Grooved Armor", 5350100, ERItemCategory.ARMOR),
+    ERItemData("Silver Grooved Gauntlets", 5350200, ERItemCategory.ARMOR),
+    ERItemData("Silver Grooved Greaves", 5350300, ERItemCategory.ARMOR),
+    # ERItemData("Silver Grooved Armor (Altered)", 5351100, ERItemCategory.ARMOR),
+    
+    ERItemData("Leontiel's Greatsword", 3560000, ERItemCategory.WEAPON),
+    ERItemData("Leontiel's Hat", 5360000, ERItemCategory.ARMOR),
+    ERItemData("Leontiel's Armor", 5360100, ERItemCategory.ARMOR),
+    ERItemData("Leontiel's Leather Gloves", 5360200, ERItemCategory.ARMOR),
+    ERItemData("Leontiel's Boots", 5360300, ERItemCategory.ARMOR),
+    # ERItemData("Leontiel's Hat (Altered)", 5361000, ERItemCategory.ARMOR),
+    
+    ERItemData("Hefty Scimitar", 31540000, ERItemCategory.WEAPON),
+    ERItemData("Steel Helm", 5370000, ERItemCategory.ARMOR),
+    ERItemData("Steel Armor", 53701000, ERItemCategory.ARMOR),
+    ERItemData("Steel Gauntlets", 5370200, ERItemCategory.ARMOR),
+    ERItemData("Steel Greaves", 5370300, ERItemCategory.ARMOR),
+    
+    ERItemData("Reverse-Bladed Sword", 64530000, ERItemCategory.WEAPON),
+    ERItemData("Reed Great Katana", 66530000, ERItemCategory.WEAPON),
+    ERItemData("Ritual Thrusting Shield", 62520000, ERItemCategory.WEAPON),
+]
+
 #MARK: Traps
 
 vanilla_traps = [
@@ -2958,6 +3000,9 @@ dlc_traps = [
 
 for item in _dlc_items + dlc_traps:
     item.is_dlc = True
+    
+for item in _tarnished_items:
+    item.is_tp_dlc = True
 
 item_name_groups: Dict[str, Set] = {
     "Progression": set(),
@@ -2975,7 +3020,7 @@ item_descriptions = {
     "Upgraded Weapons": "Weapons which are reinforced or have an ash of war."
 }
 
-_all_items = _vanilla_items + _dlc_items
+_all_items = _vanilla_items + _dlc_items + _tarnished_items
 
 all_traps = vanilla_traps + dlc_traps
 
@@ -2988,3 +3033,4 @@ filler_item_names_vanilla = [item_data.name for item_data in _vanilla_items if i
 item_table = {item_data.name: item_data for item_data in _all_items + all_traps}
 item_table_vanilla = {item_data.name: item_data for item_data in _vanilla_items}
 item_table_dlc = {item_data.name: item_data for item_data in _dlc_items}
+item_table_tp_dlc = {item_data.name: item_data for item_data in _tarnished_items}

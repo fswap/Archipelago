@@ -14,7 +14,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_name_groups
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
 from .options import EROptions, option_groups
 from .presets import er_options_presets
@@ -389,10 +389,12 @@ class EldenRing(World):
                     seal_locations.remove(self.spiritspring_locations[loc])
         
         using_table = {}
-        if self.base_enabled: using_table.update(item_table_vanilla)
+        if self.base_enabled: 
+            using_table.update(item_table_vanilla)
+            if self.options.enable_tp_dlc: using_table.update(item_table_tp_dlc)
         if self.options.enable_dlc: using_table.update(item_table_dlc)
         for item in using_table.values(): # loop of whole item table
-            if item.is_important(self.options) not in (ItemClassification.progression ,ItemClassification.progression_deprioritized ,ItemClassification.useful):
+            if item.is_important(self.options) not in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
                 match item.category:
                     case ERItemCategory.GOODS:
                         if (('goods' in local_item_only_lowercase) 
