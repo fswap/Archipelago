@@ -1253,8 +1253,12 @@ class EldenRing(World):
             
             # MARK: TARNISHED DLC
             # if self.options.enable_tp_dlc:
-            #     self._add_location_rule([ # new leyndell invader requires law to be used
-            #             ""
+            #     self._add_location_rule([
+            #             "LRC/ES: Golden Order Flail - to W down elevator, invader drop after using Law of Regression at statue", 
+            #             "LRC/ES: Broken Gold Mask - to W down elevator, invader drop after using Law of Regression at statue",
+            #             "LRC/ES: Gold Tattoo (Chest) - to W down elevator, invader drop after using Law of Regression at statue",
+            #             "LRC/ES: Gold Tattoo (Arm) - to W down elevator, invader drop after using Law of Regression at statue",
+            #             "LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue"
             #         ], "Law of Regression")
             
             if self.options.great_runes_required_mountain.value >= 0:

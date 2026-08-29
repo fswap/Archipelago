@@ -733,6 +733,51 @@ def missable_capital(self: ERLocationData, options: EROptions) -> bool:
 # key="603945,0:0000540258::"
 # 603945 = the map id, m60_39_45_00
 
+# tarnished pack locations
+
+# bellum highway
+# ERLocationData("LL/BC: Silver Grooved Shield - Nomadic Merchant shop N of BC", "Silver Grooved Shield", key="603649,0:0000000000:100700:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("LL/BC: Silver Grooved Helm - Nomadic Merchant shop N of BC", "Silver Grooved Helm", key="603649,0:0000000000:100700:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("LL/BC: Silver Grooved Armor - Nomadic Merchant shop N of BC", "Silver Grooved Armor", key="603649,0:0000000000:100700:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("LL/BC: Silver Grooved Gauntlets - Nomadic Merchant shop N of BC", "Silver Grooved Gauntlets", key="603649,0:0000000000:100700:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("LL/BC: Silver Grooved Greaves - Nomadic Merchant shop N of BC", "Silver Grooved Greaves", key="603649,0:0000000000:100700:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+
+# lirnia lls grace
+# ERLocationData("LL/LLS: Idus Sword - to N, W of map pillar", "Idus Sword", key="unknown", tp_dlc=True, targets=('lot:unknown')),
+
+# weeping
+# ERLocationData("WP/(IMS): Steel Helm - Isolated Merchant", "Steel Helm", key="604132,0:0000000000:100650:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("WP/(IMS): Steel Armor - Isolated Merchant", "Steel Armor", key="604132,0:0000000000:100650:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("WP/(IMS): Steel Gauntlets - Isolated Merchant", "Steel Gauntlets", key="604132,0:0000000000:100650:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+# ERLocationData("WP/(IMS): Steel Greaves - Isolated Merchant", "Steel Greaves", key="604132,0:0000000000:100650:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+
+# limgrave
+# ERLocationData("LG/ME: Hefty Scimitar - Nomadic Merchant S of ME", "Hefty Scimitar", key="604536,0:0000000000:100550:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+
+# wailing dunes
+# ERLocationData("CL/(WD): Leontiel's Greatsword - in desert, invader drop N of SR", "Leontiel's Greatsword", key="605138,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+# ERLocationData("CL/(WD): Leontiel's Hat - in desert, invader drop N of SR", "Leontiel's Hat", key="605138,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+# ERLocationData("CL/(WD): Leontiel's Armor - in desert, invader drop N of SR", "Leontiel's Armor", key="605138,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+# ERLocationData("CL/(WD): Leontiel's Leather Gloves - in desert, invader drop N of SR", "Leontiel's Leather Gloves", key="605138,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+# ERLocationData("CL/(WD): Leontiel's Boots - in desert, invader drop N of SR", "Leontiel's Boots", key="605138,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+
+# leyndell throne missable
+# ERLocationData("LRC/ES: Golden Order Flail - to W down elevator, invader drop after using Law of Regression at statue", "Golden Order Flail", key="110000,0:unknown::", tp_dlc=True, missable=True, targets=('lot:unknown')),
+# ERLocationData("LRC/ES: Broken Gold Mask - to W down elevator, invader drop after using Law of Regression at statue", "Broken Gold Mask", key="110000,0:unknown::", tp_dlc=True, missable=True, targets=('lot:unknown')),
+# ERLocationData("LRC/ES: Gold Tattoo (Chest) - to W down elevator, invader drop after using Law of Regression at statue", "Gold Tattoo (Chest)", key="110000,0:unknown::", tp_dlc=True, missable=True, targets=('lot:unknown')),
+# ERLocationData("LRC/ES: Gold Tattoo (Arm) - to W down elevator, invader drop after using Law of Regression at statue", "Gold Tattoo (Arm)", key="110000,0:unknown::", tp_dlc=True, missable=True, targets=('lot:unknown')),
+# ERLocationData("LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue", "Gold Tattoo (Leg)", key="110000,0:unknown::", tp_dlc=True, missable=True, targets=('lot:unknown')),
+
+# roundtable, add to rh/dlc too
+# ERLocationData("RH: Reverse-Bladed Sword - Twin maiden shop", "Reverse-Bladed Sword", key="111000,0:0000000000:unknown:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:unknown')),
+
+# dragonbarrow
+# ERLocationData("DB/FF: Reed Great Katana - N of FF on top of mound", "Reed Great Katana", key="605040,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+
+# great jar
+# ERLocationData("CL/CCO: Ritual Thrusting Shield - in colo behind Great-Jar", "Ritual Thrusting Shield", key="604741,0:unknown::", tp_dlc=True, targets=('lot:unknown')),
+
+
 # all regions that don't have a name were done by Bedrock
 location_tables: Dict[str, List[ERLocationData]] = {
     # MARK: Base Game
@@ -5383,7 +5428,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CS/(ME): Warming Stone x4 - on NW root of erdtree", "Warming Stone x4", key="605057,0:1050577300::", targets=('lot:1050570300')),
     ],
     "Great-Jar":[ # caelid_greatjar                                       done
-        ERLocationData("CL/CCO: Great-Jar's Arsenal - beat Great Jar's knights", "Great-Jar's Arsenal", key="604741,0:0000400470::", npc=True, targets=('lot:104700')),
+        ERLocationData("CL/CCO: Great-Jar's Arsenal - beat Great-Jar's knights", "Great-Jar's Arsenal", key="604741,0:0000400470::", npc=True, targets=('lot:104700')),
         ERLocationData("CL/DW: Map: Dragonbarrow - to E", "Map: Dragonbarrow", key="604940,0:0000062041::", map=True, targets=('lot:1049400500')),
         ERLocationData("CL/DW: Golden Rune [5] - in lake to E", "Golden Rune [5]", key="604940,0:1049407000::", targets=('lot:1049400000')),
         ERLocationData("CL/DW: Gravel Stone - in lake to E", "Gravel Stone", key="604940,0:1049407010::", targets=('lot:1049400010')),
