@@ -5,7 +5,7 @@ from typing import Any, cast, Callable, ClassVar, Dict, Generator, List, Optiona
 from logging import warning
 
 from BaseClasses import Item, ItemClassification
-from .options import EROptions
+from .options import EROptions, shard_list
 
 class ERItemCategory(IntEnum):
     GOODS = 1 # Misc, Key, Spell, most stuff that goes into your inventory
@@ -155,10 +155,12 @@ class ERItemData:
 
     def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
-        if (
-        options.key_item_shards.value['MessmerKindlingShards']['Max'] != 1 and self.name == "Messmer's Kindling"
+        for shard in shard_list:
+            if (self.name == shard[:shard.find(" Shard")] and shard_list[shard] in options.key_item_shards.value 
+            and options.key_item_shards.value[shard_list[shard]]['Max'] > 1):
+                return True
         
-        or options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
+        if (options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
         or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"
         or options.rykard_encounter and self.name == "Serpent-Hunter"): return True
         return self.skip if isinstance(self.skip, bool) else self.skip(self, options)
@@ -2236,6 +2238,10 @@ _vanilla_items = [
     ERItemData("Jarwight Puppet", 263000, ERItemCategory.GOODS),
     
     ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable, and dupe priority locations
+    
+    # MARK: Key Shards
+    ERItemData("Rusty Key Shard", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Master Keys
     ERItemData("Stonesword Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression),

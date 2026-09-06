@@ -23,20 +23,36 @@ class GoalOption(OptionSet):
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
     default = frozenset({"Final Boss", "DLC Final Boss"})
 
-class KeyItemShards(OptionDict):
+class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_early
     """
-    How many Key Item Shards do you want. (1-20)
-    If max is 1 normal key item is used.
+    How many Key Item Shards do you want.
+    
+    **KeyItem**Shards:
+    - Req: (1-10) *required shards*
+    - Max: (1-10) *maximum shards*
+    
+    The reccommended way to use this is to have a max of 3-5 and only require 1.
     """
     display_name = "Key Item Shards"
     default = {
-        "RustyKeyShards": {"Req": 5, "Max": 1},
-        "MessmerKindlingShards": {"Req": 5, "Max": 1}
+        # "RustyKeyShards": {"Req": 1, "Max": 1},
+        # "RoldMedallionShards": {"Req": 1, "Max": 1},
+        "MessmerKindlingShards": {"Req": 1, "Max": 1}
         }
-    valid_keys = ["RustyKeyShards", "MessmerKindlingShards"]
+    valid_keys = ["RustyKeyShards", "RoldMedallionShards", "MessmerKindlingShards"]
     @classmethod
     def get_option_name(cls, value: Dict[str, Any]) -> str:
         return json.dumps(value)
+    # visibility = Visibility.none
+
+# skipping og item and injecting are done automatically
+shard_list = { # item name: option name
+    # base game
+    "Rusty Key Shard": 'RustyKeyShards',
+    "Rold Medallion Shard": 'RoldMedallionShards',
+    # dlc
+    "Messmer's Kindling Shard": 'MessmerKindlingShards'
+}
     
 class ExcludeDungeonBosses(DefaultOnToggle):
     "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
@@ -67,6 +83,7 @@ class GreatRunesRequiredLeyndell(Range):
     
 class GreatRunesRequiredMountain(Range):
     """What is required to enter Mountaintops.
+    This is overwritten by Rold Medallion shards as both do basically the same thing.
 
     - **Vanilla:** Rold Medallion is required.
     - **0-7:** Rold Medallion is not required; require this many Great Runes instead."""
@@ -109,27 +126,6 @@ class EnableTarnishedPack(Toggle):
 class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
-    visibility = visibility_dlc
-    
-class MessmerKindle(Toggle):
-    """Messmer Kindle Shards"""
-    display_name = "Messmer Kindle Shards"
-    visibility = visibility_dlc
-    
-class MessmerKindleRequired(Range):
-    """Messmer Kindle Shards required to access Enir Ilim."""
-    display_name = "Messmer Kindle Shards Required"
-    range_start = 2
-    range_end = 20
-    default = 5
-    visibility = visibility_dlc
-    
-class MessmerKindleMax(Range):
-    """How many Messmer Kindle Shards there are."""
-    display_name = "Messmer Kindle Shards Max"
-    range_start = 2
-    range_end = 20
-    default = 10
     visibility = visibility_dlc
     
 class DLCMessmerKindle(Choice):
@@ -650,6 +646,7 @@ class MissableLocationBehaviorOption(Choice):
 @dataclass
 class EROptions(PerGameCommonOptions):
     goal: GoalOption
+    key_item_shards: KeyItemShards
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
     soft_logic: RegionSoftLogic
@@ -659,8 +656,6 @@ class EROptions(PerGameCommonOptions):
     royal_access: RoyalAccess
     use_master_key: StoneswordMasterKey
     
-    key_item_shards: KeyItemShards
-    
     enable_tp_dlc: EnableTarnishedPack
     enable_dlc: EnableDLC
     dlc_start: DLCStart
@@ -668,9 +663,6 @@ class EROptions(PerGameCommonOptions):
     dlc_starting_shop: DLCStartingShop
     dlc_care_package: DLCCarePackage
     dlc_initial_rune_level: DLCInitialRuneLevel
-    messmer_kindle: MessmerKindle
-    messmer_kindle_required: MessmerKindleRequired
-    messmer_kindle_max: MessmerKindleMax
     dlc_messmer_kindle: DLCMessmerKindle
     dlc_scadutree_fragments: DLCScadutreeFragments
     dlc_timing: DLCTimingOption
@@ -729,6 +721,7 @@ class EROptions(PerGameCommonOptions):
 option_groups = [
     OptionGroup("Logic", [
         GoalOption,
+        KeyItemShards,
         ExcludeDungeonBosses,
         WorldLogic,
         RegionSoftLogic,
@@ -766,9 +759,6 @@ option_groups = [
     OptionGroup("DLC", [
         EnableTarnishedPack,
         EnableDLC,
-        MessmerKindle,
-        MessmerKindleRequired,
-        MessmerKindleMax,
         DLCMessmerKindle,
         DLCScadutreeFragments,
         DLCTimingOption,

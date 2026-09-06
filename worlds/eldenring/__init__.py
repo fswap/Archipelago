@@ -16,7 +16,7 @@ from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_ru
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
-from .options import EROptions, option_groups
+from .options import EROptions, option_groups, shard_list
 from .presets import er_options_presets
 from Options import OptionError
 
@@ -327,8 +327,8 @@ class EldenRing(World):
             for val in self.options.key_item_shards.value[shard]:
                 if val not in ['Req', 'Max']:
                     raise OptionError(f"Player {self.player_name} has {shard} with unknown option {val}.")
-                if self.options.key_item_shards.value[shard][val] < 1 or self.options.key_item_shards.value[shard][val] > 20:
-                    raise OptionError(f"Player {self.player_name} has {shard} {val} set to {self.options.key_item_shards.value[shard][val]} which is outside 1-20.")
+                if self.options.key_item_shards.value[shard][val] < 1 or self.options.key_item_shards.value[shard][val] > 10:
+                    raise OptionError(f"Player {self.player_name} has {shard} {val} set to {self.options.key_item_shards.value[shard][val]} which is outside 1-10.")
         
         if self.options.important_at_priority_only and len(self.all_priority_locations) == 0: 
             raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but no priority locations. Add groups to priority_location_groups.")
@@ -900,6 +900,11 @@ class EldenRing(World):
                     if item_name != "Gravesite Lock" or self.options.dlc_start == 0 and self.options.enable_dlc:
                         all_injectable_items += [item_table[item_name]]
         
+        for shard in shard_list:
+            if (item_table[shard].is_dlc and self.options.enable_dlc or not item_table[shard].is_dlc and self.base_enabled
+                ) and shard_list[shard] in self.options.key_item_shards.value and self.options.key_item_shards.value[shard_list[shard]]['Max'] > 1:
+                all_injectable_items += [item_table[shard] for i in range(self.options.key_item_shards.value[shard_list[shard]]['Max'])]
+        
         if self.options.enable_dlc:
             if self.options.dlc_start == 1:
                 # if not started with add to injection since base game items dont exist
@@ -917,10 +922,6 @@ class EldenRing(World):
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
                 if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
             # if "dlc" not in self.options.exclude_locations.excluded_groups(): 
-            if self.options.key_item_shards.value['MessmerKindlingShards']['Max'] != 1:
-                all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.key_item_shards.value['MessmerKindlingShards']['Max'])]
-            # if self.options.messmer_kindle:
-            #     all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             if self.options.spiritspring_stones:
                 all_injectable_items += [item_table[item] for item in item_table if item_table[item].spiritspring]
         
@@ -1237,7 +1238,7 @@ class EldenRing(World):
             
             # Region Rules
             
-            self._add_entrance_rule("Stormveil Castle", "Rusty Key")
+            self._add_entrance_rule("Stormveil Castle", lambda state: self._has_key_or_shards(state, "Rusty Key"))
             self._add_entrance_rule("Raya Lucaria Academy", "Academy Glintstone Key")
             self._add_entrance_rule("Carian Study Hall (Inverted)", "Carian Inverted Statue")
             
@@ -1273,15 +1274,9 @@ class EldenRing(World):
                         "LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue"
                     ], "Law of Regression")
             
-            if self.options.great_runes_required_mountain.value >= 0:
-                self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
-                                        marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
-                if self.options.soft_logic: 
-                    self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
-                        marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
-            else:
-                self._add_entrance_rule("Mountaintops of the Giants", "Rold Medallion",)
-                if self.options.soft_logic: self._add_entrance_rule("Consecrated Snowfield", "Rold Medallion")
+            self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_key_or_shards(state, "Rold Medallion", self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)))
+            if self.options.soft_logic:
+                self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)))
             
             self._add_entrance_rule("Hidden Path to the Haligtree", self._has_haligtree_secret_medallion_access,
                 marker_requirement=self._haligtree_secret_medallion_marker_requirement())
@@ -1396,7 +1391,7 @@ class EldenRing(World):
                     lambda state: state.has("Imbued Sword Key", self.player, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
                 
                 
-            self._add_entrance_rule("Enir Ilim", lambda state: self._has_key_or_shards(state, "Messmer's Kindling", "MessmerKindlingShards"))
+            self._add_entrance_rule("Enir Ilim", lambda state: self._has_key_or_shards(state, "Messmer's Kindling"))
             # if self.options.messmer_kindle:
             #     self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
             # else:
@@ -1503,11 +1498,13 @@ class EldenRing(World):
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     
-    def _has_key_or_shards(self, state: CollectionState, item, shard_type):
-        "input item name and shard option and output state"
-        option = self.options.key_item_shards.value[shard_type]
-        if option['Max'] != 1: return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
-        else: return state.has(item)
+    def _has_key_or_shards(self, state: CollectionState, item: str, addionital_state=True) -> bool:
+        """Input item name and shard option and output state
+        \naddionital_state is so if the shard is enabled; overshadow other logic"""
+        if shard_list[f"{item} Shard"] in self.options.key_item_shards.value:
+            option = self.options.key_item_shards.value[shard_list[f"{item} Shard"]]
+            if option['Max'] > 1: return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
+        return state.has(item, self.player) and addionital_state
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
@@ -3331,9 +3328,10 @@ class EldenRing(World):
                     location_ids_to_targets[location.address] = list(location.data.targets)
         
         priority_marker_flags = self._get_priority_marker_flags(location_ids_to_keys)
-
+        
         slot_data = {
             "options": {
+                "key_item_shards": self.options.key_item_shards.value,
                 "exclude_dungeon": self.options.exclude_dungeon.value,
                 "world_logic": self.options.world_logic.value,
                 "soft_logic": self.options.soft_logic.value,
@@ -3343,8 +3341,6 @@ class EldenRing(World):
                 "royal_access": self.options.royal_access.value,
                 "use_master_key": self.options.use_master_key.value,
                 
-                "key_item_shards": self.options.key_item_shards.value,
-                
                 "enable_tp_dlc": self.options.enable_tp_dlc.value,
                 "enable_dlc": self.options.enable_dlc.value,
                 "dlc_start": self.options.dlc_start.value,
@@ -3352,9 +3348,6 @@ class EldenRing(World):
                 "dlc_starting_shop": self.options.dlc_starting_shop.value,
                 "dlc_care_package": self.options.dlc_care_package.value,
                 "dlc_initial_rune_level": self.options.dlc_initial_rune_level.value,
-                "messmer_kindle": self.options.messmer_kindle.value,
-                "messmer_kindle_required": self.options.messmer_kindle_required.value,
-                "messmer_kindle_max": self.options.messmer_kindle_max.value,
                 "dlc_messmer_kindle": self.options.dlc_messmer_kindle.value,
                 "dlc_scadutree_fragments": self.options.dlc_scadutree_fragments.value,
                 "dlc_timing": self.options.dlc_timing.value,
@@ -3424,6 +3417,10 @@ class EldenRing(World):
             ),
             "spiritspring_stone_locations": self.spiritspring_locations,
             "goal": [boss.flag for boss in self.goal_bosses],
+            "requiredShards": { # item name: required amount
+                shard: self.options.key_item_shards.value[shard_list[shard]]["Req"] 
+                for shard in shard_list if shard_list[shard] in self.options.key_item_shards.value
+            },
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToName": location_ids_to_name,

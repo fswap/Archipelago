@@ -14,6 +14,8 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 remove markers, if not needed
 
+rest of keyitemshards at later point
+and presets for keyitemshards
 
 - After release stuff -
 

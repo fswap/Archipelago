@@ -15,7 +15,6 @@ from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLog
         AutoEquipOption, AutoUpgradeOption,\
         DeathLink,\
         EnableDLC,\
-        MessmerKindle, MessmerKindleRequired, MessmerKindleMax,\
         DLCMessmerKindle, DLCScadutreeFragments,\
         DLCTimingOption,\
         DLCMaxLevelWeapons,\
@@ -52,9 +51,6 @@ template = {
     "dlc_starting_shop":                    DLCStartingShop,
     "dlc_care_package":                     DLCCarePackage,
     "dlc_initial_rune_level":               DLCInitialRuneLevel,
-    "messmer_kindle":                       MessmerKindle,
-    "messmer_kindle_required":              MessmerKindleRequired,
-    "messmer_kindle_max":                   MessmerKindleMax,
     "dlc_messmer_kindle":                   DLCMessmerKindle,
     "dlc_scadutree_fragments":              DLCScadutreeFragments,
     "dlc_timing":                           DLCTimingOption,
@@ -131,9 +127,6 @@ all_random_options = {
     "dlc_starting_shop":                    "random",
     "dlc_care_package":                     "random",
     "dlc_initial_rune_level":               "random",
-    "messmer_kindle":                       "random",
-    "messmer_kindle_required":              "random",
-    "messmer_kindle_max":                   "random",
     "dlc_messmer_kindle":                   "random",
     "dlc_scadutree_fragments":              "random",
     "dlc_timing":                           "random",
@@ -303,9 +296,6 @@ dlc_only = {
     "dlc_starting_shop":                    DLCStartingShop.option_true,
     "dlc_care_package":                     DLCCarePackage.option_false,
     "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
-    "messmer_kindle":                       MessmerKindle.option_true,
-    "messmer_kindle_required":              10,
-    "messmer_kindle_max":                   15,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_normal,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_normal,
     "dlc_timing":                           DLCTimingOption.option_off,
@@ -367,9 +357,6 @@ dlc = {
     "dlc_starting_shop":                    DLCStartingShop.option_false,
     "dlc_care_package":                     DLCCarePackage.option_false,
     "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
-    "messmer_kindle":                       MessmerKindle.option_true,
-    "messmer_kindle_required":              10,
-    "messmer_kindle_max":                   20,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_not_base,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_not_base,
     "dlc_timing":                           DLCTimingOption.option_late,
@@ -431,9 +418,6 @@ all_bosses = {
     "dlc_starting_shop":                    DLCStartingShop.option_false,
     "dlc_care_package":                     DLCCarePackage.option_false,
     "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
-    "messmer_kindle":                       MessmerKindle.option_true,
-    "messmer_kindle_required":              10,
-    "messmer_kindle_max":                   20,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_not_base,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_not_base,
     "dlc_timing":                           DLCTimingOption.option_late,
