@@ -22,7 +22,22 @@ class GoalOption(OptionSet):
     display_name = "Goal"
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type}
     default = frozenset({"Final Boss", "DLC Final Boss"})
-        
+
+class KeyItemShards(OptionDict):
+    """
+    How many Key Item Shards do you want. (1-20)
+    If max is 1 normal key item is used.
+    """
+    display_name = "Key Item Shards"
+    default = {
+        "RustyKeyShards": {"Req": 5, "Max": 1},
+        "MessmerKindlingShards": {"Req": 5, "Max": 1}
+        }
+    valid_keys = ["RustyKeyShards", "MessmerKindlingShards"]
+    @classmethod
+    def get_option_name(cls, value: Dict[str, Any]) -> str:
+        return json.dumps(value)
+    
 class ExcludeDungeonBosses(DefaultOnToggle):
     "Exclude dungeon bosses from Goal. ex: Catacomb and Cave bosses, not Siofra River bosses"
     display_name = "Exclude Dungeon Bosses"
@@ -643,6 +658,8 @@ class EROptions(PerGameCommonOptions):
     great_runes_required_erdtree: GreatRunesRequiredErdtree
     royal_access: RoyalAccess
     use_master_key: StoneswordMasterKey
+    
+    key_item_shards: KeyItemShards
     
     enable_tp_dlc: EnableTarnishedPack
     enable_dlc: EnableDLC

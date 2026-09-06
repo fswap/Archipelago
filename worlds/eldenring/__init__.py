@@ -320,6 +320,16 @@ class EldenRing(World):
         self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
         local_item_only_lowercase = [key.lower() for key in self.options.local_item_only.value]
         
+        # verify shard counts
+        for shard in self.options.key_item_shards.value:
+            if len(self.options.key_item_shards.value[shard]) != 2:
+                raise OptionError(f"Player {self.player_name} has {shard} does'nt contain 2 values.")
+            for val in self.options.key_item_shards.value[shard]:
+                if val not in ['Req', 'Max']:
+                    raise OptionError(f"Player {self.player_name} has {shard} with unknown option {val}.")
+                if self.options.key_item_shards.value[shard][val] < 1 or self.options.key_item_shards.value[shard][val] > 20:
+                    raise OptionError(f"Player {self.player_name} has {shard} {val} set to {self.options.key_item_shards.value[shard][val]} which is outside 1-20.")
+        
         if self.options.important_at_priority_only and len(self.all_priority_locations) == 0: 
             raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but no priority locations. Add groups to priority_location_groups.")
         
@@ -907,8 +917,10 @@ class EldenRing(World):
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
                 if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
             # if "dlc" not in self.options.exclude_locations.excluded_groups(): 
-            if self.options.messmer_kindle:
-                all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
+            if self.options.key_item_shards.value['MessmerKindlingShards']['Max'] != 1:
+                all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.key_item_shards.value['MessmerKindlingShards']['Max'])]
+            # if self.options.messmer_kindle:
+            #     all_injectable_items += [item_table["Messmer's Kindling Shard"] for i in range(self.options.messmer_kindle_max)]
             if self.options.spiritspring_stones:
                 all_injectable_items += [item_table[item] for item in item_table if item_table[item].spiritspring]
         
@@ -1252,14 +1264,14 @@ class EldenRing(World):
                                     marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_leyndell.value))
             
             # MARK: TARNISHED DLC
-            # if self.options.enable_tp_dlc:
-            #     self._add_location_rule([
-            #             "LRC/ES: Golden Order Flail - to W down elevator, invader drop after using Law of Regression at statue", 
-            #             "LRC/ES: Broken Gold Mask - to W down elevator, invader drop after using Law of Regression at statue",
-            #             "LRC/ES: Gold Tattoo (Chest) - to W down elevator, invader drop after using Law of Regression at statue",
-            #             "LRC/ES: Gold Tattoo (Arm) - to W down elevator, invader drop after using Law of Regression at statue",
-            #             "LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue"
-            #         ], "Law of Regression")
+            if self.options.enable_tp_dlc:
+                self._add_location_rule([
+                        "LRC/ES: Golden Order Flail - to W down elevator, invader drop after using Law of Regression at statue", 
+                        "LRC/ES: Broken Gold Mask - to W down elevator, invader drop after using Law of Regression at statue",
+                        "LRC/ES: Gold Tattoo (Chest) - to W down elevator, invader drop after using Law of Regression at statue",
+                        "LRC/ES: Gold Tattoo (Arm) - to W down elevator, invader drop after using Law of Regression at statue",
+                        "LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue"
+                    ], "Law of Regression")
             
             if self.options.great_runes_required_mountain.value >= 0:
                 self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value),
@@ -1383,10 +1395,12 @@ class EldenRing(World):
                 self._add_entrance_rule("Rauh Ruins Limited", 
                     lambda state: state.has("Imbued Sword Key", self.player, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
                 
-            if self.options.messmer_kindle:
-                self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
-            else:
-                self._add_entrance_rule("Enir Ilim", "Messmer's Kindling")
+                
+            self._add_entrance_rule("Enir Ilim", lambda state: self._has_key_or_shards(state, "Messmer's Kindling", "MessmerKindlingShards"))
+            # if self.options.messmer_kindle:
+            #     self._add_entrance_rule("Enir Ilim", lambda state: state.has("Messmer's Kindling Shard", self.player, min(self.options.messmer_kindle_required.value, self.options.messmer_kindle_max.value)))
+            # else:
+            #     self._add_entrance_rule("Enir Ilim", "Messmer's Kindling")
             
             self.multiworld.register_indirect_condition(self.get_region("Castle Ensis"), self.get_entrance("Go To Scadu Altus"))
             self.multiworld.register_indirect_condition(self.get_region("Ancient Ruins of Rauh"), self.get_entrance("Go To Rauh Ruins Limited"))
@@ -1489,6 +1503,12 @@ class EldenRing(World):
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     
+    def _has_key_or_shards(self, state: CollectionState, item, shard_type):
+        "input item name and shard option and output state"
+        option = self.options.key_item_shards.value[shard_type]
+        if option['Max'] != 1: return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
+        else: return state.has(item)
+    
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
         if self.options.world_logic == "region_lock":
@@ -1587,7 +1607,7 @@ class EldenRing(World):
         self._add_location_rule([
             "CL/DSW: Spiked Palisade Shield - to W follow ravine",
             "CL/DSW: Stonesword Key - to S",
-            "CL/CCO: Great-Jar's Arsenal - beat Great Jar's knights",
+            "CL/CCO: Great-Jar's Arsenal - beat Great-Jar's knights",
             ], lambda state: self._choose_key_rules(state, 12, "Siofra Master Key") and 
             self._can_go_to(state, "Siofra River")) # 2
         
@@ -3322,6 +3342,8 @@ class EldenRing(World):
                 "great_runes_required_erdtree": self.options.great_runes_required_erdtree.value,
                 "royal_access": self.options.royal_access.value,
                 "use_master_key": self.options.use_master_key.value,
+                
+                "key_item_shards": self.options.key_item_shards.value,
                 
                 "enable_tp_dlc": self.options.enable_tp_dlc.value,
                 "enable_dlc": self.options.enable_dlc.value,

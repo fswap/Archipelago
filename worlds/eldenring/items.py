@@ -155,7 +155,9 @@ class ERItemData:
 
     def should_skip(self, options: EROptions) -> bool:
         """Whether this item should be skipped given a set of options."""
-        if (options.messmer_kindle and self.name == "Messmer's Kindling"
+        if (
+        options.key_item_shards.value['MessmerKindlingShards']['Max'] != 1 and self.name == "Messmer's Kindling"
+        
         or options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
         or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"
         or options.rykard_encounter and self.name == "Serpent-Hunter"): return True
