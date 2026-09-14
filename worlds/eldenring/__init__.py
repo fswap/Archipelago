@@ -1498,14 +1498,14 @@ class EldenRing(World):
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     
-    def _has_key_or_shards(self, state: CollectionState, item: str, addionital_state="") -> bool:
-        """addionital_state is so if the shard is enabled; overshadow other logic"""
+    def _has_key_or_shards(self, state: CollectionState, item: str, other_logic="") -> bool:
+        """other_logic is for replacing og key item with some other logic, ex: rold requiring only great runes and not medallion"""
         if shard_list[f"{item} Shard"] in self.options.key_item_shards.value:
             option = self.options.key_item_shards.value[shard_list[f"{item} Shard"]]
             if option['Max'] > 1: 
                 return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
             
-        match addionital_state:
+        match other_logic:
             case "rold":
                 if self.options.great_runes_required_mountain.value != -1:
                     return self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)

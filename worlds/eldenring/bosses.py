@@ -32,9 +32,6 @@ class ERBossInfo:
     locations: list[str] = field(default_factory=list)
     """Locations the boss blocks so we can do can_get location."""
 
-# soldier, dane and gilika have no items behind, dane is missable
-# don't have patches
-
 # https://github.com/vawser/Smithbox/blob/main/src/Smithbox.Data/Assets/Aliases/ER/EventFlags.json for flag id
 base_bosses = [
     # MARK: Limgrave
@@ -91,6 +88,7 @@ base_bosses = [
         ]
     ),
     # limgrave dungeons
+    # ERBossInfo("Patches (LG/MCV)", ["Limgrave", "Dungeon", "Cave"], 0, 31000800, dungeon=True, locations=[]),
     ERBossInfo("Ulcerated Tree Spirit (LG/FHG)", ["Limgrave", "Dungeon", "Grave"], 0, 18000800, dungeon=True, # maybe 18000800, no place name
         locations=[
             "LG/(FHG): Golden Seed - boss drop",
@@ -583,6 +581,12 @@ base_bosses = [
     ),
 
     # MARK: Altus Plateau
+    
+    ERBossInfo("Demi-Human Queen Gilika (AP/LR)", ["Altus Plateau", "Overworld"], 0, 1038510800,
+        locations=[
+            "AP/LR: Ritual Sword Talisman - in chest after boss underground"
+        ]
+    ),
     ERBossInfo("Ancient Dragon Lansseax (AP)", ["Altus Plateau", "Overworld"], 0, 1041520800, allow_rykard=True, # early altus 1037510800   late altus 1041520800
         locations=[
             "AP/RP: Lansseax's Glaive - boss drop up hill to SW or NE of AC grace"
@@ -1157,6 +1161,7 @@ dlc_bosses = [
     ),
     
     # MARK: Scadu Altus
+    ERBossInfo("Dryleaf Dane (SA)", ["Scadu Altus", "Overworld"], 0, 2049440800, locations=[]),
     ERBossInfo("Ghostflame Dragon (SA)", ["Scadu Altus", "Overworld"], 0, 2049430800, allow_rykard=True,
         locations=[
             "SA/MR: Dragon Heart - boss drop to S",
