@@ -1858,7 +1858,7 @@ class EldenRing(World):
             
             self._add_location_rule([
                 "FFP/FFP: Frenzied Flame Seal - given by Hyetta at end of her quest",
-                "FFP/FFP: Frenzyflame Stone x5 - given by Hyetta at end of her quest"
+                "FFP/FFP: Frenzyflame Stone x3 - given by Hyetta at end of her quest"
             ], lambda state: state.has("Shabriri Grape", self.player, 3) and state.has("Fingerprint Grape", self.player)
                 and self._can_go_to(state, "Weeping Peninsula") and state.has("Irina's Letter", self.player))
             
@@ -2405,7 +2405,7 @@ class EldenRing(World):
             
             # MARK: Thiollier
             
-            self._add_location_rule("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Black Syrup", marker_requirement=False)
+            self._add_location_rule("GP/PPC: Thiollier's Concoction - talk to Thiollier after giving him Black Syrup", "Black Syrup", marker_requirement=False)
             
             self._add_location_rule([
                 "EI/GD: Thiollier's Hidden Needle - on Thiollier's body to NW",
@@ -2456,10 +2456,11 @@ class EldenRing(World):
             
             # MARK: Dane
             
-            self._add_location_rule([
-                "SA/MR: Dane's Hat - challenge Dane with May the Best Win",
-                "SA/MR: Dryleaf Arts - challenge Dane with May the Best Win"
-            ], "May the Best Win")
+            # Add back after making proper location for May the Best Win in static randomizer
+            # self._add_location_rule([
+            #     "SA/MR: Dane's Hat - challenge Dane with May the Best Win",
+            #     "SA/MR: Dryleaf Arts - challenge Dane with May the Best Win"
+            # ], "May the Best Win")
             
             # MARK: Ymir
             
