@@ -3837,7 +3837,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/MGC: Black Syrup - given by Moore after speaking with Thiollier", "Black Syrup", key="614542,0:0000400642::", missable=True), #Moore
         ERLocationData("GP/MGC: Smithing Stone [3] x3 - to SE, on cliffroad to CRT", "Smithing Stone [3] x3", key="614542,0:2045427000::"),
         ERLocationData("GP/MGC: Scadutree Fragment - by cross", "Scadutree Fragment", key="614542,0:2045427700::", cross=True),
-        ERLocationData("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Thiollier's Concoction", key="614542,3:0000000000:102250,102270,2045429331:", missable=True, shop=True, targets=('shop:102282', 'lot:106300')), #Thiollier
+        # Infinite shop item not part of AP randomization currently
+        # ERLocationData("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Thiollier's Concoction", key="614542,3:0000000000:102250,102270,2045429331:", missable=True, shop=True, targets=('shop:102282', 'lot:106300')), #Thiollier
+        ERLocationData("GP/PPC: Thiollier's Concoction - talk to Thiollier after giving him Black Syrup", "Thiollier's Concoction", key="614843,0:0000400630::", missable=True, targets=('lot:106300')), #Thiollier
         ERLocationData("GP/BG: Serpent Crest Shield - painting reward SE of BG", "Serpent Crest Shield", key="614543,0:0000580400::", missable=True, targets=('lot:80400')),
         ERLocationData("GP/BG: Shadow Realm Rune [1] - S of BG, in front of arch", "Shadow Realm Rune [1]", key="614543,0:2045437000::"),
         ERLocationData("GP/GN: Ash of War: Savage Lion's Claw - to SW, in makeshift campsite", "Ash of War: Savage Lion's Claw", key="614543,0:2045437700::"),
@@ -3917,8 +3919,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/CF: Festive Grease - to E in lower swamp area, upper S swamp in far S corner", "Festive Grease", key="614842,0:2048427000::"),
         ERLocationData("GP/PPW: Gravebird Bracelets - to S up stairs on left", "Gravebird Bracelets", key="614842,0:2048427020::"),
         ERLocationData("GP/SP: Larval Tear - blue graves NE of SP", "Larval Tear (DLC)", key="614842,0:2048427900::", bluegraves=True),
-        
-        # dupe? ERLocationData("GP/PPC: Thiollier's Concoction - talk to thiollier after giving him black syrup", "Thiollier's Concoction", key="614843,0:0000400630::", missable=True), #Thiollier 
         
         ERLocationData("GP/CF: Deep-Purple Lily - to E in lower swamp area, W of water in cave", "Deep-Purple Lily", key="614843,0:2048437000::"),
         ERLocationData("GP/CF: Toxic Mossling x8 - to E in lower swamp area, in upper S swamp under PPC grace", "Toxic Mossling x8", key="614843,0:2048437010::"),

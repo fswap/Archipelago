@@ -2405,7 +2405,7 @@ class EldenRing(World):
             
             # MARK: Thiollier
             
-            self._add_location_rule("GP/PPC: Thiollier's Concoction - sold by Thiollier after given Black Syrup", "Black Syrup", marker_requirement=False)
+            self._add_location_rule("GP/PPC: Thiollier's Concoction - talk to Thiollier after giving him Black Syrup", "Black Syrup", marker_requirement=False)
             
             self._add_location_rule([
                 "EI/GD: Thiollier's Hidden Needle - on Thiollier's body to NW",
