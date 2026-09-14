@@ -802,7 +802,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/RT: Highland Axe - shortcut elevator to SE, to NE by painting", "Highland Axe", key="100000,0:0010007340::", targets=('lot:10000340')),
         ERLocationData("SV/RT: Kukri x5 - on lower side roof of church", "Kukri x5", key="100000,0:0010007350::", targets=('lot:10000350')),
         ERLocationData("SV/RT: Golden Rune [2] x2 - from grace go outside, jump to roof to E, in room below", "Golden Rune [2] x2", key="100000,0:0010007360::", targets=('lot:10000360')),
-          ERLocationData("SV/RT: Stonesword Key - shortcut elevator to SE, to NE, right of painting, up stairs to SE room, jump over wall with sandbags, follow path up ladder and drop down, on corpse", "Stonesword Key", key="100000,0:0010007370::", targets=('lot:10000370')),
+        ERLocationData("SV/RT: Stonesword Key - shortcut elevator to SE, to NE, right of painting, up stairs to SE room, jump over wall with sandbags, follow path up ladder and drop down, on corpse", "Stonesword Key", key="100000,0:0010007370::", targets=('lot:10000370')),
         ERLocationData("SV/RT: Exalted Flesh - shortcut elevator to SE, to NE, right of painting, under wood platform", "Exalted Flesh", key="100000,0:0010007380::", targets=('lot:10000380')),
         ERLocationData("SV/RT: Lump of Flesh - shortcut elevator to SE, to SE under dead troll", "Lump of Flesh", key="100000,0:0010007390::", targets=('lot:10000390')),
         ERLocationData("SV/RT: Golden Rune [1] - shortcut elevator to SE, to SE under dead troll", "Golden Rune [1]", key="100000,0:0010007400::", targets=('lot:10000400')),
@@ -857,7 +857,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/LC: Throwing Dagger x8 - shortcut door to W, after one way at bottom", "Throwing Dagger x8", key="100000,0:0010007930::", targets=('lot:10000930')),
         ERLocationData("SV/LC: Prince of Death's Pustule - shortcut door to W, after one way at bottom, next to face", "Prince of Death's Pustule", key="100000,0:0010007940::", outoftheway=True, targets=('lot:10000940')),
         ERLocationData("SV/GC: Kukri x5 - in arch on way to massive courtyard", "Kukri x5", key="100000,0:0010007950::", targets=('lot:10000950')),
-          ERLocationData("SV/RT: Pickled Turtle Neck x3 - shortcut elevator to SE, to NE, right of painting, up stairs to SE room, jump over wall with sandbags, follow path up ladder and drop down, in chest", "Pickled Turtle Neck x3", key="100000,0:0010007960::", chest=True, targets=('lot:10000960')),
+        ERLocationData("SV/RT: Pickled Turtle Neck x3 - shortcut elevator to SE, to NE, right of painting, up stairs to SE room, jump over wall with sandbags, follow path up ladder and drop down, in chest", "Pickled Turtle Neck x3", key="100000,0:0010007960::", chest=True, targets=('lot:10000960')),
         ERLocationData("SV/LC: Godslayer's Seal - left chest behind imp statue in storeroom SE of massive courtyard", "Godslayer's Seal", key="100000,0:0010007965::", chest=True, targets=('lot:10000965')), # 1
         ERLocationData("SV/RT: Mimic's Veil - shortcut elevator to SE, to NE, right of painting, up stairs to SE room in chest", "Mimic's Veil", key="100000,0:0010007970::", chest=True, targets=('lot:10000970')),
         ERLocationData("SV/RT: Somber Smithing Stone [2] - shortcut elevator to SE, to N through door", "Somber Smithing Stone [2]", key="100000,0:0010007980::", targets=('lot:10000980')),
@@ -1582,8 +1582,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LL/(CM): Living Jar Shard - enemy drop down left path before boss arena, second area enemy 1", "Living Jar Shard", key="603550,0:1035507630::", targets=('lot:449021001')),
         ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop N of fountain", "Somber Smithing Stone [2]", key="603550,0:1035507650::", targets=('lot:424021160')),
         ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop left from entrance behind tower", "Somber Smithing Stone [2]", key="603550,0:1035507660::", targets=('lot:424021150')),
-        ERLocationData("LL:/(CM) Somber Smithing Stone [2] - enemy drop SE from fountain", "Somber Smithing Stone [2]", key="603550,0:1035507670::", targets=('lot:424021140')),
-        ERLocationData("LL:/(CM) Somber Smithing Stone [2] - enemy drop left pillar from entrance", "Somber Smithing Stone [2]", key="603550,0:1035507680::", targets=('lot:424021130')),
+        ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop SE from fountain", "Somber Smithing Stone [2]", key="603550,0:1035507670::", targets=('lot:424021140')),
+        ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop left pillar from entrance", "Somber Smithing Stone [2]", key="603550,0:1035507680::", targets=('lot:424021130')),
         ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop right pillar from entrance", "Somber Smithing Stone [2]", key="603550,0:1035507690::", targets=('lot:424021120')),
         ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop NW of fountain, 4/4", "Somber Smithing Stone [2]", key="603550,0:1035507700::", targets=('lot:424021110')),
         ERLocationData("LL/(CM): Somber Smithing Stone [2] - enemy drop left from entrance up rock face", "Somber Smithing Stone [2]", key="603550,0:1035507710::", targets=('lot:424021100')),
@@ -2600,7 +2600,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DD/TNEC: Clarifying Boluses - to W in graveyard", "Clarifying Boluses", key="120300,0:0012037400::", targets=('lot:12030400')),
         ERLocationData("DD/TNEC: Smithing Stone [4] 1 - to W in graveyard", "Smithing Stone [4]", key="120300,0:0012037410::", targets=('lot:12030410')),
         ERLocationData("DD/TNEC: Human Bone Shard x5 - to W in graveyard", "Human Bone Shard x5", key="120300,0:0012037420::", targets=('lot:12030420')),
-        ERLocationData("DD/TNEC: Golden Rune [8]1  - to W in graveyard", "Golden Rune [8]", key="120300,0:0012037430::", targets=('lot:12030430')),
+        ERLocationData("DD/TNEC: Golden Rune [8] 1 - to W in graveyard", "Golden Rune [8]", key="120300,0:0012037430::", targets=('lot:12030430')),
         ERLocationData("DD/TNEC: Golden Rune [9] - to W in graveyard", "Golden Rune [9]", key="120300,0:0012037440::", targets=('lot:12030440')),
         ERLocationData("DD/TNEC: Smithing Stone [4] 2 - to W in graveyard", "Smithing Stone [4]", key="120300,0:0012037450::", targets=('lot:12030450')),
         ERLocationData("DD/TNEC: Nascent Butterfly - to W in graveyard", "Nascent Butterfly", key="120300,0:0012037460::", targets=('lot:12030460')),
@@ -3432,7 +3432,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(MCV): Glass Shard x3 - Patches chest, after you've given the Dancer's Castanets to Tanith", "Glass Shard x3", key="310000,0:0031007030::", missable=True, targets=('lot:31000030')),
     ],
     "Volcano Manor Upper":[ # volcano_temple                              done
-        ERLocationData("VM/AP: Serpent-Hunter - statue in mainboss arena", "Serpent-Hunter", key="160000,0:0016007700::"),
+        ERLocationData("VM/AP: Serpent-Hunter - statue in mainboss arena", "Serpent-Hunter", key="160000,0:0016007690::"),
         ERLocationData("VM/AP: Rykard's Great Rune - mainboss drop", "Rykard's Great Rune", key="160000,0:0000000174::", boss=True, achievement=True, targets=('lot:10221')),
         ERLocationData("VM/TE: Missionary's Cookbook [6] - E of shortcut elevator, inside lower part of tower in cell", "Missionary's Cookbook [6]", key="160000,0:0000067130::", targets=('lot:16000450')),
         ERLocationData("VM/RLB: Consort's Mask - kill Tanith", "Consort's Mask", key="160000,0:0000400071::", missable=True, death=True, targets=('lot:100710')),
@@ -3817,7 +3817,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("GP/PPC: Miranda Powder x10 - Thiollier / Moore Shop", "Miranda Powder x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102277')), #Thiollier #Moore
         ERLocationData("GP/PPC: Poisonbloom x10 - Thiollier / Moore Shop", "Poisonbloom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102278')), #Thiollier #Moore
         ERLocationData("GP/PPC: Trina's Lily x3 - Thiollier / Moore Shop", "Trina's Lily x3", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102281')), #Thiollier #Moore
-        ERLocationData("GP/PPC: Altus Bloom x20 - Thiollier / Moore Shop", "Altus Bloom x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102278')), #Thiollier #Moore
+        ERLocationData("GP/PPC: Altus Bloom x20 - Thiollier / Moore Shop", "Altus Bloom x20", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102276')), #Thiollier #Moore
         ERLocationData("GP/PPC: Toxic Mushroom x10 - Thiollier / Moore Shop", "Toxic Mushroom x10", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102279')), #Thiollier #Moore
         ERLocationData("GP/PPC: Toxic Mossling x5 - Thiollier / Moore Shop", "Toxic Mossling x5", key="614542,0:0000000000:102250,102270,2045429330:", missable=True, shop=True, targets=('shop:102280')), #Thiollier #Moore
         ERLocationData("GP/MGC: Rune Arc x3 - Moore Shop", "Rune Arc x3", key="614542,0:0000000000:102250:", raceshop=True, shop=True, targets=('shop:102250')), #Moore
@@ -5851,7 +5851,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/HC: Battlefield Priest's Cookbook [3] - to N last left big tent of camp", "Battlefield Priest's Cookbook [3]", key="614846,0:0000068890::", cookbook=True),
         ERLocationData("SA/HC: Ash of War: Rolling Sparks - scarab to N in upper E camp", "Ash of War: Rolling Sparks", key="614846,0:0000540904::", scarab=True),
         ERLocationData("SA/HC: Golden Vow (Consumable) x2 - to N in upper W camp, left in tent", "Golden Vow (Consumable) x2", key="614846,0:2048467010::"),
-        ERLocationData("SA/HC: Somber Smithing Stone [6] - to N in upper E camp, in top tent", "Somber Smithing Stone [6]", key="614846,0:2048467030::"),
+        ERLocationData("SA/HC: Somber Smithing Stone [7] - to N in upper E camp, in top tent", "Somber Smithing Stone [7]", key="614846,0:2048467030::"),
         ERLocationData("SA/HC: Ember of Messmer x6 - to N near last right tents of camp", "Ember of Messmer x6", key="614846,0:2048467040::"),
         ERLocationData("SA/HC: Drawstring Messmerfire Grease - to N middle of camp on left side", "Drawstring Messmerfire Grease", key="614846,0:2048467050::"),
         ERLocationData("SA/MR: Smithing Stone [3] x5 - to NE, through cave, by third arch in cave", "Smithing Stone [3] x5", key="614846,0:2048467060::"),
@@ -6075,7 +6075,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("JP/FJP: Dragonscale Flesh - boss drop to SE", "Dragonscale Flesh", key="615240,0:0000530800::", altboss=True, dragonboss=True, overworldboss=True),
     ],
     "Jagged Peak":[ # jaggedpeak                                          done
-        ERLocationData("JP/FJP: Igon's Greatbow - to E on Igon's corpse after JP mainboss", "Igon's Greatbow", key="614842,0:0000400712::", missable=True),
+        ERLocationData("JP/FJP: Igon's Greatbow - to E on Igon's corpse after JP mainboss", "Igon's Greatbow", key="614842,0:0000400712::", missable=True, targets=('lot:107110')),
         ERLocationData("JP/FJP: Igon's Helm - to E on Igon's corpse after JP mainboss", "Igon's Helm", key="614842,0:0000400712::", missable=True),
         ERLocationData("JP/FJP: Igon's Armor - to E on Igon's corpse after JP mainboss", "Igon's Armor", key="614842,0:0000400712::", missable=True),
         ERLocationData("JP/FJP: Igon's Gauntlets - to E on Igon's corpse after JP mainboss", "Igon's Gauntlets", key="614842,0:0000400712::", missable=True),
