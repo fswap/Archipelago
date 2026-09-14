@@ -1274,9 +1274,9 @@ class EldenRing(World):
                         "LRC/ES: Gold Tattoo (Leg) - to W down elevator, invader drop after using Law of Regression at statue"
                     ], "Law of Regression")
             
-            self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_key_or_shards(state, "Rold Medallion", self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)))
+            self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold"))
             if self.options.soft_logic:
-                self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)))
+                self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold"))
             
             self._add_entrance_rule("Hidden Path to the Haligtree", self._has_haligtree_secret_medallion_access,
                 marker_requirement=self._haligtree_secret_medallion_marker_requirement())
@@ -1473,9 +1473,9 @@ class EldenRing(World):
         # Rykard and Serpent Rule
         if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
             if self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled:
-                self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             if self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled:
-                self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
@@ -1498,12 +1498,19 @@ class EldenRing(World):
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     
-    def _has_key_or_shards(self, state: CollectionState, item: str, addionital_state=True) -> bool:
+    def _has_key_or_shards(self, state: CollectionState, item: str, addionital_state="") -> bool:
         """addionital_state is so if the shard is enabled; overshadow other logic"""
         if shard_list[f"{item} Shard"] in self.options.key_item_shards.value:
             option = self.options.key_item_shards.value[shard_list[f"{item} Shard"]]
-            if option['Max'] > 1: return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
-        return state.has(item, self.player) and addionital_state
+            if option['Max'] > 1: 
+                return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
+            
+        match addionital_state:
+            case "rold":
+                if self.options.great_runes_required_mountain.value != -1:
+                    return self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
+        
+        return state.has(item, self.player) # if no additional state or add state fails just return has item
     
     def _region_lock(self) -> None: # MARK: Region Lock Items
         """All region lock rules."""
@@ -3090,7 +3097,7 @@ class EldenRing(World):
     
     def _is_complete(self, state: CollectionState) -> bool:
         """Whether the given state has achieved the victory condition."""
-        return all(self._can_get(state, next(iter(boss.locations))) for boss in self.goal_bosses)
+        return all(self._can_get(state, next(iter(boss.locations))) for boss in self.goal_bosses if len(boss.locations) != 0) # ignore bosses with no locations
     
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""

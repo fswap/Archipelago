@@ -38,7 +38,7 @@ class ERBossInfo:
 # https://github.com/vawser/Smithbox/blob/main/src/Smithbox.Data/Assets/Aliases/ER/EventFlags.json for flag id
 base_bosses = [
     # MARK: Limgrave
-    #ERBossInfo("Solder of Godrick", ["Limgrave"], 0, 18000850), # doesn't have an item behind it since emote spots dont count
+    ERBossInfo("Solder of Godrick", ["Limgrave"], 0, 18000850, locations=[]), # doesn't have an item behind it since emote spots dont count
     ERBossInfo("Tree Sentinel (LG)", ["Limgrave", "Overworld"], 0, 1042360800, allow_rykard=True,
         locations=[
             "LG/TFS: Golden Halberd - first field boss"
@@ -242,11 +242,11 @@ base_bosses = [
             "DD/AR: Fia's Mist - boss drop"
         ]
     ),
-    # ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850, allow_rykard=True,
-    #     locations=[
-    #         "DD/PDT: Remembrance of the Lichdragon - mainboss drop"
-    #     ]
-    # ), # uncomment once made unmissable
+    ERBossInfo("Lichdragon Fortissax (DD)", ["Deeproot Depths", "Underground", "Remembrance"], 0, 12030850, allow_rykard=True,
+        locations=[
+            #"DD/PDT: Remembrance of the Lichdragon - mainboss drop"
+        ]
+    ), # uncomment once made unmissable
     
     # MARK: Liurnia of The Lakes
     ERBossInfo("Erdtree Avatar (LL/MEW)", ["Liurnia of The Lakes", "Overworld"], 0, 1033430800, allow_rykard=True,
@@ -1320,7 +1320,7 @@ dlc_bosses = [
 
 default_rykard_location = ""
 default_serpent_location = ""
-for boss in base_bosses: 
+for boss in base_bosses:
     boss.type.append("All Base")
     if boss.name == "Rykard, Lord of Blasphemy (VM)":
         default_rykard_location = boss
