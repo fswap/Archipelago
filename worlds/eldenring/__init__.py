@@ -1858,7 +1858,7 @@ class EldenRing(World):
             
             self._add_location_rule([
                 "FFP/FFP: Frenzied Flame Seal - given by Hyetta at end of her quest",
-                "FFP/FFP: Frenzyflame Stone x5 - given by Hyetta at end of her quest"
+                "FFP/FFP: Frenzyflame Stone x3 - given by Hyetta at end of her quest"
             ], lambda state: state.has("Shabriri Grape", self.player, 3) and state.has("Fingerprint Grape", self.player)
                 and self._can_go_to(state, "Weeping Peninsula") and state.has("Irina's Letter", self.player))
             
