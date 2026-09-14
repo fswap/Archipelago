@@ -2802,7 +2802,7 @@ _dlc_items = [
     ERItemData("String-Seller's Bell Bearing", 2008909, ERItemCategory.GOODS, classification=ItemClassification.useful),
     #gestures
     #ERItemData("Ring of Miquella", 20090, ERItemCategory.GOODS, skip=True), #pre order
-    ERItemData("May the Best Win", 20090, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, inject=True), # fight dane
+    ERItemData("May the Best Win", 20090, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, inject=False), # fight dane
     ERItemData("The Two Fingers", 20090, ERItemCategory.GOODS, skip=True),
     ERItemData("Let Us Go Together", 20090, ERItemCategory.GOODS, skip=True),
     ERItemData("O Mother", 2009004, ERItemCategory.GOODS, classification=ItemClassification.progression), # hinterlands

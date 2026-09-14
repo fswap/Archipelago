@@ -2456,10 +2456,11 @@ class EldenRing(World):
             
             # MARK: Dane
             
-            self._add_location_rule([
-                "SA/MR: Dane's Hat - challenge Dane with May the Best Win",
-                "SA/MR: Dryleaf Arts - challenge Dane with May the Best Win"
-            ], "May the Best Win")
+            # Add back after making proper location for May the Best Win in static randomizer
+            # self._add_location_rule([
+            #     "SA/MR: Dane's Hat - challenge Dane with May the Best Win",
+            #     "SA/MR: Dryleaf Arts - challenge Dane with May the Best Win"
+            # ], "May the Best Win")
             
             # MARK: Ymir
             
