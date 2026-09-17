@@ -2948,11 +2948,11 @@ _dlc_items = [
     # copy of normal kindle, idk in game id
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
-    # ERItemData("Fort of Reprimand Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    # ERItemData("Scadu Altus Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    # ERItemData("Rabbath's Rise Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    # ERItemData("Northern Nameless Mausoleum Spiritsping Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    # ERItemData("Ancient Ruins of Rauh Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Fort of Reprimand Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Scaduview Cross Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rabbath's Rise Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rauh Base Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rauh Ruins Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
 ]
 
 # MARK: TP DLC

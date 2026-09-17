@@ -504,6 +504,9 @@ class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     
     Creates extra locations at priority locations to contain all important items.
+    If there are no priority locations in the starting region one will be added.
+    Base: "LG/(SG): Finger Severer - beside grace"
+    DLC: "GP/TPC: Scadutree Fragment - by cross"
     
     Generator likes to fail if there is to little priority locations, add more if it fails.
     For big syncs PLEASE test your yaml if this is on, there is a warning if there is to many priority locations set, you will need this warning to stop to bring this to big syncs."""
