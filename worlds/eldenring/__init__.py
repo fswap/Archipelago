@@ -3540,7 +3540,7 @@ class EldenRing(World):
             "itemCounts": item_counts,
             "locationIdsToName": location_ids_to_name,
             "locationIdsToKeys": location_ids_to_keys,
-            "locationIdsToTargets ": location_ids_to_targets,
+            "locationIdsToTargets": location_ids_to_targets,
             "priorityMarkerFlags": priority_marker_flags,
             "priorityMarkerRequirements": self._get_priority_marker_requirements(priority_marker_flags),
             "versions": ">=0.8.3 <0.9.0",
