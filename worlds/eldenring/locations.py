@@ -11,7 +11,6 @@ from .bosses import all_boss_locations
 #MARK: Location Order
 region_order = [
     # Limgrave
-    "Fringefolk Hero's Grave",
     "Limgrave",
     "Stormhill",
     "Coastal Cave",
@@ -23,6 +22,7 @@ region_order = [
     "Murkwater Catacombs",
     "Highroad Cave",
     "Deathtouched Catacombs",
+    "Fringefolk Hero's Grave",
     
     "Stormveil Start",
     "Stormveil Castle",
@@ -267,6 +267,9 @@ class ERLocationData:
 
     This is used to sort locations when placing items like the base game.
     """
+    
+    region_name: str = ""
+    """The name of the region this location is in."""
     
     key: Optional[str] = None
     """The key used by the static randomizer"""
@@ -1118,7 +1121,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/ME: Lump of Flesh x3 - Nomadic Merchant S of ME", "Lump of Flesh x3", key="604536,0:0000000000:100550:", raceshop=True, shop=True, targets=('shop:100554')),
         ERLocationData("LG/ME: Trina's Lily x3 - Nomadic Merchant S of ME", "Trina's Lily x3", key="604536,0:0000000000:100550:", raceshop=True, shop=True, targets=('shop:100562')),
         ERLocationData("LG/ME: Hefty Scimitar - Nomadic Merchant S of ME", "Hefty Scimitar", key="604536,0:0000000000:6953,100550:", raceshop=True, shop=True, tp_dlc=True, targets=('shop:100568')),
-        ERLocationData("LG/SRW: Map: Limgrave, East - W of SRW", "Map: Limgrave, East", key="604537,0:0000062012::", map=True, targets=('lot:1045370020')),
+        ERLocationData("LG/SRW: Map: Limgrave, East - map pillar W of SRW", "Map: Limgrave, East", key="604537,0:0000062012::", map=True, targets=('lot:1045370020')),
         ERLocationData("LG/ME: Greenspill Crystal Tear - in basin, Minor Erdtree", "Greenspill Crystal Tear", key="604537,0:0000065010::", basin=True, targets=('lot:1045370301')),
         ERLocationData("LG/ME: Spiked Cracked Tear - in basin, Minor Erdtree", "Spiked Cracked Tear", key="604537,0:0000065140::", basin=True, targets=('lot:1045370300')),
         ERLocationData("LG/SRW: Nomadic Warrior's Cookbook [4] - W of SRW", "Nomadic Warrior's Cookbook [4]", key="604537,0:0000067800::", targets=('lot:1045370030')),
@@ -6203,7 +6206,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
 
 
 for i, region in enumerate(region_order + region_order_dlc):
-    for location in location_tables[region]: location.region_value = i
+    for location in location_tables[region]: 
+        location.region_value = i
+        location.region_name = region
 
 for region in region_order:
     for location in location_tables[region]:

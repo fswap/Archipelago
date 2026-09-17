@@ -12,6 +12,12 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
+wip
+instead of random dup locations or early chances
+make sure enough locations exist to not fill error even if enough priority locations exist
+
+rusty key and stormveil lock do same thing-ish
+
 remove markers, if not needed
 
 rest of keyitemshards at later point

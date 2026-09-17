@@ -258,6 +258,7 @@ class EldenRing(World):
     goal_bosses: list[ERBossInfo] = []
     dupe_location_dictionary: Dict[str, ERLocationData] = {}
     dupe_location_tables: Dict[str, list[ERLocationData]] = {}
+    prio_in_region: Dict[str, list[str]] = {}
     
     def visualize_world(self): # puml gets put in root folder
         Utils.visualize_regions(self.multiworld.get_region(self.multiworld.worlds[1].origin_region_name, 1), f"{self.multiworld.player_name[1]}.puml")
@@ -280,7 +281,7 @@ class EldenRing(World):
             for loc in self.multiworld.get_filled_locations(self.player):
                 if loc.progress_type != LocationProgressType.PRIORITY and loc.item.classification == ItemClassification.progression and not loc.locked: # not preplaced
                     "a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen"
-                    raise OptionError(f"A progression item was placed on a non-priority location: {loc.name}, you most likely have to little priority locations.")
+                    raise OptionError(f"A progression item: {loc.item}, was placed on a non-priority location: {loc.name}, you most likely have to little priority locations.")
         return super().post_fill()
 
     def __init__(self, multiworld: MultiWorld, player: int):
@@ -297,6 +298,7 @@ class EldenRing(World):
         self.all_excluded_locations = set()
         self.all_priority_locations = set()
         self.all_duplicate_locations = set()
+        self.prio_in_region = {}
         self.all_starting_items = []
         self.goal_bosses = []
         self.dupe_location_dictionary = {}
@@ -799,9 +801,13 @@ class EldenRing(World):
         """Create duplicate locations."""
         important_items = []
         for item in self.itempool:
-            if (item.is_important(self.options) == ItemClassification.progression #or item.is_important(self.options) == ItemClassification.progression_deprioritized
+            if (item.is_important(self.options) == ItemClassification.progression
+                # rn im just making useful into progression since prog deprio goes into prio before useful
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
+        
+        # will contain a list of regions including dupes, will need to dupe within each region
+        required_region_dupes = self._required_locations()
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and self.base_enabled]
@@ -838,8 +844,8 @@ class EldenRing(World):
         
         times_duped = {}
         new_code = len(location_dictionary)
-        while loc_needed > 0 or dlc_loc_needed > 0: # how many dupes
-            if loc_needed > 0:
+        while loc_needed + dlc_loc_needed > 0: # how many dupes
+            if loc_needed > 0 or len(dlc_priority) == 0:
                 location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
             elif dlc_loc_needed > 0:
                 location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
@@ -877,6 +883,59 @@ class EldenRing(World):
         
         self.all_priority_locations += self.all_duplicate_locations
 
+    # MARK: VERY WIP STUFF
+    def _required_locations(self) -> list[str]:
+        """figure out what regions require more priority locations to avoid fill errors"""
+        # map region names to prio locations in region
+        for region in location_tables:
+            self.prio_in_region.setdefault(region, [])
+            for prio in self.all_priority_locations:
+                if location_dictionary[prio].region_name == region:
+                    self.prio_in_region[region].append(prio)
+        
+        locations_needed = []
+        if self.options.world_logic == "region_lock":
+            if self.base_enabled and self.options.dlc_start == 0 and self._find_prio_count("Limgrave") < 1: 
+                warning(f"Player {self.player_name} has no Priority locations within Starting region. Adding progression to starting inventory.")
+                self._add_to_inventory(self.create_item(self.random.choice(sorted(["Weeping Lock","Liurnia Lock"]))))
+                
+            elif self.options.enable_dlc and self.options.dlc_start != 0 and self._find_prio_count("Gravesite Plain") < 1:
+                warning(f"Player {self.player_name} has no Priority locations within Starting region. Adding progression to starting inventory.")
+                self._add_to_inventory(self.create_item(self.random.choice(sorted(["Belurat Lock","Ensis Lock","Ellac Lock","Jagged Peak Lock","Scadu Altus Lock"]))))
+ 
+        return locations_needed # will return regions that need dupe items
+    
+    def _find_prio_count(self, region: str) -> int:
+        """fallthrough stuff""" # rn this doesnt work with dlc start + base
+        prio_count = 0
+        fall = False
+        
+        if self.options.enable_dlc:
+            
+            if fall or region == "Gravesite Plain":
+                fall = True
+                (prio_count.__add__(len(self.prio_in_region[r])) for r in ["Gravesite Plain","Fog Rift Catacombs","Belurat Gaol","Dragon's Pit","Ruined Forge Lava Intake"])
+        
+        if self.base_enabled and self.options.dlc_start == 0:
+            
+            if fall or region == "Liurnia of The Lakes":
+                fall = True
+                (prio_count.__add__(len(self.prio_in_region[r])) for r in ["Liurnia of The Lakes","Bellum Highway","Road's End Catacombs","Black Knife Catacombs","Cliffbottom Catacombs"
+                    ,"Stillwater Cave","Lakeside Crystal Cave","Raya Lucaria Crystal Tunnel","Caria Manor","Carian Study Hall","Ruin-Strewn Precipice",])
+            
+            if fall or region == "Limgrave":
+                (prio_count.__add__(len(self.prio_in_region[r])) for r in ["Limgrave","Stormhill","Coastal Cave","Church of Dragon Communion","Groveside Cave"
+                    ,"Stormfoot Catacombs","Limgrave Tunnels","Murkwater Cave","Murkwater Catacombs","Highroad Cave","Deathtouched Catacombs"])
+        
+        # always
+        if not self.base_enabled:
+            prio_count += len(self.prio_in_region["Roundtable Hold DLC Only"])
+        else: 
+            prio_count += len(self.prio_in_region["Roundtable Hold"])
+        
+        # warning(f"{region}, {prio_count}")
+        return prio_count
+        
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
 

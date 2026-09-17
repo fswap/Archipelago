@@ -30,8 +30,6 @@ class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_
     **KeyItem**Shards:
     - Req: (1-10) *required shards*
     - Max: (1-10) *maximum shards*
-    
-    The reccommended way to use this is to have a max of 3-5 and only require 1.
     """
     display_name = "Key Item Shards"
     default = {
@@ -43,7 +41,6 @@ class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_
     @classmethod
     def get_option_name(cls, value: Dict[str, Any]) -> str:
         return json.dumps(value)
-    # visibility = Visibility.none
 
 # skipping og item and injecting are done automatically
 shard_list = { # item name: option name
@@ -67,7 +64,6 @@ class WorldLogic(Choice):
     option_region_lock = 0
     option_open_world = 1
     default = 1
-    # visibility = Visibility.none
     
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid.
@@ -119,7 +115,6 @@ class StoneswordMasterKey(Choice):
 class EnableTarnishedPack(Toggle):
     """Enable Tarnished Pack"""
     display_name = "Enable Tarnished Pack"
-    visibility = Visibility.none
 
 # MARK: DLC
 
@@ -131,6 +126,7 @@ class EnableDLC(Toggle):
 class DLCMessmerKindle(Choice):
     """Randomize Messmer's Kindling / Shards.
     
+    **Normal:** Messmer's Kindling / Shards can be anywhere.
     **DLC Only:** Randomize Kindling to your DLC.
     **Not Base:** Don't randomize Kindling to your base game.
     """
@@ -143,6 +139,7 @@ class DLCMessmerKindle(Choice):
 class DLCScadutreeFragments(Choice):
     """Randomize Scadutree Fragments.
     
+    **Normal:** Scadutree Fragments can be anywhere.
     **DLC Only:** Randomize Scadutree Fragments to your DLC.
     **Not Base:** Don't randomize Scadutree Fragments to your base game.
     """
@@ -253,7 +250,7 @@ class RestrictiveBossPlacement(DefaultOnToggle):
     
 class RykardEncounter(DefaultOnToggle):
     """Give Serpent-Hunter on encounter with Rykard/Serpent in boss arenas.
-    If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent block."""
+    If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent blocks."""
     display_name = "Rykard Encounter"
     
 class BossScalingPercent(Range):
@@ -352,7 +349,7 @@ class NGPlusTrapCount(BaseTrapCount): # https://github.com/borgCode/TarnishedToo
     NG+ Trap: Sets the game to NG+7 until the player dies.
     """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
     display_name = "NG+ Trap Count"
-    visibility = Visibility.all
+    visibility = Visibility.none
     
 class StatusTrapCount(BaseTrapCount): 
     """
@@ -461,12 +458,10 @@ class SmithingBellBearingOption(Choice):
 class SmoothUpgradeItems(Toggle):
     """Smooth Upgrade Items."""
     display_name = "Smooth Upgrade Items"
-    # visibility = Visibility.none
     
 class SmoothRuneItems(Toggle):
     """Smooth Rune Items."""
     display_name = "Smooth Rune Items"
-    # visibility = Visibility.none
     
 class SpellShopSpellsOnly(Toggle):
     """Spell Shops only have spells."""
@@ -513,7 +508,6 @@ class ERImportantAtPriorityOnly(Toggle):
     Generator likes to fail if there is to little priority locations, add more if it fails.
     For big syncs PLEASE test your yaml if this is on, there is a warning if there is to many priority locations set, you will need this warning to stop to bring this to big syncs."""
     display_name = "Important at Priority Only"
-    # visibility = Visibility.none # likes to fill error depending on how many priority locations there are
     
 class ERImportantAtPriorityEarly(Range):
     """
@@ -521,7 +515,7 @@ class ERImportantAtPriorityEarly(Range):
     Does nothing if there are tons of Priority Locations.
     
     Make extra generated locations appear more early game (Limgrave, Weeping, Liurnia, Stormveil and Raya Lucaria).
-    If starting in DLC (Grave, Belurat, Dragon Pit and Ensis).
+    If starting in DLC (Gravesite, Belurat, Dragon Pit and Ensis).
     
     1: Normal.
     2+: Multiplied odds of early game locations.
@@ -537,7 +531,6 @@ class ERUsefulAtPriority(Toggle):
     """Should useful items be included in Priority locations.
     This is used with Important at Priority Only option since it uses custom priority handling."""
     display_name = "Useful at Priority"
-    # visibility = Visibility.none
 
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
@@ -565,7 +558,7 @@ class RemembrancesAtPriority(Toggle):
     display_name = "Remembrances at Priority"
 
 # MARK: Excludes and Behavior
-    
+
 class LocalItemOnly(OptionList):
     """Which categories should be local only, useful and progression excluded.
     - [Items] **Item Group**
@@ -582,7 +575,7 @@ class LocalItemOnly(OptionList):
     display_name = "Local Item Only"
     default = ["Filler"]
     valid_keys = ["weapon", "armor", "accessory", "ashofwar", "goods", "filler", "non-filler"]
-    valid_keys_casefold = True # spells are part of goods, do we add them to ashes of war or weapons category?
+    valid_keys_casefold = True
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important items.
