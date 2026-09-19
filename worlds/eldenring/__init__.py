@@ -898,31 +898,46 @@ class EldenRing(World):
                 warning(f"Player {self.player_name} has no Priority locations within Starting region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")
                 self.all_priority_locations.add("GP/TPC: Scadutree Fragment - by cross")
                 self.prio_in_region["Gravesite Plain"].append("GP/TPC: Scadutree Fragment - by cross")
- 
+            
             # before Altus
             prio_locations = self._find_prio_locations("Liurnia of The Lakes")
-            if len(prio_locations) < 2:
+            total_required = 2 # required to access altus, dectus shards later
+            if len(prio_locations) < total_required:
                 locations_needed.append(prio_locations) # if this is true then only 1 location exists
+                total_required -= 1
             
             # before Leyndell
             prio_locations = self._find_prio_locations("Capital Outskirts")
-            if len(prio_locations) < self.options.great_runes_required_leyndell:
-                for i in range(len(prio_locations), self.options.great_runes_required_leyndell):
+            total_required += self.options.great_runes_required_leyndell
+            if len(prio_locations) < total_required:
+                for i in range(len(prio_locations), total_required):
                     locations_needed.append(self.random.choice(sorted(prio_locations)))
+                    total_required -= 1
             
             # before Mountaintops
             prio_locations = self._find_prio_locations("Forbidden Lands")
-            if shard_list["Rold Medallion Shard"] in self.options.key_item_shards.value:
-                option = self.options.key_item_shards.value[shard_list["Rold Medallion Shard"]]
-                if len(prio_locations) < min(option['Req'], option['Max']):
-                    for i in range(len(prio_locations), min(option['Req'], option['Max'])):
-                        locations_needed.append(self.random.choice(sorted(prio_locations))) 
-            if (not (shard_list["Rold Medallion Shard"] in self.options.key_item_shards.value and self.options.key_item_shards.value["Max"] == 1) 
-                and len(prio_locations) < self.options.great_runes_required_mountain):
-                for i in range(len(prio_locations), self.options.great_runes_required_mountain):
-                    locations_needed.append(self.random.choice(sorted(prio_locations)))
+            option, min_shard = self._shard_exists("Rold Medallion Shard")
+            if option and option["Max"] > 1:
+                total_required += min_shard
+                if len(prio_locations) < total_required:
+                    for i in range(len(prio_locations), total_required):
+                        locations_needed.append(self.random.choice(sorted(prio_locations)))
+                        total_required -= 1
+            else:
+                total_required += self.options.great_runes_required_mountain
+                if len(prio_locations) < total_required:
+                    for i in range(len(prio_locations), total_required):
+                        locations_needed.append(self.random.choice(sorted(prio_locations)))
+                        total_required -= 1
  
         return locations_needed # will return locations to be duped
+    
+    def _shard_exists(self, shard):
+        "Check to see if shard exists and return option and min for easy use."
+        if shard_list[shard] in self.options.key_item_shards.value:
+            option = self.options.key_item_shards.value[shard_list[shard]]
+            return option, min(option['Req'], option['Max'])
+        return False, False
     
     def _find_prio_locations(self, region: str) -> list[str]:
         """fallthrough stuff""" # rn this doesnt work with dlc start + base
@@ -1616,10 +1631,9 @@ class EldenRing(World):
     
     def _has_key_or_shards(self, state: CollectionState, item: str, other_logic="") -> bool:
         """other_logic is for replacing og key item with some other logic, ex: rold requiring only great runes and not medallion"""
-        if shard_list[f"{item} Shard"] in self.options.key_item_shards.value:
-            option = self.options.key_item_shards.value[shard_list[f"{item} Shard"]]
-            if option['Max'] > 1: 
-                return state.has(f"{item} Shard", self.player, min(option['Req'], option['Max']))
+        option, min_shard = self._shard_exists(f"{item} Shard")
+        if option and option['Max'] > 1: 
+            return state.has(f"{item} Shard", self.player, min_shard)
             
         match other_logic:
             case "rold":
