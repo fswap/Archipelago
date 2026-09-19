@@ -2245,26 +2245,26 @@ _vanilla_items = [
     ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Master Keys
-    ERItemData("Stonesword Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Stonesword Master Key", 7830000, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
-    ERItemData("Limgrave Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Roundtable Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Weeping Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Stormveil Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Siofra Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Liurnia Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Altus Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Caelid Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Nokron Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Mt. Gelmir Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Volcano Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Capital Outskirts Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Nokstella Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Moonlight Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Mountaintops Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Farum Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Snowfield Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
-    ERItemData("Haligtree Master Key", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Limgrave Master Key", 7830100, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Roundtable Master Key", 7830101, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Weeping Master Key", 7830102, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Stormveil Master Key", 7830103, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Siofra Master Key", 7830104, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Liurnia Master Key", 7830105, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Altus Master Key", 7830106, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Caelid Master Key", 7830107, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Nokron Master Key", 7830108, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Mt. Gelmir Master Key", 7830109, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Volcano Master Key", 7830110, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Capital Outskirts Master Key", 7830111, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Nokstella Master Key", 7830112, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Moonlight Master Key", 7830113, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Mountaintops Master Key", 7830114, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Farum Master Key", 7830115, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Snowfield Master Key", 7830116, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
+    ERItemData("Haligtree Master Key", 7830117, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
     
     # MARK: Region Lock Items
     ERItemData("Weeping Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
@@ -2948,11 +2948,11 @@ _dlc_items = [
     # copy of normal kindle, idk in game id
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
-    ERItemData("Fort of Reprimand Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    ERItemData("Scaduview Cross Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    ERItemData("Rabbath's Rise Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    ERItemData("Rauh Base Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
-    ERItemData("Rauh Ruins Spiritspring Stone", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Fort of Reprimand Spiritspring Stone", 7830500, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Scaduview Cross Spiritspring Stone", 7830501, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rabbath's Rise Spiritspring Stone", 7830502, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rauh Base Spiritspring Stone", 7830503, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
+    ERItemData("Rauh Ruins Spiritspring Stone", 7830504, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
 ]
 
 # MARK: TP DLC
@@ -2998,7 +2998,7 @@ _tarnished_items = [
 
 vanilla_traps = [
     ERItemData("Example Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("NG+ Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("NG+ Trap", 7830600, ERItemCategory.GOODS, ItemClassification.trap),
     ERItemData("Status Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
