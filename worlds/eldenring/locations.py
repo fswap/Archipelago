@@ -511,6 +511,9 @@ class ERLocationData:
     forgereward: bool = False
     """Whether this location is a forgereward."""
     
+    spiritspring_stone: bool = False
+    """Whether this location is a spiritspring stone."""
+    
     @property
     def is_event(self) -> bool:
         """Whether this location represents an event rather than a specific item pickup."""
@@ -542,6 +545,8 @@ class ERLocationData:
             self.dlc and not options.enable_dlc.value
         ) or (
             self.tp_dlc and not options.enable_tp_dlc.value
+        ) or (
+            self.spiritspring_stone and not options.spiritspring_stones
         ) or (
             (self.omit if isinstance(self.omit, bool) else self.omit(self, options))
             and self.name not in all_boss_locations
@@ -3788,6 +3793,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/CDE: Crab Eggs x2 - down right on first roof", "Crab Eggs x2", key="210000,0:0021007420::", targets=('lot:21000420')),
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
+        ERLocationData("GP/(EH): Fort of Reprimand Spiritspring Stone to NW", "Fort of Reprimand Spiritspring Stone", key='614942,0:1032507000::', spiritspring_stone=True, targets=('lot:')),
+        
         ERLocationData("GP/TPC: Cross Map - given by Hornsent at TPC or HC", "Cross Map", key="210100,0:0000400610::", missable=True, targets=('lot:106100', 'lot:106120', 'lot:106140')), #Hornsent
         ERLocationData("GP/TPC: Furnace Visage x3 - given by Hornsent after giving Scorpion Stew", "Furnace Visage x3", key="210100,0:0000400612::", missable=True, targets=('lot:106110', 'lot:106142')), #Hornsent
         ERLocationData("GP/PT: Ghost Glovewort [5] - W of PT, in front of gravestone", "Ghost Glovewort [5]", key="614441,0:2044417000::", targets=('lot:2044410000')),
@@ -5596,6 +5603,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
 
     # MARK: More DLC
     "Ancient Ruins of Rauh":[ # rauhruins                                 done, some done by Layka
+        ERLocationData("ARR/CBME: Rauh Ruins Spiritspring Stone, drop to E till cliff then up ledge to N", "Rauh Ruins Spiritspring Stone", key='614446,0:1032507004::', spiritspring_stone=True, targets=('lot:')),
+        
         ERLocationData("ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop", "Remembrance of the Saint of the Bud", key="614445,0:0000510600::", boss=True, remembrance=True, targets=('lot:10600')),
         ERLocationData("ARR/RARW: Scadutree Fragment - to W up stairs, by NW monument", "Scadutree Fragment", key="614445,0:2044457000::", fragment=True, targets=('lot:2044450000')),
         ERLocationData("ARR/CBME: Four-Toed Fowl Foot x3 - to N downstairs, outside to S, drop right of elevator, forward 2 down 1", "Four-Toed Fowl Foot x3", key="614445,0:2044457010::", targets=('lot:2044450010')),
@@ -5667,6 +5676,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("ARR/VMT: Fine Crucible Feather Talisman - down W hall from giant room second floor, right at intersection, up on roots", "Fine Crucible Feather Talisman", key="614548,0:2045487000::", talisman=True, targets=('lot:2045480000')),
     ],
     "Rauh Base":[ # rauhbase                                              done
+        ERLocationData("RB/(TTR): Rauh Base Spiritspring Stone to E", "Rauh Base Spiritspring Stone", key='614646,0:1032507003::', spiritspring_stone=True, targets=('lot:')),
+        
         ERLocationData("RB/SRC: Greater Potentate's Cookbook [8] - N of SRC on pile of brown", "Greater Potentate's Cookbook [8]", key="614447,0:0000068680::", cookbook=True, targets=('lot:2045480700')),
         ERLocationData("RB/RN: Roar of Rugalea - boss drop to NW", "Roar of Rugalea", key="614447,0:0000530905::", altboss=True, overworldboss=True, targets=('lot:30910')),
         ERLocationData("RB/SRC: Ghost Glovewort [6] - just N of SRC", "Ghost Glovewort [6]", key="614447,0:2044477000::", targets=('lot:2044470000')),
@@ -5816,8 +5827,10 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/ARR: Verdigris Discus - NE side of imbued sword key area by altar", "Verdigris Discus", key="614647,0:2046477720::", talisman=True, targets=('lot:2046470720')),
     ],
     "Scadu Altus":[ # scadualtus                                          done
-        ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, targets=('lot:10440')),
+        ERLocationData("SA/(MR): Scaduview Cross Spiritspring Stone to SE", "Scaduview Cross Spiritspring Stone", key='614944,0:1032507001::', spiritspring_stone=True, targets=('lot:')),
+        ERLocationData("SA/(RR): Rabbath's Rise Spiritspring Stone to S", "Rabbath's Rise Spiritspring Stone", key='615147,0:1032507002::', spiritspring_stone=True, targets=('lot:')),
         
+        ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, targets=('lot:10440')),
         ERLocationData("SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her", "Lacerating Crossed-Tree", key="120500,0:0000400590::", missable=True, exclusive=True, targets=('lot:105900')),
         ERLocationData("SA/HC: Retaliatory Crossed-Tree - given by Leda after invading Ansbach alongside her", "Retaliatory Crossed-Tree", key="120500,0:0000400592::", missable=True, exclusive=True, targets=('lot:105910')),
         ERLocationData("SA/(CC): Prayer Room Key - invader drop", "Prayer Room Key", key="200000,0:0000400696::", missable=True, targets=('lot:106931')),

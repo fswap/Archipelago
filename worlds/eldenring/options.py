@@ -176,9 +176,7 @@ class DLCAbyssalTorrent(Toggle):
 class DLCSpiritspringStones(Toggle):
     """Randomize the Spiritsping Stones.""" 
     display_name = "Randomize Spiritsping Stones"
-    visibility = visibility_dlc  
-
-# randomizing spiritspring seals would mean making a location for the seals
+    visibility = visibility_dlc
     
 # MARK: DLC Start
 

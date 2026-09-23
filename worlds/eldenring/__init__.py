@@ -369,7 +369,8 @@ class EldenRing(World):
         # Inform Universal Tracker where Rykard is being randomized to.
         if hasattr(self.multiworld, "re_gen_passthrough"):
             if "EldenRing" in self.multiworld.re_gen_passthrough:
-                if self.multiworld.re_gen_passthrough["EldenRing"]["options"]["enemy_rando"]:
+                if (self.multiworld.re_gen_passthrough["EldenRing"]["options"]["enemy_rando"] 
+                    and self.multiworld.re_gen_passthrough["EldenRing"]["options"]["rykard_encounter"] == False):
                     rykard_data = self.multiworld.re_gen_passthrough["EldenRing"]["rykard"]
                     serpent_data = self.multiworld.re_gen_passthrough["EldenRing"]["serpent"]
                     for boss in all_bosses:
@@ -381,7 +382,7 @@ class EldenRing(World):
                 self.soft_logic_enabled = False # turn off soft logic with UT
         else:
             # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
-            if self.options.enemy_rando:
+            if self.options.enemy_rando and not self.options.rykard_encounter: # only force if not given SH
                 self.rykard_location = self.random.choice(
                     [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
                 self.serpent_location = self.random.choice(
@@ -1058,9 +1059,6 @@ class EldenRing(World):
                     item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
                 if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
-            # if "dlc" not in self.options.exclude_locations.excluded_groups(): 
-            if self.options.spiritspring_stones:
-                all_injectable_items += [item_table[item] for item in item_table if item_table[item].spiritspring]
         
         if self.base_enabled:
             if self.options.use_master_key.value == 1: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
@@ -1254,7 +1252,8 @@ class EldenRing(World):
         return self.random.choice(candidate_filler)
 
 
-    def set_rules(self) -> None: #MARK: Rules
+    #MARK: Rules
+    def set_rules(self) -> None: 
         
         self._dragon_communion_rules()
         self._add_remembrance_rules()
