@@ -2055,6 +2055,10 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/(DWV): Celebrant's Skull - N from grace down cliff path", "Celebrant's Skull", key="604255,0:1042557000::", targets=('lot:1042550000')),
         ERLocationData("AP/HLT: Ash of War: Lightning Slash - scarab SE of HLT", "Ash of War: Lightning Slash", key="604353,0:0000540318::", scarab=True, targets=('lot:40318')),
         ERLocationData("AP/HLT: Golden Rune [9] - SE of HLT by tent just before CO entrance", "Golden Rune [9]", key="604353,0:1043537000::", targets=('lot:1043530000')),
+    
+        # from MtG, but before region lock blocker
+        ERLocationData("AP/SR: Ash of War: Barrage - scarab to N", "Ash of War: Barrage", key="603753,0:0000540332::", scarab=True, targets=('lot:40332')),
+        ERLocationData("AP/SR: Arrow x10 - to NE under slanted rock", "Arrow x10", key="603752,0:1037527020::", targets=('lot:1037520020')),
     ],
     "Leyndell, Royal Capital":[ # leyndell                                done
         ERLocationData("LRC|LAC/RC: Immutable Shield - Brother Corhyn shop after using Law of Regression and telling Goldmask", "Immutable Shield", key="110000,0:0000000000:100350,11009455:", missable=True, incantations=True, shop=True, targets=('shop:100361')),
@@ -2830,8 +2834,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was", "Azur's Glintstone Robe", key="603753,0:0000400441::", targets=('lot:114411')),
         ERLocationData("MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was", "Azur's Manchettes", key="603753,0:0000400441::", targets=('lot:114412')),
         
-        ERLocationData("MtG/SR: Ash of War: Barrage - scarab to N", "Ash of War: Barrage", key="603753,0:0000540332::", targets=('lot:40332')),
-        ERLocationData("MtG/SR: Arrow x10 - to NE under slanted rock", "Arrow x10", key="603752,0:1037527020::", targets=('lot:1037520020')),
+        
+        
         ERLocationData("MtG/GHG: Mushroom x6 - N of GHG", "Mushroom x6", key="603753,0:1037537000::", targets=('lot:1037530000')),
         ERLocationData("MtG/PSA: Golden Rune [6] - to NE on tip", "Golden Rune [6]", key="603753,0:1037537010::", targets=('lot:1037530010')),
         ERLocationData("MtG/SR: Smithing Stone [5] - S of SR in river", "Smithing Stone [5]", key="603753,0:1037537020::", targets=('lot:1037530020')),

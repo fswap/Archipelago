@@ -427,7 +427,8 @@ class EldenRing(World):
         # removed base / dlc restriction, so dlc only doesnt have both rykard and serpent in it everytime
         # or not self.options.enable_dlc and boss.dlc or not self.base_enabled and not boss.dlc
 
-    def create_regions(self) -> None: #MARK: Connections
+    #MARK: Connections
+    def create_regions(self) -> None: 
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
         if self.base_enabled:  regions.update({region_name: self.create_region(region_name, location_tables[region_name]) for region_name in region_order})
@@ -931,7 +932,7 @@ class EldenRing(World):
                         locations_needed.append(self.random.choice(sorted(prio_locations)))
                         total_required -= 1
  
-        return locations_needed # will return locations to be duped
+        return locations_needed
     
     def _shard_exists(self, shard):
         "Check to see if shard exists and return option and min for easy use."
@@ -1275,7 +1276,7 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Ainsel River Main"))
             self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Leyndell, Royal Capital"))
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
-            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
+            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Altus Plateau"))
             
             if self.options.world_logic == "open_world":
                 if self.options.soft_logic:
@@ -1389,13 +1390,9 @@ class EldenRing(World):
                     
             # also from RLA side you can get back into main hall through imp statue
             self._add_entrance_rule("Volcano Manor", 
-                                    lambda state: state.has("Drawing-Room Key", self.player)
-                                    or self._can_go_to(state, "Volcano Manor Dungeon"),
-                                    marker_requirement=self._volcano_manor_route_marker_requirement()) 
+                lambda state: state.has("Drawing-Room Key", self.player) or self._can_go_to(state, "Volcano Manor Dungeon"))
             self._add_entrance_rule("Volcano Manor Dungeon", 
-                                    lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") 
-                                    or self._can_go_to(state, "Volcano Manor"),
-                                    marker_requirement=self._volcano_manor_dungeon_marker_requirement())
+                lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") or self._can_go_to(state, "Volcano Manor"))
             
             self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value),
                                     marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_leyndell.value))
@@ -1665,8 +1662,8 @@ class EldenRing(World):
                 self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
                 
                 self._add_entrance_rule("Altus Plateau", lambda state: 
-                    state.has("Dectus Medallion (Left)", self.player) and
-                    state.has("Dectus Medallion (Right)", self.player))
+                    state.has("Dectus Medallion (Left)", self.player)
+                    and state.has("Dectus Medallion (Right)", self.player))
                 self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
                 self._add_entrance_rule("Volcano Manor Entrance", "Volcano Lock")
                 self._add_entrance_rule("Volcano Manor Dungeon", "Volcano Lock")
