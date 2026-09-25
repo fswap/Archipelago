@@ -330,8 +330,8 @@ class EldenRing(World):
                 if self.options.key_item_shards.value[shard][val] < 1 or self.options.key_item_shards.value[shard][val] > 10:
                     raise OptionError(f"Player {self.player_name} has {shard} {val} set to {self.options.key_item_shards.value[shard][val]} which is outside 1-10.")
         
-        if self.options.important_at_priority_only and len(self.all_priority_locations) == 0: 
-            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but no priority locations. Add groups to priority_location_groups.")
+        if self.options.important_at_priority_only and len(self.all_priority_locations) < 10: # make sure player adds enough locations
+            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 10 priority locations. Add groups to priority_location_groups.")
         
         m_goal_bosses = self._goal_bosses()
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
@@ -878,7 +878,7 @@ class EldenRing(World):
         self.all_priority_locations += self.all_duplicate_locations
 
     # MARK: VERY WIP STUFF
-    # currently guarantees access upto mountaintops in base
+    # currently guarantees access to main path, can still fail with side paths
     def _required_locations(self) -> list[str]:
         """Figure out what regions require more priority locations to avoid fill errors."""
         # map region names to prio locations in region
@@ -891,14 +891,14 @@ class EldenRing(World):
         locations_needed = []
         if self.options.world_logic == "region_lock":
             # if starting region has no locations create one
-            if self.base_enabled and self.options.dlc_start == 0 and len(self._find_prio_locations("Limgrave")) < 1: 
-                warning(f"Player {self.player_name} has no Priority locations within Starting region. Adding priority location \"LG/(SG): Finger Severer - beside grace\".")
-                self.all_priority_locations.add("LG/(SG): Finger Severer - beside grace")
+            if self.base_enabled and self.options.dlc_start == 0 and len(self.prio_in_region["Limgrave"]) < 1: 
+                warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SG): Finger Severer - beside grace\".")
+                self.all_priority_locations.append("LG/(SG): Finger Severer - beside grace")
                 self.prio_in_region["Limgrave"].append("LG/(SG): Finger Severer - beside grace")
                 
-            elif self.options.enable_dlc and self.options.dlc_start != 0 and len(self._find_prio_locations("Gravesite Plain")) < 1:
-                warning(f"Player {self.player_name} has no Priority locations within Starting region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")
-                self.all_priority_locations.add("GP/TPC: Scadutree Fragment - by cross")
+            if self.options.enable_dlc and len(self.prio_in_region["Gravesite Plain"]) < 1:
+                warning(f"Player {self.player_name} has no Priority locations within Gravesite Plain region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")
+                self.all_priority_locations.append("GP/TPC: Scadutree Fragment - by cross")
                 self.prio_in_region["Gravesite Plain"].append("GP/TPC: Scadutree Fragment - by cross")
             
             total_required = 0
@@ -908,69 +908,69 @@ class EldenRing(World):
                 # before Altus
                 prio_locations = self._find_prio_locations("Liurnia of The Lakes")
                 total_required += 2 # required to access altus, dectus shards later
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before Leyndell
                 prio_locations = self._find_prio_locations("Capital Outskirts")
                 total_required += self.options.great_runes_required_leyndell
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before Mountaintops
                 prio_locations = self._find_prio_locations("Forbidden Lands")
                 option, min_shard = self._shard_exists("Rold Medallion Shard")
                 if option and option["Max"] > 1: total_required += min_shard
                 else: total_required += self.options.great_runes_required_mountain
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before farum            
                 prio_locations = self._find_prio_locations("Mountaintops of the Giants")
                 total_required += 1 # lock, can be shards later
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before ashen cap        
                 prio_locations = self._find_prio_locations("Farum Azula")
                 total_required += 1 # lock, can be shards later
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before erdtree      
                 prio_locations = self._find_prio_locations("Leyndell, Ashen Capital")
                 total_required += self.options.great_runes_required_erdtree
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
  
             if self.options.enable_dlc:
                 # before gravesite
                 if self.options.dlc_start != 0:
                     prio_locations = self._find_prio_locations("DLC Path")
                     total_required += 1 # gravesite lock
-                    locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                    locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before ensis
                 prio_locations = self._find_prio_locations("Gravesite Plain")
                 total_required += 1 # ensis lock
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before scadu altus
                 prio_locations = self._find_prio_locations("Castle Ensis")
                 total_required += 1 # scadu altus lock
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before shadow keep
                 prio_locations = self._find_prio_locations("Scadu Altus")
                 total_required += 1 # shadow keep lock
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before ancient ruins
                 prio_locations = self._find_prio_locations("Shadow Keep")
                 total_required += 1 # ancient ruins lock
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before ilir ilim
                 prio_locations = self._find_prio_locations("Ancient Ruins of Rauh")
                 option, min_shard = self._shard_exists("Messmer's Kindling Shard")
                 if option and option["Max"] > 1: total_required += min_shard
                 else: total_required += 1 # kindle
-                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))                                 
-                
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))                                 
+        
         return locations_needed
     
     def _needed_locations(self, prio, loc_needed, req):
@@ -989,7 +989,7 @@ class EldenRing(World):
         return False, False
     
     def _find_prio_locations(self, region: str) -> list[str]:
-        """fallthrough stuff""" # rn this doesnt work with dlc start + base
+        """fallthrough stuff""" # this doesn't work with dlc start + base
         prio_locations = []
         fall = False
         
@@ -997,26 +997,26 @@ class EldenRing(World):
             
             if fall or region == "Ancient Ruins of Rauh":
                 fall = True
-                prio_locations.append(self.prio_in_region["Ancient Ruins of Rauh"])    
+                prio_locations.extend(self.prio_in_region["Ancient Ruins of Rauh"])    
                             
             if fall or region == "Shadow Keep":
                 fall = True
                 for r in ["Shadow Keep","Shadow Keep Storehouse","Shadow Keep Storehouse Back","Shadow Keep, West Rampart","Shadow Keep, Church District","Shadow Keep, Church District Lower"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Scadu Altus":
                 fall = True
                 for r in ["Scadu Altus","Bonny Gaol","Ruined Forge of Starfall Past"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Castle Ensis":
                 fall = True
-                prio_locations.append(self.prio_in_region["Castle Ensis"])
+                prio_locations.extend(self.prio_in_region["Castle Ensis"])
             
             if fall or region == "Gravesite Plain":
                 fall = True
                 for r in ["Gravesite Plain","Fog Rift Catacombs","Belurat Gaol","Dragon's Pit","Ruined Forge Lava Intake"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
         
         if self.base_enabled and self.options.dlc_start == 0:
             
@@ -1024,59 +1024,59 @@ class EldenRing(World):
                 for r in ["Mohgwyn Palace","Consecrated Snowfield","Consecrated Snowfield Catacombs","Yelough Anix Tunnel",
                         "Caelid","Caelid Catacombs","Sellia Crystal Tunnel","Abandoned Cave","Minor Erdtree Catacombs","Great-Jar","Gale Tunnel"
                         ,"Redmane Castle Post Radahn","Wailing Dunes","War-Dead Catacombs"]:
-                    prio_locations.append(self.prio_in_region[r])              
+                    prio_locations.extend(self.prio_in_region[r])              
 
             if fall or region == "Leyndell, Ashen Capital":
                 fall = True
                 for r in ["Leyndell, Ashen Capital","Leyndell, Ashen Capital Throne"]:
-                    prio_locations.append(self.prio_in_region[r])               
+                    prio_locations.extend(self.prio_in_region[r])               
             
             if fall or region == "Farum Azula":
                 fall = True
                 for r in ["Farum Azula","Farum Azula Main"]:
-                    prio_locations.append(self.prio_in_region[r])               
+                    prio_locations.extend(self.prio_in_region[r])               
             
             if fall or region == "Mountaintops of the Giants":
                 fall = True
                 for r in ["Mountaintops of the Giants","Flame Peak","Giant-Conquering Hero's Grave","Giants' Mountaintop Catacombs"]:
-                    prio_locations.append(self.prio_in_region[r])               
+                    prio_locations.extend(self.prio_in_region[r])               
             
             if fall or region == "Forbidden Lands":
                 fall = True
                 for r in ["Divine Tower of East Altus","Forbidden Lands"]:
-                    prio_locations.append(self.prio_in_region[r])              
+                    prio_locations.extend(self.prio_in_region[r])              
             
             if fall or region == "Leyndell, Royal Capital":
                 fall = True
                 for r in ["Leyndell, Royal Capital","Leyndell, Royal Capital Unmissable","Leyndell, Royal Capital Throne","Divine Bridge","Subterranean Shunning-Grounds","Leyndell Catacombs"]:
-                    prio_locations.append(self.prio_in_region[r])  
+                    prio_locations.extend(self.prio_in_region[r])  
             
             if fall or region == "Capital Outskirts":
                 fall = True
                 for r in ["Capital Outskirts","Auriza Hero's Grave","Auriza Side Tomb","Sealed Tunnel"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Altus Plateau":
                 fall = True
                 for r in ["Altus Plateau","Sainted Hero's Grave","Perfumer's Grotto","Sage's Cave","Altus Tunnel"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Liurnia of The Lakes":
                 fall = True
                 for r in ["Liurnia of The Lakes","Bellum Highway","Road's End Catacombs","Black Knife Catacombs","Cliffbottom Catacombs"
                     ,"Stillwater Cave","Lakeside Crystal Cave","Raya Lucaria Crystal Tunnel","Caria Manor","Carian Study Hall","Ruin-Strewn Precipice"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Limgrave":
                 for r in ["Limgrave","Stormhill","Coastal Cave","Church of Dragon Communion","Groveside Cave"
                     ,"Stormfoot Catacombs","Limgrave Tunnels","Murkwater Cave","Murkwater Catacombs","Highroad Cave","Deathtouched Catacombs"]:
-                    prio_locations.append(self.prio_in_region[r])
+                    prio_locations.extend(self.prio_in_region[r]) 
         
         # always
         if not self.base_enabled:
-            prio_locations.append(self.prio_in_region["Roundtable Hold DLC Only"])
+            prio_locations.extend(self.prio_in_region["Roundtable Hold DLC Only"])
         else: 
-            prio_locations.append(self.prio_in_region["Roundtable Hold"])
+            prio_locations.extend(self.prio_in_region["Roundtable Hold"])
         
         # warning(f"{region}, {prio_locations}")
         return prio_locations
