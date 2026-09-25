@@ -7,8 +7,7 @@ from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, Exclu
     
 from .bosses import all_bosses
 
-visibility_dlc = Visibility.all
-# Visibility.all
+unsupported_options = Visibility.none
 
 # MARK: Game Options
 
@@ -30,6 +29,8 @@ class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_
     **KeyItem**Shards:
     - Req: (1-10) *required shards*
     - Max: (1-10) *maximum shards*
+    
+    It is reccomended to require about half of the Max shards.
     """
     display_name = "Key Item Shards"
     default = {
@@ -121,7 +122,6 @@ class EnableTarnishedPack(Toggle):
 class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
-    visibility = visibility_dlc
     
 class DLCMessmerKindle(Choice):
     """Randomize Messmer's Kindling / Shards.
@@ -134,7 +134,6 @@ class DLCMessmerKindle(Choice):
     option_normal = 0
     option_dlc_only = 1
     option_not_base = 2
-    visibility = visibility_dlc
     
 class DLCScadutreeFragments(Choice):
     """Randomize Scadutree Fragments.
@@ -147,7 +146,6 @@ class DLCScadutreeFragments(Choice):
     option_normal = 0
     option_dlc_only = 1
     option_not_base = 2
-    visibility = visibility_dlc
 
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
@@ -161,22 +159,18 @@ class DLCTimingOption(Choice):
     option_off = 1
     option_late = 2
     default = 1
-    visibility = visibility_dlc
     
 class DLCMaxLevelWeapons(Toggle):
     """Upgrade all weapons to max level in the DLC."""
     display_name = "DLC Max Level Weapons"
-    visibility = visibility_dlc
     
 class DLCAbyssalTorrent(Toggle):
     """Prevent Torrent from getting frightened."""
     display_name = "DLC Abyssal Torrent"
-    visibility = visibility_dlc
     
 class DLCSpiritspringStones(Toggle):
     """Randomize the Spiritsping Stones.""" 
     display_name = "Randomize Spiritsping Stones"
-    visibility = visibility_dlc
     
 # MARK: DLC Start
 
@@ -192,7 +186,6 @@ class DLCStart(Choice):
     option_dlc_start = 1
     option_dlc_start_with_base = 2
     default = 0
-    visibility = visibility_dlc
     
 class DLCStartingItems(OptionList):
     """Choose what base game items to start with in DLC Start.
@@ -211,17 +204,14 @@ class DLCStartingItems(OptionList):
     valid_keys = ["sacred tears", "golden seeds", "talisman pouches", 
                   "memory stones", "whetblades", "upgrade bell bearings"]
     valid_keys_casefold = True
-    visibility = visibility_dlc
 
 class DLCStartingShop(Toggle): # just the static rando option
     """Add a shop at grace with all base game equipment for free."""
     display_name = "DLC Starting Shop"
-    visibility = visibility_dlc
     
 class DLCCarePackage(Toggle): # just the static rando option
     """Start with 80 extra base game items."""
     display_name = "DLC Care Package"
-    visibility = visibility_dlc
     
 class DLCInitialRuneLevel(Choice): # just the static rando option
     """Runes are given to level up at start."""
@@ -234,7 +224,6 @@ class DLCInitialRuneLevel(Choice): # just the static rando option
     option_150 = 150
     option_200 = 200
     default = 0
-    visibility = visibility_dlc
     
 # MARK: Other Rando
     
@@ -540,7 +529,6 @@ class FlaskUpgradesAtPriority(Toggle):
 class ScaduAtPriority(Toggle):
     "Should scadu fragments be randomized to important locations."
     display_name = "Scadutree Fragments at Priority"
-    visibility = visibility_dlc
 
 class TalismanPouchesAtPriority(Toggle):
     "Should talisman pouches be randomized to important locations."

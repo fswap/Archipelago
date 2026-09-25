@@ -901,38 +901,85 @@ class EldenRing(World):
                 self.all_priority_locations.add("GP/TPC: Scadutree Fragment - by cross")
                 self.prio_in_region["Gravesite Plain"].append("GP/TPC: Scadutree Fragment - by cross")
             
-            # before Altus
-            prio_locations = self._find_prio_locations("Liurnia of The Lakes")
-            total_required = 2 # required to access altus, dectus shards later
-            if len(prio_locations) < total_required:
-                locations_needed.append(prio_locations) # if this is true then only 1 location exists
-                total_required -= 1
+            total_required = 0
             
-            # before Leyndell
-            prio_locations = self._find_prio_locations("Capital Outskirts")
-            total_required += self.options.great_runes_required_leyndell
-            if len(prio_locations) < total_required:
-                for i in range(len(prio_locations), total_required):
-                    locations_needed.append(self.random.choice(sorted(prio_locations)))
-                    total_required -= 1
-            
-            # before Mountaintops
-            prio_locations = self._find_prio_locations("Forbidden Lands")
-            option, min_shard = self._shard_exists("Rold Medallion Shard")
-            if option and option["Max"] > 1:
-                total_required += min_shard
-                if len(prio_locations) < total_required:
-                    for i in range(len(prio_locations), total_required):
-                        locations_needed.append(self.random.choice(sorted(prio_locations)))
-                        total_required -= 1
-            else:
-                total_required += self.options.great_runes_required_mountain
-                if len(prio_locations) < total_required:
-                    for i in range(len(prio_locations), total_required):
-                        locations_needed.append(self.random.choice(sorted(prio_locations)))
-                        total_required -= 1
+            if self.base_enabled and self.options.dlc_start == 0:
+                
+                # before Altus
+                prio_locations = self._find_prio_locations("Liurnia of The Lakes")
+                total_required += 2 # required to access altus, dectus shards later
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before Leyndell
+                prio_locations = self._find_prio_locations("Capital Outskirts")
+                total_required += self.options.great_runes_required_leyndell
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before Mountaintops
+                prio_locations = self._find_prio_locations("Forbidden Lands")
+                option, min_shard = self._shard_exists("Rold Medallion Shard")
+                if option and option["Max"] > 1: total_required += min_shard
+                else: total_required += self.options.great_runes_required_mountain
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before farum            
+                prio_locations = self._find_prio_locations("Mountaintops of the Giants")
+                total_required += 1 # lock, can be shards later
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before ashen cap        
+                prio_locations = self._find_prio_locations("Farum Azula")
+                total_required += 1 # lock, can be shards later
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before erdtree      
+                prio_locations = self._find_prio_locations("Leyndell, Ashen Capital")
+                total_required += self.options.great_runes_required_erdtree
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
  
+            if self.options.enable_dlc:
+                # before gravesite
+                if self.options.dlc_start != 0:
+                    prio_locations = self._find_prio_locations("DLC Path")
+                    total_required += 1 # gravesite lock
+                    locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before ensis
+                prio_locations = self._find_prio_locations("Gravesite Plain")
+                total_required += 1 # ensis lock
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before scadu altus
+                prio_locations = self._find_prio_locations("Castle Ensis")
+                total_required += 1 # scadu altus lock
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before shadow keep
+                prio_locations = self._find_prio_locations("Scadu Altus")
+                total_required += 1 # shadow keep lock
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before ancient ruins
+                prio_locations = self._find_prio_locations("Shadow Keep")
+                total_required += 1 # ancient ruins lock
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before ilir ilim
+                prio_locations = self._find_prio_locations("Ancient Ruins of Rauh")
+                option, min_shard = self._shard_exists("Messmer's Kindling Shard")
+                if option and option["Max"] > 1: total_required += min_shard
+                else: total_required += 1 # kindle
+                locations_needed.append(self._needed_locations(prio_locations, locations_needed, total_required))                                 
+                
         return locations_needed
+    
+    def _needed_locations(self, prio, loc_needed, req):
+        """return locations needed"""
+        needed = []
+        if len(prio) - len(loc_needed) < req:
+            for i in range(len(prio), req):
+                needed.append(self.random.choice(sorted(prio)))
+        return needed
     
     def _shard_exists(self, shard):
         "Check to see if shard exists and return option and min for easy use."
@@ -946,7 +993,25 @@ class EldenRing(World):
         prio_locations = []
         fall = False
         
-        if self.options.enable_dlc:
+        if self.options.enable_dlc:        
+            
+            if fall or region == "Ancient Ruins of Rauh":
+                fall = True
+                prio_locations.append(self.prio_in_region["Ancient Ruins of Rauh"])    
+                            
+            if fall or region == "Shadow Keep":
+                fall = True
+                for r in ["Shadow Keep","Shadow Keep Storehouse","Shadow Keep Storehouse Back","Shadow Keep, West Rampart","Shadow Keep, Church District","Shadow Keep, Church District Lower"]:
+                    prio_locations.append(self.prio_in_region[r])
+            
+            if fall or region == "Scadu Altus":
+                fall = True
+                for r in ["Scadu Altus","Bonny Gaol","Ruined Forge of Starfall Past"]:
+                    prio_locations.append(self.prio_in_region[r])
+            
+            if fall or region == "Castle Ensis":
+                fall = True
+                prio_locations.append(self.prio_in_region["Castle Ensis"])
             
             if fall or region == "Gravesite Plain":
                 fall = True
@@ -955,7 +1020,7 @@ class EldenRing(World):
         
         if self.base_enabled and self.options.dlc_start == 0:
             
-            if fall: # path to dlc regions
+            if fall or region == "DLC Path": # path to dlc regions
                 for r in ["Mohgwyn Palace","Consecrated Snowfield","Consecrated Snowfield Catacombs","Yelough Anix Tunnel",
                         "Caelid","Caelid Catacombs","Sellia Crystal Tunnel","Abandoned Cave","Minor Erdtree Catacombs","Great-Jar","Gale Tunnel"
                         ,"Redmane Castle Post Radahn","Wailing Dunes","War-Dead Catacombs"]:
