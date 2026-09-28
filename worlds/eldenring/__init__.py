@@ -24,9 +24,17 @@ from Options import OptionError
 class EldenRingSettings(settings.Group):
     class ImportantAtPriorityOnlySafeGuard(settings.Bool):
         """Stops gen if there are too many Priority locations, since most if not all progression items would go to Elden Ring."""
-    
-    class ForceFillerLocal(settings.Bool):
-        """Filler items are forced local only."""
+
+    class ForceLocalItems(list):
+        """Choose certain categories to be local only for all EldenRing worlds.
+        - [Est Items] **Item Group**
+        - [472] **Weapon**: All Weapons and Ammo.
+        - [423] **Armor**: All Armors.
+        - [160] **Accessory**: All Talismans.
+        - [105] **AshofWar**: All Ashes of War.
+        - [3250] **Goods**: The two below
+        - [1000] **Filler**: All Crafting Mats, and some craftables.
+        - [2200] **Non-Filler**: Smithing stones, Spells and Spirit ashes."""
     
     class ForceRegionLock(settings.Bool):
         """Disables open world option, since sphere 1 would have ~2.1k checks."""
@@ -36,7 +44,7 @@ class EldenRingSettings(settings.Group):
         There are 207 Bosses total in Base + DLC, and 165 in Base game."""
     
     important_at_priority_only_safe_guard: typing.Union[ImportantAtPriorityOnlySafeGuard, bool] = True
-    force_filler_local: typing.Union[ForceFillerLocal, bool] = True
+    force_local_items: typing.Union[ForceLocalItems, list] = ["Filler"]
     force_region_lock: typing.Union[ForceRegionLock, bool] = True
     goal_bosses_allowed: typing.Union[GoalBossesAllowed, int] = 100
 
@@ -258,6 +266,9 @@ class EldenRing(World):
     dupe_location_tables: Dict[str, list[ERLocationData]] = {}
     prio_in_region: Dict[str, list[str]] = {}
     
+    local_items: Set[str] = set()
+    # this is only used to output local count in create_items
+    
     def visualize_world(self): # puml gets put in root folder
         Utils.visualize_regions(self.multiworld.get_region(self.multiworld.worlds[1].origin_region_name, 1), f"{self.multiworld.player_name[1]}.puml")
 
@@ -275,11 +286,17 @@ class EldenRing(World):
         # self.visualize_world()
 
     def post_fill(self):
+        badly_placed_items: Dict[str, str] = {}
         if self.options.important_at_priority_only:
             for loc in self.multiworld.get_filled_locations(self.player):
                 if loc.progress_type != LocationProgressType.PRIORITY and loc.item.classification == ItemClassification.progression and not loc.locked: # not preplaced
-                    "a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen"
-                    raise OptionError(f"A progression item: {loc.item}, was placed on a non-priority location: {loc.name}, you most likely have to little priority locations.")
+                    badly_placed_items[loc.name] = loc.item
+                    # a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen
+                    # raise OptionError(f"\n  A progression item: {loc.item},\n  was placed on a non-priority location: ({loc.name}),\n  you most likely have to little priority locations.")
+              
+        if len(badly_placed_items) > 0:
+            raise OptionError(f"misplaced prog: {badly_placed_items}")
+            
         return super().post_fill()
 
     def __init__(self, multiworld: MultiWorld, player: int):
@@ -306,6 +323,7 @@ class EldenRing(World):
         self.location_rule_requirements: Dict[str, ERReq] = {}
         self.region_marker_requirement_cache: Dict[str, ERReq] = {}
         self.ignored_marker_entrance_rules: Set[str] = set()
+        self.local_items = set()
         self.explicit_indirect_conditions = False
         self.soft_logic_enabled = True
 
@@ -318,17 +336,23 @@ class EldenRing(World):
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         self.all_priority_locations.update(self.options.priority_location_groups.value)
         self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
-        local_item_only_lowercase = [key.lower() for key in self.options.local_item_only.value]
+        local_item_only_lowercase = set(key.lower() for key in self.options.local_item_only.value)
+        [local_item_only_lowercase.add(key.lower()) for key in self.settings.force_local_items]
         
         # verify shard counts
         for shard in self.options.key_item_shards.value:
             if len(self.options.key_item_shards.value[shard]) != 2:
-                raise OptionError(f"Player {self.player_name} has {shard} does'nt contain 2 values.")
+                raise OptionError(f"Player {self.player_name} has {shard} that doesn't contain 2 values.")
             for val in self.options.key_item_shards.value[shard]:
                 if val not in ['Req', 'Max']:
                     raise OptionError(f"Player {self.player_name} has {shard} with unknown option {val}.")
-                if self.options.key_item_shards.value[shard][val] < 1 or self.options.key_item_shards.value[shard][val] > 10:
-                    raise OptionError(f"Player {self.player_name} has {shard} {val} set to {self.options.key_item_shards.value[shard][val]} which is outside 1-10.")
+                max_shard_count = 10
+                if self.options.key_item_shards.value[shard][val] < 1:
+                    self.options.key_item_shards.value[shard][val] = 1
+                    # warning(f"{shard} {val} less then 1")
+                if self.options.key_item_shards.value[shard][val] > max_shard_count:
+                    self.options.key_item_shards.value[shard][val] = max_shard_count
+                    # warning(f"{shard} {val} greater then {max_shard_count}")
         
         if self.options.important_at_priority_only and len(self.all_priority_locations) < 10: # make sure player adds enough locations
             raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 10 priority locations. Add groups to priority_location_groups.")
@@ -338,17 +362,12 @@ class EldenRing(World):
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
         if self.multiworld.players != 1: # this only applies when not solo
-            if self.settings.force_filler_local and "filler" not in local_item_only_lowercase and "goods" not in local_item_only_lowercase:
-                raise OptionError(f"EldenRing host.yaml force_filler_local Error: "
-                                    f"Player {self.player_name} has filler or goods missing from local_item_only. "
-                                    f"This being here means the itempool will be flooded with lots of filler items.")
-            elif len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
+            if len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
                 raise OptionError(f"EldenRing host.yaml goal_bosses_allowed Error: "
                                 f"Player {self.player_name} has Goal Bosses count set higher then allowed amount. "
                                 f"Current amount: {len(self._goal_bosses())}, allowed amount: {self.settings.goal_bosses_allowed}.")
             elif self.settings.force_region_lock and self.options.world_logic == "open_world":
-                raise OptionError(f"EldenRing host.yaml force_region_lock Error: "
-                                f"Player {self.player_name} has world logic set to open world, this means sphere 1 would be ~2.1k checks *ignoring soft logic*.")
+                self.options.world_logic.value = 0
         
         if self.options.enable_dlc:
             if "dlc" not in self.options.exclude_locations.excluded_groups(): # if dlc is excluded, exclude bosses too
@@ -398,27 +417,24 @@ class EldenRing(World):
                 match item.category:
                     case ERItemCategory.GOODS:
                         if (('goods' in local_item_only_lowercase) 
-                            or ('filler' in local_item_only_lowercase and item.replacable)
-                            or ('non-filler' in local_item_only_lowercase and not item.replacable)):
+                            or ('filler' in local_item_only_lowercase and (item.replacable or item_table[item.base_name].filler))
+                            or ('non-filler' in local_item_only_lowercase and not (item.replacable or item_table[item.base_name].filler))):
                             self.options.local_items.value.add(item.name)
-                        break
                     case ERItemCategory.WEAPON:
                         if 'weapon' in local_item_only_lowercase:
                             self.options.local_items.value.add(item.name)
-                        break
                     case ERItemCategory.ARMOR:
                         if 'armor' in local_item_only_lowercase:
                             self.options.local_items.value.add(item.name)
-                        break
                     case ERItemCategory.ACCESSORY:
                         if 'accessory' in local_item_only_lowercase:
                             self.options.local_items.value.add(item.name)
-                        break
                     case ERItemCategory.ASHOFWAR:
                         if 'ashofwar' in local_item_only_lowercase:
                             self.options.local_items.value.add(item.name)
-                        break
-
+        
+        self.local_items = self.options.local_items.value
+    
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
         if not boss.allow_rykard and self.options.restrictive_bosses: return False 
@@ -785,6 +801,8 @@ class EldenRing(World):
             (len(self.multiworld.get_unfilled_locations(self.player))) - len(self.itempool)))
         
         self.multiworld.itempool += self.itempool
+        
+        warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations."""
@@ -1607,8 +1625,7 @@ class EldenRing(World):
                 self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("Rauh Ruins Limited", 
                     lambda state: state.has("Imbued Sword Key", self.player, 4) or self._can_go_to(state, "Ancient Ruins of Rauh"))
-                
-                
+              
             self._add_entrance_rule("Enir Ilim", lambda state: self._has_key_or_shards(state, "Messmer's Kindling"))
             
             self.multiworld.register_indirect_condition(self.get_region("Castle Ensis"), self.get_entrance("Go To Scadu Altus"))

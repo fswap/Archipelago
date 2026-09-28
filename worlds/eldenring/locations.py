@@ -872,6 +872,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/LC: Godskin Prayerbook - right chest behind imp statue in storeroom SE of massive courtyard", "Godskin Prayerbook", key="100000,0:0010007990::", chest=True, targets=('lot:10000990')), # 1
     ],
     "Stormhill":[ # stormhill                                             done
+        ERLocationData("SV/CT: Talisman Pouch - boss drop", "Talisman Pouch", key="100000,0:0000060510::", boss=True, achievement=True, targets=('lot:10000')),
+        
         ERLocationData("LG/SB: Exalted Flesh - help Alexander to S", "Exalted Flesh", key="130000,0:0000400170::", missable=True, targets=('lot:101700')),
         ERLocationData("LG/SB: Warrior Jar Shard - kill Alexander to S", "Warrior Jar Shard", key="130000,0:0000400175::", missable=True, death=True, targets=('lot:111700')),
         ERLocationData("LG/(WS): Beast Champion Helm - kill Bernahl", "Beast Champion Helm", key="130000,0:0000400294::", death=True, targets=('lot:102922', 'lot:112902')),
@@ -921,7 +923,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/DC: Lance Talisman - NE of DC", "Lance Talisman", key="604340,0:1043407010::", talisman=True, hidden=True, targets=('lot:1043400010')),
     ],
     "Stormveil Start":[ # stormveil_start                                 done
-        ERLocationData("SV/CT: Talisman Pouch - boss drop", "Talisman Pouch", key="100000,0:0000060510::", boss=True, achievement=True, targets=('lot:10000')),
         ERLocationData("SV/StC: Grace Mimic - talk to Gostoc in stalking spot, to SE and above SC grace", "Grace Mimic", key="100000,0:0000400050::", missable=True, targets=('lot:100500')),
         ERLocationData("SV/SMG: Furlcalling Finger Remedy - down stairs to NE", "Furlcalling Finger Remedy", key="100000,0:0010007030::", targets=('lot:10000030')),
         ERLocationData("SV/SMG: Fire Grease x2 - down stairs to NE, then drop to wood platform, at end of tunnel", "Fire Grease x2", key="100000,0:0010007040::", targets=('lot:10000040')),

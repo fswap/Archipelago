@@ -559,16 +559,16 @@ class RemembrancesAtPriority(Toggle):
 
 class LocalItemOnly(OptionList):
     """Which categories should be local only, useful and progression excluded.
-    - [Items] **Item Group**
-    - [~600] **Weapon**: All Weapons and Ammo.
-    - [621] **Armor**: All Armors.
-    - [154] **Accessory**: All Talismans.
+    - [Est Items] **Item Group**
+    - [472] **Weapon**: All Weapons and Ammo.
+    - [423] **Armor**: All Armors.
+    - [160] **Accessory**: All Talismans.
     - [105] **AshofWar**: All Ashes of War.
-    - [~3700] **Goods**: The two below
-    - **Filler**: All Crafting Mats.
-    - **Non-Filler**: Smithing stones, Spells and Spirit ashes.
+    - [3250] **Goods**: The two below
+    - [1000] **Filler**: All Crafting Mats, and some craftables.
+    - [2200] **Non-Filler**: Smithing stones, Spells and Spirit ashes.
     
-    Filler should always be local only, it floods the itempool with useless items.
+    Filler is forced local by default in host.yaml, it floods the itempool with useless items.
     """
     display_name = "Local Item Only"
     default = ["Filler"]
