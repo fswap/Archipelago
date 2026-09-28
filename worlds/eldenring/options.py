@@ -7,8 +7,7 @@ from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, Exclu
     
 from .bosses import all_bosses
 
-visibility_dlc = Visibility.all
-# Visibility.all
+unsupported_options = Visibility.none
 
 # MARK: Game Options
 
@@ -30,6 +29,8 @@ class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_
     **KeyItem**Shards:
     - Req: (1-10) *required shards*
     - Max: (1-10) *maximum shards*
+    
+    It is reccomended to require about half of the Max shards.
     """
     display_name = "Key Item Shards"
     default = {
@@ -69,6 +70,15 @@ class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid.
     Consecrated Snowfield also requires the same items as Mountaintops."""
     display_name = "Region Soft Logic"
+
+class SeparateProgression(Toggle):
+    """Separate Progression.
+    
+    If separate:
+    - Base game progession will be in base game or other worlds.
+    - DLC progression will be in DLC or other worlds.
+    """
+    display_name = "Separate Progression"
 
 class GreatRunesRequiredLeyndell(Range):
     """How many great runes are required to enter Leyndell."""
@@ -121,7 +131,6 @@ class EnableTarnishedPack(Toggle):
 class EnableDLC(Toggle):
     """Enable DLC"""
     display_name = "Enable DLC"
-    visibility = visibility_dlc
     
 class DLCMessmerKindle(Choice):
     """Randomize Messmer's Kindling / Shards.
@@ -134,7 +143,6 @@ class DLCMessmerKindle(Choice):
     option_normal = 0
     option_dlc_only = 1
     option_not_base = 2
-    visibility = visibility_dlc
     
 class DLCScadutreeFragments(Choice):
     """Randomize Scadutree Fragments.
@@ -147,7 +155,6 @@ class DLCScadutreeFragments(Choice):
     option_normal = 0
     option_dlc_only = 1
     option_not_base = 2
-    visibility = visibility_dlc
 
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
@@ -161,22 +168,18 @@ class DLCTimingOption(Choice):
     option_off = 1
     option_late = 2
     default = 1
-    visibility = visibility_dlc
     
 class DLCMaxLevelWeapons(Toggle):
     """Upgrade all weapons to max level in the DLC."""
     display_name = "DLC Max Level Weapons"
-    visibility = visibility_dlc
     
 class DLCAbyssalTorrent(Toggle):
     """Prevent Torrent from getting frightened."""
     display_name = "DLC Abyssal Torrent"
-    visibility = visibility_dlc
     
 class DLCSpiritspringStones(Toggle):
     """Randomize the Spiritsping Stones.""" 
     display_name = "Randomize Spiritsping Stones"
-    visibility = visibility_dlc
     
 # MARK: DLC Start
 
@@ -192,7 +195,6 @@ class DLCStart(Choice):
     option_dlc_start = 1
     option_dlc_start_with_base = 2
     default = 0
-    visibility = visibility_dlc
     
 class DLCStartingItems(OptionList):
     """Choose what base game items to start with in DLC Start.
@@ -211,17 +213,14 @@ class DLCStartingItems(OptionList):
     valid_keys = ["sacred tears", "golden seeds", "talisman pouches", 
                   "memory stones", "whetblades", "upgrade bell bearings"]
     valid_keys_casefold = True
-    visibility = visibility_dlc
 
 class DLCStartingShop(Toggle): # just the static rando option
     """Add a shop at grace with all base game equipment for free."""
     display_name = "DLC Starting Shop"
-    visibility = visibility_dlc
     
 class DLCCarePackage(Toggle): # just the static rando option
     """Start with 80 extra base game items."""
     display_name = "DLC Care Package"
-    visibility = visibility_dlc
     
 class DLCInitialRuneLevel(Choice): # just the static rando option
     """Runes are given to level up at start."""
@@ -234,7 +233,6 @@ class DLCInitialRuneLevel(Choice): # just the static rando option
     option_150 = 150
     option_200 = 200
     default = 0
-    visibility = visibility_dlc
     
 # MARK: Other Rando
     
@@ -342,14 +340,14 @@ class ExampleTrapCount(BaseTrapCount):
     """
     display_name = "Example Trap Count"
     
-class NGPlusTrapCount(BaseTrapCount): # https://github.com/borgCode/TarnishedTool used this tool to test it, could figure out how to implement it from here
+class NGPlusTrapCount(BaseTrapCount):
     """
     NG+ Trap: Sets the game to NG+7 until the player dies.
     """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
     display_name = "NG+ Trap Count"
     visibility = Visibility.none
     
-class StatusTrapCount(BaseTrapCount): 
+class StatusTrapCount(BaseTrapCount):
     """
     Status Trap: Applies a random status to the player.
     """ # excluding deathblight... or keep it for the funny clips
@@ -493,10 +491,10 @@ class ERPriorityLocationGroups(PriorityLocations):
     """
     display_name = "Priority Location Groups"
     default = ["Achievement Boss", "Seedtree", "Map", "Church", "Key Items"]
-    valid_keys = ["chest", "scarab", "seedtree", "basin", "church", "map", "key items",
-        "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
-        "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
-    valid_keys_casefold = True
+    valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
+        "Fragment", "Cross", "Revered", "Overworld boss", "DLC Overworld Boss", 
+        "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
+    valid_keys_casefold = False
     
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
@@ -540,7 +538,6 @@ class FlaskUpgradesAtPriority(Toggle):
 class ScaduAtPriority(Toggle):
     "Should scadu fragments be randomized to important locations."
     display_name = "Scadutree Fragments at Priority"
-    visibility = visibility_dlc
 
 class TalismanPouchesAtPriority(Toggle):
     "Should talisman pouches be randomized to important locations."
@@ -562,16 +559,16 @@ class RemembrancesAtPriority(Toggle):
 
 class LocalItemOnly(OptionList):
     """Which categories should be local only, useful and progression excluded.
-    - [Items] **Item Group**
-    - [~600] **Weapon**: All Weapons and Ammo.
-    - [621] **Armor**: All Armors.
-    - [154] **Accessory**: All Talismans.
+    - [Est Items] **Item Group**
+    - [472] **Weapon**: All Weapons and Ammo.
+    - [423] **Armor**: All Armors.
+    - [160] **Accessory**: All Talismans.
     - [105] **AshofWar**: All Ashes of War.
-    - [~3700] **Goods**: The two below
-    - **Filler**: All Crafting Mats.
-    - **Non-Filler**: Smithing stones, Spells and Spirit ashes.
+    - [3250] **Goods**: The two below
+    - [1000] **Filler**: All Crafting Mats, and some craftables.
+    - [2200] **Non-Filler**: Smithing stones, Spells and Spirit ashes.
     
-    Filler should always be local only, it floods the itempool with useless items.
+    Filler is forced local by default in host.yaml, it floods the itempool with useless items.
     """
     display_name = "Local Item Only"
     default = ["Filler"]
@@ -644,6 +641,7 @@ class EROptions(PerGameCommonOptions):
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
     soft_logic: RegionSoftLogic
+    separate_progression: SeparateProgression
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
     great_runes_required_mountain: GreatRunesRequiredMountain
     great_runes_required_erdtree: GreatRunesRequiredErdtree
@@ -719,6 +717,7 @@ option_groups = [
         ExcludeDungeonBosses,
         WorldLogic,
         RegionSoftLogic,
+        SeparateProgression,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,
         GreatRunesRequiredErdtree,

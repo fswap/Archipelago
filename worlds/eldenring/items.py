@@ -132,7 +132,7 @@ class ERItemData:
                 base_name = self.base_name,
                 count = count,
                 filler = False, # Don't count multiples as filler by default
-                replacable = True,
+                replacable = self.replacable,
             )
             
     def counts_filler(self, counts: List[int]) -> Generator["ERItemData", None, None]:
@@ -146,7 +146,7 @@ class ERItemData:
                 base_name = self.base_name,
                 count = count,
                 filler = self.filler,
-                replacable = True,
+                replacable = self.replacable,
             )
 
     def should_inject(self, options: EROptions) -> bool:

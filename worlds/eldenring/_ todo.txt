@@ -12,6 +12,9 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
+multiple ER worlds with important at priority only on fail to gen by not having enough priority early
+need to finish below to fix
+
 wip
 instead of random dup locations or early chances
 make sure enough locations exist to not fill error even if enough priority locations exist
@@ -33,8 +36,6 @@ progressive region locks for caelid > dragonbarrow, ensis > scadu altus, cerulea
 client would need to give respective item based on progression?
 
 option to turn off healing item randomization / start with
-
-for in-game poptracker idea, have each map marker just check a flag that the client sets, so logic doesn't have to be in-game
 
 
 - Art that will be needed probs -
