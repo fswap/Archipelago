@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from Options import Accessibility, ProgressionBalancing
-from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLogic,\
+from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLogic, SeparateProgression,\
         GreatRunesRequiredLeyndell, GreatRunesRequiredMountain, GreatRunesRequiredErdtree,\
         RoyalAccess,\
         StoneswordMasterKey,\
@@ -39,6 +39,7 @@ template = {
     "exclude_dungeon":                      ExcludeDungeonBosses,
     "world_logic":                          WorldLogic,
     "soft_logic":                           RegionSoftLogic,
+    "separate_progression":                 SeparateProgression,
     "great_runes_required_leyndell":        GreatRunesRequiredLeyndell,
     "great_runes_required_mountain":        GreatRunesRequiredMountain,
     "great_runes_required_erdtree":         GreatRunesRequiredErdtree,
@@ -56,7 +57,7 @@ template = {
     "dlc_timing":                           DLCTimingOption,
     "dlc_max_level_weapons":                DLCMaxLevelWeapons,
     "dlc_abyssal_torrent":                  DLCAbyssalTorrent,
-    # "spiritspring_stones":                  DLCSpiritspringStones,
+    "spiritspring_stones":                  DLCSpiritspringStones,
     
     "enemy_rando":                          EnemyRando,
     "restrictive_bosses":                   RestrictiveBossPlacement,
@@ -115,6 +116,7 @@ all_random_options = {
     "exclude_dungeon":                      "random",
     "world_logic":                          "random",
     "soft_logic":                           "random",
+    "separate_progression":                 "random",
     "great_runes_required_leyndell":        "random",
     "great_runes_required_mountain":        "random",
     "great_runes_required_erdtree":         "random",
@@ -132,7 +134,7 @@ all_random_options = {
     "dlc_timing":                           "random",
     "dlc_max_level_weapons":                "random",
     "dlc_abyssal_torrent":                  "random",
-    # "spiritspring_stones":                  "random",
+    "spiritspring_stones":                  "random",
     
     "enemy_rando":                          EnemyRando.option_true,
     "restrictive_bosses":                   "random",
@@ -301,7 +303,7 @@ dlc_only = {
     "dlc_timing":                           DLCTimingOption.option_off,
     "dlc_max_level_weapons":                DLCMaxLevelWeapons.option_false,
     "dlc_abyssal_torrent":                  DLCAbyssalTorrent.option_false,
-    # "spiritspring_stones":                  DLCSpiritspringStones.option_true,
+    "spiritspring_stones":                  DLCSpiritspringStones.option_true,
     
     "enemy_rando":                          EnemyRando.option_true,
     "restrictive_bosses":                   RestrictiveBossPlacement.option_true,
@@ -362,7 +364,7 @@ dlc = {
     "dlc_timing":                           DLCTimingOption.option_late,
     "dlc_max_level_weapons":                DLCMaxLevelWeapons.option_false,
     "dlc_abyssal_torrent":                  DLCAbyssalTorrent.option_true,
-    # "spiritspring_stones":                  DLCSpiritspringStones.option_true,
+    "spiritspring_stones":                  DLCSpiritspringStones.option_true,
     
     "enemy_rando":                          EnemyRando.option_true,
     "restrictive_bosses":                   RestrictiveBossPlacement.option_true,
@@ -423,7 +425,7 @@ all_bosses = {
     "dlc_timing":                           DLCTimingOption.option_late,
     "dlc_max_level_weapons":                DLCMaxLevelWeapons.option_false,
     "dlc_abyssal_torrent":                  DLCAbyssalTorrent.option_true,
-    # "spiritspring_stones":                  DLCSpiritspringStones.option_true,
+    "spiritspring_stones":                  DLCSpiritspringStones.option_true,
     
     "enemy_rando":                          EnemyRando.option_true,
     "restrictive_bosses":                   RestrictiveBossPlacement.option_true,

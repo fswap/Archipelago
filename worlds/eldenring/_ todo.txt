@@ -12,6 +12,8 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
+make option to keep base prog in base and dlc prog in dlc
+
 wip
 instead of random dup locations or early chances
 make sure enough locations exist to not fill error even if enough priority locations exist

@@ -71,6 +71,15 @@ class RegionSoftLogic(DefaultOnToggle):
     Consecrated Snowfield also requires the same items as Mountaintops."""
     display_name = "Region Soft Logic"
 
+class SeparateProgression(Toggle):
+    """Separate Progression.
+    
+    If separate:
+    - Base game progession will be in base game or other worlds.
+    - DLC progression will be in DLC or other worlds.
+    """
+    display_name = "Separate Progression"
+
 class GreatRunesRequiredLeyndell(Range):
     """How many great runes are required to enter Leyndell."""
     display_name = "Leyndell Great Runes Required"
@@ -331,14 +340,14 @@ class ExampleTrapCount(BaseTrapCount):
     """
     display_name = "Example Trap Count"
     
-class NGPlusTrapCount(BaseTrapCount): # https://github.com/borgCode/TarnishedTool used this tool to test it, could figure out how to implement it from here
+class NGPlusTrapCount(BaseTrapCount):
     """
     NG+ Trap: Sets the game to NG+7 until the player dies.
     """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
     display_name = "NG+ Trap Count"
     visibility = Visibility.none
     
-class StatusTrapCount(BaseTrapCount): 
+class StatusTrapCount(BaseTrapCount):
     """
     Status Trap: Applies a random status to the player.
     """ # excluding deathblight... or keep it for the funny clips
@@ -482,10 +491,10 @@ class ERPriorityLocationGroups(PriorityLocations):
     """
     display_name = "Priority Location Groups"
     default = ["Achievement Boss", "Seedtree", "Map", "Church", "Key Items"]
-    valid_keys = ["chest", "scarab", "seedtree", "basin", "church", "map", "key items",
-        "fragment", "cross", "revered", "overworld boss", "dlc overworld boss", 
-        "achievement boss", "dlc remembrance boss", "boss reward", "dlc boss reward"]
-    valid_keys_casefold = True
+    valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
+        "Fragment", "Cross", "Revered", "Overworld boss", "DLC Overworld Boss", 
+        "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
+    valid_keys_casefold = False
     
 class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
@@ -632,6 +641,7 @@ class EROptions(PerGameCommonOptions):
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
     soft_logic: RegionSoftLogic
+    separate_progression: SeparateProgression
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
     great_runes_required_mountain: GreatRunesRequiredMountain
     great_runes_required_erdtree: GreatRunesRequiredErdtree
@@ -707,6 +717,7 @@ option_groups = [
         ExcludeDungeonBosses,
         WorldLogic,
         RegionSoftLogic,
+        SeparateProgression,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,
         GreatRunesRequiredErdtree,

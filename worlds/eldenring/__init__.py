@@ -937,9 +937,12 @@ class EldenRing(World):
                 total_required += self.options.great_runes_required_erdtree
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
  
+            if self.options.separate_progression:
+                total_required = 0
+ 
             if self.options.enable_dlc:
                 # before gravesite
-                if self.options.dlc_start != 0:
+                if self.options.dlc_start == 0:
                     prio_locations = self._find_prio_locations("DLC Path")
                     total_required += 1 # gravesite lock
                     locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
@@ -1018,6 +1021,9 @@ class EldenRing(World):
                 for r in ["Gravesite Plain","Fog Rift Catacombs","Belurat Gaol","Dragon's Pit","Ruined Forge Lava Intake"]:
                     prio_locations.extend(self.prio_in_region[r])
         
+        if self.options.separate_progression and fall:
+            fall = False
+        
         if self.base_enabled and self.options.dlc_start == 0:
             
             if fall or region == "DLC Path": # path to dlc regions
@@ -1080,6 +1086,7 @@ class EldenRing(World):
         
         # warning(f"{region}, {prio_locations}")
         return prio_locations
+
         
     def _create_injectable_items(self, num_required_extra_items: int):
         """Returns a list of items to inject into the multiworld instead of skipped items.
@@ -1567,7 +1574,8 @@ class EldenRing(World):
                     lambda state: state.has("Imbued Sword Key", self.player, 1) or self._can_go_to(state, "Ancient Ruins of Rauh"))
             elif "dlc" not in self.options.exclude_locations.excluded_groups():
                 if (self.options.dlc_scadutree_fragments.value
-                    or self.options.dlc_messmer_kindle.value): # only do loop if one of these are on
+                    or self.options.dlc_messmer_kindle.value
+                    or self.options.separate_progression.value): # only do loop if one of these are on
                     for region in self.multiworld.get_regions(self.player):
                         for location in region.locations:
                             if region.name in region_order:
@@ -1576,11 +1584,23 @@ class EldenRing(World):
                                         lambda item: (item.player != self.player)
                                             or (item.data.base_name != "Scadutree Fragment")
                                         )
-                                if self.options.dlc_messmer_kindle.value:
+                                if self.options.separate_progression.value:
+                                    self._add_item_rule(location.name,
+                                        lambda item: (item.player != self.player)
+                                            or not ((item.data.is_dlc or item.found_in_dlc) and item.classification == ItemClassification.progression)
+                                        )
+                                elif self.options.dlc_messmer_kindle.value:
                                     self._add_item_rule(location.name,
                                         lambda item: (item.player != self.player)
                                             or (item.data.name != "Messmer's Kindling" and item.data.name != "Messmer's Kindling Shard")
                                         )
+                            elif region.name in region_order_dlc:
+                                if self.options.separate_progression.value:
+                                    self._add_item_rule(location.name,
+                                        lambda item: (item.player != self.player)
+                                            or not (not (item.data.is_dlc or item.found_in_dlc) and item.classification == ItemClassification.progression)
+                                        )
+                                
                                 
                 self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: state.has("Imbued Sword Key", self.player, 4))
                 self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: state.has("Imbued Sword Key", self.player, 4))
@@ -3534,6 +3554,7 @@ class EldenRing(World):
                 "exclude_dungeon": self.options.exclude_dungeon.value,
                 "world_logic": self.options.world_logic.value,
                 "soft_logic": self.options.soft_logic.value,
+                "separate_progression": self.options.separate_progression.value,
                 "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,
                 "great_runes_required_mountain": self.options.great_runes_required_mountain.value,
                 "great_runes_required_erdtree": self.options.great_runes_required_erdtree.value,
