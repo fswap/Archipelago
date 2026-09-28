@@ -1752,13 +1752,12 @@ class EldenRing(World):
                 self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
                 self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
                 
-                self._add_entrance_rule("Siofra River", "Siofra & Ainsel Lock")
-                self._add_entrance_rule("Nokron, Eternal City Start", "Siofra & Ainsel Lock")
-                self._add_entrance_rule("Ainsel River", "Siofra & Ainsel Lock")
-                
-                self._add_entrance_rule("Ainsel River Main", "Deeproot & Ainsel Main Lock")
-                self._add_entrance_rule("Deeproot Depths", "Deeproot & Ainsel Main Lock")
-                # self._add_entrance_rule("Lake of Rot", "Deeproot & Ainsel Main Lock")
+                self._add_entrance_rule("Siofra River", "Siofra Lock")
+                self._add_entrance_rule("Nokron, Eternal City Start", "Siofra Lock")
+                self._add_entrance_rule("Ainsel River", "Ainsel Lock")
+                self._add_entrance_rule("Ainsel River Main", "Ainsel Lock")
+                self._add_entrance_rule("Deeproot Depths", "Deeproot Lock")
+                self._add_entrance_rule("Deeproot Depths Upper", "Deeproot Lock")
                 
                 self._add_entrance_rule("Caelid", "Caelid Lock")
                 self._add_entrance_rule("Sellia Crystal Tunnel", "Caelid Lock")
@@ -1786,14 +1785,16 @@ class EldenRing(World):
                 if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
                 self._add_entrance_rule("Belurat", "Belurat Lock")
                 self._add_entrance_rule("Belurat Swamp", "Belurat Lock")
-                self._add_entrance_rule("Castle Ensis", "Ensis Lock")
-                self._add_entrance_rule("Fog Rift Fort", lambda state: state.has("Ensis Lock", self.player) and state.has("Scadu Altus Lock", self.player))
+                self._add_location_rule(
+                    "BTS|EI/SR: Euporia - outside to SE downstairs, drop down from gazebo, after jump to window, continue down and down",
+                    "Belurat Lock")
+                self._add_entrance_rule("Castle Ensis", "Ensis & Scadu Altus Lock")
+                self._add_entrance_rule("Scadu Altus", "Ensis & Scadu Altus Lock")
                 self._add_entrance_rule("Ellac River", "Ellac Lock")
-                self._add_entrance_rule("Cerulean Coast", "Cerulean Lock")
+                self._add_entrance_rule("Cerulean Coast", "Cerulean & Charo Lock")
+                self._add_entrance_rule("Charo's Hidden Grave", "Cerulean & Charo Lock")
                 self._add_entrance_rule("Stone Coffin Fissure", lambda state: state.has("Stone Coffin Lock", self.player) and self._can_go_to(state, "Scadu Altus"))
                 self._add_entrance_rule("Jagged Peak Foot", "Jagged Peak Lock")
-                self._add_entrance_rule("Charo's Hidden Grave", "Charo's Lock")
-                self._add_entrance_rule("Scadu Altus", "Scadu Altus Lock")
                 self._add_entrance_rule("Rauh Base", "Rauh Base Lock")
                 self._add_entrance_rule("Shadow Keep", "Shadow Keep Lock")
                 self._add_entrance_rule("Shadow Keep, Church District", "Shadow Keep Lock")
@@ -3249,8 +3250,9 @@ class EldenRing(World):
     def _deeproot_route_marker_requirement(self) -> ERReq:
         if self._uses_region_lock_logic():
             return ERReq.all(
-                ERReq.item("Siofra & Ainsel Lock"),
                 ERReq.item("Caelid Lock"),
+                ERReq.item("Siofra Lock"),
+                ERReq.item("Ainsel Lock"),
                 ERReq.item("Deeproot Lock"),
             )
         return self._region_marker_requirement("Deeproot Depths")
