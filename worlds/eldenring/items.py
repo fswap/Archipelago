@@ -2267,30 +2267,30 @@ _vanilla_items = [
     ERItemData("Haligtree Master Key", 7830117, ERItemCategory.GOODS, classification=ItemClassification.progression, master_key=True),
     
     # MARK: Region Lock Items
-    ERItemData("Weeping Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Stormveil Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Liurnia Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Weeping Lock", 7830300, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Stormveil Lock", 7830301, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Liurnia Lock", 7830302, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    # ERItemData("South West Underground Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Siofra & Ainsel Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Deeproot & Ainsel Main Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Siofra Lock", 7830303, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Ainsel Lock", 7830304, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Deeproot Lock", 7830305, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     # ERItemData("Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True), # dectus
     
-    ERItemData("Caelid Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Caelid Lock", 7830306, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Mt. Gelmir Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Volcano Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Sewer Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Mt. Gelmir Lock", 7830307, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Volcano Lock", 7830308, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Sewer Lock", 7830309, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Mohgwyn Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Mohgwyn Lock", 7830310, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Farum Azula Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Ashen Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Farum Azula Lock", 7830311, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Ashen Lock", 7830312, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Haligtree Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Haligtree Lock", 7830313, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
-    ERItemData("Gravesite Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Gravesite Lock", 7830350, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
 ]
 
 #MARK: DLC Items
@@ -2931,19 +2931,17 @@ _dlc_items = [
     ERItemData("Jolán and Anna", 2220000, ERItemCategory.GOODS),
     
     #MARK: DLC Region Lock Items
-    ERItemData("Belurat Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Ensis Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Ellac Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Cerulean Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Stone Coffin Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Jagged Peak Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Charo's Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Scadu Altus Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Rauh Base Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Shadow Keep Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Recluses' Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Abyssal Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Ancient Ruins Lock", 99999, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Belurat Lock", 7830351, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Ensis & Scadu Altus Lock", 7830352, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Ellac Lock", 7830353, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Cerulean & Charo Lock", 7830354, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Stone Coffin Lock", 7830355, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Jagged Peak Lock", 7830356, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Rauh Base Lock", 7830357, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Shadow Keep Lock", 7830358, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Recluses' Lock", 7830359, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Abyssal Lock", 7830360, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    ERItemData("Ancient Ruins Lock", 7830361, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
         
     # copy of normal kindle, idk in game id
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
