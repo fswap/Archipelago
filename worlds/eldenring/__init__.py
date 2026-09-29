@@ -923,10 +923,39 @@ class EldenRing(World):
             
             if self.base_enabled and self.options.dlc_start == 0:
                 
+                # before Liurnia
+                prio_locations = self._find_prio_locations("Limgrave")
+                total_required += 3 # weeping and siofra and Liurnia
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # stormveil
+                option, min_shard = self._shard_exists("Rusty Key Shard")
+                if option and option["Max"] > 1: total_required += min_shard
+                else: total_required += 2
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))               
+                                              
                 # before Altus
                 prio_locations = self._find_prio_locations("Liurnia of The Lakes")
                 total_required += 2 # required to access altus, dectus shards later
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                total_required += 1 # raya lucaria, make shards later
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before Caelid
+                prio_locations = self._find_prio_locations("Altus Plateau")
+                total_required += 3 # caelid mt gelmir and volcano
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # dragonbarrow
+                prio_locations = self._find_prio_locations("Caelid")
+                total_required += 1
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # deeproot
+                prio_locations = self._find_prio_locations("Nokron, Eternal City")
+                total_required += 1
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required)) 
                 
                 # before Leyndell
                 prio_locations = self._find_prio_locations("Capital Outskirts")
@@ -967,17 +996,22 @@ class EldenRing(World):
                 
                 # before ensis
                 prio_locations = self._find_prio_locations("Gravesite Plain")
-                total_required += 1 # ensis lock
+                total_required += 4 # ensis lock, belurat, ellac, jagged peak
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
-                # before scadu altus
-                prio_locations = self._find_prio_locations("Castle Ensis")
-                total_required += 1 # scadu altus lock
+                # before cerulean
+                prio_locations = self._find_prio_locations("Ellac River")
+                total_required += 1 
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
+                
+                # before stone coffin
+                prio_locations = self._find_prio_locations("Cerulean Coast")
+                total_required += 1 
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before shadow keep
                 prio_locations = self._find_prio_locations("Scadu Altus")
-                total_required += 1 # shadow keep lock
+                total_required += 3 # shadow keep lock, rauh base, abssal woods
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before ancient ruins
@@ -1032,7 +1066,18 @@ class EldenRing(World):
             
             if fall or region == "Castle Ensis":
                 fall = True
-                prio_locations.extend(self.prio_in_region["Castle Ensis"])
+                for r in ["Castle Ensis","Fog Rift Fort"]:
+                    prio_locations.extend(self.prio_in_region[r])
+            
+            if region == "Cerulean Coast":
+                fall = True
+                for r in ["Cerulean Coast","Finger Ruins of Rhia"]:
+                    prio_locations.extend(self.prio_in_region[r])            
+            
+            if region == "Ellac River" or region == "Cerulean Coast":
+                fall = True
+                for r in ["Ellac River","Rivermouth Cave","Jagged Peak Foot","Jagged Peak","Charo's Hidden Grave","Lamenter's Gaol (Entrance)","Lamenter's Gaol (Upper)","Lamenter's Gaol (Lower)"]:
+                    prio_locations.extend(self.prio_in_region[r])
             
             if fall or region == "Gravesite Plain":
                 fall = True
@@ -1080,6 +1125,17 @@ class EldenRing(World):
                 for r in ["Capital Outskirts","Auriza Hero's Grave","Auriza Side Tomb","Sealed Tunnel"]:
                     prio_locations.extend(self.prio_in_region[r])
             
+            if region == "Nokron, Eternal City":
+                fall = True
+                for r in ["Nokron, Eternal City Start","Nokron, Eternal City"]:
+                    prio_locations.extend(self.prio_in_region[r])                
+            
+            if region == "Caelid" or region == "Nokron, Eternal City":
+                fall = True
+                for r in ["Caelid","Caelid Catacombs","Sellia Crystal Tunnel","Abandoned Cave","Minor Erdtree Catacombs",
+                        "Gale Tunnel","Redmane Castle Post Radahn","Wailing Dunes","War-Dead Catacombs"]:
+                    prio_locations.extend(self.prio_in_region[r])
+                        
             if fall or region == "Altus Plateau":
                 fall = True
                 for r in ["Altus Plateau","Sainted Hero's Grave","Perfumer's Grotto","Sage's Cave","Altus Tunnel"]:
@@ -1090,6 +1146,10 @@ class EldenRing(World):
                 for r in ["Liurnia of The Lakes","Bellum Highway","Road's End Catacombs","Black Knife Catacombs","Cliffbottom Catacombs"
                     ,"Stillwater Cave","Lakeside Crystal Cave","Raya Lucaria Crystal Tunnel","Caria Manor","Carian Study Hall","Ruin-Strewn Precipice"]:
                     prio_locations.extend(self.prio_in_region[r])
+            
+            if fall or region == "Siofra River":
+                fall = True
+                prio_locations.extend(self.prio_in_region["Siofra River"])
             
             if fall or region == "Limgrave":
                 for r in ["Limgrave","Stormhill","Coastal Cave","Church of Dragon Communion","Groveside Cave"
@@ -1604,7 +1664,7 @@ class EldenRing(World):
                                         )
                                 if self.options.separate_progression.value:
                                     self._add_item_rule(location.name,
-                                        lambda item: (item.player != self.player)
+                                        lambda item: (item.player != self.player and item.game != "EldenRing")
                                             or not ((item.data.is_dlc or item.found_in_dlc) and item.classification == ItemClassification.progression)
                                         )
                                 elif self.options.dlc_messmer_kindle.value:
@@ -1615,7 +1675,7 @@ class EldenRing(World):
                             elif region.name in region_order_dlc:
                                 if self.options.separate_progression.value:
                                     self._add_item_rule(location.name,
-                                        lambda item: (item.player != self.player)
+                                        lambda item: (item.player != self.player and item.game != "EldenRing")
                                             or not (not (item.data.is_dlc or item.found_in_dlc) and item.classification == ItemClassification.progression)
                                         )
                                 
