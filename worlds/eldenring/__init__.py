@@ -179,7 +179,7 @@ class EldenRing(World):
                     # raise OptionError(f"\n  A progression item: {loc.item},\n  was placed on a non-priority location: ({loc.name}),\n  you most likely have to little priority locations.")
               
         if len(badly_placed_items) > 0:
-            raise OptionError(f"misplaced prog: {badly_placed_items}")
+            raise OptionError(f"{self.player_name} misplaced prog: {badly_placed_items}")
             
         return super().post_fill()
 
@@ -242,10 +242,10 @@ class EldenRing(World):
             m_goal_bosses = [boss for boss in m_goal_bosses if not boss.dungeon]
         
         if self.multiworld.players != 1: # this only applies when not solo
-            if len(self._goal_bosses()) > self.settings.goal_bosses_allowed:
+            if len(m_goal_bosses) > self.settings.goal_bosses_allowed:
                 raise OptionError(f"EldenRing host.yaml goal_bosses_allowed Error: "
                                 f"Player {self.player_name} has Goal Bosses count set higher then allowed amount. "
-                                f"Current amount: {len(self._goal_bosses())}, allowed amount: {self.settings.goal_bosses_allowed}.")
+                                f"Current amount: {len(m_goal_bosses)}, allowed amount: {self.settings.goal_bosses_allowed}.")
             elif self.settings.force_region_lock and self.options.world_logic == "open_world":
                 self.options.world_logic.value = 0
         
@@ -617,7 +617,6 @@ class EldenRing(World):
                         self.all_priority_locations.remove(location.name)
                 elif location.name in self.all_priority_locations:
                     if location.shop or location.hidden: self.all_priority_locations.remove(location.name)
-                    if self.options.important_at_priority_only: new_location.progress_type = LocationProgressType.PRIORITY
             else:
                 # Don't consider non-randomized locations to be AP-excluded
                 if location.name in excluded:
@@ -693,8 +692,6 @@ class EldenRing(World):
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
         
-        
-        
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and self.base_enabled]
         early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44 and self.base_enabled] # lim, storm, weep, liurnia, raya
@@ -725,6 +722,11 @@ class EldenRing(World):
             dlc_priority.remove(removed)
             self.all_priority_locations.remove(removed)
             dlc_loc_needed += 1
+        
+        # need to modify progress type here after create_regions
+        for location in self.multiworld.get_locations(self.player):
+            if location.name in self.all_priority_locations:
+                location.progress_type = LocationProgressType.PRIORITY
         
         # this can make more prio then prog exist, but it should be very little
         required_region_dupes = self._required_locations()
@@ -1260,7 +1262,8 @@ class EldenRing(World):
         self.all_starting_items.append(item)
         if item in self.itempool:
             self.itempool.remove(item)
-        # idk how its being handled so everything added to starting inventory will be called here
+        # only precollect important?
+        # if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
         self.multiworld.push_precollected(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
@@ -3006,7 +3009,8 @@ class EldenRing(World):
             goal_type = name[:-len(" Boss")]
             boss = [boss for boss in all_bosses if goal_type in boss.type and boss.flag != None]
             assert boss
-            result += boss
+            # no dupe bosses
+            [result.append(b) for b in boss if b not in result]
         return result
     
     def _is_complete(self, state: CollectionState) -> bool:
@@ -3338,6 +3342,7 @@ class EldenRing(World):
             "locationIdsToName": location_ids_to_name,
             "locationIdsToKeys": location_ids_to_keys,
             "locationIdsToTargets": location_ids_to_targets,
+            "allStartingItems": self.all_starting_items,
             "versions": ">=0.8.3 <0.9.0",
         }
 

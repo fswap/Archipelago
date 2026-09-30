@@ -3,7 +3,7 @@ er mod tools Smithbox, and Dark Script 3
 
 Run       python generate.py   need yaml in players
 Or        python launcher.py   so you can gen template options
-fuzzer    python fuzz.py -r 50 -j 16 -g eldenring -n 1
+fuzzer    python fuzz.py -r 50 -j 16 -g eldenring -n 1-2 --dump-ignored
 
 python launcher.py "Build APWorlds" -- "Elden Ring" 
 
@@ -11,6 +11,8 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 
 - TODO -
+
+multiple eldenring's have issues
 
 rusty key and stormveil lock do same thing-ish
 

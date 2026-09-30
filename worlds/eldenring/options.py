@@ -474,6 +474,9 @@ class EarlyLegacyDungeonsEarly(Toggle):
 class ERPriorityLocationGroups(PriorityLocations):
     """Prevent these location types from having an unimportant items.
     
+    If you add more priority locations then progression items, random priority locations will contain normal items.
+    Otherwise your world would contain a lot of other worlds progression.
+    
     - *Achievement Boss*: Base game Achievement bosses.
     - *DLC Remembrance Boss*: DLC Remembrance bosses.
     - *Boss Reward*: Base game bosses.
@@ -506,8 +509,7 @@ class ERImportantAtPriorityOnly(Toggle):
     Base: "LG/(SG): Finger Severer - beside grace"
     DLC: "GP/TPC: Scadutree Fragment - by cross"
     
-    Generator likes to fail if there is to little priority locations, add more if it fails.
-    For big syncs PLEASE test your yaml if this is on, there is a warning if there is to many priority locations set, you will need this warning to stop to bring this to big syncs."""
+    Generator likes to fail if there is to little priority locations, add more if it fails."""
     display_name = "Important at Priority Only"
     
 class ERImportantAtPriorityEarly(Range):
