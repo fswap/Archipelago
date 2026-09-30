@@ -22,9 +22,6 @@ from Options import OptionError
 
 # Settings
 class EldenRingSettings(settings.Group):
-    class ImportantAtPriorityOnlySafeGuard(settings.Bool):
-        """Stops gen if there are too many Priority locations, since most if not all progression items would go to Elden Ring."""
-
     class ForceLocalItems(list):
         """Choose certain categories to be local only for all EldenRing worlds.
         - [Est Items] **Item Group**
@@ -43,7 +40,6 @@ class EldenRingSettings(settings.Group):
         """How many Goal Bosses can Elden Ring have.
         There are 207 Bosses total in Base + DLC, and 165 in Base game."""
     
-    important_at_priority_only_safe_guard: typing.Union[ImportantAtPriorityOnlySafeGuard, bool] = True
     force_local_items: typing.Union[ForceLocalItems, list] = ["Filler"]
     force_region_lock: typing.Union[ForceRegionLock, bool] = True
     goal_bosses_allowed: typing.Union[GoalBossesAllowed, int] = 100
@@ -697,7 +693,7 @@ class EldenRing(World):
                 or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
                 important_items.append(item)
         
-        required_region_dupes = self._required_locations()
+        
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and self.base_enabled]
@@ -717,20 +713,21 @@ class EldenRing(World):
         
         if not dlc_priority and dlc_loc_needed and (self.options.dlc_messmer_kindle or self.options.dlc_scadutree_fragments) and self.options.enable_dlc: 
             raise OptionError(f"Player {self.player_name} has no dlc priority locations but dlc only progression items.")
-
-        if self.multiworld.players != 1 and self.settings.important_at_priority_only_safe_guard:
-            minimum_prio = 25
-            if len(base_priority) + len(dlc_priority) < minimum_prio:
-                raise OptionError(f"EldenRing host.yaml important_at_priority_only_safe_guard Error: "
-                                f"Player {self.player_name} has {len(base_priority) + len(dlc_priority)} Priority locations, "
-                                f"This should be more then {minimum_prio}.")
-            elif loc_needed + dlc_loc_needed < 0:
-                raise OptionError(f"EldenRing host.yaml important_at_priority_only_safe_guard Error: "
-                                f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, "
-                                f"this \"can\" make all progression items be in their world.")
-        if loc_needed + dlc_loc_needed < 0:
-            warning(f"Player {self.player_name} has {abs(loc_needed + dlc_loc_needed)} more Priority locations then Progression Items, this \"can\" make all progression items be in their world.")
-            return # don't need to dupe since enough exist 
+        
+        # make sure not to many priority locations exist
+        while loc_needed < 0:
+            removed = self.random.choice(sorted(base_priority))
+            base_priority.remove(removed)
+            self.all_priority_locations.remove(removed)
+            loc_needed += 1
+        while dlc_loc_needed < 0:
+            removed = self.random.choice(sorted(dlc_priority))
+            dlc_priority.remove(removed)
+            self.all_priority_locations.remove(removed)
+            dlc_loc_needed += 1
+        
+        # this can make more prio then prog exist, but it should be very little
+        required_region_dupes = self._required_locations()
         
         times_duped = {}
         new_code = len(location_dictionary)
@@ -1202,6 +1199,9 @@ class EldenRing(World):
 
         if self.options.map_option == 1:
             [self._add_to_inventory(item) for item in self.itempool if item.data.map]
+        
+        # for now just give lantern by default
+        self._add_to_inventory("Lantern")
 
     def _fill_local_item(
         self, name: str,

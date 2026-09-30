@@ -12,17 +12,6 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
-if to many priority exist remove prio till same as prog count, safeguard can be removed
-
-add an output count of prio loc and prog items
-
-multiple ER worlds with important at priority only on fail to gen by not having enough priority early
-need to finish below to fix
-
-wip
-instead of random dup locations or early chances
-make sure enough locations exist to not fill error even if enough priority locations exist
-
 rusty key and stormveil lock do same thing-ish
 
 remove markers, if not needed
