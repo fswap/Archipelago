@@ -776,7 +776,7 @@ class EldenRing(World):
         
         self.all_priority_locations += self.all_duplicate_locations
 
-    # MARK: VERY WIP STUFF
+    # MARK: Priority Fixer
     # currently guarantees access to main path, and some side paths
     def _required_locations(self) -> list[str]:
         """Figure out what regions require more priority locations to avoid fill errors."""
@@ -1177,8 +1177,7 @@ class EldenRing(World):
                     "Flask of Wondrous Physick",
                     "Spectral Steed Whistle",
                     "Spirit Calling Bell",
-                    "Whetstone Knife",
-                    "Lantern",
+                    "Whetstone Knife"
                 )]
 
         if not self.base_enabled: # dlc starting items
@@ -1201,7 +1200,7 @@ class EldenRing(World):
             [self._add_to_inventory(item) for item in self.itempool if item.data.map]
         
         # for now just give lantern by default
-        self._add_to_inventory("Lantern")
+        self._add_to_inventory(self.create_item("Lantern"))
 
     def _fill_local_item(
         self, name: str,
