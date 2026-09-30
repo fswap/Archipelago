@@ -7,7 +7,7 @@ from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, Exclu
     
 from .bosses import all_bosses
 
-unsupported_options = Visibility.none
+unsupported = Visibility.none
 
 # MARK: Game Options
 
@@ -180,6 +180,7 @@ class DLCAbyssalTorrent(Toggle):
 class DLCSpiritspringStones(Toggle):
     """Randomize the Spiritsping Stones.""" 
     display_name = "Randomize Spiritsping Stones"
+    visibility = unsupported
     
 # MARK: DLC Start
 
@@ -343,9 +344,8 @@ class ExampleTrapCount(BaseTrapCount):
 class NGPlusTrapCount(BaseTrapCount):
     """
     NG+ Trap: Sets the game to NG+7 until the player dies.
-    """ # could also be a random NG+ and make them stackable, even if its unlikely with the size of the itempool
+    """
     display_name = "NG+ Trap Count"
-    visibility = Visibility.none
     
 class StatusTrapCount(BaseTrapCount):
     """
@@ -353,7 +353,7 @@ class StatusTrapCount(BaseTrapCount):
     """ # excluding deathblight... or keep it for the funny clips
     # maybe add a 1/10 chance to add an additional effect that stacks, so a 1/1000 for 4 effects lol
     display_name = "Status Trap Count"
-    visibility = Visibility.none
+    visibility = unsupported
     
 # game speed trap, speeds game up by 25% - 50%
     
@@ -370,7 +370,7 @@ class BlindnessTrapCount(BaseTrapCount):
     Blindness Trap: Blinds the player for a short time.
     """
     display_name = "Blindness Trap Count"
-    visibility = Visibility.none
+    visibility = unsupported
     
 
 # MARK: Item & Location
@@ -406,10 +406,12 @@ class SnowFast(Toggle):
 class AutoEquipOption(Toggle):
     """Automatically equips any received armor or left/right weapons."""
     display_name = "Auto-Equip"
+    visibility = unsupported
     
 class AutoUpgradeOption(Toggle):
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
+    visibility = unsupported
     
 class CraftingKitOption(Choice):
     """Choose how the Crafting Kit is handled.

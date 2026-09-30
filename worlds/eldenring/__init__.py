@@ -100,118 +100,6 @@ class _LocationStatus(Enum):
         """Returns whether this location is accessible but also missable."""
         return self.value & 0b011 == 0b011
 
-@dataclass(frozen=True)
-class ERReq:
-    """A small serializable subset of Elden Ring access requirements."""
-
-    kind: str
-    args: Tuple[Any, ...]
-
-    @staticmethod
-    def item(name: str) -> "ERReq":
-        return ERReq("item", (name,))
-
-    @staticmethod
-    def location(name: str) -> "ERReq":
-        return ERReq("location", (name,))
-
-    @staticmethod
-    def all(*reqs: "ERReq") -> "ERReq":
-        flattened: List[ERReq] = []
-        for req in reqs:
-            if req.kind == "never":
-                return req
-            if req.kind == "all":
-                flattened.extend(cast(Tuple[ERReq, ...], req.args))
-            else:
-                flattened.append(req)
-
-        flattened = [req for req in flattened if req.kind != "all" or req.args]
-        if not flattened:
-            return ERReq("all", ())
-        if len(flattened) == 1:
-            return flattened[0]
-        return ERReq("all", tuple(flattened))
-
-    @staticmethod
-    def any(*reqs: "ERReq") -> "ERReq":
-        flattened: List[ERReq] = []
-        for req in reqs:
-            if req.kind == "never":
-                continue
-            if req.kind == "all" and not req.args:
-                return req
-            if req.kind == "any":
-                flattened.extend(cast(Tuple[ERReq, ...], req.args))
-            else:
-                flattened.append(req)
-
-        if not flattened:
-            return ERReq.never()
-        if len(flattened) == 1:
-            return flattened[0]
-        return ERReq("any", tuple(flattened))
-
-    @staticmethod
-    def never() -> "ERReq":
-        return ERReq("never", ())
-
-    def as_rule(self, world: "EldenRing") -> CollectionRule:
-        if self.kind == "item":
-            item = cast(str, self.args[0])
-            return lambda state: state.has(item, world.player)
-        if self.kind == "location":
-            location = cast(str, self.args[0])
-            return lambda state: state.can_reach_location(location, world.player)
-        if self.kind == "all":
-            rules = [req.as_rule(world) for req in cast(Tuple[ERReq, ...], self.args)]
-            return lambda state: all(rule(state) for rule in rules)
-        if self.kind == "any":
-            rules = [req.as_rule(world) for req in cast(Tuple[ERReq, ...], self.args)]
-            return lambda state: any(rule(state) for rule in rules)
-        if self.kind == "never":
-            return lambda state: False
-        raise AssertionError(f"Unknown Elden Ring requirement kind {self.kind}")
-
-    def as_slot_data(self, world: "EldenRing") -> object:
-        if self.kind == "item":
-            item_id = world.item_name_to_id.get(cast(str, self.args[0]))
-            return {"item": item_id} if item_id is not None else "never"
-        if self.kind == "location":
-            location_id = world.location_name_to_id.get(cast(str, self.args[0]))
-            return {"location": location_id} if location_id is not None else "never"
-        if self.kind == "all":
-            children = [
-                req.as_slot_data(world)
-                for req in cast(Tuple[ERReq, ...], self.args)
-            ]
-            return "never" if any(child == "never" for child in children) else {"all": children}
-        if self.kind == "any":
-            children = [
-                child
-                for req in cast(Tuple[ERReq, ...], self.args)
-                if (child := req.as_slot_data(world)) != "never"
-            ]
-            return {"any": children} if children else "never"
-        if self.kind == "never":
-            return "never"
-        raise AssertionError(f"Unknown Elden Ring requirement kind {self.kind}")
-
-    def without_locations(self, locations: Set[str]) -> "ERReq":
-        if self.kind == "location":
-            return ERReq.all() if cast(str, self.args[0]) in locations else self
-        if self.kind == "all":
-            return ERReq.all(*(
-                req.without_locations(locations)
-                for req in cast(Tuple[ERReq, ...], self.args)
-            ))
-        if self.kind == "any":
-            return ERReq.any(*(
-                req.without_locations(locations)
-                for req in cast(Tuple[ERReq, ...], self.args)
-            ))
-        return self
-
 # Main World
 class EldenRing(World):
     """
@@ -318,10 +206,6 @@ class EldenRing(World):
         self.goal_bosses = []
         self.dupe_location_dictionary = {}
         self.dupe_location_tables = {}
-        self.entrance_rule_requirements: Dict[str, ERReq] = {}
-        self.marker_entrance_requirements: Dict[str, ERReq] = {}
-        self.location_rule_requirements: Dict[str, ERReq] = {}
-        self.region_marker_requirement_cache: Dict[str, ERReq] = {}
         self.ignored_marker_entrance_rules: Set[str] = set()
         self.local_items = set()
         self.explicit_indirect_conditions = False
@@ -896,7 +780,7 @@ class EldenRing(World):
         self.all_priority_locations += self.all_duplicate_locations
 
     # MARK: VERY WIP STUFF
-    # currently guarantees access to main path, can still fail with side paths
+    # currently guarantees access to main path, and some side paths
     def _required_locations(self) -> list[str]:
         """Figure out what regions require more priority locations to avoid fill errors."""
         # map region names to prio locations in region
@@ -1430,21 +1314,17 @@ class EldenRing(World):
             
             if self.options.world_logic == "open_world":
                 if self.options.soft_logic:
-                    self._add_entrance_rule("Caelid", 
-                        lambda state: self._can_go_to(state, "Altus Plateau")
-                        ,marker_requirement=ERReq.all())
+                    self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
                     self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-                self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau")
-                                        ,marker_requirement=ERReq.all())
-                self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau")
-                                        ,marker_requirement=ERReq.all())
+                self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau"))
+                self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
             
             # Custom Rules
             
             if not self.options.enemy_rando and self.soft_logic_enabled: # boss rules
-                self._add_entrance_rule("Stormveil Start", "Margit's Shackle", marker_requirement=False)
+                self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player)
-                                        , marker_requirement=False)
+                                        )
                 if not self.options.rykard_encounter:
                     self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
                                             "Serpent-Hunter")
@@ -1480,23 +1360,17 @@ class EldenRing(World):
                 ],lambda state: state.has("Erudition", self.player) and
                 (state.has("Twinsage Glintstone Crown", self.player) or state.has("Olivinus Glintstone Crown", self.player) or
                 state.has("Lazuli Glintstone Crown", self.player) or state.has("Karolos Glintstone Crown", self.player) or
-                state.has("Witch's Glintstone Crown", self.player))
-                , marker_requirement=ERReq.all(ERReq.item("Erudition"), 
-                    ERReq.any(ERReq.item("Twinsage Glintstone Crown"),ERReq.item("Olivinus Glintstone Crown"),
-                    ERReq.item("Lazuli Glintstone Crown"),ERReq.item("Karolos Glintstone Crown"),
-                    ERReq.item("Witch's Glintstone Crown"))))
+                state.has("Witch's Glintstone Crown", self.player)))
         
             self._add_location_rule("LL/(CT): Memory Stone - top of tower, requires Erudition gesture", "Erudition")
             
             # MotG/SR spirit summon item
             self._add_location_rule(["MotG/(SR): Primal Glintstone Blade - in chest underground behind jellyfish seal"
-                ], lambda state: state.has("Spirit Jellyfish Ashes", self.player) and state.has("Spirit Calling Bell", self.player),
-                    marker_requirement=ERReq.all(ERReq.item("Spirit Jellyfish Ashes"), ERReq.item("Spirit Calling Bell")))
+                ], lambda state: state.has("Spirit Jellyfish Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
 
             # CS/AR spirit summon item
             self._add_location_rule(["CS/(AR): Graven-Mass Talisman - top of rise, use Fanged Imp Ashes or bewitching branch to make spirit enemies fight"
-                ], lambda state: state.has("Fanged Imp Ashes", self.player) and state.has("Spirit Calling Bell", self.player),
-                    marker_requirement=ERReq.all(ERReq.item("Sanged Imp Ashes"), ERReq.item("Spirit Calling Bell")))
+                ], lambda state: state.has("Fanged Imp Ashes", self.player) and state.has("Spirit Calling Bell", self.player))
                 
             # Paintings
             self._add_location_rule("LG/SR: Incantation Scarab - \"Homing Instinct\" Painting reward to NW", "\"Homing Instinct\" Painting")
@@ -1529,10 +1403,7 @@ class EldenRing(World):
             self._add_entrance_rule("Raya Lucaria Academy", "Academy Glintstone Key")
             self._add_entrance_rule("Carian Study Hall (Inverted)", "Carian Inverted Statue")
             
-            self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
-                marker_requirement=ERReq.item("Caelid Lock")
-                if self.options.world_logic == "region_lock"
-                else ERReq.all())
+            self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
             
             self._add_entrance_rule("Deeproot Depths Upper", lambda state: self._can_go_to(state, "Frenzied Flame Proscription"))
             
@@ -1544,8 +1415,7 @@ class EldenRing(World):
             self._add_entrance_rule("Volcano Manor Dungeon", 
                 lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") or self._can_go_to(state, "Volcano Manor"))
             
-            self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value),
-                                    marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_leyndell.value))
+            self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
             
             # MARK: TARNISHED DLC
             if self.options.enable_tp_dlc:
@@ -1561,87 +1431,59 @@ class EldenRing(World):
             if self.options.soft_logic:
                 self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold"))
             
-            self._add_entrance_rule("Hidden Path to the Haligtree", self._has_haligtree_secret_medallion_access,
-                marker_requirement=self._haligtree_secret_medallion_marker_requirement())
+            self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
+                state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player))
             
             if self.options.great_runes_required_erdtree.value > 0:
-                self._add_entrance_rule("Erdtree", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_erdtree.value),
-                                        marker_requirement=self._great_runes_marker_requirement(self.options.great_runes_required_erdtree.value))
+                self._add_entrance_rule("Erdtree", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_erdtree.value))
             
             # Smithing bell bearing rules
             if self.options.smithing_bell_bearing_option.value == 1:
-                self._add_entrance_rule("Altus Plateau", lambda state: self._bell_bearings_required(state, 1, False),
-                    marker_requirement=False)
-                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, False),
-                    marker_requirement=False)
-                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, False),
-                    marker_requirement=False)
-                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, False),
-                    marker_requirement=False)
+                self._add_entrance_rule("Altus Plateau", lambda state: self._bell_bearings_required(state, 1, False))
+                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, False))
+                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, False))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, False))
                 
-                self._add_entrance_rule("Dragonbarrow", lambda state: self._bell_bearings_required(state, 1, True),
-                    marker_requirement=False)
-                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, True),
-                    marker_requirement=False)
-                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, True),
-                    marker_requirement=False)
-                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, True),
-                    marker_requirement=False)
-                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._bell_bearings_required(state, 5, True),
-                    marker_requirement=False)
+                self._add_entrance_rule("Dragonbarrow", lambda state: self._bell_bearings_required(state, 1, True))
+                self._add_entrance_rule("Capital Outskirts", lambda state: self._bell_bearings_required(state, 2, True))
+                self._add_entrance_rule("Flame Peak", lambda state: self._bell_bearings_required(state, 3, True))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._bell_bearings_required(state, 4, True))
+                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._bell_bearings_required(state, 5, True))
                 if self.options.enable_dlc and self.options.dlc_start == 0:
                     self._add_entrance_rule("Gravesite Plain", # DLC requires all bell bearings if starting in base game
-                        lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True),
-                    marker_requirement=False)
+                        lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True))
             
             if self.options.early_legacy_dungeons:
-                self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key", marker_requirement=False)
-                self._add_entrance_rule("Caelid", "Rusty Key", marker_requirement=False)
-                self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key", marker_requirement=False)
+                self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
+                self._add_entrance_rule("Caelid", "Rusty Key")
+                self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
-            if not self._uses_region_lock_logic():
+            if not self.options.world_logic == "region_lock":
                 self._add_entrance_rule("Mohgwyn Palace",
                     lambda state: state.has("Pureblood Knight's Medal", self.player)
-                    or self._can_go_to(state, "Consecrated Snowfield"),
-                    marker_requirement=ERReq.any(ERReq.item("Pureblood Knight's Medal"),
-                    self._region_marker_requirement("Consecrated Snowfield")))
+                    or self._can_go_to(state, "Consecrated Snowfield"))
                 
             if self.options.dlc_start == 0 and self.options.enable_dlc:
                 if self.options.dlc_timing == 2:
                     if self.options.great_runes_required_mountain >= 0:
                         self._add_entrance_rule("Gravesite Plain",
                             lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
-                            and self._has_haligtree_secret_medallion_access
+                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
                             and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
-                            marker_requirement=ERReq.all(
-                                ERReq.item("Haligtree Secret Medallion (Left)"),
-                                ERReq.item("Haligtree Secret Medallion (Right)"),
-                                ERReq.location("MP/(MDM): Remembrance of the Blood Lord - mainboss drop"),
-                                ERReq.location("CL/(WD): Remembrance of the Starscourge - mainboss drop")) 
-                            and self._great_runes_marker_requirement(self.options.great_runes_required_mountain.value))
+                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                     else:
                         self._add_entrance_rule("Gravesite Plain",
                             lambda state: state.has("Rold Medallion", self.player)
-                            and self._has_haligtree_secret_medallion_access
+                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
                             and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
-                            marker_requirement=ERReq.all(
-                                ERReq.item("Haligtree Secret Medallion (Left)"),
-                                ERReq.item("Haligtree Secret Medallion (Right)"), 
-                                ERReq.item("Rold Medallion"),
-                                ERReq.location("MP/(MDM): Remembrance of the Blood Lord - mainboss drop"),
-                                ERReq.location("CL/(WD): Remembrance of the Starscourge - mainboss drop")))
+                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                 else:
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"),
-                    marker_requirement=ERReq.all(self._region_marker_requirement("Wailing Dunes"), self._region_marker_requirement("Mohgwyn Palace")))
+                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                     if self.options.dlc_timing == 0 and self.options.missable_location_behavior <= 1 and self.soft_logic_enabled: # Early medal
-                        self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player),
-                                                marker_requirement=False)
-                        self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player),
-                                                marker_requirement=False)
+                        self._add_entrance_rule("Altus Plateau", lambda state: state.has("Pureblood Knight's Medal", self.player))
+                        self._add_entrance_rule("Caelid", lambda state: state.has("Pureblood Knight's Medal", self.player))
         
         # MARK: DLC Rules
         if self.options.enable_dlc:
@@ -1717,8 +1559,7 @@ class EldenRing(World):
             # dlc paintings
             self._add_location_rule("GP/BG: Serpent Crest Shield - painting reward SE of BG", "\"Incursion\" Painting")
             self._add_location_rule("RB/NNM: Spiraltree Seal - \"The Sacred Tower\" Painting reward SW of NNM", 
-                lambda state: state.has("\"The Sacred Tower\" Painting", self.player) and self._can_go_to(state, "Enir Ilim")
-                , marker_requirement=ERReq.all(ERReq.item("\"The Sacred Tower\" Painting"), ERReq.location("EI/OW: Somber Smithing Stone [9] - by grace")))
+                lambda state: state.has("\"The Sacred Tower\" Painting", self.player) and self._can_go_to(state, "Enir Ilim"))
             self._add_location_rule("JP/JPM: Rock Heart - \"Domain of Dragons\" Painting reward, after first spirit spring head down return path", "\"Domain of Dragons\" Painting")
             
             # furnace golem / Hefty Furnace Pot
@@ -1731,24 +1572,17 @@ class EldenRing(World):
                 "CHG/CHG: Glovewort Crystal Tear - furnace golem to W above river",
                 "CHG/CHG: Furnace Visage - furnace golem to W above river"
                 ], lambda state: state.has("Crafting Kit", self.player) 
-                    and state.has("Greater Potentate's Cookbook [2]", self.player) and state.has("Hefty Cracked Pot", self.player)
-                    , marker_requirement=ERReq.all(ERReq.item("Crafting Kit")
-                    , ERReq.item("Greater Potentate's Cookbook [2]"), ERReq.item("Hefty Cracked Pot")))
+                    and state.has("Greater Potentate's Cookbook [2]", self.player) and state.has("Hefty Cracked Pot", self.player))
             
             # DLC region rules
             
             self._add_entrance_rule("Belurat Swamp", lambda state: # the long drop down path lets you go here
-                state.has("Well Depths Key", self.player) or self._can_go_to(state, "Enir Ilim")
-                , marker_requirement=ERReq.any(ERReq.item("Well Depths Key")
-                , ERReq.location("EI/OW: Somber Smithing Stone [9] - by grace")))
+                state.has("Well Depths Key", self.player) or self._can_go_to(state, "Enir Ilim"))
             
             self._add_entrance_rule("Hinterland", "O Mother")
             
             self._add_entrance_rule("Cathedral of Manus Metyr", lambda state: state.has("Hole-Laden Necklace", self.player) and 
-                self._can_go_to(state, "Finger Ruins of Rhia") and self._can_go_to(state, "Finger Ruins of Dheo")
-                , marker_requirement=ERReq.all(ERReq.item("Hole-Laden Necklace")
-                , ERReq.location("FRR: Crimson Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center")
-                , ERReq.location("FRD: Cerulean Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center")))
+                self._can_go_to(state, "Finger Ruins of Rhia") and self._can_go_to(state, "Finger Ruins of Dheo"))
             
             # the funny gaol
             self._add_entrance_rule("Lamenter's Gaol (Upper)", "Gaol Upper Level Key")
@@ -2177,8 +2011,7 @@ class EldenRing(World):
             self._add_location_rule([ 
                 "LG/(SS): Golden Seed - give Roderika Chrysalids' Memento then talk to her at RH, or after SV mainboss item is at SS",
                 "SV/RT: Crimson Hood - shortcut elevator to SE, to SE under dead troll, after Roderika becomes a spirit tuner",
-            ], "Chrysalids' Memento", marker_requirement=ERReq.any(
-                    ERReq.item("Chrysalids' Memento"), ERReq.location("SV/SeC: Remembrance of the Grafted - mainboss drop")))
+            ], "Chrysalids' Memento")
             
             # MARK: Ensha
             
@@ -2188,7 +2021,7 @@ class EldenRing(World):
                 "RH: Royal Remains Armor - Ensha's spot, after getting half of secret medallion",
                 "RH: Royal Remains Gauntlets - Ensha's spot, after getting half of secret medallion",
                 "RH: Royal Remains Greaves - Ensha's spot, after getting half of secret medallion"
-            ], self._has_haligtree_secret_medallion_half_access)
+            ], lambda state: state.has("Haligtree Secret Medallion (Left)", self.player) or state.has("Haligtree Secret Medallion (Right)", self.player))
             
             # MARK: Sellen
             
@@ -2249,8 +2082,7 @@ class EldenRing(World):
             # MARK: Enia
             
             self._add_location_rule([ "RH: Talisman Pouch - talk to Enia at 2 great runes or Twin Maiden after farum boss",
-            ], lambda state: self._has_enough_great_runes(state, 2),
-                marker_requirement=self._great_runes_marker_requirement(2))
+            ], lambda state: self._has_enough_great_runes(state, 2))
             
             # MARK: Yura
             
@@ -2263,7 +2095,8 @@ class EldenRing(World):
             # MARK: Latenna
 
             self._add_location_rule([ "LL/(SWS): Latenna the Albinauric - talk to Latenna after talking to Albus",
-            ], self._has_haligtree_secret_medallion_access) # might need the right medallion, having both kills her if not talked to
+            ], lambda state: state.has("Haligtree Secret Medallion (Left)", self.player) or state.has("Haligtree Secret Medallion (Right)", self.player))
+            # might need the right medallion, having both kills her if not talked to
             
             self._add_location_rule([ "CS/(AD): Somber Ancient Dragon Smithing Stone - summon Latenna at her sister and talk to her",
             ], lambda state: self._can_go_to(state, "Lakeside Crystal Cave") and self._can_go_to(state, "Mountaintops of the Giants")) 
@@ -2642,20 +2475,20 @@ class EldenRing(World):
             self._add_location_rule([
                 "BTS/SPA: Watchful Spirit - given by Hornsent Grandam while wearing the Divine Beast Head",
                 "BTS/SPA: Scorpion Stew - given by Hornsent Grandam while wearing the Divine Beast Head a second time after reloading"
-            ], lambda state: state.has("Storeroom Key", self.player) and state.has("Divine Beast Head", self.player), marker_requirement=False)
+            ], lambda state: state.has("Storeroom Key", self.player) and state.has("Divine Beast Head", self.player))
             
             self._add_location_rule([
                 "BTS/SPA: Gourmet Scorpion Stew - given by Hornsent Grandam after defeating SK mainboss",
                 "BTS/SPA: Gourmet Scorpion Stew - on Hornsent Grandam after defeating SK mainboss, exhausting her dialogue, and reloading"
             ], lambda state: state.has("Storeroom Key", self.player) and state.has("Divine Beast Head", self.player) 
-                and self._can_go_to(state, "Shadow Keep"), marker_requirement=False)
+                and self._can_go_to(state, "Shadow Keep"))
             
             # MARK: Florissax
             
             self._add_location_rule([
                 "JP/GADC: Ancient Dragon Florissax - admit to putting Florissax to sleep with Thiollier's Concoction",
                 "JP/GADC: Dragonbolt of Florissax - given by Florissax if you gave her Thiollier's Concoction before JP mainboss"
-                ], "Thiollier's Concoction", marker_requirement=False)
+                ], "Thiollier's Concoction")
             
             # MARK: Igon
             
@@ -2674,34 +2507,34 @@ class EldenRing(World):
                 "SA/(CC): Prayer Room Key - invader drop",
                 "SA/(CC): Ash of War: Flame Skewer - invader drop",
                 "BTS/SPA: Crusade Insignia - invader drop in NE courtyard"
-            ], lambda state: self._can_go_to(state, "Scadu Altus") and self._can_go_to(state, "Belurat"), marker_requirement=False)
+            ], lambda state: self._can_go_to(state, "Scadu Altus") and self._can_go_to(state, "Belurat"))
             
             self._add_location_rule(["SK/CDE: Fire Knight Queelign - on Queelign, give Iris of Grace, in room with door"
             ], lambda state: self._can_go_to(state, "Scadu Altus") and self._can_go_to(state, "Belurat")
-                and state.has("Prayer Room Key", self.player) and state.has("Iris of Grace", self.player), marker_requirement=False)
+                and state.has("Prayer Room Key", self.player) and state.has("Iris of Grace", self.player))
             
             self._add_location_rule(["SK/CDE: Queelign's Greatsword - on Queelign, give Iris of Occultation, in room with door"
             ], lambda state: self._can_go_to(state, "Scadu Altus") and self._can_go_to(state, "Belurat")
-                and state.has("Prayer Room Key", self.player) and state.has("Iris of Occultation", self.player), marker_requirement=False)
+                and state.has("Prayer Room Key", self.player) and state.has("Iris of Occultation", self.player))
             
             # MARK: Leda
             
             self._add_location_rule([
                 "SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her",
                 "SA/HC: Retaliatory Crossed-Tree - given by Leda after invading Ansbach alongside her"
-                ], lambda state: self._can_go_to(state, "Shadow Keep"), marker_requirement=False)
+                ], lambda state: self._can_go_to(state, "Shadow Keep"))
             
             # MARK: Freyja
             
-            self._add_location_rule("SK/SSF: Golden Lion Shield - given by Freyja after giving her Letter for Freyja", "Letter for Freyja", marker_requirement=False)
+            self._add_location_rule("SK/SSF: Golden Lion Shield - given by Freyja after giving her Letter for Freyja", "Letter for Freyja")
             
             # MARK: Ansbach
             
-            self._add_location_rule("SK/SFiF: Letter for Freyja - given by Ansbach after giving Secret Rite Scroll", "Secret Rite Scroll", marker_requirement=False)
+            self._add_location_rule("SK/SFiF: Letter for Freyja - given by Ansbach after giving Secret Rite Scroll", "Secret Rite Scroll")
             
             # MARK: Thiollier
             
-            self._add_location_rule("GP/PPC: Thiollier's Concoction - talk to Thiollier after giving him Black Syrup", "Black Syrup", marker_requirement=False)
+            self._add_location_rule("GP/PPC: Thiollier's Concoction - talk to Thiollier after giving him Black Syrup", "Black Syrup")
             
             self._add_location_rule([
                 "EI/GD: Thiollier's Hidden Needle - on Thiollier's body to NW",
@@ -2709,10 +2542,10 @@ class EldenRing(World):
                 "EI/GD: Thiollier's Garb - on Thiollier's body to NW",
                 "EI/GD: Thiollier's Gloves - on Thiollier's body to NW",
                 "EI/GD: Thiollier's Trousers - on Thiollier's body to NW"
-                ], lambda state: self._can_go_to(state, "Stone Coffin Fissure"), marker_requirement=False)
+                ], lambda state: self._can_go_to(state, "Stone Coffin Fissure"))
             
             self._add_location_rule("SCF/GDP: St. Trina's Blossom - on St. Trina's body after EI mainboss",
-                lambda state: self._can_go_to(state, "Enir Ilim"), marker_requirement=ERReq.location("EI/OW: Somber Smithing Stone [9] - by grace"))
+                lambda state: self._can_go_to(state, "Enir Ilim"))
             
             # MARK: Moore
             
@@ -2722,7 +2555,7 @@ class EldenRing(World):
                 "GP/MGC: Verdigris Armor - on Moore's body",
                 "GP/MGC: Verdigris Gauntlets - on Moore's body",
                 "GP/MGC: Verdigris Greaves - on Moore's body"
-                ], lambda state: self._can_go_to(state, "Scadu Altus"), marker_requirement=False)
+                ], lambda state: self._can_go_to(state, "Scadu Altus"))
             
             # friendly Kindred of Rot locations
             # "GP/PT: Forager Brood Cookbook [2] - given by friendly Kindred of Rot E of PT"
@@ -2768,32 +2601,27 @@ class EldenRing(World):
                 "SA/(CMM): Beloved Stardust - given by Ymir after ringing the hanging bell in FRR",
                 "SA/(CMM): Ruins Map (2nd) - given by Ymir after ringing the hanging bell in FRR",
                 "FRD: Cerulean Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center"
-            ], lambda state: self._can_go_to(state, "Finger Ruins of Rhia") and state.has("Hole-Laden Necklace", self.player)
-                , marker_requirement=ERReq.all(ERReq.item("Hole-Laden Necklace")
-                , ERReq.location("FRR: Crimson Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center")))
+            ], lambda state: self._can_go_to(state, "Finger Ruins of Rhia") and state.has("Hole-Laden Necklace", self.player))
             
             self._add_location_rule([
                 "SA/(CMM): Fleeting Microcosm - Ymir shop after ringing both hanging bells",
                 "SA/(CMM): Ruins Map (3rd) - given by Ymir after ringing both hanging bells"
             ], lambda state: self._can_go_to(state, "Finger Ruins of Dheo") and self._can_go_to(state, "Finger Ruins of Rhia")
-                and state.has("Hole-Laden Necklace", self.player), marker_requirement=False)
+                and state.has("Hole-Laden Necklace", self.player))
             
             self._add_location_rule([
                 "SA/CMM: Cherishing Fingers - in graveyard W of CMM after Ymir dead"
-            ], lambda state: self._can_go_to(state, "Finger Ruins of Miyr")
-                , marker_requirement=ERReq.location("FRM: Remembrance of the Mother of Fingers - mainboss drop"))
+            ], lambda state: self._can_go_to(state, "Finger Ruins of Miyr"))
             
             # MARK: Jolán
             
             self._add_location_rule([
                 "SA/(CMM): Swordhand of Night Jolán - on Jolán after killing Ymir, give Iris of Grace"                
-            ], lambda state: state.has("Iris of Grace", self.player) and self._can_go_to(state, "Finger Ruins of Miyr")
-                , marker_requirement=False)
+            ], lambda state: state.has("Iris of Grace", self.player) and self._can_go_to(state, "Finger Ruins of Miyr"))
             
             self._add_location_rule([
                 "SA/(CMM): Sword of Night - on Jolán after killing Ymir, give Iris of Occultation"
-            ], lambda state: state.has("Iris of Occultation", self.player) and self._can_go_to(state, "Finger Ruins of Miyr")
-                , marker_requirement=False)
+            ], lambda state: state.has("Iris of Occultation", self.player) and self._can_go_to(state, "Finger Ruins of Miyr"))
             
     def _add_remembrance_rules(self) -> None:
         """Adds rules for items obtainable for trading remembrances."""
@@ -3121,245 +2949,42 @@ class EldenRing(World):
 
         if self.options.excluded_location_behavior == "allow_useful":
             self.options.exclude_locations.value.clear()
-    
-    # MARK: Marker stuff 
-     
-    def _coerce_requirement(self, rule: Union[CollectionRule, str, ERReq]) -> Optional[ERReq]:
-        if isinstance(rule, ERReq):
-            return rule
-        if isinstance(rule, str):
-            return ERReq.item(rule)
-        return None
-
-    def _record_requirement(self, requirements: Dict[str, ERReq], key: str, requirement: ERReq) -> None:
-        existing = requirements.get(key)
-        requirements[key] = requirement if existing is None else ERReq.all(existing, requirement)
-        self.region_marker_requirement_cache.clear()
-              
+   
     def _add_location_rule(
         self,
         location: Union[str, List[str]],
-        rule: Union[CollectionRule, str, ERReq],
-        marker_requirement: Union[ERReq, bool, None] = None,
+        rule: Union[CollectionRule, str],
     ) -> None:        
         """Sets a rule for the given location if it that location is randomized.
 
         The rule can just be a single item/event name as well as an explicit rule lambda.
         """
-        requirement = self._coerce_requirement(rule)
         if isinstance(rule, str):
             assert item_table[rule].is_important(self.options) in (
                 ItemClassification.progression, ItemClassification.progression_deprioritized)
-        access_rule = requirement.as_rule(self) if requirement is not None else cast(CollectionRule, rule)
+            rule = lambda state, item=rule: state.has(item, self.player)
+        
         locations = location if isinstance(location, list) else [location]
         for location in locations:
             if self._location_status(location).is_absent: continue
-            add_rule(self.multiworld.get_location(location, self.player), access_rule)
-            if marker_requirement is False:
-                self.region_marker_requirement_cache.clear()
-            elif isinstance(marker_requirement, ERReq):
-                self._record_requirement(self.location_rule_requirements, location, marker_requirement)
-            else:
-                self._record_requirement(self.location_rule_requirements, location
-                    , requirement if requirement is not None else ERReq.never())
+            add_rule(self.multiworld.get_location(location, self.player), rule)
     
     def _add_entrance_rule(
         self,
         region: str,
-        rule: Union[CollectionRule, str, ERReq],
-        from_region: Optional[str] = None,
-        marker_requirement: Union[ERReq, bool, None] = None,
+        rule: Union[CollectionRule, str],
+        from_region: Optional[str] = None
     ) -> None:        
         """Sets a rule for the entrance to the given region."""
         assert region in location_tables
         if region not in self.created_regions: return
-        requirement = self._coerce_requirement(rule)
         if isinstance(rule, str):
             if " -> " not in rule:
                 assert item_table[rule].is_important(self.options) in (
                     ItemClassification.progression, ItemClassification.progression_deprioritized)
-        access_rule = requirement.as_rule(self) if requirement is not None else cast(CollectionRule, rule)
-        entrance = (
-            f"{from_region} => {region}" if from_region
-            else "Go To " + region
-        )
-        add_rule(self.multiworld.get_entrance(entrance, self.player), access_rule)
-        if marker_requirement is False:
-            self.region_marker_requirement_cache.clear()
-        elif isinstance(marker_requirement, ERReq):
-            self._record_requirement(self.entrance_rule_requirements, entrance, marker_requirement)
-        else:
-            self._record_requirement(self.entrance_rule_requirements, entrance
-                , requirement if requirement is not None else ERReq.never())
-
-
-    def _get_priority_marker_flags(self, location_ids_to_keys: Dict[int, str]) -> Dict[str, int]:
-        priority_ids = sorted(
-            location_id
-            for location in self.all_priority_locations
-            if (location_id := self.location_name_to_id.get(location)) in location_ids_to_keys
-        )
-        return {
-            str(location_id): self.priority_marker_flag_base + index
-            for index, location_id in enumerate(priority_ids)
-        }
-
-    def _get_priority_marker_requirements(self, priority_marker_flags: Dict[str, int]) -> Dict[str, object]:
-        return {
-            location_id: self._strict_marker_requirement(location).as_slot_data(self)
-            for location_id in priority_marker_flags
-            if (location_name := self.location_id_to_name.get(int(location_id))) is not None
-            and (location := self.multiworld.get_location(location_name, self.player)) is not None
-        }
-
-    def _strict_marker_requirement(self, location: Location) -> ERReq:
-        if location.parent_region is None:
-            return ERReq.never()
-        return ERReq.all(self._region_marker_requirement(location.parent_region.name),
-                        self._location_marker_requirement(location)
-                        ).without_locations({location for boss in all_bosses
-                                            for location in boss.locations})
-
-    def _location_marker_requirement(self, location: Location) -> ERReq:
-        requirement = self.location_rule_requirements.get(location.name)
-        if requirement is not None:
-            return requirement
-        if location.access_rule is Location.access_rule:
-            return ERReq.all()
-        return ERReq.never()
-
-    def _region_marker_requirement(self, region_name: str) -> ERReq:
-        cached = self.region_marker_requirement_cache.get(region_name)
-        if cached is not None:
-            return cached
-
-        try:
-            origin = self.multiworld.get_region("Menu", self.player)
-        except KeyError:
-            return ERReq.never()
-
-        requirements: List[ERReq] = []
-        stack: List[Tuple[Region, ERReq, Set[str]]] = [(origin, ERReq.all(), {origin.name})]
-        while stack and len(requirements) < 256:
-            region, requirement, seen = stack.pop()
-            if region.name == region_name:
-                requirements.append(requirement)
-                continue
-
-            for exit in reversed(region.exits):
-                if exit.player != self.player or exit.connected_region is None:
-                    continue
-                next_region = exit.connected_region
-                if next_region.name in seen:
-                    continue
-
-                exit_requirement = self._entrance_marker_requirement(exit)
-                if exit_requirement.kind == "never":
-                    continue
-                stack.append((
-                    next_region,
-                    ERReq.all(requirement, exit_requirement),
-                    seen | {next_region.name},
-                ))
-                
-        result = ERReq.any(*requirements)
-        if region_name == "Volcano Manor Dungeon":
-            result = ERReq.any(result, self._volcano_manor_route_marker_requirement())
-        self.region_marker_requirement_cache[region_name] = result
-        return result
-                
-    def _entrance_marker_requirement(self, entrance: Entrance) -> ERReq:
-        requirements: List[ERReq] = []
-
-        entrance_requirement = self.entrance_rule_requirements.get(entrance.name)
-        if entrance_requirement is not None:
-            requirements.append(entrance_requirement)
-        elif (
-            entrance.access_rule is not Entrance.access_rule
-            and entrance.name not in self.ignored_marker_entrance_rules
-        ):
-            return ERReq.never()
-
-        marker_requirement = self.marker_entrance_requirements.get(entrance.name)
-        if marker_requirement is not None:
-            requirements.append(marker_requirement)
-
-        return ERReq.all(*requirements)
-
-    # MARK: Marker rules
-    
-    def _uses_region_lock_logic(self) -> bool:
-        return self.options.world_logic == "region_lock"
-    
-    def _has_haligtree_secret_medallion_access(self, state: CollectionState) -> bool:
-        return all([state.has("Haligtree Secret Medallion (Left)", self.player), state.has("Haligtree Secret Medallion (Right)", self.player)])
-
-    def _has_haligtree_secret_medallion_half_access(self, state: CollectionState) -> bool:
-        return any([state.has("Haligtree Secret Medallion (Left)", self.player), state.has("Haligtree Secret Medallion (Right)", self.player)])
-
-    def _haligtree_secret_medallion_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.all(ERReq.item("Haligtree Secret Medallion (Left)"),ERReq.item("Haligtree Secret Medallion (Right)"))
-    
-    def _altus_route_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.all(ERReq.item("Liurnia Lock"), 
-                ERReq.item("Dectus Medallion (Left)"), ERReq.item("Dectus Medallion (Right)"))
-        return self._region_marker_requirement("Altus Plateau")
-    
-    def _deeproot_route_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.all(
-                ERReq.item("Caelid Lock"),
-                ERReq.item("Siofra Lock"),
-                ERReq.item("Ainsel Lock"),
-                ERReq.item("Deeproot Lock"),
-            )
-        return self._region_marker_requirement("Deeproot Depths")
-
-    def _ainsel_river_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.any(ERReq.item("Liurnia Lock"), self._deeproot_route_marker_requirement())
-        return ERReq.all()
-
-    def _leyndell_route_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.any(self._altus_route_marker_requirement(), self._deeproot_route_marker_requirement())
-        return ERReq.all()
-    
-    def _volcano_manor_route_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            return ERReq.all(
-                self._altus_route_marker_requirement(),
-                ERReq.item("Drawing-Room Key"),
-            )
-        return ERReq.all(
-            self._region_marker_requirement("Volcano Manor Drawing Room"),
-            ERReq.item("Drawing-Room Key"),
-        )
-
-    def _volcano_manor_dungeon_marker_requirement(self) -> ERReq:
-        if self._uses_region_lock_logic():
-            academy_route = ERReq.all(
-                self._altus_route_marker_requirement(),
-                ERReq.item("Academy Glintstone Key"),
-            )
-        else:
-            academy_route = ERReq.all(
-                self._region_marker_requirement("Raya Lucaria Academy Main"),
-                ERReq.item("Academy Glintstone Key"),
-            )
-        return ERReq.any(academy_route, self._volcano_manor_route_marker_requirement())
-
-    def _great_runes_marker_requirement(self, runes_required: int) -> ERReq:
-        if runes_required <= 0:
-            return ERReq.all()
-        if runes_required > len(self.great_rune_item_names):
-            return ERReq.never()
-        return ERReq.any(*(
-            ERReq.all(*(ERReq.item(rune) for rune in runes))
-            for runes in combinations(self.great_rune_item_names, runes_required)
-        ))
+            rule = lambda state, item=rule: state.has(item, self.player)
+        entrance = (f"{from_region} => {region}" if from_region else "Go To " + region)
+        add_rule(self.multiworld.get_entrance(entrance, self.player), rule)
 
     def _add_item_rule(self, location: str, rule: ItemRule) -> None:
         """Sets a rule for what items are allowed in a given location."""
@@ -3625,8 +3250,6 @@ class EldenRing(World):
                         location.data.targets = [location.data.targets]
                     location_ids_to_targets[location.address] = list(location.data.targets)
         
-        priority_marker_flags = self._get_priority_marker_flags(location_ids_to_keys)
-        
         slot_data = {
             "options": {
                 "key_item_shards": self.options.key_item_shards.value,
@@ -3716,8 +3339,6 @@ class EldenRing(World):
             "locationIdsToName": location_ids_to_name,
             "locationIdsToKeys": location_ids_to_keys,
             "locationIdsToTargets": location_ids_to_targets,
-            "priorityMarkerFlags": priority_marker_flags,
-            "priorityMarkerRequirements": self._get_priority_marker_requirements(priority_marker_flags),
             "versions": ">=0.8.3 <0.9.0",
         }
 
