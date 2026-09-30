@@ -1153,7 +1153,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(SWV): Skeletal Militiaman Ashes - boss drop", "Skeletal Militiaman Ashes", key="604539,0:0000530170::", altboss=True, overworldboss=True, targets=('lot:30171')),
         ERLocationData("LG/SWV: Golden Rune [4] - ruins NE of SMV", "Golden Rune [4]", key="604539,0:1045397000::", targets=('lot:1045390000')),
         ERLocationData("LG/(SWV): Mushroom x3 - within ruins", "Mushroom x3", key="604539,0:1045397020::", targets=('lot:1045390020')),
-        ERLocationData("LG/SWV: Smithing Stone [2] - ", "Smithing Stone [2]", key="604539,0:1045397040::", targets=('lot:1045390040')),
+        ERLocationData("LG/SWV: Smithing Stone [2] - to E, down cliff middle of pond", "Smithing Stone [2]", key="604539,0:1045397040::", targets=('lot:1045390040')),
         ERLocationData("LG/SWV: Golden Rune [1] 1 - graveyard SE of SMV", "Golden Rune [1]", key="604539,0:1045397050::", targets=('lot:1045390050')),
         ERLocationData("LG/SWV: Golden Rune [1] 2 - graveyard SE of SMV", "Golden Rune [1]", key="604539,0:1045397060::", targets=('lot:1045390060')),
         ERLocationData("LG/SWV: Golden Rune [1] 3 - graveyard SE of SMV", "Golden Rune [1]", key="604539,0:1045397070::", targets=('lot:1045390070')),

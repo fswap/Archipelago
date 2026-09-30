@@ -144,7 +144,8 @@ class EldenRing(World):
     all_excluded_locations: Set[str] = set()
     all_priority_locations: Set[str] = set()
     all_duplicate_locations: Set[str] = set()
-    all_starting_items: list[ERItem] = []
+    all_starting_items: list[int] = []
+    starting_inventory: list[str] = [] # start inv from options
     goal_bosses: list[ERBossInfo] = []
     dupe_location_dictionary: Dict[str, ERLocationData] = {}
     dupe_location_tables: Dict[str, list[ERLocationData]] = {}
@@ -199,6 +200,7 @@ class EldenRing(World):
         self.all_duplicate_locations = set()
         self.prio_in_region = {}
         self.all_starting_items = []
+        self.starting_inventory = []
         self.goal_bosses = []
         self.dupe_location_dictionary = {}
         self.dupe_location_tables = {}
@@ -314,6 +316,11 @@ class EldenRing(World):
                             self.options.local_items.value.add(item.name)
         
         self.local_items = self.options.local_items.value
+        
+        for i in self.options.start_inventory.value:
+            for _ in range(self.options.start_inventory.value[i]):
+                self.starting_inventory.append(i)
+        self.options.start_inventory.value = {} # remove so items aren't precollected
     
     def _allow_boss_for_rykard(self, boss: ERBossInfo) -> bool:
         """Returns whether boss is a valid location for Rykard in this seed."""
@@ -1203,6 +1210,9 @@ class EldenRing(World):
         
         # for now just give lantern by default
         self._add_to_inventory(self.create_item("Lantern"))
+        
+        for i in self.starting_inventory:
+            self._add_to_inventory(self.create_item(i))
 
     def _fill_local_item(
         self, name: str,
@@ -1259,11 +1269,11 @@ class EldenRing(World):
 
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
-        self.all_starting_items.append(item)
+        self.all_starting_items.append(self._er_item_full_id(item.data))
         if item in self.itempool:
             self.itempool.remove(item)
         # only precollect important?
-        # if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
+        # if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized):
         self.multiworld.push_precollected(item)
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
@@ -3342,7 +3352,7 @@ class EldenRing(World):
             "locationIdsToName": location_ids_to_name,
             "locationIdsToKeys": location_ids_to_keys,
             "locationIdsToTargets": location_ids_to_targets,
-            "allStartingItems": self.all_starting_items,
+            "allStartingItems": self.all_starting_items, # list of _er_item_full_id
             "versions": ">=0.8.3 <0.9.0",
         }
 

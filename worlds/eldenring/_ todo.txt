@@ -12,7 +12,7 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
-multiple eldenring's have issues
+priority has issues
 
 rusty key and stormveil lock do same thing-ish
 
