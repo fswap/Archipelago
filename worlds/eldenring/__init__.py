@@ -217,9 +217,18 @@ class EldenRing(World):
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         self.all_priority_locations.update(self.options.priority_location_groups.value)
-        self.all_priority_locations = [loc for loc in self.all_priority_locations if not location_dictionary[loc].missable] # remove these from priority
+        for loc in self.all_priority_locations.copy():
+            if (not self.base_enabled and not location_dictionary[loc].dlc 
+                or not self.options.enable_dlc and location_dictionary[loc].dlc 
+                or location_dictionary[loc].missable):
+                self.all_priority_locations.remove(loc)
+        
         local_item_only_lowercase = set(key.lower() for key in self.options.local_item_only.value)
         [local_item_only_lowercase.add(key.lower()) for key in self.settings.force_local_items]
+        
+        # this is the only thing that causes fill errors now
+        if len(local_item_only_lowercase) >= 5:
+            warning(f"\nEldenRing Player {self.player_name} has to many categories of local_item_only set to local, this can cause a fill error.")
         
         # verify shard counts
         for shard in self.options.key_item_shards.value:
@@ -688,15 +697,14 @@ class EldenRing(World):
         
         self.multiworld.itempool += self.itempool
         
+        # warning(f"all_priority_locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized)])}")
         warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations."""
         important_items = []
         for item in self.itempool:
-            if (item.is_important(self.options) == ItemClassification.progression
-                # rn im just making useful into progression since prog deprio goes into prio before useful
-                or self.options.useful_at_priority and item.is_important(self.options) == ItemClassification.useful): 
+            if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized):
                 important_items.append(item)
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
@@ -783,7 +791,7 @@ class EldenRing(World):
             for location in self.all_duplicate_locations
         })
         
-        self.all_priority_locations += self.all_duplicate_locations
+        self.all_priority_locations.update(self.all_duplicate_locations)
 
     # MARK: Priority Fixer
     # currently guarantees access to main path, and some side paths
@@ -915,6 +923,17 @@ class EldenRing(World):
                 if option and option["Max"] > 1: total_required += min_shard
                 else: total_required += 1 # kindle
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))                                 
+        else:
+            total_required = 0
+            
+            if self.options.enable_dlc:
+                # before ilir ilim
+                prio_locations = self._find_prio_locations("Ancient Ruins of Rauh")
+                option, min_shard = self._shard_exists("Messmer's Kindling Shard")
+                if option and option["Max"] > 1: total_required += min_shard
+                else: total_required += 1 # kindle
+                locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required)) 
+        
         
         return locations_needed
     
@@ -1924,7 +1943,7 @@ class EldenRing(World):
             "Festering Bloody Finger x10"], self.player) >= 1)
     
     def _has_enough_hearts(self, state: CollectionState, req_hearts: int) -> bool:
-        """Returns whether the given state has enough keys."""
+        """Returns whether the given state has enough dragon hearts."""
         return (state.count("Dragon Heart", self.player) + (state.count("Dragon Heart x3", self.player) * 3) + (state.count("Dragon Heart x5", self.player) * 5)) >= req_hearts
     
     def _add_shop_rules(self) -> None:

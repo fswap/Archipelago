@@ -3,7 +3,7 @@ er mod tools Smithbox, and Dark Script 3
 
 Run       python generate.py   need yaml in players
 Or        python launcher.py   so you can gen template options
-fuzzer    python fuzz.py -r 50 -j 16 -g eldenring -n 1-2 --dump-ignored
+fuzzer    python fuzz.py -r 50 -j 16 -g eldenring -n 1-2 --dump-ignored -m fuzz.yaml
 
 python launcher.py "Build APWorlds" -- "Elden Ring" 
 
@@ -12,11 +12,10 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
-priority has issues
+currently make prog_deprio place at priority and it has fully stopped the fill erroring
+only setting all items to local is the only issue
 
 rusty key and stormveil lock do same thing-ish
-
-remove markers, if not needed
 
 rest of keyitemshards at later point
 and presets for keyitemshards

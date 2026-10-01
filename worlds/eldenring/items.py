@@ -172,6 +172,7 @@ class ERItemData:
             if self.boss_tools and options.enemy_rando.value == 0: return ItemClassification.progression
         
         if options.enable_dlc:
+            if options.dlc_start == 1 and self.base_name == "Starlight Shards": return ItemClassification.filler
             if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
             if self.name == "Pureblood Knight's Medal" and (options.world_logic == 0
                     or options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1)):
