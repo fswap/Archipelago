@@ -7,8 +7,6 @@ from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, Exclu
     
 from .bosses import all_bosses
 
-unsupported = Visibility.none
-
 # MARK: Game Options
 
 class GoalOption(OptionSet):
@@ -64,7 +62,7 @@ class WorldLogic(Choice):
     display_name = "World Logic"
     option_region_lock = 0
     option_open_world = 1
-    default = 1
+    default = 0
     
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid.
@@ -177,10 +175,9 @@ class DLCAbyssalTorrent(Toggle):
     """Prevent Torrent from getting frightened."""
     display_name = "DLC Abyssal Torrent"
     
-class DLCSpiritspringStones(Toggle):
+class DLCSpiritspringStones(Toggle): # unsupported
     """Randomize the Spiritsping Stones.""" 
     display_name = "Randomize Spiritsping Stones"
-    visibility = unsupported
     
 # MARK: DLC Start
 
@@ -250,7 +247,7 @@ class RykardEncounter(DefaultOnToggle):
     If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent blocks."""
     display_name = "Rykard Encounter"
     
-class BossScalingPercent(Range):
+class BossScalingPercent(Range): # unsupported
     """Scales HP and damage for enemies placed into boss slots.
 
     100 keeps the current static randomizer scaling. 90 means 90% of the boss
@@ -347,13 +344,12 @@ class NGPlusTrapCount(BaseTrapCount):
     """
     display_name = "NG+ Trap Count"
     
-class StatusTrapCount(BaseTrapCount):
+class StatusTrapCount(BaseTrapCount): # unsupported
     """
     Status Trap: Applies a random status to the player.
     """ # excluding deathblight... or keep it for the funny clips
     # maybe add a 1/10 chance to add an additional effect that stacks, so a 1/1000 for 4 effects lol
     display_name = "Status Trap Count"
-    visibility = unsupported
     
 # game speed trap, speeds game up by 25% - 50%
     
@@ -365,12 +361,11 @@ class ExampleDLCTrapCount(BaseTrapCount):
     """
     display_name = "Example DLC Trap Count"
     
-class BlindnessTrapCount(BaseTrapCount):
+class BlindnessTrapCount(BaseTrapCount): # unsupported
     """
     Blindness Trap: Blinds the player for a short time.
     """
     display_name = "Blindness Trap Count"
-    visibility = unsupported
     
 
 # MARK: Item & Location
@@ -391,7 +386,7 @@ class RemoveWeaponAndSpellRequirements(Toggle):
     """Remove all stat requirements from weapons and spells."""
     display_name = "Remove All Weapon and Spell Requirements"
 
-class NoEquipLoadOption(Toggle):
+class NoEquipLoadOption(Toggle): # unsupported
     """Disable the equip load constraint from the game."""
     display_name = "No Equip Load"
 
@@ -403,15 +398,13 @@ class SnowFast(Toggle):
     """Adds Mountaintops of the Giants shortcuts for faster traversal."""
     display_name = "Add Shortcuts in Mountaintops for Faster Traversal"
 
-class AutoEquipOption(Toggle):
+class AutoEquipOption(Toggle): # unsupported
     """Automatically equips any received armor or left/right weapons."""
     display_name = "Auto-Equip"
-    visibility = unsupported
     
-class AutoUpgradeOption(Toggle):
+class AutoUpgradeOption(Toggle): # unsupported
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
-    visibility = unsupported
     
 class CraftingKitOption(Choice):
     """Choose how the Crafting Kit is handled.
@@ -501,7 +494,7 @@ class ERPriorityLocationGroups(PriorityLocations):
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
     valid_keys_casefold = False
     
-class ERImportantAtPriorityOnly(Toggle):
+class ERImportantAtPriorityOnly(Toggle): # unsupported
     """Should important items be only at priority locations.
     
     Creates extra locations at priority locations to contain all important items.

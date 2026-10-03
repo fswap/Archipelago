@@ -3148,7 +3148,7 @@ class EldenRing(World):
             # All items in the base game in approximately the order they appear
             all_item_order: List[ERItemData] = [
                 item_table[location.default_item_name]
-                for region in region_order
+                for region in region_order + region_order_dlc
                 # Shuffle locations within each region.
                 for location in er_world._shuffle(location_tables[region])
                 if er_world._location_status(location).is_randomized
@@ -3209,16 +3209,17 @@ class EldenRing(World):
                 remaining_fill(multiworld, locations_to_smooth, converted_item_order, name="ER Smoothing", check_location_can_fill=True)
                 
             if er_world.options.smooth_upgrade_items: # smoothed items cant be filler items
-                smooth_items([
+                smooth_items(sorted([
                     item for item in all_item_order 
                     if item.upgrade_item and item.is_important(er_world.options) != ItemClassification.progression
-                ])
+                ], key=lambda item: float(item.base_name[len(item.base_name)-2: len(item.base_name)-1]) + (item.count / 10) if item.base_name.find('[') != -1 else 10))
+                # sort by [#] and make non numbered 10, then add count as decimal
 
             if er_world.options.smooth_rune_items:
-                smooth_items([
+                smooth_items(sorted([
                     item for item in all_item_order
                     if item.runes and item.is_important(er_world.options) != ItemClassification.progression
-                ])
+                ], key=lambda item: item.runes * item.count)) # sort by runes given
 
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""
