@@ -24,6 +24,7 @@ from Options import OptionError
 class EldenRingSettings(settings.Group):
     class ForceLocalItems(list):
         """Choose certain categories to be local only for all EldenRing worlds.
+        If every category is set to local, Accessory and AshofWar will be unset to dodge fill errors.
         - [Est Items] **Item Group**
         - [472] **Weapon**: All Weapons and Ammo.
         - [423] **Armor**: All Armors.
@@ -34,7 +35,7 @@ class EldenRingSettings(settings.Group):
         - [2200] **Non-Filler**: Smithing stones, Spells and Spirit ashes."""
     
     class ForceRegionLock(settings.Bool):
-        """Disables open world option, since sphere 1 would have ~2.1k checks."""
+        """Forces region_lock on, since sphere 1 would have ~2.1k checks."""
     
     class GoalBossesAllowed(int):
         """How many Goal Bosses can Elden Ring have.
@@ -42,7 +43,7 @@ class EldenRingSettings(settings.Group):
     
     force_local_items: typing.Union[ForceLocalItems, list] = ["Filler"]
     force_region_lock: typing.Union[ForceRegionLock, bool] = True
-    goal_bosses_allowed: typing.Union[GoalBossesAllowed, int] = 100
+    goal_bosses_allowed: typing.Union[GoalBossesAllowed, int] = 150
 
 # Web stuff
 class EldenRingWeb(WebWorld):
@@ -98,9 +99,9 @@ class _LocationStatus(Enum):
 
 # Main World
 class EldenRing(World):
-    """
-    This is the description of the game that will be displayed on the AP website.
-    """
+    """ 
+    Elden Ring Archipeligo.
+    """ # description
 
     game = "EldenRing"
     options: EROptions
@@ -226,9 +227,15 @@ class EldenRing(World):
         local_item_only_lowercase = set(key.lower() for key in self.options.local_item_only.value)
         [local_item_only_lowercase.add(key.lower()) for key in self.settings.force_local_items]
         
-        # this is the only thing that causes fill errors now
-        if len(local_item_only_lowercase) >= 5:
-            warning(f"\nEldenRing Player {self.player_name} has to many categories of local_item_only set to local, this can cause a fill error.")
+        # if every category is local_only there is a 10 in 50 chance of fill errors, so make sure atleast some items can goto other worlds
+        if (len(local_item_only_lowercase.intersection(("weapon", "armor", "accessory", "goods"))) == 4
+            or len(local_item_only_lowercase.intersection(("weapon", "armor", "accessory", "filler", "non-filler"))) == 5):
+            # is everything local, make sure accessory and ashofwar is atleast not local to attempt to avoid fill error
+            warning(f"\nEldenRing Player {self.player_name} has too many categories of local_item_only set to local, this can cause a fill error."
+                    f"\nRemoving Accessory and AshofWar from local only to attempt to dodge fill error, or fix yaml to not make everything local.")
+            local_item_only_lowercase.remove("accessory") # makes fill errors 2 in 50
+            if "ashofwar" in local_item_only_lowercase:
+                local_item_only_lowercase.remove("ashofwar") # 0 errors
         
         # verify shard counts
         for shard in self.options.key_item_shards.value:

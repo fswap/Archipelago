@@ -572,7 +572,8 @@ class LocalItemOnly(OptionList):
     - [1000] **Filler**: All Crafting Mats, and some craftables.
     - [2200] **Non-Filler**: Smithing stones, Spells and Spirit ashes.
     
-    Filler is forced local by default in host.yaml, it floods the itempool with useless items.
+    If every category is set to local, Accessory and AshofWar will be unset to dodge fill errors.
+    *host.yaml can force categories local.*
     """
     display_name = "Local Item Only"
     default = ["Filler"]
