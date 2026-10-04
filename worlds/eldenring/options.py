@@ -212,15 +212,15 @@ class DLCStartingItems(OptionList):
                   "memory stones", "whetblades", "upgrade bell bearings"]
     valid_keys_casefold = True
 
-class DLCStartingShop(Toggle): # just the static rando option
+class DLCStartingShop(Toggle):
     """Add a shop at grace with all base game equipment for free."""
     display_name = "DLC Starting Shop"
     
-class DLCCarePackage(Toggle): # just the static rando option
+class DLCCarePackage(Toggle):
     """Start with 80 extra base game items."""
     display_name = "DLC Care Package"
     
-class DLCInitialRuneLevel(Choice): # just the static rando option
+class DLCInitialRuneLevel(Choice):
     """Runes are given to level up at start."""
     display_name = "DLC Initial Rune Level"
     option_0 = 0
@@ -247,7 +247,7 @@ class RykardEncounter(DefaultOnToggle):
     If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent blocks."""
     display_name = "Rykard Encounter"
     
-class BossScalingPercent(Range): # unsupported
+class BossScalingPercent(Range): # unsupported but will be
     """Scales HP and damage for enemies placed into boss slots.
 
     100 keeps the current static randomizer scaling. 90 means 90% of the boss
@@ -344,12 +344,13 @@ class NGPlusTrapCount(BaseTrapCount):
     """
     display_name = "NG+ Trap Count"
     
-class StatusTrapCount(BaseTrapCount): # unsupported
+class StatusTrapCount(BaseTrapCount): # unsupported, till after first release
     """
     Status Trap: Applies a random status to the player.
     """ # excluding deathblight... or keep it for the funny clips
     # maybe add a 1/10 chance to add an additional effect that stacks, so a 1/1000 for 4 effects lol
     display_name = "Status Trap Count"
+    visibility = Visibility.none
     
 # game speed trap, speeds game up by 25% - 50%
     
@@ -361,11 +362,12 @@ class ExampleDLCTrapCount(BaseTrapCount):
     """
     display_name = "Example DLC Trap Count"
     
-class BlindnessTrapCount(BaseTrapCount): # unsupported
+class BlindnessTrapCount(BaseTrapCount): # unsupported, till after first release
     """
     Blindness Trap: Blinds the player for a short time.
     """
     display_name = "Blindness Trap Count"
+    visibility = Visibility.none
     
 
 # MARK: Item & Location
@@ -386,9 +388,10 @@ class RemoveWeaponAndSpellRequirements(Toggle):
     """Remove all stat requirements from weapons and spells."""
     display_name = "Remove All Weapon and Spell Requirements"
 
-class NoEquipLoadOption(Toggle): # unsupported
+class NoEquipLoadOption(Toggle): # unsupported, till after first release
     """Disable the equip load constraint from the game."""
     display_name = "No Equip Load"
+    visibility = Visibility.none
 
 class ReduceNonSomberUpgradeCost(Toggle):
     """Reduce regular Smithing Stone costs for non-somber weapons to one stone per weapon level."""
@@ -398,11 +401,11 @@ class SnowFast(Toggle):
     """Adds Mountaintops of the Giants shortcuts for faster traversal."""
     display_name = "Add Shortcuts in Mountaintops for Faster Traversal"
 
-class AutoEquipOption(Toggle): # unsupported
+class AutoEquipOption(Toggle): # unsupported but will be
     """Automatically equips any received armor or left/right weapons."""
     display_name = "Auto-Equip"
     
-class AutoUpgradeOption(Toggle): # unsupported
+class AutoUpgradeOption(Toggle): # unsupported but will be
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
     
@@ -494,7 +497,7 @@ class ERPriorityLocationGroups(PriorityLocations):
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
     valid_keys_casefold = False
     
-class ERImportantAtPriorityOnly(Toggle): # unsupported
+class ERImportantAtPriorityOnly(Toggle): # unsupported but will be
     """Should important items be only at priority locations.
     
     Creates extra locations at priority locations to contain all important items.

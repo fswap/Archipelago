@@ -12,6 +12,8 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
+local items are causing issues ;-;
+
 currently make prog_deprio place at priority and it has fully stopped the fill erroring with prog at prio only
 
 rusty key and stormveil lock do same thing-ish

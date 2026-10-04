@@ -1049,7 +1049,7 @@ class EldenRing(World):
             if region == "Caelid" or region == "Nokron, Eternal City":
                 fall = True
                 for r in ["Caelid","Caelid Catacombs","Sellia Crystal Tunnel","Abandoned Cave","Minor Erdtree Catacombs",
-                        "Gale Tunnel","Redmane Castle Post Radahn","Wailing Dunes","War-Dead Catacombs"]:
+                        "Gale Tunnel","Redmane Castle Post Radahn"]:
                     prio_locations.extend(self.prio_in_region[r])
                         
             if fall or region == "Altus Plateau":
@@ -1350,12 +1350,13 @@ class EldenRing(World):
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
             self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Altus Plateau"))
             
-            if self.options.world_logic == "open_world":
-                if self.options.soft_logic:
-                    self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
-                    self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
-                self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau"))
-                self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
+            # altus before caelid
+            if self.options.soft_logic:
+                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
+                self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
+            # wailing dunes hard requires altus
+            self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau"))
+            self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
             
             # Custom Rules
             
