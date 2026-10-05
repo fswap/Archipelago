@@ -6342,3 +6342,8 @@ for k in ERPriorityLocationGroups.valid_keys:
     dupable_locations.update(location_name_groups[k])
 # locations that required locations might need
 dupable_locations.update(("LG/(SG): Finger Severer - beside grace", "GP/TPC: Scadutree Fragment - by cross"))
+
+early_dupable_locations = set()
+early_dupable_locations.update(loc for loc in dupable_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44) # lim, storm, weep, liurnia, raya
+early_dupable_locations.update(loc for loc in dupable_locations if location_dictionary[loc].dlc and location_dictionary[loc].region_value <= len(region_order) + 9 
+                     and location_dictionary[loc].region_value > len(region_order)) # grave, belurat, dragon pit, ensis

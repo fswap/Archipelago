@@ -15,7 +15,7 @@ from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_ru
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups
-from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc, dupable_locations
+from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc, dupable_locations, early_dupable_locations
 from .options import EROptions, option_groups, shard_list
 from .presets import er_options_presets
 from Options import OptionError
@@ -118,11 +118,17 @@ class EldenRing(World):
         for location in locations
         if location.ap_code is not None
     } | {
-        f"Dupe {_}: {location.name}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
+        f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
         for locations in location_tables.values()
         for location in locations
         if location.ap_code is not None and location.name in dupable_locations
-        for _ in range(1, 3) # how many dupes to prefill
+        for _ in range(1, 3) # how many dupes to prefill, dupe 1 and 2
+    } | {
+        f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
+        for locations in location_tables.values()
+        for location in locations
+        if location.ap_code is not None and location.name in early_dupable_locations
+        for _ in range(3, 5) # how many early dupes to prefill more, dupe 3 and 4
     }
     location_name_groups = location_name_groups
     item_name_groups = item_name_groups
@@ -790,12 +796,12 @@ class EldenRing(World):
                         if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
                         else: times_duped[location] = 1 # add to dict
                         new_code = 0
-                        if f"Dupe {times_duped[location]}: {location}" in EldenRing.location_name_to_id:
-                            new_code = EldenRing.location_name_to_id[f"Dupe {times_duped[location]}: {location}"]
+                        if f"{location}, extra item {times_duped[location]}" in EldenRing.location_name_to_id:
+                            new_code = EldenRing.location_name_to_id[f"{location}, extra item {times_duped[location]}"]
                             dupe_location = ERLocation( # replace works, yippee
                                 self.player,
                                 replace(location_dictionary[location], 
-                                    name=f"Dupe {times_duped[location]}: {location}", 
+                                    name=f"{location}, extra item {times_duped[location]}", 
                                     default_item_name = "Dummy item",
                                     ap_code = new_code),
                                 parent = region
@@ -1666,7 +1672,7 @@ class EldenRing(World):
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
             for dupe_location in self.all_duplicate_locations: # dupe locations require og locations
-                og_location = dupe_location[dupe_location.find(":")+2:]
+                og_location = dupe_location[:dupe_location.find("extra item")-2]
                 self._add_location_rule(dupe_location, lambda state, og_location=og_location: self._can_get(state, og_location))
             
         # if more then 1 world exists stop prio placing outside of prio
@@ -3317,9 +3323,7 @@ class EldenRing(World):
         
         duplicated_locations = {}
         for dupe_location in self.all_duplicate_locations:
-            duplicated_locations[dupe_location] = dupe_location[dupe_location.find(":")+2:]
-            # warning(f"{self.multiworld.get_location(dupe_location[dupe_location.find(":")+2:], self.player)} *extra items:* "
-            #         f"{self.multiworld.get_location(dupe_location[dupe_location.find(":")+2:], self.player).extra_items}")
+            duplicated_locations[dupe_location] = dupe_location[:dupe_location.find("extra item")-2]
         
         slot_data = {
             "options": {
