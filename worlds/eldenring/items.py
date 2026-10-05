@@ -1,19 +1,18 @@
 from dataclasses import dataclass
 import dataclasses
 from enum import IntEnum
-from typing import Any, cast, Callable, ClassVar, Dict, Generator, List, Optional, Set, Union
+from typing import Callable, ClassVar, Dict, Generator, List, Optional, Set, Union
 from logging import warning
 
 from BaseClasses import Item, ItemClassification
 from .options import EROptions, shard_list
 
 class ERItemCategory(IntEnum):
-    GOODS = 1 # Misc, Key, Spell, most stuff that goes into your inventory
+    GOODS = 1
     WEAPON = 2
     ARMOR = 3
     ACCESSORY = 4
     ASHOFWAR = 5
-    #CUSTOMWEAPON = 6 # reinforced and ash of wars
 
 @dataclass
 class ERItemData:
@@ -90,7 +89,7 @@ class ERItemData:
     scadu: bool = False
     """Scadutree frags"""
     
-    cracked_tear: bool = False
+    crystal_tear: bool = False
     """Whether this is a Wondrous Physick tear."""
 
     remembrance: bool = False
@@ -179,19 +178,16 @@ class ERItemData:
                 return ItemClassification.progression
         
         if options.important_at_priority_only:
-            if options.useful_at_priority and self.classification == ItemClassification.useful:
+            if options.flask_at_priority and self.base_name in {"Golden Seed", "Sacred Tear"}:
                 return ItemClassification.progression
-            else:
-                if options.flask_at_priority and self.base_name in {"Golden Seed", "Sacred Tear"}:
-                    return ItemClassification.progression
-                if options.talisman_pouches_at_priority and self.name == "Talisman Pouch":
-                    return ItemClassification.progression
-                if options.cracked_tears_at_priority and self.cracked_tear:
-                    return ItemClassification.progression
-                if options.memory_stones_at_priority and self.name == "Memory Stone":
-                    return ItemClassification.progression
-                if options.remembrances_at_priority and self.remembrance:
-                    return ItemClassification.progression
+            if options.talisman_pouches_at_priority and self.name == "Talisman Pouch":
+                return ItemClassification.progression
+            if options.crystal_tears_at_priority and self.crystal_tear:
+                return ItemClassification.progression
+            if options.memory_stones_at_priority and self.name == "Memory Stone":
+                return ItemClassification.progression
+            if options.remembrances_at_priority and self.remembrance:
+                return ItemClassification.progression
         
         return self.classification
 
@@ -2073,38 +2069,38 @@ _vanilla_items = [
     ERItemData("Ghost Glovewort [9]", 10918, ERItemCategory.GOODS, upgrade_item=True),
     ERItemData("Great Ghost Glovewort", 10919, ERItemCategory.GOODS, upgrade_item=True),
 
-    ERItemData("Crimsonspill Crystal Tear", 11000, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Greenspill Crystal Tear", 11001, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimson Crystal Tear", 11002, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimson Crystal Tear (Alternate)", 11003, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Cerulean Crystal Tear", 11004, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Cerulean Crystal Tear (Alternate)", 11005, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Speckled Hardtear", 11006, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimson Bubbletear", 11007, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Opaline Bubbletear", 11008, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimsonburst Crystal Tear", 11009, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Greenburst Crystal Tear", 11010, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Opaline Hardtear", 11011, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Winged Crystal Tear", 11012, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Thorny Cracked Tear", 11013, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Spiked Cracked Tear", 11014, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Windy Crystal Tear", 11015, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Ruptured Crystal Tear", 11016, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Ruptured Crystal Tear (Alternate)", 11017, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Leaden Hardtear", 11018, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Twiggy Cracked Tear", 11019, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimsonwhorl Bubbletear", 11020, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Strength-knot Crystal Tear", 11021, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Dexterity-knot Crystal Tear", 11022, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Intelligence-knot Crystal Tear", 11023, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, classification=ItemClassification.useful, boss_tools=True, cracked_tear=True),
-    ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Holy-Shrouding Cracked Tear", 11031, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Crimsonspill Crystal Tear", 11000, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Greenspill Crystal Tear", 11001, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimson Crystal Tear", 11002, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimson Crystal Tear (Alternate)", 11003, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Cerulean Crystal Tear", 11004, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Cerulean Crystal Tear (Alternate)", 11005, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Speckled Hardtear", 11006, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimson Bubbletear", 11007, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Opaline Bubbletear", 11008, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimsonburst Crystal Tear", 11009, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Greenburst Crystal Tear", 11010, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Opaline Hardtear", 11011, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Winged Crystal Tear", 11012, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Thorny Cracked Tear", 11013, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Spiked Cracked Tear", 11014, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Windy Crystal Tear", 11015, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Ruptured Crystal Tear", 11016, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Ruptured Crystal Tear (Alternate)", 11017, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Leaden Hardtear", 11018, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Twiggy Cracked Tear", 11019, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimsonwhorl Bubbletear", 11020, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Strength-knot Crystal Tear", 11021, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Dexterity-knot Crystal Tear", 11022, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Intelligence-knot Crystal Tear", 11023, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Faith-knot Crystal Tear", 11024, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Cerulean Hidden Tear", 11025, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Stonebarb Cracked Tear", 11026, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Purifying Crystal Tear", 11027, ERItemCategory.GOODS, classification=ItemClassification.useful, boss_tools=True, crystal_tear=True),
+    ERItemData("Flame-Shrouding Cracked Tear", 11028, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Magic-Shrouding Cracked Tear", 11029, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Lightning-Shrouding Cracked Tear", 11030, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Holy-Shrouding Cracked Tear", 11031, ERItemCategory.GOODS, crystal_tear=True),
     # crafting mats
     *ERItemData("Sliver of Meat", 15000, ERItemCategory.GOODS, replacable=True).counts([2, 3, 5, 6]),
     *ERItemData("Beast Liver", 15010, ERItemCategory.GOODS, replacable=True).counts([3, 5]),
@@ -2860,14 +2856,14 @@ _dlc_items = [
     ERItemData("Revered Spirit Ash", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Revered Spirit Ash x2", 2010100, ERItemCategory.GOODS, classification=ItemClassification.useful, count=2),
 
-    ERItemData("Viridian Hidden Tear", 2011000, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimsonburst Dried Tear", 2011010, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Crimson-Sapping Cracked Tear", 2011020, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Cerulean-Sapping Cracked Tear", 2011030, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Oil-Soaked Tear", 2011040, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Bloodsucking Cracked Tear", 2011050, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Glovewort Crystal Tear", 2011060, ERItemCategory.GOODS, cracked_tear=True),
-    ERItemData("Deflecting Hardtear", 2011070, ERItemCategory.GOODS, cracked_tear=True),
+    ERItemData("Viridian Hidden Tear", 2011000, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimsonburst Dried Tear", 2011010, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Crimson-Sapping Cracked Tear", 2011020, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Cerulean-Sapping Cracked Tear", 2011030, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Oil-Soaked Tear", 2011040, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Bloodsucking Cracked Tear", 2011050, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Glovewort Crystal Tear", 2011060, ERItemCategory.GOODS, crystal_tear=True),
+    ERItemData("Deflecting Hardtear", 2011070, ERItemCategory.GOODS, crystal_tear=True),
     # crafting mats
     *ERItemData("Beast Horn", 2015000, ERItemCategory.GOODS, replacable=True).counts([2, 4]),
     *ERItemData("Spirit Calculus", 2015010, ERItemCategory.GOODS, replacable=True).counts([3]),

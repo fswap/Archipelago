@@ -30,7 +30,7 @@ from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLog
         LocalItemOnly,\
         ERExcludeLocations, ExcludedLocationBehaviorOption, MissableLocationBehaviorOption,\
         ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly,\
-        ERUsefulAtPriority, FlaskUpgradesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrackedTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
+        FlaskUpgradesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrystalTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
 
 template = {
     "progression_balancing":                ProgressionBalancing.default,
@@ -95,11 +95,10 @@ template = {
     "priority_location_groups":             ERPriorityLocationGroups,
     "important_at_priority_only":           ERImportantAtPriorityOnly,
     "important_at_priority_early":          ERImportantAtPriorityEarly,
-    "useful_at_priority":                   ERUsefulAtPriority,
     "flask_at_priority":                    FlaskUpgradesAtPriority,
     "scadu_at_priority":                    ScaduAtPriority,
     "talisman_pouches_at_priority":         TalismanPouchesAtPriority,
-    "cracked_tears_at_priority":            CrackedTearsAtPriority,
+    "crystal_tears_at_priority":            CrystalTearsAtPriority,
     "memory_stones_at_priority":            MemoryStonesAtPriority,
     "remembrances_at_priority":             RemembrancesAtPriority,
     "local_item_only":                      LocalItemOnly.default,
@@ -176,7 +175,7 @@ all_random_options = {
     "flask_at_priority":                    "random",
     "scadu_at_priority":                    "random",
     "talisman_pouches_at_priority":         "random",
-    "cracked_tears_at_priority":            "random",
+    "crystal_tears_at_priority":            "random",
     "memory_stones_at_priority":            "random",
     "remembrances_at_priority":             "random",
     "local_item_only":                      LocalItemOnly.default,
@@ -458,11 +457,10 @@ all_bosses = {
     "priority_location_groups":             ["Boss Reward", "DLC Boss Reward"],
     "important_at_priority_only":           ERImportantAtPriorityOnly.option_true,
     "important_at_priority_early":          ERImportantAtPriorityEarly.default,
-    "useful_at_priority":                   ERUsefulAtPriority.option_true,
     "flask_at_priority":                    FlaskUpgradesAtPriority.option_true,
     "scadu_at_priority":                    ScaduAtPriority.option_true,
     "talisman_pouches_at_priority":         TalismanPouchesAtPriority.option_true,
-    "cracked_tears_at_priority":            CrackedTearsAtPriority.option_false,
+    "crystal_tears_at_priority":            CrystalTearsAtPriority.option_false,
     "memory_stones_at_priority":            MemoryStonesAtPriority.option_false,
     "remembrances_at_priority":             RemembrancesAtPriority.option_false,
     "local_item_only":                      LocalItemOnly.default,

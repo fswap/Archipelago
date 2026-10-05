@@ -238,15 +238,14 @@ class EldenRing(World):
         local_item_only_lowercase = set(key.lower() for key in self.options.local_item_only.value)
         [local_item_only_lowercase.add(key.lower()) for key in self.settings.force_local_items]
         
-        # if every category is local_only there is a 10 in 50 chance of fill errors, so make sure atleast some items can goto other worlds
         if (len(local_item_only_lowercase.intersection(("weapon", "armor", "accessory", "goods"))) == 4
             or len(local_item_only_lowercase.intersection(("weapon", "armor", "accessory", "filler", "non-filler"))) == 5):
-            # is everything local, make sure accessory and ashofwar is atleast not local to attempt to avoid fill error
+            # is everything local, make sure accessory and ashofwar is atleast not local to attempt to avoid fill error, still a rare chance
             warning(f"\nEldenRing Player {self.player_name} has too many categories of local_item_only set to local, this can cause a fill error."
                     f"\nRemoving Accessory and AshofWar from local only to attempt to dodge fill error, or fix yaml to not make everything local.")
-            local_item_only_lowercase.remove("accessory") # makes fill errors 2 in 50
+            local_item_only_lowercase.remove("accessory")
             if "ashofwar" in local_item_only_lowercase:
-                local_item_only_lowercase.remove("ashofwar") # 0 errors
+                local_item_only_lowercase.remove("ashofwar")
         
         # verify shard counts
         for shard in self.options.key_item_shards.value:
@@ -263,8 +262,8 @@ class EldenRing(World):
                     self.options.key_item_shards.value[shard][val] = max_shard_count
                     # warning(f"{shard} {val} greater then {max_shard_count}")
         
-        if self.options.important_at_priority_only and len(self.all_priority_locations) < 25: # make sure player adds enough locations
-            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 25 priority locations. Add groups to priority_location_groups.")
+        if self.options.important_at_priority_only and len(self.all_priority_locations) < 50: # make sure player adds enough locations
+            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 50 priority locations. Add groups to priority_location_groups.")
         
         m_goal_bosses = self._goal_bosses()
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
@@ -715,7 +714,7 @@ class EldenRing(World):
         
         self.multiworld.itempool += self.itempool
         
-        # warning(f"all_priority_locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized)])}")
+        warning(f"priority locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized)])}")
         warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
     def _create_dupe_locations(self) -> None:
@@ -1685,7 +1684,6 @@ class EldenRing(World):
                         for loc in self.multiworld.get_unfilled_locations(self.player):
                             if loc.progress_type != LocationProgressType.PRIORITY:
                                 self._add_item_rule(loc.name, lambda item: item.classification != ItemClassification.progression)
-                        break
         
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
@@ -3388,11 +3386,10 @@ class EldenRing(World):
                 "priority_location_groups": self.options.priority_location_groups.value,
                 "important_at_priority_only": self.options.important_at_priority_only.value,
                 "important_at_priority_early": self.options.important_at_priority_early.value,
-                "useful_at_priority": self.options.useful_at_priority.value,
                 "flask_at_priority": self.options.flask_at_priority.value,
                 "scadu_at_priority": self.options.scadu_at_priority.value,
                 "talisman_pouches_at_priority": self.options.talisman_pouches_at_priority.value,
-                "cracked_tears_at_priority": self.options.cracked_tears_at_priority.value,
+                "crystal_tears_at_priority": self.options.crystal_tears_at_priority.value,
                 "memory_stones_at_priority": self.options.memory_stones_at_priority.value,
                 "remembrances_at_priority": self.options.remembrances_at_priority.value,
                 "exclude_locations": self.options.exclude_locations.value,

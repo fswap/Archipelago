@@ -526,11 +526,6 @@ class ERImportantAtPriorityEarly(Range):
     range_end = 5
     default = 1
 
-class ERUsefulAtPriority(Toggle):
-    """Should useful items be included in Priority locations.
-    This is used with Important at Priority Only option since it uses custom priority handling."""
-    display_name = "Useful at Priority"
-
 class FlaskUpgradesAtPriority(Toggle):
     "Should flask upgrades be randomized to important locations."
     display_name = "Flask Upgrades at Priority"
@@ -543,9 +538,9 @@ class TalismanPouchesAtPriority(Toggle):
     "Should talisman pouches be randomized to important locations."
     display_name = "Talisman Pouches at Priority"
 
-class CrackedTearsAtPriority(Toggle):
+class CrystalTearsAtPriority(Toggle):
     "Should Wondrous Physick tears be randomized to important locations."
-    display_name = "Cracked Tears at Priority"
+    display_name = "Crystal Tears at Priority"
 
 class MemoryStonesAtPriority(Toggle):
     "Should memory stones be randomized to important locations."
@@ -699,11 +694,10 @@ class EROptions(PerGameCommonOptions):
     priority_location_groups: ERPriorityLocationGroups
     important_at_priority_only: ERImportantAtPriorityOnly
     important_at_priority_early: ERImportantAtPriorityEarly
-    useful_at_priority: ERUsefulAtPriority
     flask_at_priority: FlaskUpgradesAtPriority
     scadu_at_priority: ScaduAtPriority
     talisman_pouches_at_priority: TalismanPouchesAtPriority
-    cracked_tears_at_priority: CrackedTearsAtPriority
+    crystal_tears_at_priority: CrystalTearsAtPriority
     memory_stones_at_priority: MemoryStonesAtPriority
     remembrances_at_priority: RemembrancesAtPriority
     local_item_only: LocalItemOnly
@@ -791,11 +785,10 @@ option_groups = [
         ERPriorityLocationGroups,
         ERImportantAtPriorityOnly,
         ERImportantAtPriorityEarly,
-        ERUsefulAtPriority,
         FlaskUpgradesAtPriority,
         ScaduAtPriority,
         TalismanPouchesAtPriority,
-        CrackedTearsAtPriority,
+        CrystalTearsAtPriority,
         MemoryStonesAtPriority,
         RemembrancesAtPriority,
     ])
