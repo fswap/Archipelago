@@ -15,7 +15,7 @@ from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_ru
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups
-from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc
+from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, region_order, region_order_dlc, dupable_locations
 from .options import EROptions, option_groups, shard_list
 from .presets import er_options_presets
 from Options import OptionError
@@ -111,13 +111,18 @@ class EldenRing(World):
     base_id = 69000
     required_client_version = (0, 6, 7)
     topology_present = True
-    priority_marker_flag_base = 79000
     item_name_to_id = {data.name: data.ap_code for data in item_table.values() if data.ap_code is not None}
     location_name_to_id = {
         location.name: location.ap_code
         for locations in location_tables.values()
         for location in locations
         if location.ap_code is not None
+    } | {
+        f"Dupe {_}: {location.name}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
+        for locations in location_tables.values()
+        for location in locations
+        if location.ap_code is not None and location.name in dupable_locations
+        for _ in range(1, 3) # how many dupes to prefill
     }
     location_name_groups = location_name_groups
     item_name_groups = item_name_groups
@@ -252,8 +257,8 @@ class EldenRing(World):
                     self.options.key_item_shards.value[shard][val] = max_shard_count
                     # warning(f"{shard} {val} greater then {max_shard_count}")
         
-        if self.options.important_at_priority_only and len(self.all_priority_locations) < 10: # make sure player adds enough locations
-            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 10 priority locations. Add groups to priority_location_groups.")
+        if self.options.important_at_priority_only and len(self.all_priority_locations) < 25: # make sure player adds enough locations
+            raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 25 priority locations. Add groups to priority_location_groups.")
         
         m_goal_bosses = self._goal_bosses()
         if self.options.exclude_dungeon.value: # exclude dungeon bosses
@@ -754,7 +759,6 @@ class EldenRing(World):
         required_region_dupes = self._required_locations()
         
         times_duped = {}
-        new_code = len(location_dictionary)
         while loc_needed + dlc_loc_needed > 0 or len(required_region_dupes) > 0: # how many dupes
             required_prio = None
             if len(required_region_dupes) > 0: # if locations are required add them
@@ -763,9 +767,21 @@ class EldenRing(World):
             if required_prio != None:
                 location = required_prio
             elif loc_needed > 0 or len(dlc_priority) == 0:
-                location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
+                if len(base_priority) == 0:
+                    if self.multiworld.players == 1:
+                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
+                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                    break # leave while loop
+                else:
+                    location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
             elif dlc_loc_needed > 0:
-                location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
+                if len(base_priority) == 0:
+                    if self.multiworld.players == 1:
+                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
+                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                    break # leave while loop
+                else:
+                    location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
             
             found = False
             for region in self.multiworld.get_regions(self.player):
@@ -773,30 +789,38 @@ class EldenRing(World):
                     if location == loc.name:
                         if location in times_duped: times_duped[location] = times_duped[location] + 1 # add 1 to location
                         else: times_duped[location] = 1 # add to dict
-                        new_code += 1
-                        dupe_location = ERLocation( # replace works, yippee
-                            self.player,
-                            replace(location_dictionary[location], 
-                                name=f"Dupe {times_duped[location]}: {location}", 
-                                default_item_name = "Dummy item",
-                                ap_code = 7000000 + new_code),
-                            parent = region,
-                        )
-                        dupe_location.progress_type = LocationProgressType.PRIORITY
-                        region.locations.append(dupe_location)
-                        self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
-                        self.dupe_location_tables[region.name].append(dupe_location.data)
-                        self.all_duplicate_locations.add(dupe_location.data.name)
-                        found = True
-                        if not location_dictionary[location].dlc: loc_needed -= 1
-                        else: dlc_loc_needed -= 1
-                        break
+                        new_code = 0
+                        if f"Dupe {times_duped[location]}: {location}" in EldenRing.location_name_to_id:
+                            new_code = EldenRing.location_name_to_id[f"Dupe {times_duped[location]}: {location}"]
+                            dupe_location = ERLocation( # replace works, yippee
+                                self.player,
+                                replace(location_dictionary[location], 
+                                    name=f"Dupe {times_duped[location]}: {location}", 
+                                    default_item_name = "Dummy item",
+                                    ap_code = new_code),
+                                parent = region
+                            )
+                            dupe_location.progress_type = LocationProgressType.PRIORITY
+                            region.locations.append(dupe_location)
+                            self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
+                            self.dupe_location_tables[region.name].append(dupe_location.data)
+                            self.all_duplicate_locations.add(dupe_location.data.name)
+                            found = True
+                            if not location_dictionary[location].dlc: loc_needed -= 1
+                            else: dlc_loc_needed -= 1
+                            break
+                        else: # can't be duped or no more Dupe #
+                            if location in base_priority:
+                                base_priority.remove(location)
+                                if location in early_base:
+                                    early_base.remove(location)
+                            elif location in dlc_priority:
+                                dlc_priority.remove(location)
+                                if location in early_dlc:
+                                    early_dlc.remove(location)
+                            found = True
+                            break
                 if found: break
-                
-        self.location_name_to_id.update({ # add new locations
-            location: self.dupe_location_dictionary[location].ap_code
-            for location in self.all_duplicate_locations
-        })
         
         self.all_priority_locations.update(self.all_duplicate_locations)
 
@@ -816,12 +840,12 @@ class EldenRing(World):
             # if starting region has no locations create one
             if self.base_enabled and self.options.dlc_start == 0 and len(self.prio_in_region["Limgrave"]) < 1: 
                 warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SG): Finger Severer - beside grace\".")
-                self.all_priority_locations.append("LG/(SG): Finger Severer - beside grace")
+                self.all_priority_locations.add("LG/(SG): Finger Severer - beside grace")
                 self.prio_in_region["Limgrave"].append("LG/(SG): Finger Severer - beside grace")
                 
             if self.options.enable_dlc and len(self.prio_in_region["Gravesite Plain"]) < 1:
                 warning(f"Player {self.player_name} has no Priority locations within Gravesite Plain region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")
-                self.all_priority_locations.append("GP/TPC: Scadutree Fragment - by cross")
+                self.all_priority_locations.add("GP/TPC: Scadutree Fragment - by cross")
                 self.prio_in_region["Gravesite Plain"].append("GP/TPC: Scadutree Fragment - by cross")
             
             total_required = 0
@@ -3291,6 +3315,12 @@ class EldenRing(World):
                         location.data.targets = [location.data.targets]
                     location_ids_to_targets[location.address] = list(location.data.targets)
         
+        duplicated_locations = {}
+        for dupe_location in self.all_duplicate_locations:
+            duplicated_locations[dupe_location] = dupe_location[dupe_location.find(":")+2:]
+            # warning(f"{self.multiworld.get_location(dupe_location[dupe_location.find(":")+2:], self.player)} *extra items:* "
+            #         f"{self.multiworld.get_location(dupe_location[dupe_location.find(":")+2:], self.player).extra_items}")
+        
         slot_data = {
             "options": {
                 "key_item_shards": self.options.key_item_shards.value,
@@ -3381,6 +3411,7 @@ class EldenRing(World):
             "locationIdsToKeys": location_ids_to_keys,
             "locationIdsToTargets": location_ids_to_targets,
             "allStartingItems": self.all_starting_items, # list of _er_item_full_id
+            "duplicatedLocations": duplicated_locations,
             "versions": ">=0.8.3 <0.9.0",
         }
 

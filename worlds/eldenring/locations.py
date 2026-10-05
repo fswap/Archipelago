@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from logging import warning
 
 from BaseClasses import ItemClassification, Location, Region
-from .options import EROptions
+from .options import EROptions, ERPriorityLocationGroups
 from .items import ERItemCategory, item_table
 from .bosses import all_boss_locations
 
@@ -6336,3 +6336,9 @@ for location_name, location_table in location_tables.items():
         
     if location_name.__contains__("- Enia"):
         location_data.conditional = True
+        
+dupable_locations = set()
+for k in ERPriorityLocationGroups.valid_keys:
+    dupable_locations.update(location_name_groups[k])
+# locations that required locations might need
+dupable_locations.update(("LG/(SG): Finger Severer - beside grace", "GP/TPC: Scadutree Fragment - by cross"))

@@ -32,8 +32,8 @@ class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_
     """
     display_name = "Key Item Shards"
     default = {
-        # "RustyKeyShards": {"Req": 1, "Max": 1},
-        # "RoldMedallionShards": {"Req": 1, "Max": 1},
+        "RustyKeyShards": {"Req": 1, "Max": 1},
+        "RoldMedallionShards": {"Req": 1, "Max": 1},
         "MessmerKindlingShards": {"Req": 1, "Max": 1}
         }
     valid_keys = ["RustyKeyShards", "RoldMedallionShards", "MessmerKindlingShards"]
@@ -493,7 +493,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     display_name = "Priority Location Groups"
     default = ["Achievement Boss", "Seedtree", "Map", "Church", "Key Items"]
     valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
-        "Fragment", "Cross", "Revered", "Overworld boss", "DLC Overworld Boss", 
+        "Fragment", "Cross", "Revered", "Overworld Boss", "DLC Overworld Boss", 
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
     valid_keys_casefold = False
     
