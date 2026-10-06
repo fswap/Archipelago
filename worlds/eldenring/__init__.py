@@ -144,8 +144,8 @@ class EldenRing(World):
         "Great Rune of the Unborn",
     )
     
-    rykard_location: ERBossInfo = default_rykard_location
-    serpent_location: ERBossInfo = default_serpent_location
+    rykard_location: ERBossInfo = None
+    serpent_location: ERBossInfo = None
     """If enemy randomization is enabled, this is the boss who Rykard should replace.
     
     This is used to determine where the Serpent-Hunter can be placed.
@@ -298,6 +298,7 @@ class EldenRing(World):
             if "EldenRing" in self.multiworld.re_gen_passthrough:
                 if (self.multiworld.re_gen_passthrough["EldenRing"]["options"]["enemy_rando"] 
                     and self.multiworld.re_gen_passthrough["EldenRing"]["options"]["rykard_encounter"] == False):
+                    # TODO: This data may not exist currently
                     rykard_data = self.multiworld.re_gen_passthrough["EldenRing"]["rykard"]
                     serpent_data = self.multiworld.re_gen_passthrough["EldenRing"]["serpent"]
                     for boss in all_bosses:
@@ -314,6 +315,9 @@ class EldenRing(World):
                     [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
                 self.serpent_location = self.random.choice(
                     [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
+            elif not self.options.enemy_rando:
+                self.rykard_location = default_rykard_location
+                self.serpent_location = default_serpent_location
         
         using_table = {}
         if self.base_enabled: 
@@ -1662,10 +1666,10 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Rykard and Serpent Rule
-        if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
-            if self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled:
+        if not self.options.rykard_encounter:
+            if self.rykard_location and (self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled):
                 if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
-            if self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled:
+            if self.serpent_location and (self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled):
                 if len(self.rykard_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
         # Create duplicate location rules
@@ -3085,10 +3089,10 @@ class EldenRing(World):
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
         
-        if self.serpent_location != default_serpent_location:
+        if self.serpent_location and self.serpent_location != default_serpent_location:
             text += f"\nSerpent takes the place of {self.serpent_location.name} in {self.player_name}'s world\n"
         
-        if self.rykard_location != default_rykard_location:
+        if self.rykard_location and self.rykard_location != default_rykard_location:
             text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world\n"
 
         if self.options.excluded_location_behavior == "forbid_useful":
@@ -3318,10 +3322,19 @@ class EldenRing(World):
                     if isinstance(location.data.targets, str):
                         location.data.targets = [location.data.targets]
                     location_ids_to_targets[location.address] = list(location.data.targets)
+
+
         
         duplicated_locations = {}
         for dupe_location in self.all_duplicate_locations:
             duplicated_locations[dupe_location] = dupe_location[:dupe_location.find("extra item")-2]
+
+        # Mapping from target to forced boss which prevents the forced boss from appearing anywhere else
+        force_bosses = {}
+        if self.rykard_location:
+            force_bosses[self.rykard_location.id] = default_rykard_location.id
+        if self.serpent_location:
+            force_bosses[self.serpent_location.id] = default_serpent_location.id
         
         slot_data = {
             "options": {
@@ -3399,13 +3412,12 @@ class EldenRing(World):
             "seed": self.multiworld.seed_name,  # to verify the server's multiworld
             "slot": self.multiworld.player_name[self.player],  # to connect to server
             "random_enemy_preset": json.dumps(self.options.random_enemy_preset.value),
-            "rykard_flag": self.rykard_location.flag,
-            "serpent_flag": self.serpent_location.flag,
             "goal": [boss.flag for boss in self.goal_bosses],
             "requiredShards": { # item name: required amount
                 shard: self.options.key_item_shards.value[shard_list[shard]]["Req"] 
                 for shard in shard_list if shard_list[shard] in self.options.key_item_shards.value
             },
+            "forceBosses": force_bosses,
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToName": location_ids_to_name,
