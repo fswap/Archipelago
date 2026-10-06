@@ -418,12 +418,7 @@ base_bosses = [
             "RLA/SC: Memory Stone - boss drop"
         ]
     ),
-    ERBossInfo("Rennala, Queen of the Full Moon (Phase 1) (RLA)", [], 14000801, 14000800,
-        locations=[
-            "RLA: Great Rune of the Unborn - mainboss drop",
-            "RLA: Remembrance of the Full Moon Queen - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Rennala, Queen of the Full Moon (Phase 1) (RLA)", [], 14000801, 14000800, locations=[]),
     ERBossInfo("Rennala, Queen of the Full Moon (Phase 2) (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 14000800, 14000800, allow_rykard=True,
         locations=[
             "RLA: Great Rune of the Unborn - mainboss drop",
@@ -769,12 +764,7 @@ base_bosses = [
     ),
     
     # MARK: Volcano Manor
-    ERBossInfo("God-Devouring Serpent (VM)", [], 16000801, 16000800, allow_rykard=True,
-        locations=[
-            "VM/AP: Rykard's Great Rune - mainboss drop",
-            "VM/AP: Remembrance of the Blasphemous - mainboss drop"
-        ]
-    ),
+    ERBossInfo("God-Devouring Serpent (VM)", [], 16000801, 16000800, allow_rykard=True, locations=[]),
     ERBossInfo("Rykard, Lord of Blasphemy (VM)", ["Volcano Manor", "Remembrance", "Great Rune", "Main"], 16000800, 16000800, allow_rykard=True,
         locations=[
             "VM/AP: Rykard's Great Rune - mainboss drop",
@@ -868,11 +858,7 @@ base_bosses = [
             "MotG/FR: Dragon Heart - boss drop to SE"
         ]
     ),
-    ERBossInfo("Fire Giant (Phase 1) (FP)", [], 1052520801, 1252520800, allow_rykard=True,
-        locations=[
-            "FP/FF: Remembrance of the Fire Giant - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Fire Giant (Phase 1) (FP)", [], 1052520801, 1252520800, allow_rykard=True, locations=[]),
     ERBossInfo("Fire Giant (Phase 2) (FP)", ["Mountaintops of the Giants", "Overworld", "Remembrance", "Main"], 1052520800, 1252520800, allow_rykard=True,
         locations=[
             "FP/FF: Remembrance of the Fire Giant - mainboss drop"
@@ -907,11 +893,7 @@ base_bosses = [
             "FA/BGB: Remembrance of the Dragonlord - alt mainboss drop"
         ]
     ),
-    ERBossInfo("Beast Clergyman (FA)", [], 13000801, 13000800, allow_rykard=True,
-        locations=[
-            "FA/BGB: Remembrance of the Black Blade - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Beast Clergyman (FA)", [], 13000801, 13000800, allow_rykard=True, locations=[] ),
     ERBossInfo("Maliketh, The Black Blade (FA)", ["Farum Azula", "Remembrance", "Main"], 13000800, 13000800, allow_rykard=True,
         locations=[
             "FA/BGB: Remembrance of the Black Blade - mainboss drop"
@@ -1005,21 +987,13 @@ base_bosses = [
             "LAC/LCA: All-Knowing Greaves - boss drop"
         ]
     ),
-    ERBossInfo("Godfrey, First Elden Lord (LAC)", [], 11050801, 11050800,
-        locations=[
-            "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Godfrey, First Elden Lord (LAC)", [], 11050801, 11050800, locations=[]),
     ERBossInfo("Hoarah Loux (LAC)", ["Leyndell, Ashen Capital", "Remembrance", "Main"], 11050800, 11050800,
         locations=[
             "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"
         ]
     ),
-    ERBossInfo("Radagon of the Golden Order (ET)", [], 19000810, 19000800, allow_rykard=True,
-        locations=[
-            "ET: Elden Remembrance - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Radagon of the Golden Order (ET)", [], 19000810, 19000800, allow_rykard=True, locations=[] ),
     ERBossInfo("Elden Beast (ET)", ["Remembrance", "Final", "Main"], 19000800, 19000800, allow_rykard=True,
         locations=[
             "ET: Elden Remembrance - mainboss drop"
@@ -1205,12 +1179,7 @@ dlc_bosses = [
     ),
     
     # MARK: Shadow Keep
-    ERBossInfo("Messmer the Impaler (SK)", [], 21010801, 21010800,
-        locations=[
-            "SK/DCE: Remembrance of the Impaler - mainboss drop",
-            "SK/DCE: Messmer's Kindling - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Messmer the Impaler (SK)", [], 21010801, 21010800, locations=[]),
     ERBossInfo("Base Serpent Messmer (SK)", ["Shadow Keep", "DLC Remembrance"], 21010800, 21010800,
         locations=[
             "SK/DCE: Remembrance of the Impaler - mainboss drop",
@@ -1309,11 +1278,7 @@ dlc_bosses = [
     ),
     
     # MARK: Enir Ilim
-    ERBossInfo("Promised Consort Radahn (EI)", [], 20010801, 20010800, allow_rykard=True,
-        locations=[
-            "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"
-        ]
-    ),
+    ERBossInfo("Promised Consort Radahn (EI)", [], 20010801, 20010800, allow_rykard=True, locations=[]),
     ERBossInfo("Radahn, Consort of Miquella (EI)", ["DLC Remembrance", "DLC Final", "DLC Main"], 20010800, 20010800, allow_rykard=True,
         locations=[
             "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"

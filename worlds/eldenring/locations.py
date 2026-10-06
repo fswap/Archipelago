@@ -581,6 +581,7 @@ class ERLocationData:
         ) or (self.default_item_name == "Crafting Kit" and options.crafting_kit_option.value == 2
         ) or (self.map and options.map_option.value == 2
         ) or (self.smithingbell and options.smithing_bell_bearing_option.value == 2
+        ) or (self.default_item_name == "Serpent-Hunter" and not options.enemy_rando and options.rykard_encounter
         ))
 
     def location_groups(self) -> List[str]:

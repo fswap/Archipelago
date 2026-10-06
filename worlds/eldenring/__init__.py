@@ -298,13 +298,12 @@ class EldenRing(World):
             if "EldenRing" in self.multiworld.re_gen_passthrough:
                 if (self.multiworld.re_gen_passthrough["EldenRing"]["options"]["enemy_rando"] 
                     and self.multiworld.re_gen_passthrough["EldenRing"]["options"]["rykard_encounter"] == False):
-                    # TODO: This data may not exist currently
-                    rykard_data = self.multiworld.re_gen_passthrough["EldenRing"]["rykard"]
-                    serpent_data = self.multiworld.re_gen_passthrough["EldenRing"]["serpent"]
+                    
+                    force_bosses = self.multiworld.re_gen_passthrough["EldenRing"]["forceBosses"]
                     for boss in all_bosses:
-                        if rykard_data.startswith(boss.name):
+                        if boss.id in force_bosses and force_bosses[boss.id] == default_rykard_location.id:
                             self.rykard_location = boss
-                        if serpent_data.startswith(boss.name):
+                        if boss.id in force_bosses and force_bosses[boss.id] == default_serpent_location.id:
                             self.serpent_location = boss
                             
                 self.soft_logic_enabled = False # turn off soft logic with UT
@@ -3076,7 +3075,7 @@ class EldenRing(World):
         for name in self.options.goal:
             assert name.endswith(" Boss")
             goal_type = name[:-len(" Boss")]
-            boss = [boss for boss in all_bosses if goal_type in boss.type and boss.flag != None]
+            boss = [boss for boss in all_bosses if goal_type in boss.type and len(boss.locations) != 0]
             assert boss
             # no dupe bosses
             [result.append(b) for b in boss if b not in result]
