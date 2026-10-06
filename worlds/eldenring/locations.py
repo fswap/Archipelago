@@ -2213,6 +2213,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LRC|LAC/AB: Exalted Flesh - up stairs, to NE past door, on ledge near top of stairs", "Exalted Flesh", key="110000,0:0011007420::", targets=('lot:11000420')),
         ERLocationData("LRC|LAC/AB: Soporific Grease x2 - up stairs, to NE past door, up stairs, to NW in corner", "Soporific Grease x2", key="110000,0:0011007430::", targets=('lot:11000430')),
         ERLocationData("LRC|LAC/AB: Somber Smithing Stone [6] - up stairs, to NE past door, up stairs to NW down pit behind statue", "Somber Smithing Stone [6]", key="110000,0:0011007440::", targets=('lot:11000440')),
+        
+        # before the seal leaving leyndell
+        ERLocationData("DTEA: Flamedrake Talisman +1 - E of leyndell elevator by pillar", "Flamedrake Talisman +1", key="341400,0:0034147020::", talisman=True, targets=('lot:34140020')),
     ],
     "Leyndell, Royal Capital Throne":[ # leyndell_throne                  done
         ERLocationData("LRC/QB: Morgott's Great Rune - mainboss drop", "Morgott's Great Rune", key="110000,0:0000000173::", boss=True, achievement=True, targets=('lot:10041')),
@@ -3325,10 +3328,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CL/(STS): \"Redmane\" Painting - upstairs from SUS grace to right", "\"Redmane\" Painting", key="605039,0:0000580060::", painting=True, targets=('lot:80060')),
         ERLocationData("CL/(STS): Poison Grease x2 - upstairs from SUS grace, straight up next stairs", "Poison Grease x2", key="605039,0:1050397000::", targets=('lot:1050390000')),
         ERLocationData("CL/(STS): Toxic Mushroom x5 - upstairs from SUS grace, straight up next stairs, on roof to left", "Toxic Mushroom x5", key="605039,0:1050397010::", targets=('lot:1050390010')),
-        ERLocationData("CL/FF: Smithing Stone [7] - on skull SW of FF item 1", "Smithing Stone [7]", key="605039,0:1050397020::", targets=('lot:1050390020')),
-        ERLocationData("CL/FF: Smithing Stone [7] - on skull SW of FF item 2", "Smithing Stone [7]", key="605039,0:1050397030::", targets=('lot:1050390030')),
-        ERLocationData("CL/FF: Stonesword Key - on skull SW of FF", "Stonesword Key", key="605039,0:1050397040::", targets=('lot:1050390040')),
-        ERLocationData("CL/FF: Smithing Stone [8] - on skull SW of FF", "Smithing Stone [8]", key="605039,0:1050397050::", targets=('lot:1050390050')),
         ERLocationData("CL/CP: Starlight Shards - E of CP", "Starlight Shards", key="605039,0:1050397060::", targets=('lot:1050390060')),
         ERLocationData("CL/(STS): Cerulean Tear Scarab - on house NE side of STS", "Cerulean Tear Scarab", key="605039,0:1050397070::", targets=('lot:1050390070')),
         ERLocationData("CL/SH: Beast Blood x2 - S of SH", "Beast Blood x2", key="605039,0:1050397090::", targets=('lot:1050390090')),
@@ -4605,7 +4604,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DTEA: Omenkiller Rollo - boss drop on way to divine tower", "Omenkiller Rollo", key="341400,0:0000510740::", altboss=True, miscboss=True, targets=('lot:10740')),
         ERLocationData("DTEA: Invigorating White Cured Meat - E of leyndell elevator just past gate on ground", "Invigorating White Cured Meat", key="341400,0:0034147000::", targets=('lot:34140000')),
         ERLocationData("DTEA: Official's Attire - room mid small elevator in chair", "Official's Attire", key="341400,0:0034147010::", targets=('lot:34140010')),
-        ERLocationData("DTEA: Flamedrake Talisman +1 - E of leyndell elevator by pillar", "Flamedrake Talisman +1", key="341400,0:0034147020::", talisman=True, targets=('lot:34140020')),
         ERLocationData("DTEA: Somber Smithing Stone [6] - scarab E of leyndell elevator", "Somber Smithing Stone [6]", key="341400,0:0034147720::", scarab=True, targets=('lot:34140720')),
         ERLocationData("DTEA: Golden Rune [9] - in boss arena", "Golden Rune [9]", key="341400,0:0034147800::", targets=('lot:34140800')),
         ERLocationData("DTEA: Blade of Calling - room mid small elevator on desk", "Blade of Calling", key="341400,0:0034147810::", targets=('lot:34140810')),
@@ -5294,10 +5292,10 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CS/(OLT): Black Knife Armor - under stairs to haligtree seal", "Black Knife Armor", key="604857,0:1048577810::", targets=('lot:1048570811')),
         ERLocationData("CS/(OLT): Black Knife Gauntlets - under stairs to haligtree seal", "Black Knife Gauntlets", key="604857,0:1048577810::", targets=('lot:1048570812')),
         ERLocationData("CS/(OLT): Black Knife Greaves - under stairs to haligtree seal", "Black Knife Greaves", key="604857,0:1048577810::", targets=('lot:1048570813')),
-        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings", "Ghost Glovewort [9]", key="604857,0:1048577900::", targets=('lot:1048570900')),
-        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall", "Ghost Glovewort [9]", key="604857,0:1048577910::", targets=('lot:1048570910')),
-        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be", "Ghost Glovewort [9]", key="604857,0:1048577920::", targets=('lot:1048570920')),
-        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal", "Ghost Glovewort [9]", key="604857,0:1048577930::", targets=('lot:1048570930')),
+        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings", "Ghost Glovewort [9]", key="604857,0:1048577900::", missable=True, targets=('lot:1048570900')),
+        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall", "Ghost Glovewort [9]", key="604857,0:1048577910::", missable=True, targets=('lot:1048570910')),
+        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be", "Ghost Glovewort [9]", key="604857,0:1048577920::", missable=True, targets=('lot:1048570920')),
+        ERLocationData("CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal", "Ghost Glovewort [9]", key="604857,0:1048577930::", missable=True, targets=('lot:1048570930')),
         ERLocationData("CS/OLT: Rotten Greataxe - enemy drop NW of OLT", "Rotten Greataxe", key="604857,0:1048577990::", targets=('lot:340052101')),
         ERLocationData("CS/OLT: Rotten Duelist Greaves - enemy drop NW of OLT", "Rotten Duelist Greaves", key="604857,0:1048577990::", targets=('lot:340052100')),
         ERLocationData("CS/AD: Golden Rune [13] - to E, drop down", "Golden Rune [13]", key="604858,0:1048587300::", targets=('lot:1048580300')),
@@ -5383,6 +5381,12 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DB/DT: Rune Arc - chair circle S of DT", "Rune Arc", key="604941,0:1049417080::", targets=('lot:1049410080')),
         ERLocationData("DB/DT: Somber Smithing Stone [9] - chair circle S of DT", "Somber Smithing Stone [9]", key="604941,0:1049417090::", targets=('lot:1049410090')),
         ERLocationData("DB/(DT): Numen's Rune - layer 3, N side", "Numen's Rune", key="604941,0:1049417100::", targets=('lot:1049410100')), # on divine tower
+        
+        ERLocationData("DB/FF: Smithing Stone [7] - on skull SW of FF item 1", "Smithing Stone [7]", key="605039,0:1050397020::", targets=('lot:1050390020')),
+        ERLocationData("DB/FF: Smithing Stone [7] - on skull SW of FF item 2", "Smithing Stone [7]", key="605039,0:1050397030::", targets=('lot:1050390030')),
+        ERLocationData("DB/FF: Stonesword Key - on skull SW of FF", "Stonesword Key", key="605039,0:1050397040::", targets=('lot:1050390040')),
+        ERLocationData("DB/FF: Smithing Stone [8] - on skull SW of FF", "Smithing Stone [8]", key="605039,0:1050397050::", targets=('lot:1050390050')),
+        
         ERLocationData("DB/FF: Reed Great Katana - N of FF on top of mound", "Reed Great Katana", key="605040,0:1050407000::", tp_dlc=True, targets=('lot:1050400000')),
         ERLocationData("DB/FF: Dragon Heart x5 - enemy drop W of FF", "Dragon Heart x5", key="605040,0:1050407800::", targets=('lot:1050400800')),
         ERLocationData("DB/(FF): Golden Rune [12] - on fort rafters", "Golden Rune [12]", key="605139,0:1051397040::", targets=('lot:1051390040')),

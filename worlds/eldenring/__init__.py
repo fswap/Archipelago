@@ -1708,9 +1708,6 @@ class EldenRing(World):
         """All region lock rules."""
         if self.options.world_logic == "region_lock":
             if self.base_enabled:
-                # "BS: Stonesword Key - behind wooden platform" # in limgrave rn
-                # "BS: Smithing Stone [1] x3 - corpse hanging off edge" # on Bridge of Sacrifice idk where wall for WP will be
-                
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
                 self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
                 self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
@@ -1738,12 +1735,6 @@ class EldenRing(World):
                 self._add_entrance_rule("Farum Azula", "Farum Azula Lock")
                 self._add_entrance_rule("Leyndell, Ashen Capital", "Ashen Lock")
                 self._add_entrance_rule("Miquella's Haligtree", "Haligtree Lock")
-                
-                # if haligtree region lock adds a key to the evergaol these items would require it
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, NW side of town middle of buildings"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, S side of town by fog wall"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, up stairs from where the grace would be"
-                # "CS/(OLT): Ghost Glovewort [9] - enemy drop in evergaol, under stairs to haligtree seal"
                 
             if self.options.enable_dlc:
                 if self.options.dlc_start == 0: self._add_entrance_rule("Gravesite Plain", "Gravesite Lock")
