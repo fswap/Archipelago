@@ -1666,10 +1666,11 @@ class EldenRing(World):
             self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: state.has("Imbued Sword Key", self.player, 3))
         
         # Rykard and Serpent Rule
-        if self.rykard_location and (self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled):
-            if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
-        if self.serpent_location and (self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled):
-            if len(self.rykard_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+        if not self.options.rykard_encounter:
+            if self.rykard_location and (self.rykard_location.dlc and self.options.enable_dlc or not self.rykard_location.dlc and self.base_enabled):
+                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+            if self.serpent_location and (self.serpent_location.dlc and self.options.enable_dlc or not self.serpent_location.dlc and self.base_enabled):
+                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
             
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
