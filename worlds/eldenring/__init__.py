@@ -3075,7 +3075,7 @@ class EldenRing(World):
         for name in self.options.goal:
             assert name.endswith(" Boss")
             goal_type = name[:-len(" Boss")]
-            boss = [boss for boss in all_bosses if goal_type in boss.type and len(boss.locations) != 0]
+            boss = [boss for boss in all_bosses if goal_type in boss.type and boss.flag != None]
             assert boss
             # no dupe bosses
             [result.append(b) for b in boss if b not in result]
