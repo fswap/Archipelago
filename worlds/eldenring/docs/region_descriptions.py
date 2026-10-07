@@ -25,8 +25,6 @@ def find_description(initial: str) -> str:
     return ""
 
 if __name__ == '__main__':
-    "main"
-    
     for region in location_tables:
         region_initals_to_description.setdefault(region, {})
         for location in location_tables[region]:

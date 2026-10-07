@@ -254,6 +254,9 @@ class EldenRing(World):
             for val in self.options.key_item_shards.value[shard]:
                 if val not in ['Req', 'Max']:
                     raise OptionError(f"Player {self.player_name} has {shard} with unknown option {val}.")
+                if shard == "RoldMedallionShards" and self.options.key_item_shards.value[shard]['Max'] > 1:
+                    self.options.great_runes_required_mountain = -1
+                
                 max_shard_count = 10
                 if self.options.key_item_shards.value[shard][val] < 1:
                     self.options.key_item_shards.value[shard][val] = 1
