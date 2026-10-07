@@ -12,6 +12,9 @@ python launcher.py "Build APWorlds" -- "Elden Ring"
 
 - TODO -
 
+make a docs folder for locations and region descriptions
+and make a python script to automate it
+
 currently make prog_deprio place at priority and it has fully stopped the fill erroring with prog at prio only
 
 rusty key and stormveil lock do same thing-ish

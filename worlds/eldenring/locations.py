@@ -145,10 +145,10 @@ region_order = [
     
     # Mountaintops
     "Mountaintops of the Giants",
-    "Flame Peak",
-    "Giant-Conquering Hero's Grave",
     "Giants' Mountaintop Catacombs",
     "Spiritcaller Cave",
+    "Flame Peak",
+    "Giant-Conquering Hero's Grave",
     
     # Farum Azula
     "Farum Azula",
@@ -6235,6 +6235,8 @@ for region in region_order_dlc:
     for location in location_tables[region] + location_tables["Roundtable Hold DLC Only"]:
         location.dlc = True
         location.omit = disable_dlc
+        if location.name in [l.name for l in location_tables["Roundtable Hold DLC Only"]]:
+            location.region_value = location_tables["Gravesite Plain"][0].region_value
 
 for region in [# conditional locations
     # need keys

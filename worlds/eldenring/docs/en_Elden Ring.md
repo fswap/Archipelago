@@ -1,0 +1,881 @@
+# Elden Ring
+
+Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
+
+## Understanding the Acronyms
+
+### What a location looks like 
+`region acronym` **/** `grace or landmark acronym` **:** 
+<br>`original item` **-** `a landmark or descriptor` *(ex: scarab, boss drop)*
+<br>then a `direction from a grace or landmark` or a `very brief description to find location`
+
+### Examples
+* **CD/AFCHN: Lifesteal Fist - scarab to NW**
+<br> from grace AFCHN head in compass direction to find scarab
+* **LG/WR: Golden Rune [1] - graveyard S of WR**
+<br> from landmark WR (because acronym is in the description) head in compass direction to find graveyard
+* **LG/(CE): Smithing Stone [1] - on anvil**
+<br> within landmark CE the item is on an anvil
+
+#### Some Useful Terminology
+
+`hostile npc drop`: the rare hostile npc's that aren't red
+<br>`invader drop`: invaders / red npc's
+<br>`enemy drop / ballon drop`: non boss enemies with a guaranteed drop
+
+
+# Regions and Acronyms
+<!-- begin region table -->
+## Base Game
+<table>
+<tr><td><h3>Limgrave</td></tr>
+<tr><td><strong>BS: </strong>Bridge of Sacifice, connection point between South Limgrave and Weeping Peninsula</td></tr>
+<tr><td><strong>LG/(AS): </strong>Artists Shack landmark.</td></tr>
+<tr><td><strong>LG/(CE): </strong></td></tr>
+<tr><td><strong>LG/(DBR): </strong></td></tr>
+<tr><td><strong>LG/(FH): </strong></td></tr>
+<tr><td><strong>LG/(FHE): </strong></td></tr>
+<tr><td><strong>LG/(GR): </strong></td></tr>
+<tr><td><strong>LG/(MR): </strong></td></tr>
+<tr><td><strong>LG/(SG): </strong></td></tr>
+<tr><td><strong>LG/(SWV): </strong></td></tr>
+<tr><td><strong>LG/(TCM): </strong></td></tr>
+<tr><td><strong>LG/(WR): </strong></td></tr>
+<tr><td><strong>LG/ALN: </strong></td></tr>
+<tr><td><strong>LG/ALS: </strong></td></tr>
+<tr><td><strong>LG/AS: </strong></td></tr>
+<tr><td><strong>LG/CC: </strong></td></tr>
+<tr><td><strong>LG/CE: </strong></td></tr>
+<tr><td><strong>LG/DBR: </strong></td></tr>
+<tr><td><strong>LG/DC: </strong></td></tr>
+<tr><td><strong>LG/FHE: </strong></td></tr>
+<tr><td><strong>LG/FHW: </strong></td></tr>
+<tr><td><strong>LG/GC: </strong></td></tr>
+<tr><td><strong>LG/HC: </strong></td></tr>
+<tr><td><strong>LG/MCO: </strong></td></tr>
+<tr><td><strong>LG/MCV: </strong></td></tr>
+<tr><td><strong>LG/ME: </strong></td></tr>
+<tr><td><strong>LG/MO: </strong></td></tr>
+<tr><td><strong>LG/MR: </strong></td></tr>
+<tr><td><strong>LG/SB: </strong></td></tr>
+<tr><td><strong>LG/SC: </strong></td></tr>
+<tr><td><strong>LG/SG: </strong></td></tr>
+<tr><td><strong>LG/SR: </strong></td></tr>
+<tr><td><strong>LG/SRW: </strong></td></tr>
+<tr><td><strong>LG/SWV: </strong></td></tr>
+<tr><td><strong>LG/SWVO: </strong></td></tr>
+<tr><td><strong>LG/TCM: </strong></td></tr>
+<tr><td><strong>LG/TFS: </strong></td></tr>
+<tr><td><strong>LG/WR: </strong></td></tr>
+<tr><td><strong>LG/WS: </strong></td></tr>
+<tr><td><h3>Stormhill</td></tr>
+<tr><td><strong>LG/(SE): </strong></td></tr>
+<tr><td><strong>LG/(SG): </strong></td></tr>
+<tr><td><strong>LG/(SS): </strong></td></tr>
+<tr><td><strong>LG/(WS): </strong></td></tr>
+<tr><td><strong>LG/DC: </strong></td></tr>
+<tr><td><strong>LG/LC: </strong></td></tr>
+<tr><td><strong>LG/SB: </strong></td></tr>
+<tr><td><strong>LG/SS: </strong></td></tr>
+<tr><td><strong>LG/SV: </strong></td></tr>
+<tr><td><strong>LG/WS: </strong></td></tr>
+<tr><td><strong>SV/CT: </strong></td></tr>
+<tr><td><h3>Coastal Cave</td></tr>
+<tr><td><strong>LG/(CC): </strong></td></tr>
+<tr><td><h3>Church of Dragon Communion</td></tr>
+<tr><td><strong>LG/(CDC): </strong></td></tr>
+<tr><td><h3>Groveside Cave</td></tr>
+<tr><td><strong>LG/(GC): </strong></td></tr>
+<tr><td><h3>Stormfoot Catacombs</td></tr>
+<tr><td><strong>LG/(SC): </strong></td></tr>
+<tr><td><h3>Limgrave Tunnels</td></tr>
+<tr><td><strong>LG/(LT): </strong></td></tr>
+<tr><td><h3>Murkwater Cave</td></tr>
+<tr><td><strong>LG/(MCV): </strong></td></tr>
+<tr><td><h3>Murkwater Catacombs</td></tr>
+<tr><td><strong>LG/(MCC): </strong></td></tr>
+<tr><td><h3>Highroad Cave</td></tr>
+<tr><td><strong>LG/(HC): </strong></td></tr>
+<tr><td><h3>Deathtouched Catacombs</td></tr>
+<tr><td><strong>LG/(DC): </strong></td></tr>
+<tr><td><h3>Fringefolk Hero&#x27;s Grave</td></tr>
+<tr><td><strong>LG/(FHG): </strong></td></tr>
+<tr><td><h3>Stormveil Start</td></tr>
+<tr><td><strong>SV/SMG: </strong></td></tr>
+<tr><td><strong>SV/StC: </strong></td></tr>
+<tr><td><h3>Stormveil Castle</td></tr>
+<tr><td><strong>SV/GC: </strong></td></tr>
+<tr><td><strong>SV/LC: </strong></td></tr>
+<tr><td><strong>SV/LTB: </strong></td></tr>
+<tr><td><strong>SV/RT: </strong></td></tr>
+<tr><td><strong>SV/SMG: </strong></td></tr>
+<tr><td><strong>SV/SeC: </strong></td></tr>
+<tr><td><strong>SV/StC: </strong></td></tr>
+<tr><td><h3>Stormveil Throne</td></tr>
+<tr><td><strong>SV/GG: </strong>Godrick the Grafted grace in Godrick&#x27;s arena.</td></tr>
+<tr><td><strong>SV/LL: </strong></td></tr>
+<tr><td><h3>Divine Tower of Limgrave</td></tr>
+<tr><td><strong>SV/(DTL): </strong></td></tr>
+<tr><td><strong>SV/LTB: </strong></td></tr>
+<tr><td><h3>Roundtable Hold</td></tr>
+<tr><td><strong>RH: </strong></td></tr>
+<tr><td><h3>Weeping Peninsula</td></tr>
+<tr><td><strong>WP/(AV): </strong></td></tr>
+<tr><td><strong>WP/(CBC): </strong></td></tr>
+<tr><td><strong>WP/(CM): </strong></td></tr>
+<tr><td><strong>WP/(CP): </strong></td></tr>
+<tr><td><strong>WP/(DHFR): </strong></td></tr>
+<tr><td><strong>WP/(FCM): </strong></td></tr>
+<tr><td><strong>WP/(FLT): </strong></td></tr>
+<tr><td><strong>WP/(IMS): </strong></td></tr>
+<tr><td><strong>WP/(OR): </strong></td></tr>
+<tr><td><strong>WP/(TwR): </strong></td></tr>
+<tr><td><strong>WP/(WE): </strong></td></tr>
+<tr><td><strong>WP/(WR): </strong></td></tr>
+<tr><td><strong>WP/AV: </strong></td></tr>
+<tr><td><strong>WP/BCPG: </strong></td></tr>
+<tr><td><strong>WP/BS: </strong></td></tr>
+<tr><td><strong>WP/CM: </strong></td></tr>
+<tr><td><strong>WP/CMR: </strong></td></tr>
+<tr><td><strong>WP/CP: </strong></td></tr>
+<tr><td><strong>WP/DHFR: </strong></td></tr>
+<tr><td><strong>WP/EC: </strong></td></tr>
+<tr><td><strong>WP/FLT: </strong></td></tr>
+<tr><td><strong>WP/ME: </strong></td></tr>
+<tr><td><strong>WP/MT: </strong></td></tr>
+<tr><td><strong>WP/OR: </strong></td></tr>
+<tr><td><strong>WP/SLT: </strong></td></tr>
+<tr><td><strong>WP/ToR: </strong></td></tr>
+<tr><td><strong>WP/TwR: </strong></td></tr>
+<tr><td><strong>WP/WR: </strong></td></tr>
+<tr><td><h3>Impaler&#x27;s Catacombs</td></tr>
+<tr><td><strong>WP/(IC): </strong></td></tr>
+<tr><td><h3>Tombsward Catacombs</td></tr>
+<tr><td><strong>WP/(TCC): </strong></td></tr>
+<tr><td><h3>Tombsward Cave</td></tr>
+<tr><td><strong>WP/(TCV): </strong></td></tr>
+<tr><td><h3>Morne Tunnel</td></tr>
+<tr><td><strong>WP/(MT): </strong></td></tr>
+<tr><td><h3>Earthbore Cave</td></tr>
+<tr><td><strong>WP/(EC): </strong></td></tr>
+<tr><td><h3>Siofra River</td></tr>
+<tr><td><strong>SR/(HG): </strong></td></tr>
+<tr><td><strong>SR/BW: </strong></td></tr>
+<tr><td><strong>SR/SRB: </strong></td></tr>
+<tr><td><strong>SR/SRWD: </strong></td></tr>
+<tr><td><strong>SR/WW: </strong></td></tr>
+<tr><td><h3>Liurnia of The Lakes</td></tr>
+<tr><td><strong>LL/(AGT): </strong></td></tr>
+<tr><td><strong>LL/(AS): </strong></td></tr>
+<tr><td><strong>LL/(CE): </strong></td></tr>
+<tr><td><strong>LL/(CFT): </strong></td></tr>
+<tr><td><strong>LL/(CIr): </strong></td></tr>
+<tr><td><strong>LL/(CM): </strong></td></tr>
+<tr><td><strong>LL/(CT): </strong></td></tr>
+<tr><td><strong>LL/(CV): </strong></td></tr>
+<tr><td><strong>LL/(FFV): </strong></td></tr>
+<tr><td><strong>LL/(HLT): </strong></td></tr>
+<tr><td><strong>LL/(KR): </strong></td></tr>
+<tr><td><strong>LL/(LR): </strong></td></tr>
+<tr><td><strong>LL/(ME): </strong></td></tr>
+<tr><td><strong>LL/(PR): </strong></td></tr>
+<tr><td><strong>LL/(RC): </strong></td></tr>
+<tr><td><strong>LL/(RS): </strong></td></tr>
+<tr><td><strong>LL/(SWS): </strong></td></tr>
+<tr><td><strong>LL/(TFB): </strong></td></tr>
+<tr><td><strong>LL/(VA): </strong></td></tr>
+<tr><td><strong>LL/AGT: </strong></td></tr>
+<tr><td><strong>LL/ARW: </strong></td></tr>
+<tr><td><strong>LL/AS: </strong></td></tr>
+<tr><td><strong>LL/BC: </strong></td></tr>
+<tr><td><strong>LL/BCM: </strong></td></tr>
+<tr><td><strong>LL/BS: </strong></td></tr>
+<tr><td><strong>LL/CC: </strong></td></tr>
+<tr><td><strong>LL/CFT: </strong></td></tr>
+<tr><td><strong>LL/CIn: </strong></td></tr>
+<tr><td><strong>LL/CIr: </strong></td></tr>
+<tr><td><strong>LL/CT: </strong></td></tr>
+<tr><td><strong>LL/CV: </strong></td></tr>
+<tr><td><strong>LL/CW: </strong></td></tr>
+<tr><td><strong>LL/EGBT: </strong></td></tr>
+<tr><td><strong>LL/ELLS: </strong></td></tr>
+<tr><td><strong>LL/ERLG: </strong></td></tr>
+<tr><td><strong>LL/ET: </strong></td></tr>
+<tr><td><strong>LL/FFB: </strong></td></tr>
+<tr><td><strong>LL/FFV: </strong></td></tr>
+<tr><td><strong>LL/FFVO: </strong></td></tr>
+<tr><td><strong>LL/FL: </strong></td></tr>
+<tr><td><strong>LL/FRL: </strong></td></tr>
+<tr><td><strong>LL/GLD: </strong></td></tr>
+<tr><td><strong>LL/GTB: </strong></td></tr>
+<tr><td><strong>LL/GTN: </strong></td></tr>
+<tr><td><strong>LL/JB: </strong></td></tr>
+<tr><td><strong>LL/LFC: </strong></td></tr>
+<tr><td><strong>LL/LHN: </strong></td></tr>
+<tr><td><strong>LL/LHS: </strong></td></tr>
+<tr><td><strong>LL/LLS: </strong></td></tr>
+<tr><td><strong>LL/LR: </strong></td></tr>
+<tr><td><strong>LL/MC: </strong></td></tr>
+<tr><td><strong>LL/MCMG: </strong></td></tr>
+<tr><td><strong>LL/MEW: </strong></td></tr>
+<tr><td><strong>LL/NLLS: </strong></td></tr>
+<tr><td><strong>LL/REC: </strong></td></tr>
+<tr><td><strong>LL/RL: </strong></td></tr>
+<tr><td><strong>LL/RM: </strong></td></tr>
+<tr><td><strong>LL/RS: </strong></td></tr>
+<tr><td><strong>LL/RVV: </strong></td></tr>
+<tr><td><strong>LL/SHE: </strong></td></tr>
+<tr><td><strong>LL/SRLG: </strong></td></tr>
+<tr><td><strong>LL/SeI: </strong></td></tr>
+<tr><td><strong>LL/SoI: </strong></td></tr>
+<tr><td><strong>LL/TQ: </strong></td></tr>
+<tr><td><strong>LL/TR: </strong></td></tr>
+<tr><td><strong>LL/VA: </strong></td></tr>
+<tr><td><h3>Bellum Highway</td></tr>
+<tr><td><strong>LL: </strong></td></tr>
+<tr><td><strong>LL/(BC): </strong></td></tr>
+<tr><td><strong>LL/(CIn): </strong></td></tr>
+<tr><td><strong>LL/(FFT): </strong></td></tr>
+<tr><td><strong>LL/(FFV): </strong></td></tr>
+<tr><td><strong>LL/BC: </strong></td></tr>
+<tr><td><strong>LL/CIn: </strong></td></tr>
+<tr><td><strong>LL/FFVO: </strong></td></tr>
+<tr><td><strong>LL/GLD: </strong></td></tr>
+<tr><td><strong>LL/MEE: </strong></td></tr>
+<tr><td><h3>Road&#x27;s End Catacombs</td></tr>
+<tr><td><strong>LL/(REC): </strong></td></tr>
+<tr><td><h3>Black Knife Catacombs</td></tr>
+<tr><td><strong>LL/(BKC): </strong></td></tr>
+<tr><td><h3>Cliffbottom Catacombs</td></tr>
+<tr><td><strong>LL/(CC): </strong></td></tr>
+<tr><td><h3>Stillwater Cave</td></tr>
+<tr><td><strong>LL/(SC): </strong></td></tr>
+<tr><td><h3>Lakeside Crystal Cave</td></tr>
+<tr><td><strong>LL/(LCC): </strong></td></tr>
+<tr><td><h3>Academy Crystal Cave</td></tr>
+<tr><td><strong>LL/(ACC): </strong></td></tr>
+<tr><td><h3>Raya Lucaria Crystal Tunnel</td></tr>
+<tr><td><strong>LL/(RLCT): </strong></td></tr>
+<tr><td><h3>Caria Manor</td></tr>
+<tr><td><strong>LL/(CM): </strong></td></tr>
+<tr><td><strong>LL/(RGE): </strong></td></tr>
+<tr><td><strong>LL/(RaR): </strong></td></tr>
+<tr><td><strong>LL/(ReR): </strong></td></tr>
+<tr><td><strong>LL/(SR): </strong></td></tr>
+<tr><td><strong>LL/BCM: </strong></td></tr>
+<tr><td><strong>LL/RM: </strong></td></tr>
+<tr><td><strong>LL/RMG: </strong></td></tr>
+<tr><td><strong>LL/RaR: </strong></td></tr>
+<tr><td><strong>LL/SR: </strong></td></tr>
+<tr><td><h3>Carian Study Hall</td></tr>
+<tr><td><strong>LL/(CSH)N: </strong></td></tr>
+<tr><td><h3>Carian Study Hall (Inverted)</td></tr>
+<tr><td><strong>LL/(CSH)I: </strong></td></tr>
+<tr><td><strong>LL/(DV): </strong></td></tr>
+<tr><td><strong>LL/LTB: </strong></td></tr>
+<tr><td><h3>Ainsel River</td></tr>
+<tr><td><strong>AR/(UPR): </strong></td></tr>
+<tr><td><strong>AR/ARD: </strong></td></tr>
+<tr><td><strong>AR/ARSG: </strong></td></tr>
+<tr><td><strong>AR/ARWD: </strong></td></tr>
+<tr><td><strong>AR/UPR: </strong></td></tr>
+<tr><td><h3>Ruin-Strewn Precipice</td></tr>
+<tr><td><strong>RSP/RSP: </strong></td></tr>
+<tr><td><strong>RSP/RSPO: </strong></td></tr>
+<tr><td><strong>RSP/RVV: </strong></td></tr>
+<tr><td><h3>The Four Belfries (Chapel of Anticipation)</td></tr>
+<tr><td><strong>LL/(TFB/CA): </strong></td></tr>
+<tr><td><h3>The Four Belfries (Nokron)</td></tr>
+<tr><td><strong>LL/(TFB/NEC): </strong></td></tr>
+<tr><td><h3>The Four Belfries (Farum Azula)</td></tr>
+<tr><td><strong>LL/(TFB/FA): </strong></td></tr>
+<tr><td><h3>Raya Lucaria Academy</td></tr>
+<tr><td><strong>RLA/CC: </strong></td></tr>
+<tr><td><strong>RLA/DB: </strong></td></tr>
+<tr><td><strong>RLA/MAG: </strong></td></tr>
+<tr><td><strong>RLA/RLGL: </strong></td></tr>
+<tr><td><strong>RLA/SC: </strong></td></tr>
+<tr><td><h3>Raya Lucaria Academy Main</td></tr>
+<tr><td><strong>RLA: </strong></td></tr>
+<tr><td><strong>RLA/DB: </strong></td></tr>
+<tr><td><h3>Raya Lucaria Academy Chest</td></tr>
+<tr><td><strong>RLA/RLGL: </strong></td></tr>
+<tr><td><h3>Raya Lucaria Academy Library</td></tr>
+<tr><td><strong>RLA/RLGL: </strong></td></tr>
+<tr><td><h3>Caelid</td></tr>
+<tr><td><strong>CL/(CDC): </strong></td></tr>
+<tr><td><strong>CL/(CP): </strong></td></tr>
+<tr><td><strong>CL/(CR): </strong></td></tr>
+<tr><td><strong>CL/(CWR): </strong></td></tr>
+<tr><td><strong>CL/(FG): </strong></td></tr>
+<tr><td><strong>CL/(FR): </strong></td></tr>
+<tr><td><strong>CL/(GS): </strong></td></tr>
+<tr><td><strong>CL/(RC): </strong></td></tr>
+<tr><td><strong>CL/(SC): </strong></td></tr>
+<tr><td><strong>CL/(SG): </strong></td></tr>
+<tr><td><strong>CL/(SLT): </strong></td></tr>
+<tr><td><strong>CL/(SSR): </strong></td></tr>
+<tr><td><strong>CL/(STS): </strong></td></tr>
+<tr><td><strong>CL/ACHN: </strong></td></tr>
+<tr><td><strong>CL/ASS: </strong></td></tr>
+<tr><td><strong>CL/CCC: </strong></td></tr>
+<tr><td><strong>CL/CHS: </strong></td></tr>
+<tr><td><strong>CL/CP: </strong></td></tr>
+<tr><td><strong>CL/CR: </strong></td></tr>
+<tr><td><strong>CL/CWR: </strong></td></tr>
+<tr><td><strong>CL/DSW: </strong></td></tr>
+<tr><td><strong>CL/DW: </strong></td></tr>
+<tr><td><strong>CL/FGN: </strong></td></tr>
+<tr><td><strong>CL/FR: </strong></td></tr>
+<tr><td><strong>CL/IA: </strong></td></tr>
+<tr><td><strong>CL/IG: </strong></td></tr>
+<tr><td><strong>CL/MEW: </strong></td></tr>
+<tr><td><strong>CL/RB: </strong></td></tr>
+<tr><td><strong>CL/SASB: </strong></td></tr>
+<tr><td><strong>CL/SG: </strong></td></tr>
+<tr><td><strong>CL/SH: </strong></td></tr>
+<tr><td><strong>CL/SSR: </strong></td></tr>
+<tr><td><strong>CL/SUS: </strong></td></tr>
+<tr><td><strong>CL/SW: </strong></td></tr>
+<tr><td><h3>Caelid Catacombs</td></tr>
+<tr><td><strong>CL/(CCC): </strong></td></tr>
+<tr><td><h3>Gaol Cave</td></tr>
+<tr><td><strong>CL/(GC): </strong></td></tr>
+<tr><td><h3>Sellia Crystal Tunnel</td></tr>
+<tr><td><strong>CL/(SCT): </strong></td></tr>
+<tr><td><h3>Abandoned Cave</td></tr>
+<tr><td><strong>CL/(AC): </strong></td></tr>
+<tr><td><h3>Minor Erdtree Catacombs</td></tr>
+<tr><td><strong>CL/(MEC): </strong></td></tr>
+<tr><td><h3>Great-Jar</td></tr>
+<tr><td><strong>CL/CCO: </strong></td></tr>
+<tr><td><strong>CL/DW: </strong></td></tr>
+<tr><td><strong>CL/SE: </strong></td></tr>
+<tr><td><h3>Gale Tunnel</td></tr>
+<tr><td><strong>CL/(GT): </strong></td></tr>
+<tr><td><h3>Redmane Castle Post Radahn</td></tr>
+<tr><td><strong>CL/(RC): </strong></td></tr>
+<tr><td><h3>Wailing Dunes</td></tr>
+<tr><td><strong>CL/(WD): </strong></td></tr>
+<tr><td><h3>War-Dead Catacombs</td></tr>
+<tr><td><strong>CL/(WDC): </strong></td></tr>
+<tr><td><h3>Dragonbarrow</td></tr>
+<tr><td><strong>DB/(BS): </strong></td></tr>
+<tr><td><strong>DB/(DT): </strong></td></tr>
+<tr><td><strong>DB/(FF): </strong></td></tr>
+<tr><td><strong>DB/(IMS): </strong></td></tr>
+<tr><td><strong>DB/(LR): </strong></td></tr>
+<tr><td><strong>DB/(SE): </strong></td></tr>
+<tr><td><strong>DB/BS: </strong></td></tr>
+<tr><td><strong>DB/DT: </strong></td></tr>
+<tr><td><strong>DB/DW: </strong></td></tr>
+<tr><td><strong>DB/FF: </strong></td></tr>
+<tr><td><strong>DB/FG: </strong></td></tr>
+<tr><td><strong>DB/IMS: </strong></td></tr>
+<tr><td><strong>DB/LR: </strong></td></tr>
+<tr><td><strong>DB/MEE: </strong></td></tr>
+<tr><td><h3>Dragonbarrow Cave</td></tr>
+<tr><td><strong>DB/(DC): </strong></td></tr>
+<tr><td><h3>Sellia Hideaway</td></tr>
+<tr><td><strong>DB/(SH): </strong></td></tr>
+<tr><td><h3>Divine Tower of Caelid</td></tr>
+<tr><td><strong>DB/(DT): </strong></td></tr>
+<tr><td><h3>Nokron, Eternal City Start</td></tr>
+<tr><td><strong>NR/LG: </strong></td></tr>
+<tr><td><strong>NR/NEC: </strong></td></tr>
+<tr><td><h3>Nokron, Eternal City</td></tr>
+<tr><td><strong>NR/(HG): </strong></td></tr>
+<tr><td><strong>NR/(NSG): </strong></td></tr>
+<tr><td><strong>NR/(SA): </strong></td></tr>
+<tr><td><strong>NR/AFC: </strong></td></tr>
+<tr><td><strong>NR/AW: </strong></td></tr>
+<tr><td><strong>NR/HG: </strong></td></tr>
+<tr><td><strong>NR/MT: </strong></td></tr>
+<tr><td><h3>Deeproot Depths Upper</td></tr>
+<tr><td><strong>DD/RFC: </strong></td></tr>
+<tr><td><h3>Deeproot Depths</td></tr>
+<tr><td><strong>DD/AR: </strong></td></tr>
+<tr><td><strong>DD/DD: </strong></td></tr>
+<tr><td><strong>DD/GWC: </strong></td></tr>
+<tr><td><strong>DD/TNEC: </strong></td></tr>
+<tr><td><h3>Deeproot Depths Boss</td></tr>
+<tr><td><strong>DD/AR: </strong></td></tr>
+<tr><td><strong>DD/PDT: </strong></td></tr>
+<tr><td><h3>Ainsel River Main</td></tr>
+<tr><td><strong>ARM/(UPR): </strong></td></tr>
+<tr><td><strong>ARM/ARM: </strong></td></tr>
+<tr><td><strong>ARM/UPR: </strong></td></tr>
+<tr><td><strong>NS/NEC: </strong></td></tr>
+<tr><td><strong>NS/NWB: </strong></td></tr>
+<tr><td><h3>Lake of Rot</td></tr>
+<tr><td><strong>LR: </strong></td></tr>
+<tr><td><strong>LR/GC: </strong></td></tr>
+<tr><td><strong>LR/LRS: </strong></td></tr>
+<tr><td><h3>Moonlight Altar</td></tr>
+<tr><td><strong>MA/(CMC): </strong></td></tr>
+<tr><td><strong>MA/(CR): </strong></td></tr>
+<tr><td><strong>MA/(LER): </strong></td></tr>
+<tr><td><strong>MA/(MR): </strong></td></tr>
+<tr><td><strong>MA/(RE): </strong></td></tr>
+<tr><td><strong>MA/MA: </strong></td></tr>
+<tr><td><h3>Altus Plateau</td></tr>
+<tr><td><strong>AP/(DMV): </strong></td></tr>
+<tr><td><strong>AP/(DWV): </strong></td></tr>
+<tr><td><strong>AP/(HLT): </strong></td></tr>
+<tr><td><strong>AP/(MR): </strong></td></tr>
+<tr><td><strong>AP/(SC): </strong></td></tr>
+<tr><td><strong>AP/(SCM): </strong></td></tr>
+<tr><td><strong>AP/(WbR): </strong></td></tr>
+<tr><td><strong>AP/(WfR): </strong></td></tr>
+<tr><td><strong>AP/AC: </strong></td></tr>
+<tr><td><strong>AP/AHJ: </strong></td></tr>
+<tr><td><strong>AP/AP: </strong></td></tr>
+<tr><td><strong>AP/BB: </strong></td></tr>
+<tr><td><strong>AP/EGH: </strong></td></tr>
+<tr><td><strong>AP/EWP: </strong></td></tr>
+<tr><td><strong>AP/FSG: </strong></td></tr>
+<tr><td><strong>AP/GLE: </strong></td></tr>
+<tr><td><strong>AP/HLT: </strong></td></tr>
+<tr><td><strong>AP/LR: </strong></td></tr>
+<tr><td><strong>AP/ME: </strong></td></tr>
+<tr><td><strong>AP/MR: </strong></td></tr>
+<tr><td><strong>AP/OAT: </strong></td></tr>
+<tr><td><strong>AP/PR: </strong></td></tr>
+<tr><td><strong>AP/RISP: </strong></td></tr>
+<tr><td><strong>AP/RP: </strong></td></tr>
+<tr><td><strong>AP/SCM: </strong></td></tr>
+<tr><td><strong>AP/SCR: </strong></td></tr>
+<tr><td><strong>AP/SH: </strong></td></tr>
+<tr><td><strong>AP/SHG: </strong></td></tr>
+<tr><td><strong>AP/SR: </strong></td></tr>
+<tr><td><strong>AP/STH: </strong></td></tr>
+<tr><td><strong>AP/TSC: </strong></td></tr>
+<tr><td><strong>AP/VW: </strong></td></tr>
+<tr><td><strong>AP/VWP: </strong></td></tr>
+<tr><td><strong>AP/WV: </strong></td></tr>
+<tr><td><strong>AP/WWP: </strong></td></tr>
+<tr><td><strong>AP/WbR: </strong></td></tr>
+<tr><td><strong>AP/WhR: </strong></td></tr>
+<tr><td><strong>TSC/CI: </strong></td></tr>
+<tr><td><strong>TSC/SCIG: </strong></td></tr>
+<tr><td><strong>TSC/SCR: </strong></td></tr>
+<tr><td><h3>Sainted Hero&#x27;s Grave</td></tr>
+<tr><td><strong>AP/(SHG): </strong></td></tr>
+<tr><td><h3>Unsightly Catacombs</td></tr>
+<tr><td><strong>AP/(UC): </strong></td></tr>
+<tr><td><h3>Perfumer&#x27;s Grotto</td></tr>
+<tr><td><strong>AP/(PG): </strong></td></tr>
+<tr><td><h3>Sage&#x27;s Cave</td></tr>
+<tr><td><strong>AP/(SC): </strong></td></tr>
+<tr><td><h3>Old Altus Tunnel</td></tr>
+<tr><td><strong>AP/(OAT): </strong></td></tr>
+<tr><td><h3>Altus Tunnel</td></tr>
+<tr><td><strong>AP/(AT): </strong></td></tr>
+<tr><td><h3>Mt. Gelmir</td></tr>
+<tr><td><strong>MtG/(CS): </strong></td></tr>
+<tr><td><strong>MtG/(CSS): </strong></td></tr>
+<tr><td><strong>MtG/(FL): </strong></td></tr>
+<tr><td><strong>MtG/(HS): </strong></td></tr>
+<tr><td><strong>MtG/(HV): </strong></td></tr>
+<tr><td><strong>MtG/BI: </strong></td></tr>
+<tr><td><strong>MtG/FL: </strong></td></tr>
+<tr><td><strong>MtG/FMGC: </strong></td></tr>
+<tr><td><strong>MtG/GHG: </strong></td></tr>
+<tr><td><strong>MtG/HS: </strong></td></tr>
+<tr><td><strong>MtG/HV: </strong></td></tr>
+<tr><td><strong>MtG/ME: </strong></td></tr>
+<tr><td><strong>MtG/NMGC: </strong></td></tr>
+<tr><td><strong>MtG/PSA: </strong></td></tr>
+<tr><td><strong>MtG/RI: </strong></td></tr>
+<tr><td><strong>MtG/SR: </strong></td></tr>
+<tr><td><strong>MtG/ST: </strong></td></tr>
+<tr><td><strong>MtG/VC: </strong></td></tr>
+<tr><td><strong>MtG/VM: </strong></td></tr>
+<tr><td><h3>Wyndham Catacombs</td></tr>
+<tr><td><strong>MtG/(WC): </strong></td></tr>
+<tr><td><h3>Gelmir Hero&#x27;s Grave</td></tr>
+<tr><td><strong>MtG/(GHG): </strong></td></tr>
+<tr><td><h3>Seethewater Cave</td></tr>
+<tr><td><strong>MtG/(SC): </strong></td></tr>
+<tr><td><h3>Volcano Cave</td></tr>
+<tr><td><strong>MtG/(VC): </strong></td></tr>
+<tr><td><h3>Volcano Manor Dungeon</td></tr>
+<tr><td><strong>(VM)/RLA: </strong></td></tr>
+<tr><td><strong>(VM)/SIC: </strong></td></tr>
+<tr><td><h3>Volcano Manor Entrance</td></tr>
+<tr><td><strong>VM/VM: </strong></td></tr>
+<tr><td><h3>Volcano Manor Drawing Room</td></tr>
+<tr><td><strong>VM/VM: </strong></td></tr>
+<tr><td><h3>Volcano Manor</td></tr>
+<tr><td><strong>VM/GH: </strong></td></tr>
+<tr><td><strong>VM/PTC: </strong></td></tr>
+<tr><td><strong>VM/TE: </strong></td></tr>
+<tr><td><h3>Volcano Manor Upper</td></tr>
+<tr><td><strong>VM/AP: </strong></td></tr>
+<tr><td><strong>VM/RLB: </strong></td></tr>
+<tr><td><strong>VM/TE: </strong></td></tr>
+<tr><td><h3>Capital Outskirts</td></tr>
+<tr><td><strong>CO: </strong></td></tr>
+<tr><td><strong>CO/(HMS): </strong></td></tr>
+<tr><td><strong>CO/(ME): </strong></td></tr>
+<tr><td><strong>CO/(MEC): </strong></td></tr>
+<tr><td><strong>CO/AHG: </strong></td></tr>
+<tr><td><strong>CO/HMS: </strong></td></tr>
+<tr><td><strong>CO/ME: </strong></td></tr>
+<tr><td><strong>CO/MEC: </strong></td></tr>
+<tr><td><strong>CO/OWB: </strong></td></tr>
+<tr><td><strong>CO/OWPT: </strong></td></tr>
+<tr><td><h3>Auriza Hero&#x27;s Grave</td></tr>
+<tr><td><strong>CO/(AHG): </strong></td></tr>
+<tr><td><h3>Auriza Side Tomb</td></tr>
+<tr><td><strong>CO/(AST): </strong></td></tr>
+<tr><td><h3>Sealed Tunnel</td></tr>
+<tr><td><strong>CO/(ST): </strong></td></tr>
+<tr><td><h3>Leyndell, Royal Capital</td></tr>
+<tr><td><strong>LRC/AB: </strong></td></tr>
+<tr><td><strong>LRC/ECR: </strong></td></tr>
+<tr><td><strong>LRC/FMFF: </strong></td></tr>
+<tr><td><strong>LRC/LCC: </strong></td></tr>
+<tr><td><strong>LRC/QB: </strong></td></tr>
+<tr><td><strong>LRC/WCR: </strong></td></tr>
+<tr><td><strong>LRC|LAC/RC: </strong></td></tr>
+<tr><td><h3>Leyndell, Royal Capital Unmissable</td></tr>
+<tr><td><strong>DTEA: </strong></td></tr>
+<tr><td><strong>LRC/WCR: </strong></td></tr>
+<tr><td><strong>LRC|LAC/AB: </strong></td></tr>
+<tr><td><strong>LRC|LAC/ECR: </strong></td></tr>
+<tr><td><strong>LRC|LAC/FMFF: </strong></td></tr>
+<tr><td><strong>LRC|LAC/RC: </strong></td></tr>
+<tr><td><strong>LRC|LAC/WCR: </strong></td></tr>
+<tr><td><h3>Leyndell, Royal Capital Throne</td></tr>
+<tr><td><strong>LRC/ES: </strong></td></tr>
+<tr><td><strong>LRC/ET: </strong></td></tr>
+<tr><td><strong>LRC/QB: </strong></td></tr>
+<tr><td><strong>LRC|LAC/ES: </strong></td></tr>
+<tr><td><h3>Divine Bridge</td></tr>
+<tr><td><strong>LRC|LAC/(DB): </strong></td></tr>
+<tr><td><h3>Subterranean Shunning-Grounds</td></tr>
+<tr><td><strong>SSG/(LC): </strong></td></tr>
+<tr><td><strong>SSG/FD: </strong></td></tr>
+<tr><td><strong>SSG/LC: </strong></td></tr>
+<tr><td><strong>SSG/UR: </strong></td></tr>
+<tr><td><h3>Leyndell Catacombs</td></tr>
+<tr><td><strong>SSG/(LC): </strong></td></tr>
+<tr><td><h3>Frenzied Flame Proscription</td></tr>
+<tr><td><strong>FFP/CF: </strong></td></tr>
+<tr><td><strong>FFP/FFP: </strong></td></tr>
+<tr><td><h3>Divine Tower of East Altus</td></tr>
+<tr><td><strong>DTEA: </strong></td></tr>
+<tr><td><h3>Forbidden Lands</td></tr>
+<tr><td><strong>FL/FL: </strong></td></tr>
+<tr><td><strong>FL/GLR: </strong></td></tr>
+<tr><td><h3>Hidden Path to the Haligtree</td></tr>
+<tr><td><strong>CS/(HPH): </strong></td></tr>
+<tr><td><h3>Mountaintops of the Giants</td></tr>
+<tr><td><strong>MotG/(CS): </strong></td></tr>
+<tr><td><strong>MotG/(FCM): </strong></td></tr>
+<tr><td><strong>MotG/(GG): </strong></td></tr>
+<tr><td><strong>MotG/(GLR): </strong></td></tr>
+<tr><td><strong>MotG/(GMC): </strong></td></tr>
+<tr><td><strong>MotG/(HR): </strong></td></tr>
+<tr><td><strong>MotG/(LCE): </strong></td></tr>
+<tr><td><strong>MotG/(ME): </strong></td></tr>
+<tr><td><strong>MotG/(SL): </strong></td></tr>
+<tr><td><strong>MotG/(SR): </strong></td></tr>
+<tr><td><strong>MotG/(ZR): </strong></td></tr>
+<tr><td><strong>MotG/ASVR: </strong></td></tr>
+<tr><td><strong>MotG/CSMG: </strong></td></tr>
+<tr><td><strong>MotG/FCM: </strong></td></tr>
+<tr><td><strong>MotG/FR: </strong></td></tr>
+<tr><td><strong>MotG/GG: </strong></td></tr>
+<tr><td><strong>MotG/HR: </strong></td></tr>
+<tr><td><strong>MotG/LCE: </strong></td></tr>
+<tr><td><strong>MotG/ME: </strong></td></tr>
+<tr><td><strong>MotG/SL: </strong></td></tr>
+<tr><td><strong>MotG/SR: </strong></td></tr>
+<tr><td><strong>MotG/SVRO: </strong></td></tr>
+<tr><td><strong>MotG/WR: </strong></td></tr>
+<tr><td><strong>MotG/ZR: </strong></td></tr>
+<tr><td><h3>Giants&#x27; Mountaintop Catacombs</td></tr>
+<tr><td><strong>MotG/(GMC): </strong></td></tr>
+<tr><td><h3>Spiritcaller Cave</td></tr>
+<tr><td><strong>MotG/(SC): </strong></td></tr>
+<tr><td><h3>Flame Peak</td></tr>
+<tr><td><strong>FP/(CR): </strong></td></tr>
+<tr><td><strong>FP/CR: </strong></td></tr>
+<tr><td><strong>FP/FF: </strong></td></tr>
+<tr><td><strong>FP/GCHG: </strong></td></tr>
+<tr><td><strong>FP/GG: </strong></td></tr>
+<tr><td><h3>Giant-Conquering Hero&#x27;s Grave</td></tr>
+<tr><td><strong>FP/(GCHG): </strong></td></tr>
+<tr><td><h3>Farum Azula</td></tr>
+<tr><td><strong>FA/CBG: </strong></td></tr>
+<tr><td><strong>FA/CBGD: </strong></td></tr>
+<tr><td><strong>FA/DT: </strong></td></tr>
+<tr><td><strong>FA/DTT: </strong></td></tr>
+<tr><td><strong>FA/MotG: </strong></td></tr>
+<tr><td><strong>FA/TFB: </strong></td></tr>
+<tr><td><h3>Farum Azula Main</td></tr>
+<tr><td><strong>FA/BGB: </strong></td></tr>
+<tr><td><strong>FA/DTA: </strong></td></tr>
+<tr><td><strong>FA/DTL: </strong></td></tr>
+<tr><td><strong>FA/DTR: </strong></td></tr>
+<tr><td><h3>Consecrated Snowfield</td></tr>
+<tr><td><strong>CS/(AD): </strong></td></tr>
+<tr><td><strong>CS/(AR): </strong></td></tr>
+<tr><td><strong>CS/(ME): </strong></td></tr>
+<tr><td><strong>CS/(OLT): </strong></td></tr>
+<tr><td><strong>CS/(YAR): </strong></td></tr>
+<tr><td><strong>CS/AD: </strong></td></tr>
+<tr><td><strong>CS/AR: </strong></td></tr>
+<tr><td><strong>CS/CF: </strong></td></tr>
+<tr><td><strong>CS/CS: </strong></td></tr>
+<tr><td><strong>CS/CSC: </strong></td></tr>
+<tr><td><strong>CS/HPH: </strong></td></tr>
+<tr><td><strong>CS/ICS: </strong></td></tr>
+<tr><td><strong>CS/ME: </strong></td></tr>
+<tr><td><strong>CS/OLT: </strong></td></tr>
+<tr><td><strong>CS/YAR: </strong></td></tr>
+<tr><td><strong>CS/YAT: </strong></td></tr>
+<tr><td><h3>Consecrated Snowfield Catacombs</td></tr>
+<tr><td><strong>CS/(CSC): </strong></td></tr>
+<tr><td><h3>Cave of the Forlorn</td></tr>
+<tr><td><strong>CS/(CF): </strong></td></tr>
+<tr><td><h3>Yelough Anix Tunnel</td></tr>
+<tr><td><strong>CS/(YAT): </strong></td></tr>
+<tr><td><h3>Mohgwyn Palace</td></tr>
+<tr><td><strong>MP/(MDM): </strong></td></tr>
+<tr><td><strong>MP/MDE: </strong></td></tr>
+<tr><td><strong>MP/PALR: </strong></td></tr>
+<tr><td><strong>MP/PALR|(MDM): </strong></td></tr>
+<tr><td><h3>Miquella&#x27;s Haligtree</td></tr>
+<tr><td><strong>MH/HC: </strong></td></tr>
+<tr><td><strong>MH/HT: </strong></td></tr>
+<tr><td><strong>MH/HTP: </strong></td></tr>
+<tr><td><h3>Elphael, Brace of the Haligtree</td></tr>
+<tr><td><strong>EBH/DC: </strong></td></tr>
+<tr><td><strong>EBH/EIW: </strong></td></tr>
+<tr><td><strong>EBH/HP: </strong></td></tr>
+<tr><td><strong>EBH/HR: </strong></td></tr>
+<tr><td><strong>EBH/PR: </strong></td></tr>
+<tr><td><h3>Leyndell, Ashen Capital</td></tr>
+<tr><td><strong>LAC/FL: </strong></td></tr>
+<tr><td><strong>LAC/LCA: </strong></td></tr>
+<tr><td><strong>LAC/QB: </strong></td></tr>
+<tr><td><strong>LAC/RC: </strong></td></tr>
+<tr><td><h3>Leyndell, Ashen Capital Throne</td></tr>
+<tr><td><strong>LAC/QB: </strong></td></tr>
+<tr><td><h3>Erdtree</td></tr>
+<tr><td><strong>ET: </strong></td></tr>
+</table><br><div>
+
+## DLC
+
+</div><table>
+<tr><th><h3>Regions</th></tr>
+<tr><td><h3>Roundtable Hold DLC Only</td></tr>
+<tr><td><strong>RH/DLC: </strong></td></tr>
+<tr><td><h3>Gravesite Plain</td></tr>
+<tr><td><strong>GP/(AAV): </strong></td></tr>
+<tr><td><strong>GP/(AS): </strong></td></tr>
+<tr><td><strong>GP/(CB): </strong></td></tr>
+<tr><td><strong>GP/(CC): </strong></td></tr>
+<tr><td><strong>GP/(EG): </strong></td></tr>
+<tr><td><strong>GP/(EH): </strong></td></tr>
+<tr><td><strong>GP/(PT): </strong></td></tr>
+<tr><td><strong>GP/(RDTR): </strong></td></tr>
+<tr><td><strong>GP/(SP): </strong></td></tr>
+<tr><td><strong>GP/(SR): </strong></td></tr>
+<tr><td><strong>GP/(WNM): </strong></td></tr>
+<tr><td><strong>GP/AS: </strong></td></tr>
+<tr><td><strong>GP/BG: </strong></td></tr>
+<tr><td><strong>GP/CB: </strong></td></tr>
+<tr><td><strong>GP/CC: </strong></td></tr>
+<tr><td><strong>GP/CF: </strong></td></tr>
+<tr><td><strong>GP/CRT: </strong></td></tr>
+<tr><td><strong>GP/GN: </strong></td></tr>
+<tr><td><strong>GP/GP: </strong></td></tr>
+<tr><td><strong>GP/MGC: </strong></td></tr>
+<tr><td><strong>GP/PPC: </strong></td></tr>
+<tr><td><strong>GP/PPW: </strong></td></tr>
+<tr><td><strong>GP/PT: </strong></td></tr>
+<tr><td><strong>GP/SP: </strong></td></tr>
+<tr><td><strong>GP/SR: </strong></td></tr>
+<tr><td><strong>GP/TPC: </strong></td></tr>
+<tr><td><h3>Fog Rift Catacombs</td></tr>
+<tr><td><strong>GP/(FRC): </strong></td></tr>
+<tr><td><h3>Belurat Gaol</td></tr>
+<tr><td><strong>GP/(BG): </strong></td></tr>
+<tr><td><h3>Dragon&#x27;s Pit</td></tr>
+<tr><td><strong>GP/(DP): </strong></td></tr>
+<tr><td><h3>Ruined Forge Lava Intake</td></tr>
+<tr><td><strong>GP/(RFLI): </strong></td></tr>
+<tr><td><h3>Belurat</td></tr>
+<tr><td><strong>BTS/BTS: </strong></td></tr>
+<tr><td><strong>BTS/SF: </strong></td></tr>
+<tr><td><strong>BTS/SPA: </strong></td></tr>
+<tr><td><strong>BTS/TDB: </strong></td></tr>
+<tr><td><h3>Belurat Swamp</td></tr>
+<tr><td><strong>BTS/BTS: </strong></td></tr>
+<tr><td><h3>Castle Ensis</td></tr>
+<tr><td><strong>CE/CEC: </strong></td></tr>
+<tr><td><strong>CE/CF: </strong></td></tr>
+<tr><td><strong>CE/CLC: </strong></td></tr>
+<tr><td><h3>Fog Rift Fort</td></tr>
+<tr><td><strong>CE/(FRF): </strong></td></tr>
+<tr><td><h3>Jagged Peak Foot</td></tr>
+<tr><td><strong>JP/DPT: </strong></td></tr>
+<tr><td><strong>JP/FJP: </strong></td></tr>
+<tr><td><strong>JP/GADC: </strong></td></tr>
+<tr><td><h3>Jagged Peak</td></tr>
+<tr><td><strong>JP/FJP: </strong></td></tr>
+<tr><td><strong>JP/JPM: </strong></td></tr>
+<tr><td><strong>JP/JPS: </strong></td></tr>
+<tr><td><h3>Charo&#x27;s Hidden Grave</td></tr>
+<tr><td><strong>CHG/CHG: </strong></td></tr>
+<tr><td><strong>CHG/LG: </strong></td></tr>
+<tr><td><h3>Lamenter&#x27;s Gaol (Entrance)</td></tr>
+<tr><td><strong>CHG/(LG): </strong></td></tr>
+<tr><td><h3>Lamenter&#x27;s Gaol (Upper)</td></tr>
+<tr><td><strong>CHG/(LG): </strong></td></tr>
+<tr><td><h3>Lamenter&#x27;s Gaol (Lower)</td></tr>
+<tr><td><strong>CHG/(LG): </strong></td></tr>
+<tr><td><h3>Scadu Altus</td></tr>
+<tr><td><strong>SA/(BV): </strong></td></tr>
+<tr><td><strong>SA/(CC): </strong></td></tr>
+<tr><td><strong>SA/(CMM): </strong></td></tr>
+<tr><td><strong>SA/(FR): </strong></td></tr>
+<tr><td><strong>SA/(MR): </strong></td></tr>
+<tr><td><strong>SA/(RR): </strong></td></tr>
+<tr><td><strong>SA/(WH): </strong></td></tr>
+<tr><td><strong>SA/BFR: </strong></td></tr>
+<tr><td><strong>SA/BLV: </strong></td></tr>
+<tr><td><strong>SA/BV: </strong></td></tr>
+<tr><td><strong>SA/CC: </strong></td></tr>
+<tr><td><strong>SA/CDH: </strong></td></tr>
+<tr><td><strong>SA/CMM: </strong></td></tr>
+<tr><td><strong>SA/FR: </strong></td></tr>
+<tr><td><strong>SA/HC: </strong></td></tr>
+<tr><td><strong>SA/MHS: </strong></td></tr>
+<tr><td><strong>SA/MR: </strong></td></tr>
+<tr><td><strong>SA/RFSP: </strong></td></tr>
+<tr><td><strong>SA/SAW: </strong></td></tr>
+<tr><td><strong>SA/SC: </strong></td></tr>
+<tr><td><strong>SK/SKMG: </strong></td></tr>
+<tr><td><h3>Bonny Gaol</td></tr>
+<tr><td><strong>SA/(BG): </strong></td></tr>
+<tr><td><h3>Ruined Forge of Starfall Past</td></tr>
+<tr><td><strong>SA/(RFSP): </strong></td></tr>
+<tr><td><h3>Rauh Ruins Limited</td></tr>
+<tr><td><strong>SA/ARR: </strong></td></tr>
+<tr><td><h3>Cathedral of Manus Metyr</td></tr>
+<tr><td><strong>SA/(CMM): </strong></td></tr>
+<tr><td><h3>Finger Ruins of Miyr</td></tr>
+<tr><td><strong>FRM: </strong></td></tr>
+<tr><td><strong>SA/(CMM): </strong></td></tr>
+<tr><td><h3>Rauh Base</td></tr>
+<tr><td><strong>RB/(NNM): </strong></td></tr>
+<tr><td><strong>RB/(TTR): </strong></td></tr>
+<tr><td><strong>RB/ARB: </strong></td></tr>
+<tr><td><strong>RB/NNM: </strong></td></tr>
+<tr><td><strong>RB/RN: </strong></td></tr>
+<tr><td><strong>RB/SRC: </strong></td></tr>
+<tr><td><strong>RB/TRF: </strong></td></tr>
+<tr><td><strong>RB/TTR: </strong></td></tr>
+<tr><td><h3>Scorpion River Catacombs</td></tr>
+<tr><td><strong>RB/(SRC): </strong></td></tr>
+<tr><td><h3>Taylew&#x27;s Ruined Forge</td></tr>
+<tr><td><strong>RB/(TRF): </strong></td></tr>
+<tr><td><h3>Ellac River</td></tr>
+<tr><td><strong>ER/ERC: </strong></td></tr>
+<tr><td><strong>ER/ERD: </strong></td></tr>
+<tr><td><strong>ER/RC: </strong></td></tr>
+<tr><td><h3>Rivermouth Cave</td></tr>
+<tr><td><strong>ER/(RC): </strong></td></tr>
+<tr><td><h3>Cerulean Coast</td></tr>
+<tr><td><strong>CC/CC: </strong></td></tr>
+<tr><td><strong>CC/CCC: </strong></td></tr>
+<tr><td><strong>CC/CCW: </strong></td></tr>
+<tr><td><h3>Finger Ruins of Rhia</td></tr>
+<tr><td><strong>CC/FRR: </strong></td></tr>
+<tr><td><strong>FRR: </strong></td></tr>
+<tr><td><strong>FRR/(FWH): </strong></td></tr>
+<tr><td><h3>Stone Coffin Fissure</td></tr>
+<tr><td><strong>SCF/FC: </strong></td></tr>
+<tr><td><strong>SCF/FD: </strong></td></tr>
+<tr><td><strong>SCF/FW: </strong></td></tr>
+<tr><td><strong>SCF/GDP: </strong></td></tr>
+<tr><td><strong>SCF/SCF: </strong></td></tr>
+<tr><td><h3>Shadow Keep</td></tr>
+<tr><td><strong>SK/MGP: </strong></td></tr>
+<tr><td><strong>SK/SKMG: </strong></td></tr>
+<tr><td><h3>Shadow Keep Storehouse</td></tr>
+<tr><td><strong>Cross: </strong></td></tr>
+<tr><td><strong>SK/DCE: </strong></td></tr>
+<tr><td><strong>SK/SFiF: </strong></td></tr>
+<tr><td><strong>SK/SFoF: </strong></td></tr>
+<tr><td><strong>SK/SSF: </strong></td></tr>
+<tr><td><h3>Shadow Keep Storehouse Back</td></tr>
+<tr><td><strong>SK/SBS: </strong></td></tr>
+<tr><td><strong>SK/SL: </strong></td></tr>
+<tr><td><strong>ScV/SKBG: </strong></td></tr>
+<tr><td><h3>Shadow Keep, West Rampart</td></tr>
+<tr><td><strong>SK/SFF: </strong></td></tr>
+<tr><td><strong>SK/WR: </strong></td></tr>
+<tr><td><h3>Shadow Keep, Church District</td></tr>
+<tr><td><strong>SK/CDE: </strong></td></tr>
+<tr><td><h3>Shadow Keep, Church District Lower</td></tr>
+<tr><td><strong>SK/SC: </strong></td></tr>
+<tr><td><strong>SK/TWS: </strong></td></tr>
+<tr><td><h3>Scaduview</td></tr>
+<tr><td><strong>ScV/(AS): </strong></td></tr>
+<tr><td><strong>ScV/(SC): </strong></td></tr>
+<tr><td><strong>ScV/SKBG: </strong></td></tr>
+<tr><td><h3>Scadutree Base</td></tr>
+<tr><td><strong>SB/TWS: </strong></td></tr>
+<tr><td><h3>Ancient Ruins of Rauh</td></tr>
+<tr><td><strong>ARR/ARGS: </strong></td></tr>
+<tr><td><strong>ARR/CBME: </strong></td></tr>
+<tr><td><strong>ARR/CMBE: </strong></td></tr>
+<tr><td><strong>ARR/RARE: </strong></td></tr>
+<tr><td><strong>ARR/RARW: </strong></td></tr>
+<tr><td><strong>ARR/VMT: </strong></td></tr>
+<tr><td><h3>Hinterland</td></tr>
+<tr><td><strong>HL/(SV): </strong></td></tr>
+<tr><td><strong>HL/FH: </strong></td></tr>
+<tr><td><strong>HL/HB: </strong></td></tr>
+<tr><td><strong>HL/HL: </strong></td></tr>
+<tr><td><strong>SA/(RR): </strong></td></tr>
+<tr><td><h3>Finger Ruins of Dheo</td></tr>
+<tr><td><strong>FRD: </strong></td></tr>
+<tr><td><h3>Recluses&#x27; River</td></tr>
+<tr><td><strong>RR/(ENM): </strong></td></tr>
+<tr><td><strong>RR/(RU): </strong></td></tr>
+<tr><td><strong>RR/(VF): </strong></td></tr>
+<tr><td><strong>RR/CWH: </strong></td></tr>
+<tr><td><strong>RR/RRD: </strong></td></tr>
+<tr><td><strong>RR/RRU: </strong></td></tr>
+<tr><td><strong>RR/RU: </strong></td></tr>
+<tr><td><h3>Darklight Catacombs</td></tr>
+<tr><td><strong>RR/(DC): </strong></td></tr>
+<tr><td><h3>Abyssal Woods</td></tr>
+<tr><td><strong>AW/(AC): </strong></td></tr>
+<tr><td><strong>AW/AC: </strong></td></tr>
+<tr><td><strong>AW/AW: </strong></td></tr>
+<tr><td><strong>AW/DF: </strong></td></tr>
+<tr><td><strong>AW/MM: </strong></td></tr>
+<tr><td><strong>AW/WT: </strong></td></tr>
+<tr><td><h3>Midra&#x27;s Manse</td></tr>
+<tr><td><strong>MM/MH: </strong></td></tr>
+<tr><td><strong>MM/ML: </strong></td></tr>
+<tr><td><strong>MM/SFC: </strong></td></tr>
+<tr><td><h3>Enir Ilim</td></tr>
+<tr><td><strong>BTS|EI/SR: </strong></td></tr>
+<tr><td><strong>EI/CCA: </strong></td></tr>
+<tr><td><strong>EI/DGFS: </strong></td></tr>
+<tr><td><strong>EI/FR: </strong></td></tr>
+<tr><td><strong>EI/GD: </strong></td></tr>
+<tr><td><strong>EI/OW: </strong></td></tr>
+<tr><td><strong>EI/SR: </strong></td></tr>
+</table>
+<!-- end region table -->

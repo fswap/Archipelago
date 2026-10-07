@@ -1327,12 +1327,15 @@ class EldenRing(World):
 
     def _add_to_inventory(self, item: ERItem) -> None:
         "Add item to starting inventory."
-        self.all_starting_items.append(self._er_item_full_id(item.data))
         if item in self.itempool:
             self.itempool.remove(item)
         # only precollect important?
-        # if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized):
-        self.multiworld.push_precollected(item)
+        # if item.classification not in (ItemClassification.progression, ItemClassification.progression_deprioritized) and 
+        if item.data.map:
+            self.all_starting_items.append(self._er_item_full_id(item.data))
+        else:
+            self.multiworld.push_precollected(item)
+            
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
         new_item = ERItem(self.player, item if isinstance(item, ERItemData) else item_table[item])
