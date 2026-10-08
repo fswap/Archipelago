@@ -3421,7 +3421,7 @@ class EldenRing(World):
             "locationIdsToTargets": location_ids_to_targets,
             "allStartingItems": self.all_starting_items, # list of _er_item_full_id
             "duplicatedLocations": duplicated_locations,
-            "versions": ">=0.8.3 <0.9.0",
+            "versions": ">=0.1 <0.2",
         }
 
         return slot_data

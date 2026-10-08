@@ -24,13 +24,13 @@ region_order = [
     "Deathtouched Catacombs",
     "Fringefolk Hero's Grave",
     
+    # The hold
+    "Roundtable Hold",
+    
     "Stormveil Start",
     "Stormveil Castle",
     "Stormveil Throne",
     "Divine Tower of Limgrave",
-
-    # The hold
-    "Roundtable Hold",
 
     # Weeping
     "Weeping Peninsula",

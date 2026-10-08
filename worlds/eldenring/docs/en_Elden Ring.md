@@ -29,12 +29,12 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 ## Base Game
 <table>
 <tr><td><h3>Limgrave</td></tr>
-<tr><td><strong>BS: </strong>Bridge of Sacifice, connection point between South Limgrave and Weeping Peninsula</td></tr>
-<tr><td><strong>LG/(AS): </strong>Artists Shack landmark.</td></tr>
-<tr><td><strong>LG/(CE): </strong></td></tr>
-<tr><td><strong>LG/(DBR): </strong></td></tr>
-<tr><td><strong>LG/(FH): </strong></td></tr>
-<tr><td><strong>LG/(FHE): </strong></td></tr>
+<tr><td><strong>BS: </strong>Bridge of Sacrifice landmark, connection point between S Limgrave and Weeping Peninsula.</td></tr>
+<tr><td><strong>LG/(AS): </strong>Artists Shack landmark, Mid Limgrave.</td></tr>
+<tr><td><strong>LG/(CE): </strong>Church of Elleh landmark, W Limgrave.</td></tr>
+<tr><td><strong>LG/(DBR): </strong>Dragon-Burnt Ruins landmark, S Limgrave.</td></tr>
+<tr><td><strong>LG/(FH): </strong>Fort Haight landmark, E Limgrave.</td></tr>
+<tr><td><strong>LG/(FHE): </strong>Forlorn Hound Evergaol, S Limgrave.</td></tr>
 <tr><td><strong>LG/(GR): </strong></td></tr>
 <tr><td><strong>LG/(MR): </strong></td></tr>
 <tr><td><strong>LG/(SG): </strong></td></tr>
@@ -80,30 +80,22 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LG/SV: </strong></td></tr>
 <tr><td><strong>LG/WS: </strong></td></tr>
 <tr><td><strong>SV/CT: </strong></td></tr>
-<tr><td><h3>Coastal Cave</td></tr>
-<tr><td><strong>LG/(CC): </strong></td></tr>
-<tr><td><h3>Church of Dragon Communion</td></tr>
-<tr><td><strong>LG/(CDC): </strong></td></tr>
-<tr><td><h3>Groveside Cave</td></tr>
-<tr><td><strong>LG/(GC): </strong></td></tr>
-<tr><td><h3>Stormfoot Catacombs</td></tr>
-<tr><td><strong>LG/(SC): </strong></td></tr>
-<tr><td><h3>Limgrave Tunnels</td></tr>
-<tr><td><strong>LG/(LT): </strong></td></tr>
-<tr><td><h3>Murkwater Cave</td></tr>
-<tr><td><strong>LG/(MCV): </strong></td></tr>
-<tr><td><h3>Murkwater Catacombs</td></tr>
-<tr><td><strong>LG/(MCC): </strong></td></tr>
-<tr><td><h3>Highroad Cave</td></tr>
-<tr><td><strong>LG/(HC): </strong></td></tr>
-<tr><td><h3>Deathtouched Catacombs</td></tr>
-<tr><td><strong>LG/(DC): </strong></td></tr>
-<tr><td><h3>Fringefolk Hero&#x27;s Grave</td></tr>
-<tr><td><strong>LG/(FHG): </strong></td></tr>
-<tr><td><h3>Stormveil Start</td></tr>
+<tr><td><h3>Limgrave Dungeons</td></tr>
+<tr><td><strong>LG/(CC): </strong>Coastal Cave, SW Limgrave.</td></tr>
+<tr><td><strong>LG/(CDC): </strong>Church of Dragon Communion, through Coastal Cave SW Limgrave.</td></tr>
+<tr><td><strong>LG/(GC): </strong>Groveside Cave, W Limgrave.</td></tr>
+<tr><td><strong>LG/(SC): </strong>Stormfoot Catacombs, W Limgrave.</td></tr>
+<tr><td><strong>LG/(LT): </strong>Limgrave Tunnels, W Limgrave.</td></tr>
+<tr><td><strong>LG/(MCV): </strong>Murkwater Cave, Mid Limgrave.</td></tr>
+<tr><td><strong>LG/(MCC): </strong>Murkwater Catacombs, Mid Limgrave.</td></tr>
+<tr><td><strong>LG/(HC): </strong>Highroad Cave, N Limgrave.</td></tr>
+<tr><td><strong>LG/(DC): </strong>Deathtouched Catacombs, E Stormhill.</td></tr>
+<tr><td><strong>LG/(FHG): </strong>Fringefolk Hero&#x27;s Grave, W Limgrave.</td></tr>
+<tr><td><h3>Roundtable Hold</td></tr>
+<tr><td><strong>RH: </strong></td></tr>
+<tr><td><h3>Stormveil Castle</td></tr>
 <tr><td><strong>SV/SMG: </strong></td></tr>
 <tr><td><strong>SV/StC: </strong></td></tr>
-<tr><td><h3>Stormveil Castle</td></tr>
 <tr><td><strong>SV/GC: </strong></td></tr>
 <tr><td><strong>SV/LC: </strong></td></tr>
 <tr><td><strong>SV/LTB: </strong></td></tr>
@@ -111,14 +103,10 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>SV/SMG: </strong></td></tr>
 <tr><td><strong>SV/SeC: </strong></td></tr>
 <tr><td><strong>SV/StC: </strong></td></tr>
-<tr><td><h3>Stormveil Throne</td></tr>
 <tr><td><strong>SV/GG: </strong>Godrick the Grafted grace in Godrick&#x27;s arena.</td></tr>
 <tr><td><strong>SV/LL: </strong></td></tr>
-<tr><td><h3>Divine Tower of Limgrave</td></tr>
 <tr><td><strong>SV/(DTL): </strong></td></tr>
 <tr><td><strong>SV/LTB: </strong></td></tr>
-<tr><td><h3>Roundtable Hold</td></tr>
-<tr><td><strong>RH: </strong></td></tr>
 <tr><td><h3>Weeping Peninsula</td></tr>
 <tr><td><strong>WP/(AV): </strong></td></tr>
 <tr><td><strong>WP/(CBC): </strong></td></tr>
@@ -134,7 +122,7 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>WP/(WR): </strong></td></tr>
 <tr><td><strong>WP/AV: </strong></td></tr>
 <tr><td><strong>WP/BCPG: </strong></td></tr>
-<tr><td><strong>WP/BS: </strong></td></tr>
+<tr><td><strong>WP/BS: </strong>Bridge of Sacrifice grace.</td></tr>
 <tr><td><strong>WP/CM: </strong></td></tr>
 <tr><td><strong>WP/CMR: </strong></td></tr>
 <tr><td><strong>WP/CP: </strong></td></tr>
@@ -148,15 +136,11 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>WP/ToR: </strong></td></tr>
 <tr><td><strong>WP/TwR: </strong></td></tr>
 <tr><td><strong>WP/WR: </strong></td></tr>
-<tr><td><h3>Impaler&#x27;s Catacombs</td></tr>
+<tr><td><h3>Weeping Peninsula Dungeons</td></tr>
 <tr><td><strong>WP/(IC): </strong></td></tr>
-<tr><td><h3>Tombsward Catacombs</td></tr>
 <tr><td><strong>WP/(TCC): </strong></td></tr>
-<tr><td><h3>Tombsward Cave</td></tr>
 <tr><td><strong>WP/(TCV): </strong></td></tr>
-<tr><td><h3>Morne Tunnel</td></tr>
 <tr><td><strong>WP/(MT): </strong></td></tr>
-<tr><td><h3>Earthbore Cave</td></tr>
 <tr><td><strong>WP/(EC): </strong></td></tr>
 <tr><td><h3>Siofra River</td></tr>
 <tr><td><strong>SR/(HG): </strong></td></tr>
@@ -242,19 +226,13 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LL/FFVO: </strong></td></tr>
 <tr><td><strong>LL/GLD: </strong></td></tr>
 <tr><td><strong>LL/MEE: </strong></td></tr>
-<tr><td><h3>Road&#x27;s End Catacombs</td></tr>
+<tr><td><h3>Liurnia of The Lakes Dungeons</td></tr>
 <tr><td><strong>LL/(REC): </strong></td></tr>
-<tr><td><h3>Black Knife Catacombs</td></tr>
 <tr><td><strong>LL/(BKC): </strong></td></tr>
-<tr><td><h3>Cliffbottom Catacombs</td></tr>
 <tr><td><strong>LL/(CC): </strong></td></tr>
-<tr><td><h3>Stillwater Cave</td></tr>
 <tr><td><strong>LL/(SC): </strong></td></tr>
-<tr><td><h3>Lakeside Crystal Cave</td></tr>
 <tr><td><strong>LL/(LCC): </strong></td></tr>
-<tr><td><h3>Academy Crystal Cave</td></tr>
 <tr><td><strong>LL/(ACC): </strong></td></tr>
-<tr><td><h3>Raya Lucaria Crystal Tunnel</td></tr>
 <tr><td><strong>LL/(RLCT): </strong></td></tr>
 <tr><td><h3>Caria Manor</td></tr>
 <tr><td><strong>LL/(CM): </strong></td></tr>
@@ -268,11 +246,10 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LL/RaR: </strong></td></tr>
 <tr><td><strong>LL/SR: </strong></td></tr>
 <tr><td><h3>Carian Study Hall</td></tr>
-<tr><td><strong>LL/(CSH)N: </strong></td></tr>
-<tr><td><h3>Carian Study Hall (Inverted)</td></tr>
-<tr><td><strong>LL/(CSH)I: </strong></td></tr>
-<tr><td><strong>LL/(DV): </strong></td></tr>
-<tr><td><strong>LL/LTB: </strong></td></tr>
+<tr><td><strong>LL/(CSH)N: </strong>Carian Study Hall normal.</td></tr>
+<tr><td><strong>LL/(CSH)I: </strong>Carian Study Hall inverted.</td></tr>
+<tr><td><strong>LL/(DV): </strong>Divine Tower of Liurnia</td></tr>
+<tr><td><strong>LL/LTB: </strong>Liurnia Tower Bridge grace, after CSH.</td></tr>
 <tr><td><h3>Ainsel River</td></tr>
 <tr><td><strong>AR/(UPR): </strong></td></tr>
 <tr><td><strong>AR/ARD: </strong></td></tr>
@@ -672,7 +649,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 ## DLC
 
 </div><table>
-<tr><th><h3>Regions</th></tr>
 <tr><td><h3>Roundtable Hold DLC Only</td></tr>
 <tr><td><strong>RH/DLC: </strong></td></tr>
 <tr><td><h3>Gravesite Plain</td></tr>
@@ -702,13 +678,10 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>GP/SP: </strong></td></tr>
 <tr><td><strong>GP/SR: </strong></td></tr>
 <tr><td><strong>GP/TPC: </strong></td></tr>
-<tr><td><h3>Fog Rift Catacombs</td></tr>
+<tr><td><h3>Gravesite Plain Dungeons</td></tr>
 <tr><td><strong>GP/(FRC): </strong></td></tr>
-<tr><td><h3>Belurat Gaol</td></tr>
 <tr><td><strong>GP/(BG): </strong></td></tr>
-<tr><td><h3>Dragon&#x27;s Pit</td></tr>
 <tr><td><strong>GP/(DP): </strong></td></tr>
-<tr><td><h3>Ruined Forge Lava Intake</td></tr>
 <tr><td><strong>GP/(RFLI): </strong></td></tr>
 <tr><td><h3>Belurat</td></tr>
 <tr><td><strong>BTS/BTS: </strong></td></tr>

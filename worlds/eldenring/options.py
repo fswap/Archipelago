@@ -175,9 +175,9 @@ class DLCAbyssalTorrent(Toggle):
     """Prevent Torrent from getting frightened."""
     display_name = "DLC Abyssal Torrent"
     
-class DLCSpiritspringStones(Toggle): # unsupported
-    """Randomize the Spiritsping Stones.""" 
-    display_name = "Randomize Spiritsping Stones"
+class DLCSpiritspringStones(Toggle):
+    """Randomize the Spiritspring Stones.""" 
+    display_name = "Randomize Spiritspring Stones"
     
 # MARK: DLC Start
 
@@ -247,7 +247,7 @@ class RykardEncounter(DefaultOnToggle):
     If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent blocks."""
     display_name = "Rykard Encounter"
     
-class BossScalingPercent(Range): # unsupported but will be
+class BossScalingPercent(Range): # unsupported, till after first release
     """Scales HP and damage for enemies placed into boss slots.
 
     100 keeps the current static randomizer scaling. 90 means 90% of the boss
@@ -257,6 +257,7 @@ class BossScalingPercent(Range): # unsupported but will be
     range_start = 25
     range_end = 200
     default = 100
+    visibility = Visibility.none
 
 class DisableGargoylePoisonCloudDamage(Toggle):
     """Disable the damage tick in Valiant Gargoyles' poison cloud while leaving poison buildup intact."""
@@ -274,9 +275,10 @@ class NightBosses(Choice):
     # option_require_item = 2
     default = 0
 
-class DungeonSweep(Toggle):
+class DungeonSweep(Toggle): # unsupported, till after first release
     """After killing the boss of a dungeon collect all remaining items within that dungeon automatically."""
     display_name = "Dungeon Sweep"
+    visibility = Visibility.none
 
 class RandomEnemyPresetOption(OptionDict):
     """The YAML preset for the static enemy randomizer.
@@ -401,11 +403,11 @@ class SnowFast(Toggle):
     """Adds Mountaintops of the Giants shortcuts for faster traversal."""
     display_name = "Add Shortcuts in Mountaintops for Faster Traversal"
 
-class AutoEquipOption(Toggle): # unsupported but will be
+class AutoEquipOption(Toggle):
     """Automatically equips any received armor or left/right weapons."""
     display_name = "Auto-Equip"
     
-class AutoUpgradeOption(Toggle): # unsupported but will be
+class AutoUpgradeOption(Toggle):
     """Automatically upgrades any received weapons to highest upgraded level."""
     display_name = "Auto-Upgrade"
     
@@ -497,7 +499,7 @@ class ERPriorityLocationGroups(PriorityLocations):
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
     valid_keys_casefold = False
     
-class ERImportantAtPriorityOnly(Toggle): # unsupported but will be
+class ERImportantAtPriorityOnly(Toggle):
     """Should important items be only at priority locations.
     
     Creates extra locations at priority locations to contain all important items.
