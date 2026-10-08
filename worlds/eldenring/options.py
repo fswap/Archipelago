@@ -22,19 +22,21 @@ class GoalOption(OptionSet):
 
 class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_early
     """
-    How many Key Item Shards do you want.
+    Which key items should be broken up into shards and how many
+    shards are required to use them.
     
     **KeyItem**Shards:
     - Req: (1-10) *required shards*
     - Max: (1-10) *maximum shards*
     
-    It is reccomended to require about half of the Max shards.
+    Requiring about half of the maximum shards allows for more
+    flexibility to not get blocked at major required gates.
     """
     display_name = "Key Item Shards"
     default = {
         "RustyKeyShards": {"Req": 1, "Max": 1},
         "RoldMedallionShards": {"Req": 1, "Max": 1},
-        "MessmerKindlingShards": {"Req": 1, "Max": 1}
+        "MessmerKindlingShards": {"Req": 3, "Max": 5}
         }
     valid_keys = ["RustyKeyShards", "RoldMedallionShards", "MessmerKindlingShards"]
     @classmethod
@@ -65,18 +67,9 @@ class WorldLogic(Choice):
     default = 0
     
 class RegionSoftLogic(DefaultOnToggle):
-    """You will always get Altus access before needing to go to Caelid.
-    Consecrated Snowfield also requires the same items as Mountaintops."""
+    """You will always get Altus access before needing to go to Caelid and
+    Mountaintops access before needing to go Consecrated Snowfield."""
     display_name = "Region Soft Logic"
-
-class SeparateProgression(Toggle):
-    """Separate Progression.
-    
-    If separate:
-    - Base game progession will be in base game or other worlds.
-    - DLC progression will be in DLC or other worlds.
-    """
-    display_name = "Separate Progression"
 
 class GreatRunesRequiredLeyndell(Range):
     """How many great runes are required to enter Leyndell."""
@@ -87,7 +80,7 @@ class GreatRunesRequiredLeyndell(Range):
     
 class GreatRunesRequiredMountain(Range):
     """What is required to enter Mountaintops.
-    This is overwritten by Rold Medallion shards as both do basically the same thing.
+    This is ignored if Rold Medallion shards are used as both basically do the same thing.
 
     - **Vanilla:** Rold Medallion is required.
     - **0-7:** Rold Medallion is not required; require this many Great Runes instead."""
@@ -127,8 +120,17 @@ class EnableTarnishedPack(Toggle):
 # MARK: DLC
 
 class EnableDLC(Toggle):
-    """Enable DLC"""
+    """Enable Shadow of the Erdtree DLC"""
     display_name = "Enable DLC"
+
+class SeparateProgression(Toggle):
+    """Separate Progression.
+
+    If separate:
+    - Base game progession will be in base game or other worlds.
+    - DLC progression will be in DLC or other worlds.
+    """
+    display_name = "Separate Progression"
     
 class DLCMessmerKindle(Choice):
     """Randomize Messmer's Kindling / Shards.
@@ -153,6 +155,7 @@ class DLCScadutreeFragments(Choice):
     option_normal = 0
     option_dlc_only = 1
     option_not_base = 2
+    default = 1
 
 class DLCTimingOption(Choice):
     """Guarantee that you don't need to enter the DLC until later in the run.
@@ -176,7 +179,7 @@ class DLCAbyssalTorrent(Toggle):
     display_name = "DLC Abyssal Torrent"
     
 class DLCSpiritspringStones(Toggle):
-    """Randomize the Spiritspring Stones.""" 
+    """Randomize Spiritspring Stones into the item pool."""
     display_name = "Randomize Spiritspring Stones"
     
 # MARK: DLC Start
@@ -186,7 +189,7 @@ class DLCStart(Choice):
     
     - **Normal:** Start in Limgrave.
     - **DLC Start:** Start in Gravesite Plain, with no access to base game.
-    - **DLC Start With Base:** Start in Gravesite Plain with access to base game.
+    - **DLC Start With Base:** Start in either Stranded Graveyard or Gravesite Plain.
     """
     display_name = "DLC Start"
     option_normal = 0
@@ -204,7 +207,7 @@ class DLCStartingItems(OptionList):
     - **Memory Stones**
     - **Whetblades**
     - **Upgrade Bell Bearings**"""
-    display_name = "DLC Starting Items"
+    display_name = "DLC Start Starting Items"
     supports_weighting = False
     default = ["Talisman Pouches", "Whetblades"]
 
@@ -214,32 +217,27 @@ class DLCStartingItems(OptionList):
 
 class DLCStartingShop(Toggle):
     """Add a shop at grace with all base game equipment for free."""
-    display_name = "DLC Starting Shop"
+    display_name = "DLC Start Starting Shop"
     
 class DLCCarePackage(Toggle):
     """Start with 80 extra base game items."""
-    display_name = "DLC Care Package"
+    display_name = "DLC Start Care Package"
     
-class DLCInitialRuneLevel(Choice):
+class DLCInitialRuneLevel(Range):
     """Runes are given to level up at start."""
-    display_name = "DLC Initial Rune Level"
-    option_0 = 0
-    option_30 = 30
-    option_60 = 60
-    option_90 = 90
-    option_120 = 120
-    option_150 = 150
-    option_200 = 200
+    display_name = "DLC Start Initial Rune Level"
+    range_start = 0
+    range_end = 200
     default = 0
-    
+
 # MARK: Other Rando
     
-class EnemyRando(Toggle):
+class EnemyRando(DefaultOnToggle):
     """Randomizes the enemies."""
     display_name = "Enemy Randomizer"
 
 class RestrictiveBossPlacement(DefaultOnToggle):
-    """Restrict what arena's bosses can be placed into."""
+    """Restrict arenas bosses can be placed into based on size."""
     display_name = "Restrictive Boss Placement"
     
 class RykardEncounter(DefaultOnToggle):
@@ -280,7 +278,7 @@ class DungeonSweep(Toggle): # unsupported, till after first release
     display_name = "Dungeon Sweep"
     visibility = Visibility.none
 
-class RandomEnemyPresetOption(OptionDict):
+class RandomEnemyPresetOption(OptionDict): # unsupported, do UI editing for now
     """The YAML preset for the static enemy randomizer.
 
     See the online enemy randomization documentation for available options.
@@ -319,6 +317,8 @@ class RandomEnemyPresetOption(OptionDict):
     @classmethod
     def get_option_name(cls, value: Dict[str, Any]) -> str:
         return json.dumps(value)
+
+    visibility = Visibility.none
 
 class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials."""
@@ -378,7 +378,7 @@ class RandomizeStartingLoadout(DefaultOnToggle):
     """Randomizes the equipment characters begin with."""
     display_name = "Randomize Starting Loadout"
 
-class RandomizeStartingKeepsakes(Toggle):
+class RandomizeStartingKeepsakes(DefaultOnToggle):
     """Randomizes selectable keepsakes at character creation."""
     display_name = "Randomize Starting Keepsakes"
 
@@ -422,7 +422,7 @@ class CraftingKitOption(Choice):
     option_randomize = 0
     option_early = 1
     option_do_not_randomize = 2
-    default = 1
+    default = 2
     
 class MapOption(Choice):
     """Choose how maps are handled.
@@ -493,13 +493,13 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Achievement Boss", "Seedtree", "Map", "Church", "Key Items"]
+    default = ["Key Items", "Achievement Boss", "Seedtree", "Map", "Church", "Cross"]
     valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
         "Fragment", "Cross", "Revered", "Overworld Boss", "DLC Overworld Boss", 
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
     valid_keys_casefold = False
     
-class ERImportantAtPriorityOnly(Toggle):
+class ERImportantAtPriorityOnly(DefaultOnToggle):
     """Should important items be only at priority locations.
     
     Creates extra locations at priority locations to contain all important items.
@@ -714,7 +714,6 @@ option_groups = [
         ExcludeDungeonBosses,
         WorldLogic,
         RegionSoftLogic,
-        SeparateProgression,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,
         GreatRunesRequiredErdtree,
@@ -749,6 +748,7 @@ option_groups = [
     OptionGroup("DLC", [
         EnableTarnishedPack,
         EnableDLC,
+        SeparateProgression,
         DLCMessmerKindle,
         DLCScadutreeFragments,
         DLCTimingOption,
@@ -767,9 +767,9 @@ option_groups = [
         NGPlusTrapCount,
         StatusTrapCount,
     ]),
-    OptionGroup("DLC Traps", [
-        BlindnessTrapCount
-    ]),
+    # OptionGroup("DLC Traps", [
+    #     BlindnessTrapCount
+    # ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,
         MapOption,
