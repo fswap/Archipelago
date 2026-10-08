@@ -493,7 +493,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Key Items", "Achievement Boss", "Seedtree", "Map", "Church", "Cross"]
+    default = ["Key Items", "Achievement Boss", "DLC Remembrance Boss", "Seedtree", "Map", "Church", "Cross"]
     valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
         "Fragment", "Cross", "Revered", "Overworld Boss", "DLC Overworld Boss", 
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]
