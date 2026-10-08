@@ -119,7 +119,7 @@ class EnableTarnishedPack(Toggle):
 
 # MARK: DLC
 
-class EnableDLC(Toggle):
+class EnableDLC(DefaultOnToggle):
     """Enable Shadow of the Erdtree DLC"""
     display_name = "Enable DLC"
 
