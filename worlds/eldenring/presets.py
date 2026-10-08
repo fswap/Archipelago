@@ -189,7 +189,7 @@ great_rune_hunt = {
     "accessibility":                        Accessibility.option_full,
     "goal":                                 ["Leyndell, Royal Capital Boss"],
     "exclude_dungeon":                      ExcludeDungeonBosses.default,
-    "world_logic":                          WorldLogic.option_open_world,
+    "world_logic":                          WorldLogic.option_region_lock,
     "soft_logic":                           RegionSoftLogic.option_true,
     "great_runes_required_leyndell":        3,
     "great_runes_required_mountain":        -1,
@@ -233,12 +233,12 @@ great_rune_hunt = {
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
-base_game = {
+base_game_only = {
     "progression_balancing":                ProgressionBalancing.default,
     "accessibility":                        Accessibility.option_full,
     "goal":                                 ["Final Boss"],
     "exclude_dungeon":                      ExcludeDungeonBosses.default,
-    "world_logic":                          WorldLogic.option_open_world,
+    "world_logic":                          WorldLogic.option_region_lock,
     "soft_logic":                           RegionSoftLogic.option_true,
     "great_runes_required_leyndell":        2,
     "great_runes_required_mountain":        4,
@@ -288,7 +288,7 @@ dlc_only = {
     "accessibility":                        Accessibility.option_full,
     "goal":                                 ["DLC Final Boss"],
     "exclude_dungeon":                      ExcludeDungeonBosses.default,
-    "world_logic":                          WorldLogic.option_open_world,
+    "world_logic":                          WorldLogic.option_region_lock,
     "soft_logic":                           RegionSoftLogic.default,
     
     "enable_dlc":                           EnableDLC.option_true,
@@ -296,7 +296,7 @@ dlc_only = {
     "dlc_starting_items":                   DLCStartingItems.default,
     "dlc_starting_shop":                    DLCStartingShop.option_true,
     "dlc_care_package":                     DLCCarePackage.option_false,
-    "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
+    "dlc_initial_rune_level":               90,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_normal,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_normal,
     "dlc_timing":                           DLCTimingOption.option_off,
@@ -339,12 +339,12 @@ dlc_only = {
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
-dlc = {
+base_dlc = {
     "progression_balancing":                ProgressionBalancing.default,
     "accessibility":                        Accessibility.option_full,
     "goal":                                 GoalOption.default,
     "exclude_dungeon":                      ExcludeDungeonBosses.default,
-    "world_logic":                          WorldLogic.option_open_world,
+    "world_logic":                          WorldLogic.option_region_lock,
     "soft_logic":                           RegionSoftLogic.option_true,
     "great_runes_required_leyndell":        2,
     "great_runes_required_mountain":        4,
@@ -357,7 +357,7 @@ dlc = {
     "dlc_starting_items":                   [],
     "dlc_starting_shop":                    DLCStartingShop.option_false,
     "dlc_care_package":                     DLCCarePackage.option_false,
-    "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
+    "dlc_initial_rune_level":               DLCInitialRuneLevel.default,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_not_base,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_not_base,
     "dlc_timing":                           DLCTimingOption.option_late,
@@ -405,7 +405,7 @@ all_bosses = {
     "accessibility":                        Accessibility.option_full,
     "goal":                                 ["All Base Boss", "All DLC Boss"],
     "exclude_dungeon":                      ExcludeDungeonBosses.option_false,
-    "world_logic":                          WorldLogic.option_open_world,
+    "world_logic":                          WorldLogic.option_region_lock,
     "soft_logic":                           RegionSoftLogic.option_true,
     "great_runes_required_leyndell":        2,
     "great_runes_required_mountain":        4,
@@ -418,7 +418,7 @@ all_bosses = {
     "dlc_starting_items":                   [],
     "dlc_starting_shop":                    DLCStartingShop.option_false,
     "dlc_care_package":                     DLCCarePackage.option_false,
-    "dlc_initial_rune_level":               DLCInitialRuneLevel.option_0,
+    "dlc_initial_rune_level":               DLCInitialRuneLevel.default,
     "dlc_messmer_kindle":                   DLCMessmerKindle.option_not_base,
     "dlc_scadutree_fragments":              DLCScadutreeFragments.option_not_base,
     "dlc_timing":                           DLCTimingOption.option_late,
@@ -476,9 +476,9 @@ a_very_fun_template = { # todo, make super troll template
 er_options_presets: Dict[str, Dict[str, Any]] = {
     "[Random] All Random": all_random_options,
     "[Short] Great Rune Hunt": great_rune_hunt,
-    "[Medium] Base Game": base_game,
+    "[Medium] Base Game Only": base_game_only,
     "[Short] DLC Only": dlc_only,
-    "[Long] Base + DLC": dlc,
+    "[Long] Base + DLC": base_dlc,
     "[Very Long] All Bosses": all_bosses,
     # "Very Fun Template": a_very_fun_template
 }

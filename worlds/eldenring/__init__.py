@@ -248,22 +248,28 @@ class EldenRing(World):
                 local_item_only_lowercase.remove("ashofwar")
         
         # verify shard counts
-        for shard in self.options.key_item_shards.value:
-            if len(self.options.key_item_shards.value[shard]) != 2:
-                raise OptionError(f"Player {self.player_name} has {shard} that doesn't contain 2 values.")
-            for val in self.options.key_item_shards.value[shard]:
-                if val not in ['Req', 'Max']:
-                    raise OptionError(f"Player {self.player_name} has {shard} with unknown option {val}.")
-                if shard == "RoldMedallionShards" and self.options.key_item_shards.value[shard]['Max'] > 1:
-                    self.options.great_runes_required_mountain = -1
-                
+        for (shard, shard_dict) in self.options.key_item_shards.value.items():
+            if len(shard_dict) != 2 or 'Req' not in shard_dict or 'Max' not in shard_dict:
+                raise OptionError(f"Player {self.player_name} has {shard} that doesn't contain Req and Max entries.")
+
+            if shard == "RoldMedallionShards" and shard_dict['Max'] > 1:
+                if self.options.great_runes_required_mountain.value >= 0:
+                    warning(f"EldenRing Player {self.player_name} has {shard_dict['Max']} RoldMedallionShards in key_item_shards, "
+                            f"so great_runes_required_mountain = {self.options.great_runes_required_mountain.value} will be ignored")
+                self.options.great_runes_required_mountain.value = -1
+
+            for val in shard_dict:
                 max_shard_count = 10
-                if self.options.key_item_shards.value[shard][val] < 1:
-                    self.options.key_item_shards.value[shard][val] = 1
+                if shard_dict[val] < 1:
+                    shard_dict[val] = 1
                     # warning(f"{shard} {val} less then 1")
-                if self.options.key_item_shards.value[shard][val] > max_shard_count:
-                    self.options.key_item_shards.value[shard][val] = max_shard_count
+                if shard_dict[val] > max_shard_count:
+                    shard_dict[val] = max_shard_count
                     # warning(f"{shard} {val} greater then {max_shard_count}")
+            if shard_dict['Req'] > shard_dict['Max']:
+                warning(f"EldenRing Player {self.player_name} requires {shard_dict['Req']} out of {shard_dict['Max']} {shard}, "
+                        f"so both values will be set to {shard_dict['Max']}")
+                shard_dict['Req'] = shard_dict['Max']
         
         if self.options.important_at_priority_only and len(self.all_priority_locations) < 50: # make sure player adds enough locations
             raise OptionError(f"Player {self.player_name} has important_at_priority_only enabled but has less then 50 priority locations. Add groups to priority_location_groups.")
@@ -3411,7 +3417,8 @@ class EldenRing(World):
             "goal": [boss.flag for boss in self.goal_bosses],
             "requiredShards": { # item name: required amount
                 shard: self.options.key_item_shards.value[shard_list[shard]]["Req"] 
-                for shard in shard_list if shard_list[shard] in self.options.key_item_shards.value
+                for shard in shard_list
+                if shard_list[shard] in self.options.key_item_shards.value and self.options.key_item_shards.value[shard_list[shard]]['Max'] > 1
             },
             "forceBosses": force_bosses,
             "apIdsToItemIds": ap_ids_to_er_ids,
