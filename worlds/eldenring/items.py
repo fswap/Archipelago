@@ -1707,7 +1707,7 @@ _vanilla_items = [
     #Key and quest stuff
     ERItemData("Stonesword Key", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Stonesword Key x3", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=3, base_name="Stonesword Key"),
-    ERItemData("Stonesword Key x5", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression, count=5, base_name="Stonesword Key"),
+    ERItemData("Stonesword Key x5", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=5, base_name="Stonesword Key"),
     ERItemData("Rusty Key", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Dectus Medallion (Left)", 8105, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Dectus Medallion (Right)", 8106, ERItemCategory.GOODS, classification=ItemClassification.progression),

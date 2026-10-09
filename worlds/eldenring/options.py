@@ -110,6 +110,7 @@ class StoneswordMasterKey(Choice):
     option_vanilla = 0
     option_regional_keys = 1
     option_single_key = 2
+    default = 1
 
 # MARK: Tarnished Pack
 
@@ -493,7 +494,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Key Items", "Achievement Boss", "DLC Remembrance Boss", "Seedtree", "Map", "Church", "Cross"]
+    default = ["Key Items", "Achievement Boss", "DLC Remembrance Boss", "Seedtree", "Map", "Church", "Cross", "Fragment"]
     valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
         "Fragment", "Cross", "Revered", "Overworld Boss", "DLC Overworld Boss", 
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]

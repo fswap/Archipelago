@@ -733,7 +733,7 @@ class EldenRing(World):
         """Create duplicate locations."""
         important_items = []
         for item in self.itempool:
-            if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized):
+            if item.classification in (ItemClassification.progression): # , ItemClassification.progression_deprioritized
                 important_items.append(item)
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
@@ -787,7 +787,7 @@ class EldenRing(World):
                 if len(base_priority) == 0:
                     if self.multiworld.players == 1:
                         raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                    warning(f"Player {self.player_name} ran out of dlc priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
@@ -795,7 +795,7 @@ class EldenRing(World):
                 if len(base_priority) == 0:
                     if self.multiworld.players == 1:
                         raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                    warning(f"Player {self.player_name} ran out of base priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))

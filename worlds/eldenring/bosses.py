@@ -421,8 +421,8 @@ base_bosses = [
     ERBossInfo("Rennala, Queen of the Full Moon (Phase 1) (RLA)", [], 14000801, None, locations=[]),
     ERBossInfo("Rennala, Queen of the Full Moon (Phase 2) (RLA)", ["Raya Lucaria Academy", "Remembrance", "Great Rune", "Main"], 14000800, 14000800, allow_rykard=True,
         locations=[
-            "RLA: Great Rune of the Unborn - mainboss drop",
-            "RLA: Remembrance of the Full Moon Queen - mainboss drop"
+            "RLA/DB: Great Rune of the Unborn - mainboss drop",
+            "RLA/DB: Remembrance of the Full Moon Queen - mainboss drop"
         ]
     ),
     
@@ -660,7 +660,7 @@ base_bosses = [
     ),
     ERBossInfo("Black Knife Assassin (AP/SCV)", ["Altus Plateau", "Dungeon", "Cave"], 31190800, 31190800, dungeon=True,
         locations=[
-            "AP/(SC): Concealing Veil - boss drop"
+            "AP/(SCV): Concealing Veil - boss drop"
         ]
     ),
     ERBossInfo("Necromancer Garris (AP/SCV)", ["Altus Plateau", "Dungeon", "Cave"], 31190850, 31190850, dungeon=True,
