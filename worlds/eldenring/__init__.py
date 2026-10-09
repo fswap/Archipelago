@@ -2828,8 +2828,8 @@ class EldenRing(World):
 
         equipments = [ # done
             ( # RA mainboss
-                "RLA mainboss", #"Rennala, Queen of the Full Moon", # boss
-                "RLA: Remembrance of the Full Moon Queen - mainboss drop", # a drop from boss, so we can do 'can get' check
+                "RLA/DB mainboss", #"Rennala, Queen of the Full Moon", # boss
+                "RLA/DB: Remembrance of the Full Moon Queen - mainboss drop", # a drop from boss, so we can do 'can get' check
                 [   # items
                     "Queen's Crescent Crown", 
                     "Queen's Robe",

@@ -658,14 +658,14 @@ base_bosses = [
             "AP/(PG): Great Omenkiller Cleaver - boss drop"
         ]
     ),
-    ERBossInfo("Black Knife Assassin (AP/SC)", ["Altus Plateau", "Dungeon", "Cave"], 31190800, 31190800, dungeon=True,
+    ERBossInfo("Black Knife Assassin (AP/SCV)", ["Altus Plateau", "Dungeon", "Cave"], 31190800, 31190800, dungeon=True,
         locations=[
             "AP/(SC): Concealing Veil - boss drop"
         ]
     ),
-    ERBossInfo("Necromancer Garris (AP/SC)", ["Altus Plateau", "Dungeon", "Cave"], 31190850, 31190850, dungeon=True,
+    ERBossInfo("Necromancer Garris (AP/SCV)", ["Altus Plateau", "Dungeon", "Cave"], 31190850, 31190850, dungeon=True,
         locations=[
-            "AP/(SC): Family Heads - hidden boss drop"
+            "AP/(SCV): Family Heads - hidden boss drop"
         ]
     ),
     ERBossInfo("Stonedigger Troll (AP/OAT)", ["Altus Plateau", "Dungeon", "Tunnel"], 32040800, 32040800, dungeon=True,
