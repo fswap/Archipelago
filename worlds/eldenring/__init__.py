@@ -1717,11 +1717,8 @@ class EldenRing(World):
         if self.options.world_logic == "region_lock":
             if self.base_enabled:
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
-                self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
-                self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
-                if self.options.early_legacy_dungeons and self.soft_logic_enabled:
-                    self._add_entrance_rule("Liurnia of The Lakes", "Stormveil Lock")
-                    self._add_entrance_rule("Caelid", "Stormveil Lock")
+                self._add_entrance_rule("Stormveil Start", lambda state: self._has_key_or_shards(state, "Rusty Key"))
+                # self._add_entrance_rule("Stormveil Castle", lambda state: self._has_key_or_shards(state, "Rusty Key")) # always required in set rules
                 self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
                 
                 self._add_entrance_rule("Siofra River", "Siofra Lock")

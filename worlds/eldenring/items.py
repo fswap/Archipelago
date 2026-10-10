@@ -2271,7 +2271,7 @@ _vanilla_items = [
     
     # MARK: Region Lock Items
     ERItemData("Weeping Lock", 7830300, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
-    ERItemData("Stormveil Lock", 7830301, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
+    # ERItemData("Stormveil Lock", 7830301, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     ERItemData("Liurnia Lock", 7830302, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     ERItemData("Siofra Lock", 7830303, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
