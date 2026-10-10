@@ -6336,7 +6336,6 @@ for location_name, location_table in location_tables.items():
             for lot in lots:
                 if lot.find("lot:") != -1 and not location_data.spiritspring_stone:
                     used_lots.add(int(lot[lot.find("lot:")+4:]))
-                    used_lots.add(int(lot[lot.find("lot:")+4:]) -1) # ALWAYS NEED FILLER BEFORE
             for group_name in location_data.location_groups():
                 location_name_groups[group_name].add(location_data.name)
 
@@ -6369,8 +6368,13 @@ for loc in dupable_locations.copy():
                 biggest_lot = int(lot[lot.find("lot:")+4:])
     
     allow_dupes = 0
-    while allow_dupes < 7:
-        if (biggest_lot + allow_dupes + 1) not in used_lots:
+    already_exist = 0
+    while already_exist < 7:
+        if biggest_lot - (1 + already_exist) in used_lots:
+            already_exist += 1
+        else: break # gap found
+    while allow_dupes + already_exist < 7:
+        if (biggest_lot + allow_dupes + 1) not in used_lots and (biggest_lot + allow_dupes + 2) not in used_lots:
             allow_dupes += 1
         else: break # used lot found
     
