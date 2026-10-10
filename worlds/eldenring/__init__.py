@@ -726,7 +726,7 @@ class EldenRing(World):
         
         self.multiworld.itempool += self.itempool
         
-        warning(f"priority locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized)])}")
+        # warning(f"priority locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression)])}")
         warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
     def _create_dupe_locations(self) -> None:
@@ -3250,15 +3250,15 @@ class EldenRing(World):
                 smooth_items(sorted([
                     item for item in all_item_order 
                     if item.upgrade_item and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: item.upgrade_tier)) # sort by upgrade tier
-                # sort by [#] and make non numbered 10, then add count as decimal
-                # key=lambda item: float(item.base_name[len(item.base_name)-2: len(item.base_name)-1]) + (item.count / 10) if item.base_name.find('[') != -1 else 10))
+                ], key=lambda item, world=er_world: world.random.randrange(max(item.upgrade_tier -1, 1), min(item.upgrade_tier +1, 5), 1))) 
+                # sort by upgrade tier, and shuffle +-1
 
             if er_world.options.smooth_rune_items:
                 smooth_items(sorted([
                     item for item in all_item_order
                     if item.runes and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: item.rune_tier)) # sort by rune tier
+                ], key=lambda item, world=er_world: world.random.randrange(max(item.rune_tier -1, 1), min(item.rune_tier +1, 4), 1)))
+                # sort by rune tier, and shuffle +-1
 
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""

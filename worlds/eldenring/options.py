@@ -453,12 +453,14 @@ class SmithingBellBearingOption(Choice):
     option_do_not_randomize = 2
     default = 1
     
-class SmoothUpgradeItems(Toggle):
-    """Smooth Upgrade Items."""
+class SmoothUpgradeItems(DefaultOnToggle):
+    """Smooth Upgrade Items.
+    The smoothing is fuzzy, so you should see stones 1-4 in early spheres and 6-dragon in ending spheres."""
     display_name = "Smooth Upgrade Items"
     
-class SmoothRuneItems(Toggle):
-    """Smooth Rune Items."""
+class SmoothRuneItems(DefaultOnToggle):
+    """Smooth Rune Items.
+    The smoothing is fuzzy, so you'll see lower tier (200-10k) runes in early spheres and high tier (35k-80k) runes in ending spheres."""
     display_name = "Smooth Rune Items"
     
 class SpellShopSpellsOnly(Toggle):
