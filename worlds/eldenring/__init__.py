@@ -122,16 +122,16 @@ class EldenRing(World):
         for locations in location_tables.values()
         for location in locations
         if location.ap_code is not None and location.name in dupable_locations
-        for _ in range(1, 3) # how many dupes to prefill, dupe 1 and 2
+        for _ in range(1, 8) # how many dupes to prefill, dupe 1 and 2
         if dupable_locations[location.name] >= _
-    } | {
-        f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
-        for locations in location_tables.values()
-        for location in locations
-        if location.ap_code is not None and location.name in early_dupable_locations
-        for _ in range(3, 5) # how many early dupes to prefill more, dupe 3 and 4
-        if dupable_locations[location.name] >= _
-    }
+    } #| {
+    #     f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
+    #     for locations in location_tables.values()
+    #     for location in locations
+    #     if location.ap_code is not None and location.name in early_dupable_locations
+    #     for _ in range(5, 8) # how many early dupes to prefill more, dupe 3 and 4
+    #     if dupable_locations[location.name] >= _
+    # }
     location_name_groups = location_name_groups
     item_name_groups = item_name_groups
     location_descriptions = location_descriptions
