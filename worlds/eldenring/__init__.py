@@ -786,16 +786,16 @@ class EldenRing(World):
             elif loc_needed > 0 or len(dlc_priority) == 0:
                 if len(base_priority) == 0:
                     if self.multiworld.players == 1:
-                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of dlc priority locations, add more.")
+                        raise OptionError(f"Player {self.player_name} doesn't have base enought priority locations.")
+                    warning(f"Player {self.player_name} ran out of base priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
             elif dlc_loc_needed > 0:
-                if len(base_priority) == 0:
+                if len(dlc_priority) == 0:
                     if self.multiworld.players == 1:
-                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of base priority locations, add more.")
+                        raise OptionError(f"Player {self.player_name} doesn't have enought dlc priority locations.")
+                    warning(f"Player {self.player_name} ran out of dlc priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
@@ -1536,9 +1536,9 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", # DLC requires all bell bearings if starting in base game
                         lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True))
             
-            if self.options.early_legacy_dungeons:
-                self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
-                self._add_entrance_rule("Caelid", "Rusty Key")
+            if self.options.early_legacy_dungeons and self.soft_logic_enabled:
+                self._add_entrance_rule("Liurnia of The Lakes", lambda state: self._has_key_or_shards(state, "Rusty Key"))
+                self._add_entrance_rule("Caelid", lambda state: self._has_key_or_shards(state, "Rusty Key"))
                 self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
             if not self.options.world_logic == "region_lock":
@@ -1548,18 +1548,11 @@ class EldenRing(World):
                 
             if self.options.dlc_start == 0 and self.options.enable_dlc:
                 if self.options.dlc_timing == 2:
-                    if self.options.great_runes_required_mountain >= 0:
-                        self._add_entrance_rule("Gravesite Plain",
-                            lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
-                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
-                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                    else:
-                        self._add_entrance_rule("Gravesite Plain",
-                            lambda state: state.has("Rold Medallion", self.player)
-                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
-                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                    self._add_entrance_rule("Gravesite Plain",
+                        lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold")
+                        and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
+                        and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                 else:
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
@@ -1726,6 +1719,9 @@ class EldenRing(World):
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
                 self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
                 self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
+                if self.options.early_legacy_dungeons and self.soft_logic_enabled:
+                    self._add_entrance_rule("Liurnia of The Lakes", "Stormveil Lock")
+                    self._add_entrance_rule("Caelid", "Stormveil Lock")
                 self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
                 
                 self._add_entrance_rule("Siofra River", "Siofra Lock")
