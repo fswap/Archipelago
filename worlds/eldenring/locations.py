@@ -3798,7 +3798,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SK/CDE: Crab Eggs x2 - down right on first roof", "Crab Eggs x2", key="210000,0:0021007420::", targets=('lot:21000420')),
     ],
     "Gravesite Plain":[ # gravesite                                       most done by Legofacebob
-        ERLocationData("GP/(EH): Fort of Reprimand Spiritspring Stone to NW", "Fort of Reprimand Spiritspring Stone", key='614942,0:1032507000::', spiritspring_stone=True, targets=('lot:')),
+        ERLocationData("GP/(EH): Fort of Reprimand Spiritspring Stone to NW", "Fort of Reprimand Spiritspring Stone", key='614942,0:1032507000::', spiritspring_stone=True),
         
         ERLocationData("GP/TPC: Cross Map - given by Hornsent at TPC or HC", "Cross Map", key="210100,0:0000400610::", missable=True, targets=('lot:106100', 'lot:106120', 'lot:106140')), #Hornsent
         ERLocationData("GP/TPC: Furnace Visage x3 - given by Hornsent after giving Scorpion Stew", "Furnace Visage x3", key="210100,0:0000400612::", missable=True, targets=('lot:106110', 'lot:106142')), #Hornsent
@@ -5613,7 +5613,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
 
     # MARK: More DLC
     "Ancient Ruins of Rauh":[ # rauhruins                                 done, some done by Layka
-        ERLocationData("ARR/CBME: Rauh Ruins Spiritspring Stone, drop to E till cliff then up ledge to N", "Rauh Ruins Spiritspring Stone", key='614446,0:1032507004::', spiritspring_stone=True, targets=('lot:')),
+        ERLocationData("ARR/CBME: Rauh Ruins Spiritspring Stone, drop to E till cliff then up ledge to N", "Rauh Ruins Spiritspring Stone", key='614446,0:1032507004::', spiritspring_stone=True),
         
         ERLocationData("ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop", "Remembrance of the Saint of the Bud", key="614445,0:0000510600::", boss=True, remembrance=True, targets=('lot:10600')),
         ERLocationData("ARR/RARW: Scadutree Fragment - to W up stairs, by NW monument", "Scadutree Fragment", key="614445,0:2044457000::", fragment=True, targets=('lot:2044450000')),
@@ -5686,7 +5686,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("ARR/VMT: Fine Crucible Feather Talisman - down W hall from giant room second floor, right at intersection, up on roots", "Fine Crucible Feather Talisman", key="614548,0:2045487000::", talisman=True, targets=('lot:2045480000')),
     ],
     "Rauh Base":[ # rauhbase                                              done
-        ERLocationData("RB/(TTR): Rauh Base Spiritspring Stone to E", "Rauh Base Spiritspring Stone", key='614646,0:1032507003::', spiritspring_stone=True, targets=('lot:')),
+        ERLocationData("RB/(TTR): Rauh Base Spiritspring Stone to E", "Rauh Base Spiritspring Stone", key='614646,0:1032507003::', spiritspring_stone=True),
         
         ERLocationData("RB/SRC: Greater Potentate's Cookbook [8] - N of SRC on pile of brown", "Greater Potentate's Cookbook [8]", key="614447,0:0000068680::", cookbook=True, targets=('lot:2045480700')),
         ERLocationData("RB/RN: Roar of Rugalea - boss drop to NW", "Roar of Rugalea", key="614447,0:0000530905::", altboss=True, overworldboss=True, targets=('lot:30910')),
@@ -5837,8 +5837,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/ARR: Verdigris Discus - NE side of imbued sword key area by altar", "Verdigris Discus", key="614647,0:2046477720::", talisman=True, targets=('lot:2046470720')),
     ],
     "Scadu Altus":[ # scadualtus                                          done
-        ERLocationData("SA/(MR): Scaduview Cross Spiritspring Stone to SE", "Scaduview Cross Spiritspring Stone", key='614944,0:1032507001::', spiritspring_stone=True, targets=('lot:')),
-        ERLocationData("SA/(RR): Rabbath's Rise Spiritspring Stone to S", "Rabbath's Rise Spiritspring Stone", key='615147,0:1032507002::', spiritspring_stone=True, targets=('lot:')),
+        ERLocationData("SA/(MR): Scaduview Cross Spiritspring Stone to SE", "Scaduview Cross Spiritspring Stone", key='614944,0:1032507001::', spiritspring_stone=True),
+        ERLocationData("SA/(RR): Rabbath's Rise Spiritspring Stone to S", "Rabbath's Rise Spiritspring Stone", key='615147,0:1032507002::', spiritspring_stone=True),
         
         ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, targets=('lot:10440')),
         ERLocationData("SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her", "Lacerating Crossed-Tree", key="120500,0:0000400590::", missable=True, exclusive=True, targets=('lot:105900')),
@@ -6323,12 +6323,20 @@ location_descriptions = {
     "Blizzard": "Locations in the hard to see blizzard area of snowfield.",
 }
 
+used_lots: Set[int] = set()
 location_dictionary: Dict[str, ERLocationData] = {}
 for location_name, location_table in location_tables.items():
     location_dictionary.update({location_data.name: location_data for location_data in location_table})
 
     for location_data in location_table:
         if not location_data.is_event:
+            lots = location_data.targets
+            if isinstance(lots, str):
+                lots = [lots]
+            for lot in lots:
+                if lot.find("lot:") != -1 and not location_data.spiritspring_stone:
+                    used_lots.add(int(lot[lot.find("lot:")+4:]))
+                    used_lots.add(int(lot[lot.find("lot:")+4:]) -1) # ALWAYS NEED FILLER BEFORE
             for group_name in location_data.location_groups():
                 location_name_groups[group_name].add(location_data.name)
 
@@ -6344,11 +6352,34 @@ for location_name, location_table in location_tables.items():
     if location_name.__contains__("- Enia"):
         location_data.conditional = True
         
-dupable_locations = set()
+dupable_locations: Dict[str, int] = {}
 for k in ERPriorityLocationGroups.valid_keys:
-    dupable_locations.update(location_name_groups[k])
+    dupable_locations.update({loc: 0 for loc in location_name_groups[k]})
 # locations that required locations might need
-dupable_locations.update(("LG/(SG): Finger Severer - beside grace", "GP/TPC: Scadutree Fragment - by cross"))
+dupable_locations.update({"LG/(SG): Finger Severer - beside grace": 0, "GP/TPC: Scadutree Fragment - by cross": 0})
+
+for loc in dupable_locations.copy():
+    biggest_lot = 0
+    lots = location_dictionary[loc].targets
+    if isinstance(lots, str):
+        lots = [lots]
+    for lot in lots:
+        if lot.find("lot:") != -1:
+            if int(lot[lot.find("lot:")+4:]) > biggest_lot:
+                biggest_lot = int(lot[lot.find("lot:")+4:])
+    
+    allow_dupes = 0
+    while allow_dupes < 7:
+        if (biggest_lot + allow_dupes + 1) not in used_lots:
+            allow_dupes += 1
+        else: break # used lot found
+    
+    if allow_dupes:
+        dupable_locations[loc] = allow_dupes
+    else:
+        dupable_locations.pop(loc)
+
+# print(dupable_locations)
 
 early_dupable_locations = set()
 early_dupable_locations.update(loc for loc in dupable_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44) # lim, storm, weep, liurnia, raya

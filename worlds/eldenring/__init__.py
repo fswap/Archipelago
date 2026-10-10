@@ -123,12 +123,14 @@ class EldenRing(World):
         for location in locations
         if location.ap_code is not None and location.name in dupable_locations
         for _ in range(1, 3) # how many dupes to prefill, dupe 1 and 2
+        if dupable_locations[location.name] >= _
     } | {
         f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
         for locations in location_tables.values()
         for location in locations
         if location.ap_code is not None and location.name in early_dupable_locations
         for _ in range(3, 5) # how many early dupes to prefill more, dupe 3 and 4
+        if dupable_locations[location.name] >= _
     }
     location_name_groups = location_name_groups
     item_name_groups = item_name_groups
@@ -1717,8 +1719,6 @@ class EldenRing(World):
         if self.options.world_logic == "region_lock":
             if self.base_enabled:
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
-                self._add_entrance_rule("Stormveil Start", lambda state: self._has_key_or_shards(state, "Rusty Key"))
-                # self._add_entrance_rule("Stormveil Castle", lambda state: self._has_key_or_shards(state, "Rusty Key")) # always required in set rules
                 self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
                 
                 self._add_entrance_rule("Siofra River", "Siofra Lock")
