@@ -68,7 +68,8 @@ class WorldLogic(Choice):
     
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid and
-    Mountaintops access before needing to go Consecrated Snowfield."""
+    Mountaintops access before needing to go Consecrated Snowfield.
+    You will also get access to another region before Jagged Peak in DLC."""
     display_name = "Region Soft Logic"
 
 class GreatRunesRequiredLeyndell(Range):
@@ -110,6 +111,7 @@ class StoneswordMasterKey(Choice):
     option_vanilla = 0
     option_regional_keys = 1
     option_single_key = 2
+    default = 1
 
 # MARK: Tarnished Pack
 
@@ -451,12 +453,14 @@ class SmithingBellBearingOption(Choice):
     option_do_not_randomize = 2
     default = 1
     
-class SmoothUpgradeItems(Toggle):
-    """Smooth Upgrade Items."""
+class SmoothUpgradeItems(DefaultOnToggle):
+    """Smooth Upgrade Items.
+    The smoothing is fuzzy, so you should see stones 1-4 in early spheres and 6-dragon in ending spheres."""
     display_name = "Smooth Upgrade Items"
     
-class SmoothRuneItems(Toggle):
-    """Smooth Rune Items."""
+class SmoothRuneItems(DefaultOnToggle):
+    """Smooth Rune Items.
+    The smoothing is fuzzy, so you'll see lower tier (200-10k) runes in early spheres and high tier (35k-80k) runes in ending spheres."""
     display_name = "Smooth Rune Items"
     
 class SpellShopSpellsOnly(Toggle):
@@ -493,7 +497,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - *Key Items*: Key items.
     """
     display_name = "Priority Location Groups"
-    default = ["Key Items", "Achievement Boss", "Seedtree", "Map", "Church", "Cross"]
+    default = ["Key Items", "Achievement Boss", "DLC Remembrance Boss", "Seedtree", "Map", "Church", "Cross", "Fragment"]
     valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "Key Items",
         "Fragment", "Cross", "Revered", "Overworld Boss", "DLC Overworld Boss", 
         "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward"]

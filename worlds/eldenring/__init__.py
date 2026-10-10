@@ -123,12 +123,14 @@ class EldenRing(World):
         for location in locations
         if location.ap_code is not None and location.name in dupable_locations
         for _ in range(1, 3) # how many dupes to prefill, dupe 1 and 2
+        if dupable_locations[location.name] >= _
     } | {
         f"{location.name}, extra item {_}": 8000000 + (location.ap_code - 7000000) + (len(location_dictionary) * _)
         for locations in location_tables.values()
         for location in locations
         if location.ap_code is not None and location.name in early_dupable_locations
         for _ in range(3, 5) # how many early dupes to prefill more, dupe 3 and 4
+        if dupable_locations[location.name] >= _
     }
     location_name_groups = location_name_groups
     item_name_groups = item_name_groups
@@ -727,14 +729,14 @@ class EldenRing(World):
         
         self.multiworld.itempool += self.itempool
         
-        warning(f"priority locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized)])}")
+        # warning(f"priority locations: {len(self.all_priority_locations)} important items: {len([i for i in self.itempool if i.classification in (ItemClassification.progression)])}")
         warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations."""
         important_items = []
         for item in self.itempool:
-            if item.classification in (ItemClassification.progression, ItemClassification.progression_deprioritized):
+            if item.classification in (ItemClassification.progression): # , ItemClassification.progression_deprioritized
                 important_items.append(item)
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.options.enable_dlc]
@@ -787,16 +789,16 @@ class EldenRing(World):
             elif loc_needed > 0 or len(dlc_priority) == 0:
                 if len(base_priority) == 0:
                     if self.multiworld.players == 1:
-                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                        raise OptionError(f"Player {self.player_name} doesn't have base enought priority locations.")
+                    warning(f"Player {self.player_name} ran out of base priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(base_priority + early_base * (self.options.important_at_priority_early - 1)))
             elif dlc_loc_needed > 0:
-                if len(base_priority) == 0:
+                if len(dlc_priority) == 0:
                     if self.multiworld.players == 1:
-                        raise OptionError(f"Player {self.player_name} doesn't have enought priority locations.")
-                    warning(f"Player {self.player_name} ran out of priority locations, add more.")
+                        raise OptionError(f"Player {self.player_name} doesn't have enought dlc priority locations.")
+                    warning(f"Player {self.player_name} ran out of dlc priority locations, add more.")
                     break # leave while loop
                 else:
                     location = self.random.choice(sorted(dlc_priority + early_dlc * (self.options.important_at_priority_early - 1)))
@@ -1537,9 +1539,9 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", # DLC requires all bell bearings if starting in base game
                         lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True))
             
-            if self.options.early_legacy_dungeons:
-                self._add_entrance_rule("Liurnia of The Lakes", "Rusty Key")
-                self._add_entrance_rule("Caelid", "Rusty Key")
+            if self.options.early_legacy_dungeons and self.soft_logic_enabled:
+                self._add_entrance_rule("Liurnia of The Lakes", lambda state: self._has_key_or_shards(state, "Rusty Key"))
+                self._add_entrance_rule("Caelid", lambda state: self._has_key_or_shards(state, "Rusty Key"))
                 self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
         
             if not self.options.world_logic == "region_lock":
@@ -1549,18 +1551,11 @@ class EldenRing(World):
                 
             if self.options.dlc_start == 0 and self.options.enable_dlc:
                 if self.options.dlc_timing == 2:
-                    if self.options.great_runes_required_mountain >= 0:
-                        self._add_entrance_rule("Gravesite Plain",
-                            lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
-                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
-                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
-                    else:
-                        self._add_entrance_rule("Gravesite Plain",
-                            lambda state: state.has("Rold Medallion", self.player)
-                            and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
-                            and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
-                            and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
+                    self._add_entrance_rule("Gravesite Plain",
+                        lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold")
+                        and state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player)
+                        and self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
+                        and self._can_get(state, "CL/(WD): Remembrance of the Starscourge - mainboss drop"))
                 else:
                     self._add_entrance_rule("Gravesite Plain", 
                         lambda state: self._can_get(state, "MP/(MDM): Remembrance of the Blood Lord - mainboss drop")
@@ -1660,6 +1655,9 @@ class EldenRing(World):
             
             # DLC region rules
             
+            if self.options.soft_logic: # jagged peak is a later game area, make it not first :)
+                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_go_to(state, "Belurat") or self._can_go_to(state, "Ellac River") or self._can_go_to(state, "Castle Ensis"))
+            
             self._add_entrance_rule("Belurat Swamp", lambda state: # the long drop down path lets you go here
                 state.has("Well Depths Key", self.player) or self._can_go_to(state, "Enir Ilim"))
             
@@ -1722,8 +1720,6 @@ class EldenRing(World):
         if self.options.world_logic == "region_lock":
             if self.base_enabled:
                 self._add_entrance_rule("Weeping Peninsula", "Weeping Lock")
-                self._add_entrance_rule("Stormveil Start", "Stormveil Lock")
-                self._add_entrance_rule("Stormveil Castle", "Stormveil Lock")
                 self._add_entrance_rule("Liurnia of The Lakes", "Liurnia Lock")
                 
                 self._add_entrance_rule("Siofra River", "Siofra Lock")
@@ -2829,8 +2825,8 @@ class EldenRing(World):
 
         equipments = [ # done
             ( # RA mainboss
-                "RLA mainboss", #"Rennala, Queen of the Full Moon", # boss
-                "RLA: Remembrance of the Full Moon Queen - mainboss drop", # a drop from boss, so we can do 'can get' check
+                "RLA/DB mainboss", #"Rennala, Queen of the Full Moon", # boss
+                "RLA/DB: Remembrance of the Full Moon Queen - mainboss drop", # a drop from boss, so we can do 'can get' check
                 [   # items
                     "Queen's Crescent Crown", 
                     "Queen's Robe",
@@ -3248,14 +3244,15 @@ class EldenRing(World):
                 smooth_items(sorted([
                     item for item in all_item_order 
                     if item.upgrade_item and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: float(item.base_name[len(item.base_name)-2: len(item.base_name)-1]) + (item.count / 10) if item.base_name.find('[') != -1 else 10))
-                # sort by [#] and make non numbered 10, then add count as decimal
+                ], key=lambda item, world=er_world: world.random.randrange(max(item.upgrade_tier -1, 1), min(item.upgrade_tier +1, 5), 1))) 
+                # sort by upgrade tier, and shuffle +-1
 
             if er_world.options.smooth_rune_items:
                 smooth_items(sorted([
                     item for item in all_item_order
                     if item.runes and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: item.runes * item.count)) # sort by runes given
+                ], key=lambda item, world=er_world: world.random.randrange(max(item.rune_tier -1, 1), min(item.rune_tier +1, 4), 1)))
+                # sort by rune tier, and shuffle +-1
 
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""

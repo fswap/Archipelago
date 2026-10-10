@@ -37,7 +37,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LG/(FHE): </strong>Forlorn Hound Evergaol, S Limgrave.</td></tr>
 <tr><td><strong>LG/(GR): </strong></td></tr>
 <tr><td><strong>LG/(MR): </strong></td></tr>
-<tr><td><strong>LG/(SG): </strong></td></tr>
 <tr><td><strong>LG/(SWV): </strong></td></tr>
 <tr><td><strong>LG/(TCM): </strong></td></tr>
 <tr><td><strong>LG/(WR): </strong></td></tr>
@@ -47,7 +46,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LG/CC: </strong></td></tr>
 <tr><td><strong>LG/CE: </strong></td></tr>
 <tr><td><strong>LG/DBR: </strong></td></tr>
-<tr><td><strong>LG/DC: </strong></td></tr>
 <tr><td><strong>LG/FHE: </strong></td></tr>
 <tr><td><strong>LG/FHW: </strong></td></tr>
 <tr><td><strong>LG/GC: </strong></td></tr>
@@ -57,7 +55,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LG/ME: </strong></td></tr>
 <tr><td><strong>LG/MO: </strong></td></tr>
 <tr><td><strong>LG/MR: </strong></td></tr>
-<tr><td><strong>LG/SB: </strong></td></tr>
 <tr><td><strong>LG/SC: </strong></td></tr>
 <tr><td><strong>LG/SG: </strong></td></tr>
 <tr><td><strong>LG/SR: </strong></td></tr>
@@ -67,7 +64,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LG/TCM: </strong></td></tr>
 <tr><td><strong>LG/TFS: </strong></td></tr>
 <tr><td><strong>LG/WR: </strong></td></tr>
-<tr><td><strong>LG/WS: </strong></td></tr>
 <tr><td><h3>Stormhill</td></tr>
 <tr><td><strong>LG/(SE): </strong></td></tr>
 <tr><td><strong>LG/(SG): </strong></td></tr>
@@ -94,8 +90,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><h3>Roundtable Hold</td></tr>
 <tr><td><strong>RH: </strong></td></tr>
 <tr><td><h3>Stormveil Castle</td></tr>
-<tr><td><strong>SV/SMG: </strong></td></tr>
-<tr><td><strong>SV/StC: </strong></td></tr>
 <tr><td><strong>SV/GC: </strong></td></tr>
 <tr><td><strong>SV/LC: </strong></td></tr>
 <tr><td><strong>SV/LTB: </strong></td></tr>
@@ -106,7 +100,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>SV/GG: </strong>Godrick the Grafted grace in Godrick&#x27;s arena.</td></tr>
 <tr><td><strong>SV/LL: </strong></td></tr>
 <tr><td><strong>SV/(DTL): </strong></td></tr>
-<tr><td><strong>SV/LTB: </strong></td></tr>
 <tr><td><h3>Weeping Peninsula</td></tr>
 <tr><td><strong>WP/(AV): </strong></td></tr>
 <tr><td><strong>WP/(CBC): </strong></td></tr>
@@ -216,15 +209,9 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LL/TR: </strong></td></tr>
 <tr><td><strong>LL/VA: </strong></td></tr>
 <tr><td><h3>Bellum Highway</td></tr>
-<tr><td><strong>LL: </strong></td></tr>
 <tr><td><strong>LL/(BC): </strong></td></tr>
 <tr><td><strong>LL/(CIn): </strong></td></tr>
 <tr><td><strong>LL/(FFT): </strong></td></tr>
-<tr><td><strong>LL/(FFV): </strong></td></tr>
-<tr><td><strong>LL/BC: </strong></td></tr>
-<tr><td><strong>LL/CIn: </strong></td></tr>
-<tr><td><strong>LL/FFVO: </strong></td></tr>
-<tr><td><strong>LL/GLD: </strong></td></tr>
 <tr><td><strong>LL/MEE: </strong></td></tr>
 <tr><td><h3>Liurnia of The Lakes Dungeons</td></tr>
 <tr><td><strong>LL/(REC): </strong></td></tr>
@@ -235,20 +222,17 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LL/(ACC): </strong></td></tr>
 <tr><td><strong>LL/(RLCT): </strong></td></tr>
 <tr><td><h3>Caria Manor</td></tr>
-<tr><td><strong>LL/(CM): </strong></td></tr>
 <tr><td><strong>LL/(RGE): </strong></td></tr>
 <tr><td><strong>LL/(RaR): </strong></td></tr>
 <tr><td><strong>LL/(ReR): </strong></td></tr>
 <tr><td><strong>LL/(SR): </strong></td></tr>
-<tr><td><strong>LL/BCM: </strong></td></tr>
-<tr><td><strong>LL/RM: </strong></td></tr>
 <tr><td><strong>LL/RMG: </strong></td></tr>
 <tr><td><strong>LL/RaR: </strong></td></tr>
 <tr><td><strong>LL/SR: </strong></td></tr>
 <tr><td><h3>Carian Study Hall</td></tr>
 <tr><td><strong>LL/(CSH)N: </strong>Carian Study Hall normal.</td></tr>
 <tr><td><strong>LL/(CSH)I: </strong>Carian Study Hall inverted.</td></tr>
-<tr><td><strong>LL/(DV): </strong>Divine Tower of Liurnia</td></tr>
+<tr><td><strong>LL/(DV): </strong>Divine Tower of Liurnia.</td></tr>
 <tr><td><strong>LL/LTB: </strong>Liurnia Tower Bridge grace, after CSH.</td></tr>
 <tr><td><h3>Ainsel River</td></tr>
 <tr><td><strong>AR/(UPR): </strong></td></tr>
@@ -260,24 +244,15 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>RSP/RSP: </strong></td></tr>
 <tr><td><strong>RSP/RSPO: </strong></td></tr>
 <tr><td><strong>RSP/RVV: </strong></td></tr>
-<tr><td><h3>The Four Belfries (Chapel of Anticipation)</td></tr>
-<tr><td><strong>LL/(TFB/CA): </strong></td></tr>
-<tr><td><h3>The Four Belfries (Nokron)</td></tr>
-<tr><td><strong>LL/(TFB/NEC): </strong></td></tr>
-<tr><td><h3>The Four Belfries (Farum Azula)</td></tr>
-<tr><td><strong>LL/(TFB/FA): </strong></td></tr>
+<tr><td><h3>The Four Belfries</td></tr>
+<tr><td><strong>LL/(TFB/CA): </strong>The Four Belfries (Chapel of Anticipation)</td></tr>
+<tr><td><strong>LL/(TFB/NEC): </strong>The Four Belfries (Nokron)</td></tr>
+<tr><td><strong>LL/(TFB/FA): </strong>The Four Belfries (Farum Azula)</td></tr>
 <tr><td><h3>Raya Lucaria Academy</td></tr>
 <tr><td><strong>RLA/CC: </strong></td></tr>
-<tr><td><strong>RLA/DB: </strong></td></tr>
 <tr><td><strong>RLA/MAG: </strong></td></tr>
-<tr><td><strong>RLA/RLGL: </strong></td></tr>
 <tr><td><strong>RLA/SC: </strong></td></tr>
-<tr><td><h3>Raya Lucaria Academy Main</td></tr>
-<tr><td><strong>RLA: </strong></td></tr>
 <tr><td><strong>RLA/DB: </strong></td></tr>
-<tr><td><h3>Raya Lucaria Academy Chest</td></tr>
-<tr><td><strong>RLA/RLGL: </strong></td></tr>
-<tr><td><h3>Raya Lucaria Academy Library</td></tr>
 <tr><td><strong>RLA/RLGL: </strong></td></tr>
 <tr><td><h3>Caelid</td></tr>
 <tr><td><strong>CL/(CDC): </strong></td></tr>
@@ -314,31 +289,21 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>CL/SSR: </strong></td></tr>
 <tr><td><strong>CL/SUS: </strong></td></tr>
 <tr><td><strong>CL/SW: </strong></td></tr>
-<tr><td><h3>Caelid Catacombs</td></tr>
+<tr><td><h3>Caelid Dungeons</td></tr>
 <tr><td><strong>CL/(CCC): </strong></td></tr>
-<tr><td><h3>Gaol Cave</td></tr>
 <tr><td><strong>CL/(GC): </strong></td></tr>
-<tr><td><h3>Sellia Crystal Tunnel</td></tr>
 <tr><td><strong>CL/(SCT): </strong></td></tr>
-<tr><td><h3>Abandoned Cave</td></tr>
 <tr><td><strong>CL/(AC): </strong></td></tr>
-<tr><td><h3>Minor Erdtree Catacombs</td></tr>
 <tr><td><strong>CL/(MEC): </strong></td></tr>
+<tr><td><strong>CL/(GT): </strong></td></tr>
 <tr><td><h3>Great-Jar</td></tr>
 <tr><td><strong>CL/CCO: </strong></td></tr>
-<tr><td><strong>CL/DW: </strong></td></tr>
 <tr><td><strong>CL/SE: </strong></td></tr>
-<tr><td><h3>Gale Tunnel</td></tr>
-<tr><td><strong>CL/(GT): </strong></td></tr>
-<tr><td><h3>Redmane Castle Post Radahn</td></tr>
-<tr><td><strong>CL/(RC): </strong></td></tr>
-<tr><td><h3>Wailing Dunes</td></tr>
-<tr><td><strong>CL/(WD): </strong></td></tr>
-<tr><td><h3>War-Dead Catacombs</td></tr>
-<tr><td><strong>CL/(WDC): </strong></td></tr>
+<tr><td><h3>Radahn Festival</td></tr>
+<tr><td><strong>CL/(WD): </strong>Wailing Dunes.</td></tr>
+<tr><td><strong>CL/(WDC): </strong>War-Dead Catacombs, N of Wailing Dunes.</td></tr>
 <tr><td><h3>Dragonbarrow</td></tr>
 <tr><td><strong>DB/(BS): </strong></td></tr>
-<tr><td><strong>DB/(DT): </strong></td></tr>
 <tr><td><strong>DB/(FF): </strong></td></tr>
 <tr><td><strong>DB/(IMS): </strong></td></tr>
 <tr><td><strong>DB/(LR): </strong></td></tr>
@@ -351,16 +316,13 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>DB/IMS: </strong></td></tr>
 <tr><td><strong>DB/LR: </strong></td></tr>
 <tr><td><strong>DB/MEE: </strong></td></tr>
-<tr><td><h3>Dragonbarrow Cave</td></tr>
-<tr><td><strong>DB/(DC): </strong></td></tr>
-<tr><td><h3>Sellia Hideaway</td></tr>
-<tr><td><strong>DB/(SH): </strong></td></tr>
-<tr><td><h3>Divine Tower of Caelid</td></tr>
-<tr><td><strong>DB/(DT): </strong></td></tr>
-<tr><td><h3>Nokron, Eternal City Start</td></tr>
+<tr><td><h3>Dragonbarrow Dungeons</td></tr>
+<tr><td><strong>DB/(DC): </strong>Dragonbarrow Cave.</td></tr>
+<tr><td><strong>DB/(SH): </strong>Sellia Hideaway.</td></tr>
+<tr><td><strong>DB/(DT): </strong>Divine Tower of Caelid.</td></tr>
+<tr><td><h3>Nokron, Eternal City</td></tr>
 <tr><td><strong>NR/LG: </strong></td></tr>
 <tr><td><strong>NR/NEC: </strong></td></tr>
-<tr><td><h3>Nokron, Eternal City</td></tr>
 <tr><td><strong>NR/(HG): </strong></td></tr>
 <tr><td><strong>NR/(NSG): </strong></td></tr>
 <tr><td><strong>NR/(SA): </strong></td></tr>
@@ -368,14 +330,11 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>NR/AW: </strong></td></tr>
 <tr><td><strong>NR/HG: </strong></td></tr>
 <tr><td><strong>NR/MT: </strong></td></tr>
-<tr><td><h3>Deeproot Depths Upper</td></tr>
-<tr><td><strong>DD/RFC: </strong></td></tr>
 <tr><td><h3>Deeproot Depths</td></tr>
-<tr><td><strong>DD/AR: </strong></td></tr>
+<tr><td><strong>DD/RFC: </strong></td></tr>
 <tr><td><strong>DD/DD: </strong></td></tr>
 <tr><td><strong>DD/GWC: </strong></td></tr>
 <tr><td><strong>DD/TNEC: </strong></td></tr>
-<tr><td><h3>Deeproot Depths Boss</td></tr>
 <tr><td><strong>DD/AR: </strong></td></tr>
 <tr><td><strong>DD/PDT: </strong></td></tr>
 <tr><td><h3>Ainsel River Main</td></tr>
@@ -400,8 +359,8 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>AP/(DWV): </strong></td></tr>
 <tr><td><strong>AP/(HLT): </strong></td></tr>
 <tr><td><strong>AP/(MR): </strong></td></tr>
-<tr><td><strong>AP/(SC): </strong></td></tr>
 <tr><td><strong>AP/(SCM): </strong></td></tr>
+<tr><td><strong>AP/(ScC): </strong></td></tr>
 <tr><td><strong>AP/(WbR): </strong></td></tr>
 <tr><td><strong>AP/(WfR): </strong></td></tr>
 <tr><td><strong>AP/AC: </strong></td></tr>
@@ -436,17 +395,12 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>TSC/CI: </strong></td></tr>
 <tr><td><strong>TSC/SCIG: </strong></td></tr>
 <tr><td><strong>TSC/SCR: </strong></td></tr>
-<tr><td><h3>Sainted Hero&#x27;s Grave</td></tr>
+<tr><td><h3>Altus Plateau Dungeons</td></tr>
 <tr><td><strong>AP/(SHG): </strong></td></tr>
-<tr><td><h3>Unsightly Catacombs</td></tr>
 <tr><td><strong>AP/(UC): </strong></td></tr>
-<tr><td><h3>Perfumer&#x27;s Grotto</td></tr>
 <tr><td><strong>AP/(PG): </strong></td></tr>
-<tr><td><h3>Sage&#x27;s Cave</td></tr>
-<tr><td><strong>AP/(SC): </strong></td></tr>
-<tr><td><h3>Old Altus Tunnel</td></tr>
+<tr><td><strong>AP/(SCV): </strong></td></tr>
 <tr><td><strong>AP/(OAT): </strong></td></tr>
-<tr><td><h3>Altus Tunnel</td></tr>
 <tr><td><strong>AP/(AT): </strong></td></tr>
 <tr><td><h3>Mt. Gelmir</td></tr>
 <tr><td><strong>MtG/(CS): </strong></td></tr>
@@ -468,26 +422,17 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>MtG/ST: </strong></td></tr>
 <tr><td><strong>MtG/VC: </strong></td></tr>
 <tr><td><strong>MtG/VM: </strong></td></tr>
-<tr><td><h3>Wyndham Catacombs</td></tr>
+<tr><td><h3>Mt. Gelmir Dungeons</td></tr>
 <tr><td><strong>MtG/(WC): </strong></td></tr>
-<tr><td><h3>Gelmir Hero&#x27;s Grave</td></tr>
 <tr><td><strong>MtG/(GHG): </strong></td></tr>
-<tr><td><h3>Seethewater Cave</td></tr>
 <tr><td><strong>MtG/(SC): </strong></td></tr>
-<tr><td><h3>Volcano Cave</td></tr>
 <tr><td><strong>MtG/(VC): </strong></td></tr>
-<tr><td><h3>Volcano Manor Dungeon</td></tr>
+<tr><td><h3>Volcano Manor</td></tr>
 <tr><td><strong>(VM)/RLA: </strong></td></tr>
 <tr><td><strong>(VM)/SIC: </strong></td></tr>
-<tr><td><h3>Volcano Manor Entrance</td></tr>
 <tr><td><strong>VM/VM: </strong></td></tr>
-<tr><td><h3>Volcano Manor Drawing Room</td></tr>
-<tr><td><strong>VM/VM: </strong></td></tr>
-<tr><td><h3>Volcano Manor</td></tr>
 <tr><td><strong>VM/GH: </strong></td></tr>
 <tr><td><strong>VM/PTC: </strong></td></tr>
-<tr><td><strong>VM/TE: </strong></td></tr>
-<tr><td><h3>Volcano Manor Upper</td></tr>
 <tr><td><strong>VM/AP: </strong></td></tr>
 <tr><td><strong>VM/RLB: </strong></td></tr>
 <tr><td><strong>VM/TE: </strong></td></tr>
@@ -502,11 +447,9 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>CO/MEC: </strong></td></tr>
 <tr><td><strong>CO/OWB: </strong></td></tr>
 <tr><td><strong>CO/OWPT: </strong></td></tr>
-<tr><td><h3>Auriza Hero&#x27;s Grave</td></tr>
+<tr><td><h3>Capital Outskirts Dungeons</td></tr>
 <tr><td><strong>CO/(AHG): </strong></td></tr>
-<tr><td><h3>Auriza Side Tomb</td></tr>
 <tr><td><strong>CO/(AST): </strong></td></tr>
-<tr><td><h3>Sealed Tunnel</td></tr>
 <tr><td><strong>CO/(ST): </strong></td></tr>
 <tr><td><h3>Leyndell, Royal Capital</td></tr>
 <tr><td><strong>LRC/AB: </strong></td></tr>
@@ -516,33 +459,23 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LRC/QB: </strong></td></tr>
 <tr><td><strong>LRC/WCR: </strong></td></tr>
 <tr><td><strong>LRC|LAC/RC: </strong></td></tr>
-<tr><td><h3>Leyndell, Royal Capital Unmissable</td></tr>
 <tr><td><strong>DTEA: </strong></td></tr>
-<tr><td><strong>LRC/WCR: </strong></td></tr>
 <tr><td><strong>LRC|LAC/AB: </strong></td></tr>
 <tr><td><strong>LRC|LAC/ECR: </strong></td></tr>
 <tr><td><strong>LRC|LAC/FMFF: </strong></td></tr>
-<tr><td><strong>LRC|LAC/RC: </strong></td></tr>
 <tr><td><strong>LRC|LAC/WCR: </strong></td></tr>
-<tr><td><h3>Leyndell, Royal Capital Throne</td></tr>
 <tr><td><strong>LRC/ES: </strong></td></tr>
 <tr><td><strong>LRC/ET: </strong></td></tr>
-<tr><td><strong>LRC/QB: </strong></td></tr>
 <tr><td><strong>LRC|LAC/ES: </strong></td></tr>
-<tr><td><h3>Divine Bridge</td></tr>
 <tr><td><strong>LRC|LAC/(DB): </strong></td></tr>
 <tr><td><h3>Subterranean Shunning-Grounds</td></tr>
 <tr><td><strong>SSG/(LC): </strong></td></tr>
 <tr><td><strong>SSG/FD: </strong></td></tr>
 <tr><td><strong>SSG/LC: </strong></td></tr>
 <tr><td><strong>SSG/UR: </strong></td></tr>
-<tr><td><h3>Leyndell Catacombs</td></tr>
-<tr><td><strong>SSG/(LC): </strong></td></tr>
 <tr><td><h3>Frenzied Flame Proscription</td></tr>
 <tr><td><strong>FFP/CF: </strong></td></tr>
 <tr><td><strong>FFP/FFP: </strong></td></tr>
-<tr><td><h3>Divine Tower of East Altus</td></tr>
-<tr><td><strong>DTEA: </strong></td></tr>
 <tr><td><h3>Forbidden Lands</td></tr>
 <tr><td><strong>FL/FL: </strong></td></tr>
 <tr><td><strong>FL/GLR: </strong></td></tr>
@@ -553,7 +486,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>MotG/(FCM): </strong></td></tr>
 <tr><td><strong>MotG/(GG): </strong></td></tr>
 <tr><td><strong>MotG/(GLR): </strong></td></tr>
-<tr><td><strong>MotG/(GMC): </strong></td></tr>
 <tr><td><strong>MotG/(HR): </strong></td></tr>
 <tr><td><strong>MotG/(LCE): </strong></td></tr>
 <tr><td><strong>MotG/(ME): </strong></td></tr>
@@ -573,9 +505,8 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>MotG/SVRO: </strong></td></tr>
 <tr><td><strong>MotG/WR: </strong></td></tr>
 <tr><td><strong>MotG/ZR: </strong></td></tr>
-<tr><td><h3>Giants&#x27; Mountaintop Catacombs</td></tr>
+<tr><td><h3>Mountaintops of the Giants Dungeons</td></tr>
 <tr><td><strong>MotG/(GMC): </strong></td></tr>
-<tr><td><h3>Spiritcaller Cave</td></tr>
 <tr><td><strong>MotG/(SC): </strong></td></tr>
 <tr><td><h3>Flame Peak</td></tr>
 <tr><td><strong>FP/(CR): </strong></td></tr>
@@ -583,8 +514,8 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>FP/FF: </strong></td></tr>
 <tr><td><strong>FP/GCHG: </strong></td></tr>
 <tr><td><strong>FP/GG: </strong></td></tr>
-<tr><td><h3>Giant-Conquering Hero&#x27;s Grave</td></tr>
-<tr><td><strong>FP/(GCHG): </strong></td></tr>
+<tr><td><h3>Flame Peak Dungeon</td></tr>
+<tr><td><strong>FP/(GCHG): </strong>Giant-Conquering Hero&#x27;s Grave.</td></tr>
 <tr><td><h3>Farum Azula</td></tr>
 <tr><td><strong>FA/CBG: </strong></td></tr>
 <tr><td><strong>FA/CBGD: </strong></td></tr>
@@ -592,7 +523,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>FA/DTT: </strong></td></tr>
 <tr><td><strong>FA/MotG: </strong></td></tr>
 <tr><td><strong>FA/TFB: </strong></td></tr>
-<tr><td><h3>Farum Azula Main</td></tr>
 <tr><td><strong>FA/BGB: </strong></td></tr>
 <tr><td><strong>FA/DTA: </strong></td></tr>
 <tr><td><strong>FA/DTL: </strong></td></tr>
@@ -614,11 +544,9 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>CS/OLT: </strong></td></tr>
 <tr><td><strong>CS/YAR: </strong></td></tr>
 <tr><td><strong>CS/YAT: </strong></td></tr>
-<tr><td><h3>Consecrated Snowfield Catacombs</td></tr>
+<tr><td><h3>Consecrated Snowfield Dungeons</td></tr>
 <tr><td><strong>CS/(CSC): </strong></td></tr>
-<tr><td><h3>Cave of the Forlorn</td></tr>
 <tr><td><strong>CS/(CF): </strong></td></tr>
-<tr><td><h3>Yelough Anix Tunnel</td></tr>
 <tr><td><strong>CS/(YAT): </strong></td></tr>
 <tr><td><h3>Mohgwyn Palace</td></tr>
 <tr><td><strong>MP/(MDM): </strong></td></tr>
@@ -640,8 +568,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>LAC/LCA: </strong></td></tr>
 <tr><td><strong>LAC/QB: </strong></td></tr>
 <tr><td><strong>LAC/RC: </strong></td></tr>
-<tr><td><h3>Leyndell, Ashen Capital Throne</td></tr>
-<tr><td><strong>LAC/QB: </strong></td></tr>
 <tr><td><h3>Erdtree</td></tr>
 <tr><td><strong>ET: </strong></td></tr>
 </table><br><div>
@@ -689,7 +615,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>BTS/SPA: </strong></td></tr>
 <tr><td><strong>BTS/TDB: </strong></td></tr>
 <tr><td><h3>Belurat Swamp</td></tr>
-<tr><td><strong>BTS/BTS: </strong></td></tr>
 <tr><td><h3>Castle Ensis</td></tr>
 <tr><td><strong>CE/CEC: </strong></td></tr>
 <tr><td><strong>CE/CF: </strong></td></tr>
@@ -701,22 +626,18 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>JP/FJP: </strong></td></tr>
 <tr><td><strong>JP/GADC: </strong></td></tr>
 <tr><td><h3>Jagged Peak</td></tr>
-<tr><td><strong>JP/FJP: </strong></td></tr>
 <tr><td><strong>JP/JPM: </strong></td></tr>
 <tr><td><strong>JP/JPS: </strong></td></tr>
 <tr><td><h3>Charo&#x27;s Hidden Grave</td></tr>
 <tr><td><strong>CHG/CHG: </strong></td></tr>
 <tr><td><strong>CHG/LG: </strong></td></tr>
 <tr><td><h3>Lamenter&#x27;s Gaol (Entrance)</td></tr>
-<tr><td><strong>CHG/(LG): </strong></td></tr>
 <tr><td><h3>Lamenter&#x27;s Gaol (Upper)</td></tr>
 <tr><td><strong>CHG/(LG): </strong></td></tr>
 <tr><td><h3>Lamenter&#x27;s Gaol (Lower)</td></tr>
-<tr><td><strong>CHG/(LG): </strong></td></tr>
 <tr><td><h3>Scadu Altus</td></tr>
 <tr><td><strong>SA/(BV): </strong></td></tr>
 <tr><td><strong>SA/(CC): </strong></td></tr>
-<tr><td><strong>SA/(CMM): </strong></td></tr>
 <tr><td><strong>SA/(FR): </strong></td></tr>
 <tr><td><strong>SA/(MR): </strong></td></tr>
 <tr><td><strong>SA/(RR): </strong></td></tr>
@@ -734,7 +655,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>SA/RFSP: </strong></td></tr>
 <tr><td><strong>SA/SAW: </strong></td></tr>
 <tr><td><strong>SA/SC: </strong></td></tr>
-<tr><td><strong>SK/SKMG: </strong></td></tr>
 <tr><td><h3>Bonny Gaol</td></tr>
 <tr><td><strong>SA/(BG): </strong></td></tr>
 <tr><td><h3>Ruined Forge of Starfall Past</td></tr>
@@ -742,7 +662,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><h3>Rauh Ruins Limited</td></tr>
 <tr><td><strong>SA/ARR: </strong></td></tr>
 <tr><td><h3>Cathedral of Manus Metyr</td></tr>
-<tr><td><strong>SA/(CMM): </strong></td></tr>
 <tr><td><h3>Finger Ruins of Miyr</td></tr>
 <tr><td><strong>FRM: </strong></td></tr>
 <tr><td><strong>SA/(CMM): </strong></td></tr>
@@ -803,7 +722,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><h3>Scaduview</td></tr>
 <tr><td><strong>ScV/(AS): </strong></td></tr>
 <tr><td><strong>ScV/(SC): </strong></td></tr>
-<tr><td><strong>ScV/SKBG: </strong></td></tr>
 <tr><td><h3>Scadutree Base</td></tr>
 <tr><td><strong>SB/TWS: </strong></td></tr>
 <tr><td><h3>Ancient Ruins of Rauh</td></tr>
@@ -818,7 +736,6 @@ Regions | [Base Game Regions](#base-game) | [DLC Regions](#dlc)
 <tr><td><strong>HL/FH: </strong></td></tr>
 <tr><td><strong>HL/HB: </strong></td></tr>
 <tr><td><strong>HL/HL: </strong></td></tr>
-<tr><td><strong>SA/(RR): </strong></td></tr>
 <tr><td><h3>Finger Ruins of Dheo</td></tr>
 <tr><td><strong>FRD: </strong></td></tr>
 <tr><td><h3>Recluses&#x27; River</td></tr>

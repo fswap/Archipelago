@@ -53,10 +53,28 @@ def find_description(initial: str) -> str:
         # study hall
         case "LL/(CSH)N": return "Carian Study Hall normal."
         case "LL/(CSH)I": return "Carian Study Hall inverted."
-        case "LL/(DV)": return "Divine Tower of Liurnia"
+        case "LL/(DV)": return "Divine Tower of Liurnia."
         case "LL/LTB": return "Liurnia Tower Bridge grace, after CSH."
         
+        case "LL/(TFB/CA)": return "The Four Belfries (Chapel of Anticipation)"
+        case "LL/(TFB/NEC)": return "The Four Belfries (Nokron)"
+        case "LL/(TFB/FA)": return "The Four Belfries (Farum Azula)"
         
+        
+        
+        case "CL/(WD)": return "Wailing Dunes."
+        case "CL/(WDC)": return "War-Dead Catacombs, N of Wailing Dunes."
+        
+        case "DB/(DC)": return "Dragonbarrow Cave."
+        case "DB/(SH)": return "Sellia Hideaway."
+        case "DB/(DT)": return "Divine Tower of Caelid."
+        
+        
+        
+        
+        
+        
+        case "FP/(GCHG)": return "Giant-Conquering Hero's Grave."
         
         # DLC
         
@@ -86,24 +104,91 @@ def find_label(region: str) -> str:
     if region in ("Carian Study Hall", "Carian Study Hall (Inverted)"):
         return "Carian Study Hall"
     
+    if region in ("The Four Belfries (Chapel of Anticipation)", "The Four Belfries (Nokron)", "The Four Belfries (Farum Azula)"):
+        return "The Four Belfries"
+
+    if region in ("Raya Lucaria Academy", "Raya Lucaria Academy Main", "Raya Lucaria Academy Chest", "Raya Lucaria Academy Library"):
+        return "Raya Lucaria Academy"
     
+    if region in ("Caelid Catacombs", "Gaol Cave", "Sellia Crystal Tunnel", "Abandoned Cave", "Minor Erdtree Catacombs", "Gale Tunnel"):
+        return "Caelid Dungeons"
     
+    if region in ("Redmane Castle Post Radahn", "Wailing Dunes", "War-Dead Catacombs"):
+        return "Radahn Festival"
     
+    if region in ("Dragonbarrow Cave", "Sellia Hideaway", "Divine Tower of Caelid"):
+        return "Dragonbarrow Dungeons"
+    
+    if region in ("Nokron, Eternal City", "Nokron, Eternal City Start"):
+        return "Nokron, Eternal City"
+    
+    if region in ("Deeproot Depths Upper", "Deeproot Depths", "Deeproot Depths Boss"):
+        return "Deeproot Depths"
+    
+    if region in ("Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto", "Sage's Cave", "Old Altus Tunnel", "Altus Tunnel"):
+        return "Altus Plateau Dungeons"
+    
+    if region in ("Wyndham Catacombs", "Gelmir Hero's Grave", "Seethewater Cave", "Volcano Cave"):
+        return "Mt. Gelmir Dungeons"
+    
+    if region in ("Volcano Manor Dungeon", "Volcano Manor Entrance", "Volcano Manor Drawing Room", "Volcano Manor", "Volcano Manor Upper"):
+        return "Volcano Manor"
+    
+    if region in ("Auriza Hero's Grave", "Auriza Side Tomb", "Sealed Tunnel"):
+        return "Capital Outskirts Dungeons"
+    
+    if region in ("Leyndell, Royal Capital", "Leyndell, Royal Capital Unmissable", "Leyndell, Royal Capital Throne", "Divine Bridge"):
+        return "Leyndell, Royal Capital"
+    
+    if region in ("Subterranean Shunning-Grounds", "Leyndell Catacombs"):
+        return "Subterranean Shunning-Grounds"
+    
+    if region in ("Divine Tower of East Altus", "Forbidden Lands"):
+        return "Forbidden Lands"    
+    
+    if region in ("Giants' Mountaintop Catacombs", "Spiritcaller Cave"):
+        return "Mountaintops of the Giants Dungeons"    
+    
+    if region in ("Giant-Conquering Hero's Grave"):
+        return "Flame Peak Dungeon"    
+        
+    if region in ("Farum Azula", "Farum Azula Main"):
+        return "Farum Azula"        
+        
+    if region in ("Consecrated Snowfield Catacombs", "Cave of the Forlorn", "Yelough Anix Tunnel"):
+        return "Consecrated Snowfield Dungeons"        
+        
+    if region in ("Leyndell, Ashen Capital", "Leyndell, Ashen Capital Throne"):
+        return "Leyndell, Ashen Capital"
+        
+    
+    # DLC
     
     if region in ("Fog Rift Catacombs", "Belurat Gaol", "Dragon's Pit", "Ruined Forge Lava Intake"):
-            return "Gravesite Plain Dungeons"
+        return "Gravesite Plain Dungeons"
+    
+    
+    
+    
+    
+    
+    
+    if region in ("", ""):
+        return ""
     
     
     # if nothing return region
     return region
 
 if __name__ == '__main__':
+    all_initials = []
     for region in location_tables:
         region_initals_to_description.setdefault(region, {})
         for location in location_tables[region]:
             initial = location.name[:location.name.find(":")]
-            if initial not in region_initals_to_description[region]:
+            if initial not in all_initials and initial not in region_initals_to_description[region]:
                 region_initals_to_description[region][initial] = find_description(initial)
+                all_initials.append(initial) # removes dupe initials
                 
     table = "## Base Game\n<table>\n"
     last_region = ""
