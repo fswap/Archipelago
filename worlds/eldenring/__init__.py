@@ -1659,6 +1659,9 @@ class EldenRing(World):
             
             # DLC region rules
             
+            if self.options.soft_logic: # jagged peak is a later game area, make it not first :)
+                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_go_to(state, "Belurat") or self._can_go_to(state, "Ellac River") or self._can_go_to(state, "Castle Ensis"))
+            
             self._add_entrance_rule("Belurat Swamp", lambda state: # the long drop down path lets you go here
                 state.has("Well Depths Key", self.player) or self._can_go_to(state, "Enir Ilim"))
             
@@ -3247,14 +3250,15 @@ class EldenRing(World):
                 smooth_items(sorted([
                     item for item in all_item_order 
                     if item.upgrade_item and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: float(item.base_name[len(item.base_name)-2: len(item.base_name)-1]) + (item.count / 10) if item.base_name.find('[') != -1 else 10))
+                ], key=lambda item: item.upgrade_tier)) # sort by upgrade tier
                 # sort by [#] and make non numbered 10, then add count as decimal
+                # key=lambda item: float(item.base_name[len(item.base_name)-2: len(item.base_name)-1]) + (item.count / 10) if item.base_name.find('[') != -1 else 10))
 
             if er_world.options.smooth_rune_items:
                 smooth_items(sorted([
                     item for item in all_item_order
                     if item.runes and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item: item.runes * item.count)) # sort by runes given
+                ], key=lambda item: item.rune_tier)) # sort by rune tier
 
     def _shuffle(self, seq: Sequence) -> List:
         """Returns a shuffled copy of a sequence."""

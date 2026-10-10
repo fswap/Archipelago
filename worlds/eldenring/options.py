@@ -68,7 +68,8 @@ class WorldLogic(Choice):
     
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid and
-    Mountaintops access before needing to go Consecrated Snowfield."""
+    Mountaintops access before needing to go Consecrated Snowfield.
+    You will also get access to another region before Jagged Peak in DLC."""
     display_name = "Region Soft Logic"
 
 class GreatRunesRequiredLeyndell(Range):
