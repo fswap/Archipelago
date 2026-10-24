@@ -180,10 +180,10 @@ def find_label(region: str) -> str:
     if region in ("Deeproot Depths Upper", "Deeproot Depths", "Deeproot Depths Boss"):
         return "Deeproot Depths"
     
-    if region in ("Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto", "Sage's Cave", "Old Altus Tunnel", "Altus Tunnel"):
+    if region in ("Sainted Hero's Grave", "Unsightly Catacombs", "Perfumer's Grotto", "Sage's Cave", "Old Altus Tunnel", "Altus Tunnel", "Wyndham Catacombs"):
         return "Altus Plateau Dungeons"
     
-    if region in ("Wyndham Catacombs", "Gelmir Hero's Grave", "Seethewater Cave", "Volcano Cave"):
+    if region in ("Gelmir Hero's Grave", "Seethewater Cave", "Volcano Cave"):
         return "Mt. Gelmir Dungeons"
     
     if region in ("Volcano Manor Dungeon", "Volcano Manor Entrance", "Volcano Manor Drawing Room", "Volcano Manor", "Volcano Manor Upper"):

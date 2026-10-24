@@ -680,6 +680,11 @@ base_bosses = [
             "AP/(AT): Somberstone Miner's Bell Bearing [2] - boss drop"
         ]
     ),
+    ERBossInfo("Erdtree Burial Watchdog (AP/WC)", ["Altus Plateau", "Dungeon", "Catacomb"], 30070800, 30070800, dungeon=True,
+        locations=[
+            "AP/(WC): Glovewort Picker's Bell Bearing [1] - boss drop"
+        ]
+    ),
    
     # MARK: Capital Outskirts
     ERBossInfo("Deathbird (CO)", ["Capital Outskirts", "Overworld"], 1044530800, 1044530800,
@@ -744,11 +749,6 @@ base_bosses = [
         ]
     ),
     # gelmir dungeons
-    ERBossInfo("Erdtree Burial Watchdog (MtG/WC)", ["Mt. Gelmir", "Dungeon", "Catacomb"], 30070800, 30070800, dungeon=True,
-        locations=[
-            "MtG/(WC): Glovewort Picker's Bell Bearing [1] - boss drop"
-        ]
-    ),
     ERBossInfo("Red Wolf of the Champion (MtG/GHG)", ["Mt. Gelmir", "Dungeon", "Grave"], 30090800, 30090800, dungeon=True,
         locations=[
             "MtG/(GHG): Bloodhound Knight Floh - boss drop"

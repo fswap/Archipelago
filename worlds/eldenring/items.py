@@ -105,9 +105,6 @@ class ERItemData:
     
     great_rune: bool = False
     """Whether this is a Great rune."""
-    
-    seperate_imbued_key: bool = False
-    """Whether this is a Seperate Imbued Sword Key."""
 
     def __post_init__(self):
         self.ap_code = self.ap_code or ERItemData.__item_id
@@ -2292,9 +2289,9 @@ _vanilla_items = [
     ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Imbued Keys
-    ERItemData("Imbued Sword Key (Chapel of Anticipation)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression, seperate_imbued_key=True),
-    ERItemData("Imbued Sword Key (Nokron)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression, seperate_imbued_key=True),
-    ERItemData("Imbued Sword Key (Farum Azula)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression, seperate_imbued_key=True),
+    ERItemData("Imbued Sword Key (Chapel of Anticipation)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Imbued Sword Key (Nokron)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Imbued Sword Key (Farum Azula)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Master Keys
     ERItemData("Stonesword Master Key", 7830000, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -2996,7 +2993,7 @@ _dlc_items = [
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: DLC Imbued Keys
-    ERItemData("Imbued Sword Key (Ancient Ruins)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression, seperate_imbued_key=True),
+    ERItemData("Imbued Sword Key (Ancient Ruins)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Spiritspring Stones
     ERItemData("Fort of Reprimand Spiritspring Stone", 7830500, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),

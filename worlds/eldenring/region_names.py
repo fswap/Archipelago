@@ -98,10 +98,10 @@ region_order = [
     "Sage's Cave",
     "Old Altus Tunnel",
     "Altus Tunnel",
+    "Wyndham Catacombs",
     
     # Mt Gelmir
     "Mt. Gelmir",
-    "Wyndham Catacombs",
     "Gelmir Hero's Grave",
     "Seethewater Cave",
     "Volcano Cave",

@@ -3883,11 +3883,11 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LL/(CC): Prattling Pate \"Wonderful\" - bottom of main room, N side", "Prattling Pate \"Wonderful\"", key="300600,0:0030067080::", targets=('lot:30060080')),
     ],
     "Wyndham Catacombs":[ # gelmir_wyndhamcatacombs                       done
-        ERLocationData("MtG/(WC): Ancient Dragon Apostle's Cookbook [1] - path under huge crusher", "Ancient Dragon Apostle's Cookbook [1]", key="300700,0:0000068000::", targets=('lot:30070000')),
-        ERLocationData("MtG/(WC): Glovewort Picker's Bell Bearing [1] - boss drop", "Glovewort Picker's Bell Bearing [1]", key="300700,0:0000520120::", altboss=True, upgradeshop=True, minidungeonboss=True, catacombboss=True, targets=('lot:20120')),
-        ERLocationData("MtG/(WC): Golden Rune [5] - path under huge crusher", "Golden Rune [5]", key="300700,0:0030077010::", targets=('lot:30070010')),
-        ERLocationData("MtG/(WC): Magic Grease x2 - path under huge crusher", "Magic Grease x2", key="300700,0:0030077020::", targets=('lot:30070020')),
-        ERLocationData("MtG/(WC): Lightning Scorpion Charm - behind imp statue", "Lightning Scorpion Charm", key="300700,0:0030077600::", talisman=True, targets=('lot:30070600')), # 1
+        ERLocationData("AP/(WC): Ancient Dragon Apostle's Cookbook [1] - path under huge crusher", "Ancient Dragon Apostle's Cookbook [1]", key="300700,0:0000068000::", targets=('lot:30070000')),
+        ERLocationData("AP/(WC): Glovewort Picker's Bell Bearing [1] - boss drop", "Glovewort Picker's Bell Bearing [1]", key="300700,0:0000520120::", altboss=True, upgradeshop=True, minidungeonboss=True, catacombboss=True, targets=('lot:20120')),
+        ERLocationData("AP/(WC): Golden Rune [5] - path under huge crusher", "Golden Rune [5]", key="300700,0:0030077010::", targets=('lot:30070010')),
+        ERLocationData("AP/(WC): Magic Grease x2 - path under huge crusher", "Magic Grease x2", key="300700,0:0030077020::", targets=('lot:30070020')),
+        ERLocationData("AP/(WC): Lightning Scorpion Charm - behind imp statue", "Lightning Scorpion Charm", key="300700,0:0030077600::", talisman=True, targets=('lot:30070600')), # 1
     ],
     "Sainted Hero's Grave":[ # altus_grave                                done
         ERLocationData("AP/(SHG): Ancient Dragon Knight Kristoff - boss drop", "Ancient Dragon Knight Kristoff", key="300800,0:0000520080::", altboss=True, minidungeonboss=True, graveboss=True, targets=('lot:20080')),

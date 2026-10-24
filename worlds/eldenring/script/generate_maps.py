@@ -6,7 +6,8 @@ from typing import Dict, Set, List, Iterable, Optional, Union
 from PIL import Image, ImageFile
 import math
 
-from worlds.eldenring.locations import ERLocationData, location_tables, region_order_dlc
+from worlds.eldenring.locations import ERLocationData, location_tables
+from worlds.eldenring.region_names import region_order_dlc
 
 
 @dataclass
@@ -158,11 +159,11 @@ map_groups: List[MapGroup] = [
         "Auriza Hero's Grave",
         "Auriza Side Tomb",
         "Sealed Tunnel",
+        "Wyndham Catacombs",
     ]),
 
     MapGroup("Mt. Gelmir", [
         "Mt. Gelmir",
-        "Wyndham Catacombs",
         "Gelmir Hero's Grave",
         "Seethewater Cave",
         "Volcano Cave",

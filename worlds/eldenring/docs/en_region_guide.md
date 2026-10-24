@@ -563,6 +563,7 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 <tr><td><strong>AP/(SCV): </strong></td></tr>
 <tr><td><strong>AP/(OAT): </strong></td></tr>
 <tr><td><strong>AP/(AT): </strong></td></tr>
+<tr><td><strong>AP/(WC): </strong></td></tr>
 <tr><td><h3>
 
 ### Mt. Gelmir
@@ -592,7 +593,6 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 ### Mt. Gelmir Dungeons
 
 </td></tr>
-<tr><td><strong>MtG/(WC): </strong></td></tr>
 <tr><td><strong>MtG/(GHG): </strong></td></tr>
 <tr><td><strong>MtG/(SC): </strong></td></tr>
 <tr><td><strong>MtG/(VC): </strong></td></tr>

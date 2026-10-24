@@ -493,11 +493,11 @@ class EldenRing(World):
             create_connection("Altus Plateau", "Sage's Cave")
             create_connection("Altus Plateau", "Old Altus Tunnel")
             create_connection("Altus Plateau", "Altus Tunnel")
+            create_connection("Altus Plateau", "Wyndham Catacombs")
             
             
             create_connection("Altus Plateau", "Mt. Gelmir")
             # Mt Gelmir
-            create_connection("Mt. Gelmir", "Wyndham Catacombs")
             create_connection("Mt. Gelmir", "Gelmir Hero's Grave")
             create_connection("Mt. Gelmir", "Seethewater Cave")
             create_connection("Mt. Gelmir", "Volcano Cave")
@@ -1869,28 +1869,26 @@ class EldenRing(World):
             "AP/(SHG): Dragoncrest Shield Talisman +1 - ride up first cleaver, behind imp statue", # 1b
             "AP/WhR: Pearldrake Talisman +1 - in chest underground behind a imp statue", # 1c
             "AP/GLE: Godfrey Icon - boss drop Evergaol", # 1d
-            ], lambda state: self._choose_key_rules(state, 24, "Altus Master Key"))
-        self._add_entrance_rule("Old Altus Tunnel", lambda state: self._choose_key_rules(state, 24, "Altus Master Key")) # 2
-        self._add_entrance_rule("Unsightly Catacombs", lambda state: self._choose_key_rules(state, 24, "Altus Master Key")) # 2
+            "AP/(WC): Lightning Scorpion Charm - behind imp statue" # 1e
+            ], lambda state: self._choose_key_rules(state, 25, "Altus Master Key"))
+        self._add_entrance_rule("Old Altus Tunnel", lambda state: self._choose_key_rules(state, 25, "Altus Master Key")) # 2
+        self._add_entrance_rule("Unsightly Catacombs", lambda state: self._choose_key_rules(state, 25, "Altus Master Key")) # 2
         
         #self._add_entrance_rule("Caelid", lambda state: self._has_enough_keys(state, 24))
         # caelid
-        self._add_entrance_rule("Gaol Cave", lambda state: self._choose_key_rules(state, 27, "Caelid Master Key")) # 2
+        self._add_entrance_rule("Gaol Cave", lambda state: self._choose_key_rules(state, 28, "Caelid Master Key")) # 2
         self._add_location_rule("CL/(FR): Sword of St. Trina - in chest underground behind imp statue", 
-                                lambda state: self._choose_key_rules(state, 27, "Caelid Master Key")) # 1
+                                lambda state: self._choose_key_rules(state, 28, "Caelid Master Key")) # 1
         
         #self._add_entrance_rule("Nokron, Eternal City Start", lambda state: self._has_enough_keys(state, 27))
         # nokron
         self._add_location_rule([
             "NR/(NSG): Mimic Tear Ashes - in chest behind imp statue upper interior", # 1a
             "NR/(NSG): Smithing Stone [3] - behind imp statue upper interior", # 1a
-            ], lambda state: self._choose_key_rules(state, 28, "Nokron Master Key"))
+            ], lambda state: self._choose_key_rules(state, 29, "Nokron Master Key"))
         
         #self._add_entrance_rule("Mt. Gelmir", lambda state: self._has_enough_keys(state, 28))
         # mt gelmir
-        self._add_location_rule([
-            "MtG/(WC): Lightning Scorpion Charm - behind imp statue", # 1
-            ], lambda state: self._choose_key_rules(state, 29, "Mt. Gelmir Master Key"))
         self._add_entrance_rule("Seethewater Cave", lambda state: self._choose_key_rules(state, 31, "Mt. Gelmir Master Key")) # 2
         
         #self._add_entrance_rule("Volcano Manor Entrance", lambda state: self._has_enough_keys(state, 31))
