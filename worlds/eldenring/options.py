@@ -63,8 +63,8 @@ class ExcludeDungeonBosses(DefaultOnToggle):
 class WorldLogic(Choice):
     """World Logic options
     
-    **Region Lock:** Each region will require a 'Special item'.
-    **Open World:** No region locking. This can create a huge sphere 1, so this setting
+    - **Region Lock:** Each region will require a 'Special item'.
+    - **Open World:** No region locking. This can create a huge sphere 1, so this setting
     is disallowed in multiworlds unless force_region_lock is disabled in host.yaml."""
     display_name = "World Logic"
     option_region_lock = 0
@@ -118,10 +118,9 @@ class StoneswordMasterKey(Choice):
     option_single_key = 2
     default = 1
     
-class SeperateImbuedKey(Toggle): # unsupported make DefaultOnToggle
+class SeperateImbuedKey(DefaultOnToggle):
     """Whether Imbued Keys are made into seperate keys for each imp statue."""
     display_name = "Seperate Imbued Key"
-    visibility = Visibility.none
 
 # MARK: Tarnished Pack
 
@@ -396,6 +395,10 @@ class BlizzardTrapChance(BaseTrapChance):
     """**Blizzard Trap:** Spawns a blizzard that heavily limits visibility as long as you're outside, lasting for a while or until death."""
     display_name = "Blizzard Trap Chance"
     
+class HeavyTrapChance(BaseTrapChance):
+    """**Heavy Trap:** Gives the player heavy load regardless of equipment."""
+    display_name = "Heavy Trap Chance"
+    
 # game speed trap, speeds game up by 25% - 50%
     
 # Traps that need dlc stuff to work
@@ -424,10 +427,9 @@ class RemoveWeaponAndSpellRequirements(Toggle):
     """Remove all stat requirements from weapons and spells."""
     display_name = "Remove All Weapon and Spell Requirements"
 
-class NoEquipLoadOption(Toggle): # unsupported, till after first release
+class NoEquipLoadOption(Toggle):
     """Disable the equip load constraint from the game."""
     display_name = "No Equip Load"
-    visibility = Visibility.none
 
 class ReduceNonSomberUpgradeCost(DefaultOnToggle):
     """Reduce regular Smithing Stone costs for non-somber weapons to one stone per weapon level."""
@@ -761,6 +763,7 @@ class EROptions(PerGameCommonOptions):
     status_trap_chance: StatusTrapChance
     blindness_trap_chance: BlindnessTrapChance
     blizzard_trap_chance: BlizzardTrapChance
+    heavy_trap_chance: HeavyTrapChance
 
     random_start: RandomizeStartingLoadout
     randomize_starting_keepsakes: RandomizeStartingKeepsakes
@@ -862,6 +865,7 @@ option_groups = [
         StatusTrapChance,
         BlindnessTrapChance,
         BlizzardTrapChance,
+        HeavyTrapChance,
     ]),
     # OptionGroup("DLC Traps", [
     #     BlindnessTrapChance

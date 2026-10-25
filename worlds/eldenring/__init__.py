@@ -1164,11 +1164,11 @@ class EldenRing(World):
         if self.options.seperate_imbued_key:
             if self.base_enabled:
                 all_injectable_items += [
-                    item_table["Imbued Sword Key (Chapel of Anticipation)"],
-                    item_table["Imbued Sword Key (Nokron)"],
-                    item_table["Imbued Sword Key (Farum Azula)"]]
+                    item_table["Chapel Sword Key"],
+                    item_table["Eternal Sword Key"],
+                    item_table["Crumbling Sword Key"]]
             if self.options.enable_dlc:
-                all_injectable_items += [item_table["Imbued Sword Key (Ancient Ruins)"]]
+                all_injectable_items += [item_table["Ancient Sword Key"]]
         
         for shard in shard_list:
             if (item_table[shard].is_dlc and self.options.enable_dlc or not item_table[shard].is_dlc and self.base_enabled
@@ -1258,15 +1258,18 @@ class EldenRing(World):
         trap_pool += (["Status Trap"] * self.options.status_trap_chance.value)
         trap_pool += (["Blindness Trap"] * self.options.blindness_trap_chance.value)
         trap_pool += (["Blizzard Trap"] * self.options.blizzard_trap_chance.value)
+        trap_pool += (["Heavy Trap"] * self.options.heavy_trap_chance.value)
         # dlc
         # if self.options.enable_dlc:
         
         # no traps? return
         if len(trap_pool) == 0: return
         
+        trap_count = 5 # update when new traps
+        
         all_traps = []
         for trap_name in trap_pool:
-            all_traps += ([trap_name] * int((total_trap_count/4)/len(set(trap_pool))))
+            all_traps += ([trap_name] * int((total_trap_count/trap_count)/len(set(trap_pool))))
             
         for i in range(total_trap_count - len(all_traps)):
             all_traps.append(self.random.choice(trap_pool))
@@ -1795,17 +1798,17 @@ class EldenRing(World):
     def _key_rules(self) -> None: # MARK: SSK Rules
         # imbued sword key stuff
         if not self.base_enabled:
-            self._add_entrance_rule("Rauh Ruins Limited", lambda state: self._choose_imbued_key_rules(state, 1, "Imbued Sword Key (Ancient Ruins)") or self._can_go_to(state, "Ancient Ruins of Rauh"))
+            self._add_entrance_rule("Rauh Ruins Limited", lambda state: self._choose_imbued_key_rules(state, 1, "Ancient Sword Key") or self._can_go_to(state, "Ancient Ruins of Rauh"))
             return # don't do normal ssk rules
         elif self.options.enable_dlc:
-            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._choose_imbued_key_rules(state, 4, "Imbued Sword Key (Chapel of Anticipation)"))
-            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._choose_imbued_key_rules(state, 4, "Imbued Sword Key (Nokron)"))
-            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._choose_imbued_key_rules(state, 4, "Imbued Sword Key (Farum Azula)"))
-            self._add_entrance_rule("Rauh Ruins Limited", lambda state: self._choose_imbued_key_rules(state, 4, "Imbued Sword Key (Ancient Ruins)") or self._can_go_to(state, "Ancient Ruins of Rauh"))
+            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._choose_imbued_key_rules(state, 4, "Chapel Sword Key"))
+            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._choose_imbued_key_rules(state, 4, "Eternal Sword Key"))
+            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._choose_imbued_key_rules(state, 4, "Crumbling Sword Key"))
+            self._add_entrance_rule("Rauh Ruins Limited", lambda state: self._choose_imbued_key_rules(state, 4, "Ancient Sword Key") or self._can_go_to(state, "Ancient Ruins of Rauh"))
         else:
-            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._choose_imbued_key_rules(state, 3, "Imbued Sword Key (Chapel of Anticipation)"))
-            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._choose_imbued_key_rules(state, 3, "Imbued Sword Key (Nokron)"))
-            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._choose_imbued_key_rules(state, 3, "Imbued Sword Key (Farum Azula)"))
+            self._add_entrance_rule("The Four Belfries (Chapel of Anticipation)", lambda state: self._choose_imbued_key_rules(state, 3, "Chapel Sword Key"))
+            self._add_entrance_rule("The Four Belfries (Nokron)", lambda state: self._choose_imbued_key_rules(state, 3, "Eternal Sword Key"))
+            self._add_entrance_rule("The Four Belfries (Farum Azula)", lambda state: self._choose_imbued_key_rules(state, 3, "Crumbling Sword Key"))
         
         # in order from early game to late game each rule needs to include the last count for an area
         
@@ -3455,6 +3458,7 @@ class EldenRing(World):
                 "status_trap_chance": self.options.status_trap_chance.value,
                 "blindness_trap_chance": self.options.blindness_trap_chance.value,
                 "blizzard_trap_chance": self.options.blizzard_trap_chance.value,
+                "heavy_trap_chance": self.options.heavy_trap_chance.value,
                 
                 "random_start": self.options.random_start.value,
                 "randomize_starting_keepsakes": self.options.randomize_starting_keepsakes.value,
