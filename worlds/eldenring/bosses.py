@@ -530,7 +530,7 @@ base_bosses = [
     ),
     ERBossInfo("Battlemage Hugues (DB)", ["Dragonbarrow", "Overworld", "Evergaol"], 1049390850, 1049390850,
         locations=[
-            "DB/(SE): Battlemage Hugues - Sellia Evergaol"
+            "DB/(SE): Battlemage Hugues - boss drop Evergaol"
         ]
     ),
     ERBossInfo("Putrid Avatar (DB)", ["Dragonbarrow", "Overworld"], 1051400800, 1051400800,
