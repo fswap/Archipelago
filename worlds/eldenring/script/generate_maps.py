@@ -1,10 +1,11 @@
 from argparse import ArgumentParser
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, replace
 import json
 import os
-from typing import Dict, Set, List, Iterable, Optional, Union
+from typing import Dict, Set, List, Iterable, Optional, Union, Tuple
 from PIL import Image, ImageFile
 import math
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from worlds.eldenring.locations import ERLocationData, location_tables
 from worlds.eldenring.region_names import region_order_dlc
@@ -15,20 +16,21 @@ class MapGroup:
     name: str
     """The name of the map."""
 
-    override_regions: Optional[List[str]] = None
-    """Region names to use instead of the map name."""
+    regions: List[str] = None
+    """Region names to use."""
 
-    silo: bool = False
-    """Whether *only* the listed regions should be shown in the map image.
-    This also prevents the listed regions from appearing in all other maps
-    unless explicitly listed there (e.g. Royal and Ashen Leyndell are both
-    siloed but have overlapping items, and those items are only shown in
-    those two map images).
-    """
+    override_locations: Optional[List[str]] = None
+    """Location names which should be placed in this map and not others.
+    These do not need to be present in the region list."""
 
     underground: bool = False
     """Whether the map is base game underground. Can be inferred but simple
     enough to put here."""
+
+    combine_dungeon: bool = False
+    """Whether to put minidungeons in the same map layer as the main map."""
+
+    alt_image_location: Optional[Tuple[str, str, str, str]] = None
 
     zoom: float = 1.0
     """Scaling factor to use on the map image"""
@@ -39,8 +41,10 @@ class MapGroup:
     node_border: int = 4
     """How big to make the border of the nodes on the map"""
 
-    def regions(self) -> Iterable[str]:
-        return self.override_regions or [self.name]
+    border: int = 100
+
+    def locations(self) -> Iterable[str]:
+        return self.override_locations or ()
 
 
 map_groups: List[MapGroup] = [
@@ -58,19 +62,29 @@ map_groups: List[MapGroup] = [
         "Deathtouched Catacombs",
         "Fringefolk Hero's Grave",
         "Divine Tower of Limgrave", # accessed from Stormveil
+    ], [
+        "LG/(BS): Stonesword Key - behind wooden platform",
+        "LG/(BS): Smithing Stone [1] x3 - corpse hanging off edge",
     ]),
 
     # The canonical location is in the middle of the ocean (in-game map overrides this).
     # TODO: It has the same orientation as Fortified Manor in Leyndell so this is a great
     # candidate for a custom image based on that.
-    MapGroup("Roundtable Hold", node_size=3, node_border=1),
+    MapGroup("Roundtable Hold", [
+        "Roundtable Hold"
+    ], alt_image_location=(
+        "Roundtable Hold",
+        "RH: Sewer-Gaol Key - talk to Dung Eater while having a Seedbed Curse",
+        "Leyndell, Royal Capital Unmissable",
+        "LRC|LAC/FMFF: Seedbed Curse - second floor in Dung Eaters room, gets moved outside in LAC"
+    ), node_size=3, node_border=1),
 
     MapGroup("Stormveil Castle", [
         "Stormveil Start",
         "Stormveil Castle",
         "Stormveil Throne",
         "The Four Belfries (Chapel of Anticipation)",
-    ], silo=True, node_size=3, node_border=1),
+    ], node_size=3, node_border=1),
 
     MapGroup("Weeping Peninsula", [
         "Weeping Peninsula",
@@ -79,6 +93,9 @@ map_groups: List[MapGroup] = [
         "Tombsward Cave",
         "Morne Tunnel",
         "Earthbore Cave",
+    ], [
+        "LG/(BS): Stonesword Key - behind wooden platform",
+        "LG/(BS): Smithing Stone [1] x3 - corpse hanging off edge",
     ]),
 
     MapGroup("Liurnia of The Lakes", [
@@ -101,11 +118,16 @@ map_groups: List[MapGroup] = [
         "Raya Lucaria Academy Main",
         "Raya Lucaria Academy Chest",
         "Raya Lucaria Academy Library",
-    ], silo=True, node_size=5, node_border=2),
-    MapGroup("Moonlight Altar", silo=True, node_size=5, node_border=2),
+    ], node_size=5, node_border=2),
+
+    MapGroup("Moonlight Altar", [
+        "Moonlight Altar",
+    ], node_size=5, node_border=2),
 
     # Could also include locations outside the precipice in Liurnia for better bounding boxes.
-    MapGroup("Ruin-Strewn Precipice", silo=True, node_size=5, node_border=2),
+    MapGroup("Ruin-Strewn Precipice", [
+        "Ruin-Strewn Precipice",
+    ], node_size=5, node_border=2),
 
     MapGroup("Caelid", [
         "Caelid",
@@ -132,7 +154,9 @@ map_groups: List[MapGroup] = [
         "The Four Belfries (Nokron)",
     ], underground=True, node_size=5, node_border=2),
 
-    MapGroup("Mohgwyn Palace", silo=True, underground=True, node_size=3, node_border=1),
+    MapGroup("Mohgwyn Palace", [
+        "Mohgwyn Palace"
+    ], underground=True, node_size=3, node_border=1),
 
     MapGroup("Deeproot Depths", [
         "Deeproot Depths Upper",
@@ -140,12 +164,18 @@ map_groups: List[MapGroup] = [
         "Deeproot Depths Boss",
     ], underground=True, node_size=5, node_border=2),
 
-    # TODO astel can be separated, ignored, or manually placed
     MapGroup("Ainsel River", [
         "Ainsel River",
         "Ainsel River Main",
+    ], underground=True, node_size=5, node_border=2),
+
+    MapGroup("Lake of Rot", [
         "Lake of Rot",
     ], underground=True, node_size=5, node_border=2),
+
+    MapGroup("Ainsel River Boss", [], [
+        "LR: Remembrance of the Naturalborn - mainboss drop"
+    ], underground=True, border=220), # , node_size=5, node_border=2),
 
     MapGroup("Altus Plateau", [
         "Altus Plateau",
@@ -155,11 +185,17 @@ map_groups: List[MapGroup] = [
         "Sage's Cave",
         "Old Altus Tunnel",
         "Altus Tunnel",
+        "Wyndham Catacombs",
+    ], [
+        "AP/SR: Ash of War: Barrage - scarab to N",
+        "AP/SR: Arrow x10 - to NE under slanted rock",
+    ]),
+
+    MapGroup("Capital Outskirts", [
         "Capital Outskirts",
         "Auriza Hero's Grave",
         "Auriza Side Tomb",
         "Sealed Tunnel",
-        "Wyndham Catacombs",
     ]),
 
     MapGroup("Mt. Gelmir", [
@@ -167,6 +203,9 @@ map_groups: List[MapGroup] = [
         "Gelmir Hero's Grave",
         "Seethewater Cave",
         "Volcano Cave",
+    ], [
+        "AP/SR: Ash of War: Barrage - scarab to N",
+        "AP/SR: Arrow x10 - to NE under slanted rock",
     ], node_size=5, node_border=2),
 
     MapGroup("Volcano Manor", [
@@ -175,14 +214,14 @@ map_groups: List[MapGroup] = [
         "Volcano Manor Drawing Room",
         "Volcano Manor",
         "Volcano Manor Upper",
-    ], silo=True, node_size=5, node_border=2),
+    ], node_size=5, node_border=2),
 
     MapGroup("Leyndell, Royal Capital", [
         "Leyndell, Royal Capital",
         "Leyndell, Royal Capital Unmissable",
         "Leyndell, Royal Capital Throne",
         "Divine Bridge",
-    ], silo=True, node_size=3, node_border=1),
+    ], node_size=3, node_border=1),
 
     MapGroup("Leyndell, Ashen Capital", [
         "Leyndell, Ashen Capital",
@@ -190,18 +229,18 @@ map_groups: List[MapGroup] = [
         "Erdtree",
         "Leyndell, Royal Capital Unmissable", # also in Royal Capital
         "Divine Bridge", # also in Royal Capital
-    ], silo=True, node_size=3, node_border=1),
+    ], node_size=3, node_border=1),
 
     MapGroup("Subterranean Shunning-Grounds", [
         "Subterranean Shunning-Grounds",
         "Leyndell Catacombs",
         "Frenzied Flame Proscription",
-    ], silo=True, node_size=3, node_border=1),
+    ], combine_dungeon=True, node_size=3, node_border=1),
 
     MapGroup("Post-Leyndell", [
         "Divine Tower of East Altus",
         "Forbidden Lands",
-    ], silo=True),
+    ]),
 
     MapGroup("Mountaintops of the Giants", [
         "Mountaintops of the Giants",
@@ -241,26 +280,26 @@ map_groups: List[MapGroup] = [
         "Rivermouth Cave",
     ]),
 
-    MapGroup("Belurat and Enir-Ilim", [
+    MapGroup("Belurat", [
         "Belurat",
         "Belurat Swamp",
-        "Enir-Ilim",
-    ], silo=True, node_size=5, node_border=2),
+    ], [
+        # "BTS|EI/SR: Euporia - outside to SE downstairs, drop down from gazebo, after jump to window, continue down and down",
+    ], node_size=5, node_border=2),
 
-    MapGroup("Castle Ensis", [
-        "Castle Ensis",
-        "Fog Rift Fort",
-    ], silo=True, node_size=5, node_border=2),
+    MapGroup("Enir-Ilim", [
+        "Enir-Ilim",
+    ], node_size=5, node_border=2),
 
     # Jagged Peak is a big area but low check density
     MapGroup("Jagged Peak", [
         "Jagged Peak Foot",
         "Jagged Peak",
-        "Finger Ruins of Rhia",
     ]),
 
-    MapGroup("Cerulean Coast and Charo's Hidden Grave", [
+    MapGroup("Cerulean and Charo", [
         "Cerulean Coast",
+        "Finger Ruins of Rhia",
         "Charo's Hidden Grave",
         "Lamenter's Gaol (Entrance)",
         "Lamenter's Gaol (Upper)", #main
@@ -268,20 +307,33 @@ map_groups: List[MapGroup] = [
         "Stone Coffin Fissure",
     ]),
 
+    MapGroup("Castle Ensis", [
+        "Castle Ensis",
+    ], [
+        "SA/HC: Shadow Realm Rune [2] - to SW in a spire below warp",
+        "SA/HC: Starlight Shards - to SW down in upper area of CE, jump over to SW by statue",
+        "SA/HC: Carian Sorcery Sword - in chest to SW down in upper area of CE, back left corner",
+        "SA/SAW: Grave Glovewort [8] - to S by grave down below, cross river and head down",
+    ], node_size=4, node_border=2),
+
     MapGroup("Scadu Altus", [
         "Scadu Altus",
+        "Fog Rift Fort",
         "Bonny Gaol",
         "Ruined Forge of Starfall Past",
-        "Rauh Ruins Limited",
         "Cathedral of Manus Metyr",
         "Finger Ruins of Miyr",
         # Recluses' River could alternately be separate and siloed
         "Recluses' River",
         "Darklight Catacombs",
+    ], [
+        "SA/HC: Shadow Realm Rune [2] - to SW in a spire below warp",
+        "SA/(RR): Spellmachinist's Bell Bearing - very top of rise, drop down from HL/SV",
     ]),
 
     MapGroup("Rauh Ruins and Base", [
         "Ancient Ruins of Rauh",
+        "Rauh Ruins Limited",
         "Rauh Base",
         "Scorpion River Catacombs",
         "Taylew's Ruined Forge",
@@ -289,22 +341,15 @@ map_groups: List[MapGroup] = [
 
     MapGroup("Shadow Keep", [
         "Shadow Keep",
-    ], silo=True, node_size=5, node_border=2),
-
-    # Good luck
-    MapGroup("Shadow Keep Storehouse", [
         "Shadow Keep Storehouse",
         "Shadow Keep Storehouse Back",
-    ], silo=True, node_size=5, node_border=2),
-
-    MapGroup("Shadow Keep, Church District", [
         "Shadow Keep, Church District",
         "Shadow Keep, Church District Lower",
-    ], silo=True, node_size=5, node_border=2),
+    ], node_size=3, node_border=2), # from 5
 
     MapGroup("Shadow Keep, West Rampart", [
         "Shadow Keep, West Rampart",
-    ], silo=True, node_size=5, node_border=2),
+    ], node_size=5, node_border=2),
 
     # Huge area but very low check density
     MapGroup("Scaduview", [
@@ -312,12 +357,34 @@ map_groups: List[MapGroup] = [
         "Scadutree Base",
         "Hinterland",
         "Finger Ruins of Dheo",
-    ], silo=True),
+    ], [
+        "SK/TWS: Iris of Grace - to S by statue",
+        "SK/TWS: Marika's Rune - by grace",
+        "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop",
+        "SA/(RR): Spellmachinist's Bell Bearing - very top of rise, drop down from HL/SV",
+    ]),
 
     MapGroup("Abyssal Woods", [
         "Abyssal Woods",
         "Midra's Manse",
-    ], silo=True),
+    ]),
+]
+
+others = [
+    MapGroup("Shadow Keep", [
+        "Shadow Keep",
+    ], node_size=5, node_border=2),
+
+    # Good luck
+    MapGroup("Shadow Keep Storehouse", [
+        "Shadow Keep Storehouse",
+        "Shadow Keep Storehouse Back",
+    ], node_size=5, node_border=2),
+
+    MapGroup("Shadow Keep, Church District", [
+        "Shadow Keep, Church District",
+        "Shadow Keep, Church District Lower",
+    ], node_size=5, node_border=2),
 ]
 
 
@@ -340,12 +407,15 @@ class ImageCoord:
 
 @dataclass
 class MapImage:
-    name: str
+    group: MapGroup
+    map_name: str
+    image_name: str
     base_image: str
     min_x: int
     max_x: int
     min_y: int
     max_y: int
+    minidungeon: bool = False
 
     def contains(self, coord: ImageCoord) -> bool:
         return (self.min_x <= coord.x < self.max_x
@@ -376,73 +446,107 @@ def main(map_dir: str):
         shutil.rmtree(output_dir)
     os.mkdir(output_dir)
 
-    def get_location_coord(location: ERLocationData) -> ImageCoord:
+    output_zip = os.path.join(map_dir, "output.zip")
+    if os.path.exists(output_zip):
+        os.remove(output_zip)
+
+    def get_location_coord(location: ERLocationData, offset: Optional[Tuple[int, int]]=None) -> ImageCoord:
         if not location.key:
             raise KeyError(location.name)
-        return key_locations[location.key]
+        coord = key_locations[location.key]
+        if offset is not None:
+            coord = replace(coord, x=coord.x + offset[0], y=coord.y + offset[1])
+        return coord
+    def get_location(region: str, name: str) -> ERLocationData:
+        return next(loc for loc in location_tables[region] if loc.name == name)
 
-    dungeon_regions: Set[str] = set(name for (name, locs) in location_tables.items() if any(loc.dungeon for loc in locs))
+    dungeon_regions: Set[str] = set(region for (region, locs) in location_tables.items() if any(loc.dungeon for loc in locs))
     dlc_regions: Set[str] = set(region_order_dlc)
-    silo_regions: Set[str] = set(region for group in map_groups if group.silo for region in group.regions())
+    silo_locations: Set[str] = set(loc for group in map_groups for loc in group.locations())
+    silo_location_regions: Dict[str, str] = {
+        loc.name: region
+        for (region, locs) in location_tables.items()
+        for loc in locs
+        if loc.name in silo_locations
+    }
     base_images: Dict[str,ImageFile.ImageFile] = {}
     for group in ("underground", "dlc", "base"):
         base_images[group] = Image.open(os.path.join(map_dir,f"{group}.png"))
 
     output_locations: dict[str, Node] = {}
+    output_maps: List[MapImage] = []
 
     for group in map_groups:
-        regions = group.regions()
+        regions = frozenset(group.regions)
+        extra_regions = frozenset(silo_location_regions[loc] for loc in group.locations())
+        def location_included(location: ERLocationData) -> bool:
+            if location.region_name not in regions or location.name in silo_locations:
+                return location.name in group.locations()
+            return True
+
+        offset: Optional[Tuple[int, int]] = None
+        if group.alt_image_location is not None:
+            (target_region, target_name, source_region, source_name) = group.alt_image_location
+            target = get_location_coord(get_location(target_region, target_name))
+            source = get_location_coord(get_location(source_region, source_name))
+            offset = (source.x - target.x, source.y - target.y)
+
         base_image = ("underground" if group.underground
                       else ("dlc" if any(region in dlc_regions for region in regions) else "base"))
         group_coords: List[ImageCoord] = []
-        for region in regions:
-            if region in dungeon_regions:
-                # Two ways possible to deal with minidungeon locations:
-                # 1. Generate a unique image file per minidungeon, which is probably
-                #    how custom maps would be handled as well. Note Lamenter's Gaol
-                #    is one minidungeon in 3 regions. This basically amounts to
-                #    automatically creating silos for each minidungeon.
-                # 2. Reuse image file(s) for the overall region. In that case, the
-                #    bounding box for the region should include these locations.
-                continue
+        has_minidungeon = False
+        for region in regions.union(extra_regions):
+            if region in dungeon_regions and not group.combine_dungeon:
+                has_minidungeon = True
             for location in location_tables[region]:
-                coord = get_location_coord(location)
+                if not location_included(location):
+                    continue
+                coord = get_location_coord(location, offset)
                 if coord.image != base_image:
                     raise RuntimeError(f"{location.name} {location.key} in {region} is in {coord.image}, expected {base_image}")
                 group_coords.append(coord)
         if not len(group_coords):
             raise RuntimeError(f"No coordinates found in {group.name}")
 
-        # Can change/vary this. The base images are very big so don't really need to validate bounds.
-        border = 100
-        # TODO: Split up very big regions further. Can put stuff in MapGroup to specify.
+        # For now each MapGroup corresponds to one image and minidungeons are implemented as a separate layer on that image.
+        # Minidungeon custom maps would best be implemented by an image per minidungeon.
+        # Splits based on x/y coordinates could be handled with separate MapGroups.
+        image_name = f"{group.name}.png"
         full_image = MapImage(
-            name=group.name,
+            group=group,
+            map_name=group.name,
+            image_name=image_name,
             base_image=base_image,
-            min_x=min(coord.x for coord in group_coords) - border,
-            max_x=max(coord.x for coord in group_coords) + border,
-            min_y=min(coord.y for coord in group_coords) - border,
-            max_y=max(coord.y for coord in group_coords) + border,
+            min_x=min(coord.x for coord in group_coords) - group.border,
+            max_x=max(coord.x for coord in group_coords) + group.border,
+            min_y=min(coord.y for coord in group_coords) - group.border,
+            max_y=max(coord.y for coord in group_coords) + group.border,
         )
         res = base_images[full_image.base_image].crop((full_image.min_x, full_image.min_y, full_image.max_x, full_image.max_y))
         res = res.resize([int(group.zoom * (full_image.max_x-full_image.min_x)), int(group.zoom * (full_image.max_y - full_image.min_y))])
-        res.save(os.path.join(output_dir, f"{full_image.name}.png"))
+        res.save(os.path.join(output_dir, image_name))
         images = [full_image]
+        if has_minidungeon:
+            images.append(replace(full_image,
+                                  map_name=f"{group.name} Dungeons",
+                                  minidungeon=True))
+        output_maps.extend(images)
 
         # Quadratic or cubic or something nbd
         count = 0
         local_nodes: list[Node] = []
         for region, locations in location_tables.items():
-            if region not in regions and (group.silo or region in silo_regions):
-                continue
-            if region in dungeon_regions:
-                # See above about minidungeon locations
+            if region not in regions and region not in extra_regions:
                 continue
             for location in locations:
-                coord = get_location_coord(location)
+                if not location_included(location):
+                    continue
+                coord = get_location_coord(location, offset)
                 for image in images:
+                    if (region in dungeon_regions and not group.combine_dungeon) != image.minidungeon:
+                        continue
                     if image.contains(coord):
-                        map_coord = ImageCoord(image.name, int((coord.x - image.min_x) * group.zoom), int((coord.y - image.min_y) * group.zoom))
+                        map_coord = ImageCoord(image.map_name, int((coord.x - image.min_x) * group.zoom), int((coord.y - image.min_y) * group.zoom))
                         local_nodes.sort(key=map_coord.dist_node)
                         if len(local_nodes) > 0 and map_coord.dist_node(local_nodes[0]) < (group.node_size * 3): # about 2 * sqrt 2 so anything that has any overlap should be merged 
                             local_nodes[0].sections.append(location.name)
@@ -458,7 +562,12 @@ def main(map_dir: str):
 
         # Now to generate the output files
 
-    maps_json = [{"img":f"{group.name}.png", "name":group.name, "location_size": group.node_size, "location_border_thickness": group.node_border} for group in map_groups]
+    maps_json = [{
+        "img": image.image_name,
+        "name": image.map_name,
+        "location_size": image.group.node_size,
+        "location_border_thickness": image.group.node_border,
+    } for image in output_maps]
     # I tried to do this in a cursed comprehension but python wouldn't let me
     locations_json = []
     for node_name, node in output_locations.items():
@@ -473,6 +582,11 @@ def main(map_dir: str):
     with open(os.path.join(output_dir, "locations.json"), "w") as f:
         json.dump(locations_json, f, indent=2)
 
+    # Deflate can do e.g. 108 MB -> 107 MB
+    with ZipFile(output_zip, 'w', ZIP_DEFLATED) as zip:
+        for path in os.listdir(output_dir):
+            # zip.write(path, os.path.basename(path))
+            zip.write(os.path.join(output_dir, path), path)
 
 
 if __name__ == "__main__":
