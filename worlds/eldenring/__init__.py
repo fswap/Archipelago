@@ -1714,20 +1714,13 @@ class EldenRing(World):
             
         # if more then 1 world exists stop prio placing outside of prio
         if self.options.important_at_priority_only:
-            if self.multiworld.players != 1: # more then 1 eldenring
+            if self.multiworld.players != 1:
                 for loc in self.multiworld.get_unfilled_locations(self.player):
                     if loc.progress_type != LocationProgressType.PRIORITY:
-                        if self.options.other_world_useful_at_priority and loc.data.name in self.all_possible_priority_locations:
-                            self._add_item_rule(loc.name, lambda item: # not ER prog or other player items
-                                item.deprioritized or item.trap or not item.advancement and (item.player == self.player or item.game == self.game)
-                                or (item.player != self.player and item.game != self.game and not item.advancement))
-                        elif self.options.other_world_useful_at_priority:
-                            self._add_item_rule(loc.name, lambda item: # not ER prog or only other filler
-                                item.deprioritized or item.trap or not item.advancement and (item.player == self.player or item.game == self.game)
-                                or (item.player != self.player and item.game != self.game and not (item.useful or item.advancement)))
-                        else: # not prog only, when option is off
-                            self._add_item_rule(loc.name, lambda item: item.deprioritized or not item.advancement)  
-                # break
+                        if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
+                            self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
+                            if self.options.other_world_useful_at_priority:
+                                self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
         
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
