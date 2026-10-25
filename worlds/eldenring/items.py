@@ -2289,9 +2289,9 @@ _vanilla_items = [
     ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Imbued Keys
-    ERItemData("Imbued Sword Key (Chapel of Anticipation)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Imbued Sword Key (Nokron)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Imbued Sword Key (Farum Azula)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Chapel Sword Key", 7830700, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Eternal Sword Key", 7830701, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Crumbling Sword Key", 7830702, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Master Keys
     ERItemData("Stonesword Master Key", 7830000, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -2993,7 +2993,7 @@ _dlc_items = [
     ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: DLC Imbued Keys
-    ERItemData("Imbued Sword Key (Ancient Ruins)", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Ancient Sword Key", 7830703, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Spiritspring Stones
     ERItemData("Fort of Reprimand Spiritspring Stone", 7830500, ERItemCategory.GOODS, classification=ItemClassification.progression, spiritspring=True),
@@ -3050,6 +3050,7 @@ vanilla_traps = [
     ERItemData("Status Trap", 7830601, ERItemCategory.GOODS, ItemClassification.trap),
     ERItemData("Blindness Trap", 7830602, ERItemCategory.GOODS, ItemClassification.trap),
     ERItemData("Blizzard Trap", 7830603, ERItemCategory.GOODS, ItemClassification.trap),
+    ERItemData("Heavy Trap", 7830604, ERItemCategory.GOODS, ItemClassification.trap),
 ]
 
 dlc_traps = [
