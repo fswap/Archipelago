@@ -832,7 +832,8 @@ class EldenRing(World):
                                     ap_code = new_code),
                                 parent = region
                             )
-                            dupe_location.progress_type = LocationProgressType.PRIORITY
+                            if self.multiworld.players == 1: # only use prio on solo runs
+                                dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
                             self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
                             self.dupe_location_tables[region.name].append(dupe_location.data)
