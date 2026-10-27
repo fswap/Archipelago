@@ -19,6 +19,7 @@ from .locations import ERLocation, ERLocationData, location_tables, location_des
 from .region_names import region_order, region_order_dlc
 from .options import EROptions, EnableDLC, option_groups, shard_list
 from .presets import er_options_presets
+from .tracker import location_icon_coords, map_page_index, tracker_zip_has_json, image_zip_md5s
 from Options import OptionError, Option
 
 # Settings
@@ -52,6 +53,7 @@ class EldenRingSettings(settings.Group):
         description = "ER Maps zip"
         required = False
         ut_dialog_name = "Select ER Maps zip"
+        md5s = [] if tracker_zip_has_json else image_zip_md5s
     
     force_local_items: ForceLocalItems = ForceLocalItems(["Filler", "Ash of war", "Gloveworts", "Ashes"])
     force_region_lock: typing.Union[ForceRegionLock, bool] = True
@@ -165,8 +167,13 @@ class EldenRing(World):
     ut_can_gen_without_yaml = True
     tracker_world: ClassVar = {
         "external_pack_key": "ut_pack_path",
-        "map_page_maps":"maps.json",
-        "map_page_locations":"locations.json"
+        "map_page_folder": None if tracker_zip_has_json else "tracker",
+        "map_page_maps": "maps.json",
+        "map_page_locations": "locations.json",
+        "map_page_setting_key": "{player}_{team}_eldenring_position",
+        "map_page_index": map_page_index,
+        "location_setting_key": "{player}_{team}_eldenring_position",
+        "location_icon_coords": location_icon_coords,
     }
     
     base_enabled: bool = None
@@ -228,8 +235,15 @@ class EldenRing(World):
 
     def generate_early(self) -> None:
         self.exclude_groups = self.options.exclude_locations.excluded_groups()
+
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         if re_gen_passthrough and self.game in re_gen_passthrough:
+            # Without updated UT, position tracking fails with: 'VisualTracker' object has no attribute 'location_icons'
+            # It should be safe to import from tracker apworld during regen passthrough.
+            from worlds.tracker import UT_VERSION_TUPLE
+            if UT_VERSION_TUPLE < (0, 3, 7):
+                raise RuntimeError(f"At least Universal Tracker 0.3.7 is required but {UT_VERSION_TUPLE.as_simple_string()} is installed")
+
             self.soft_logic_enabled = False
             slot_data: dict[str, Any] = re_gen_passthrough[self.game]
             slot_options: dict[str, Any] = slot_data.get("options", {})

@@ -1,0 +1,708 @@
+[
+  {
+    "name": "Limgrave",
+    "regions": [
+      3410,
+      6100,
+      6101
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3134,
+    "max_x": 4861,
+    "min_y": 6109,
+    "max_y": 7875
+  },
+  {
+    "name": "Limgrave Dungeons",
+    "regions": [
+      1800,
+      3002,
+      3004,
+      3011,
+      3100,
+      3103,
+      3115,
+      3117,
+      3201,
+      6100090
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3134,
+    "max_x": 4861,
+    "min_y": 6109,
+    "max_y": 7875
+  },
+  {
+    "name": "Roundtable Hold",
+    "regions": [
+      1110
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 2716,
+    "max_x": 3007,
+    "min_y": 7461,
+    "max_y": 7730
+  },
+  {
+    "name": "Stormveil Castle",
+    "regions": [
+      1000,
+      1001
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 2676,
+    "max_x": 3344,
+    "min_y": 6284,
+    "max_y": 6990
+  },
+  {
+    "name": "Weeping Peninsula",
+    "regions": [
+      6102
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3233,
+    "max_x": 4595,
+    "min_y": 7534,
+    "max_y": 8939
+  },
+  {
+    "name": "Weeping Peninsula Dungeons",
+    "regions": [
+      3000,
+      3001,
+      3101,
+      3102,
+      3200
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3233,
+    "max_x": 4595,
+    "min_y": 7534,
+    "max_y": 8939
+  },
+  {
+    "name": "Siofra",
+    "regions": [
+      1202,
+      1207,
+      1208,
+      1209
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 4352,
+    "max_x": 5519,
+    "min_y": 4654,
+    "max_y": 5733
+  },
+  {
+    "name": "Liurnia of The Lakes",
+    "regions": [
+      3411,
+      6200,
+      6201
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1245,
+    "max_x": 3446,
+    "min_y": 3418,
+    "max_y": 6546
+  },
+  {
+    "name": "Liurnia of The Lakes Dungeons",
+    "regions": [
+      3003,
+      3005,
+      3006,
+      3104,
+      3105,
+      3106,
+      3202
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1245,
+    "max_x": 3446,
+    "min_y": 3418,
+    "max_y": 6546
+  },
+  {
+    "name": "Raya Lucaria Academy",
+    "regions": [
+      1400
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1643,
+    "max_x": 2134,
+    "min_y": 4515,
+    "max_y": 5137
+  },
+  {
+    "name": "Ruin-Strewn Precipice",
+    "regions": [
+      3920
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 2278,
+    "max_x": 2755,
+    "min_y": 3410,
+    "max_y": 3759
+  },
+  {
+    "name": "Caelid",
+    "regions": [
+      3413,
+      6400,
+      6401,
+      6402
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4561,
+    "max_x": 6421,
+    "min_y": 5304,
+    "max_y": 7558
+  },
+  {
+    "name": "Caelid Dungeons",
+    "regions": [
+      3014,
+      3015,
+      3016,
+      3110,
+      3111,
+      3120,
+      3121,
+      3207,
+      3208
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4561,
+    "max_x": 6421,
+    "min_y": 5304,
+    "max_y": 7558
+  },
+  {
+    "name": "Deeproot Depths",
+    "regions": [
+      1203
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 3847,
+    "max_x": 4839,
+    "min_y": 1352,
+    "max_y": 2210
+  },
+  {
+    "name": "Ainsel River",
+    "regions": [
+      1201
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 1947,
+    "max_x": 2848,
+    "min_y": 2599,
+    "max_y": 3324
+  },
+  {
+    "name": "Lake of Rot",
+    "regions": [
+      1201015,
+      1201016,
+      1201017
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 1649,
+    "max_x": 2371,
+    "min_y": 2917,
+    "max_y": 3653
+  },
+  {
+    "name": "Ainsel River Boss",
+    "regions": [
+      1204
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 1345,
+    "max_x": 1785,
+    "min_y": 4394,
+    "max_y": 4834
+  },
+  {
+    "name": "Moonlight Altar",
+    "regions": [
+      6202
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1267,
+    "max_x": 2157,
+    "min_y": 5574,
+    "max_y": 6344
+  },
+  {
+    "name": "Altus Plateau",
+    "regions": [
+      6300
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 2026,
+    "max_x": 3957,
+    "min_y": 2312,
+    "max_y": 3898
+  },
+  {
+    "name": "Altus Plateau Dungeons",
+    "regions": [
+      3007,
+      3008,
+      3012,
+      3118,
+      3119,
+      3204,
+      3205
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 2026,
+    "max_x": 3957,
+    "min_y": 2312,
+    "max_y": 3898
+  },
+  {
+    "name": "Mt. Gelmir",
+    "regions": [
+      6302
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1792,
+    "max_x": 2891,
+    "min_y": 2371,
+    "max_y": 3327
+  },
+  {
+    "name": "Mt. Gelmir Dungeons",
+    "regions": [
+      3009,
+      3107,
+      3109
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1792,
+    "max_x": 2891,
+    "min_y": 2371,
+    "max_y": 3327
+  },
+  {
+    "name": "Volcano Manor",
+    "regions": [
+      1600
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 1896,
+    "max_x": 2524,
+    "min_y": 2762,
+    "max_y": 3198
+  },
+  {
+    "name": "Capital Outskirts",
+    "regions": [
+      6301
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3563,
+    "max_x": 4650,
+    "min_y": 2748,
+    "max_y": 4008
+  },
+  {
+    "name": "Capital Outskirts Dungeons",
+    "regions": [
+      3010,
+      3013,
+      3412
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3563,
+    "max_x": 4650,
+    "min_y": 2748,
+    "max_y": 4008
+  },
+  {
+    "name": "Leyndell, Royal Capital",
+    "regions": [
+      1100
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3961,
+    "max_x": 4747,
+    "min_y": 3264,
+    "max_y": 3857
+  },
+  {
+    "name": "Subterranean Shunning-Grounds",
+    "regions": [
+      3500
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4238,
+    "max_x": 4687,
+    "min_y": 3293,
+    "max_y": 3769
+  },
+  {
+    "name": "Post-Leyndell",
+    "regions": [
+      3414,
+      6500
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4547,
+    "max_x": 5634,
+    "min_y": 2976,
+    "max_y": 3828
+  },
+  {
+    "name": "Mountaintops of the Giants",
+    "regions": [
+      6501,
+      6502
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 5383,
+    "max_x": 6894,
+    "min_y": 1543,
+    "max_y": 3210
+  },
+  {
+    "name": "Mountaintops of the Giants Dungeons",
+    "regions": [
+      3017,
+      3018,
+      3122
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 5383,
+    "max_x": 6894,
+    "min_y": 1543,
+    "max_y": 3210
+  },
+  {
+    "name": "Farum Azula",
+    "regions": [
+      1300
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 7951,
+    "max_x": 8808,
+    "min_y": 4099,
+    "max_y": 4872
+  },
+  {
+    "name": "Consecrated Snowfield",
+    "regions": [
+      6503
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4713,
+    "max_x": 5959,
+    "min_y": 1569,
+    "max_y": 3088
+  },
+  {
+    "name": "Consecrated Snowfield Dungeons",
+    "regions": [
+      3019,
+      3020,
+      3112,
+      3211
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 4713,
+    "max_x": 5959,
+    "min_y": 1569,
+    "max_y": 3088
+  },
+  {
+    "name": "Mohgwyn Palace",
+    "regions": [
+      1205
+    ],
+    "layer": 1,
+    "layer_height": 8960,
+    "min_x": 5444,
+    "max_x": 6090,
+    "min_y": 4961,
+    "max_y": 5474
+  },
+  {
+    "name": "Miquella's Haligtree",
+    "regions": [
+      1500
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 5448,
+    "max_x": 5888,
+    "min_y": 628,
+    "max_y": 1475
+  },
+  {
+    "name": "Leyndell, Ashen Capital",
+    "regions": [
+      1105,
+      1900
+    ],
+    "layer": 0,
+    "layer_height": 10496,
+    "min_x": 3961,
+    "max_x": 4744,
+    "min_y": 3264,
+    "max_y": 3996
+  },
+  {
+    "name": "Gravesite Plain",
+    "regions": [
+      6800,
+      6810
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4086,
+    "max_x": 5727,
+    "min_y": 2779,
+    "max_y": 4662
+  },
+  {
+    "name": "Gravesite Plain Dungeons",
+    "regions": [
+      4000,
+      4100,
+      4200,
+      4300,
+      4301
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4086,
+    "max_x": 5727,
+    "min_y": 2779,
+    "max_y": 4662
+  },
+  {
+    "name": "Belurat",
+    "regions": [
+      2000
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4032,
+    "max_x": 4499,
+    "min_y": 3302,
+    "max_y": 3861
+  },
+  {
+    "name": "Cerulean and Charo",
+    "regions": [
+      2200,
+      6830,
+      6840
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4484,
+    "max_x": 5946,
+    "min_y": 4157,
+    "max_y": 5828
+  },
+  {
+    "name": "Cerulean and Charo Dungeons",
+    "regions": [
+      4102
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4484,
+    "max_x": 5946,
+    "min_y": 4157,
+    "max_y": 5828
+  },
+  {
+    "name": "Jagged Peak",
+    "regions": [
+      6841,
+      6850
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 5308,
+    "max_x": 7017,
+    "min_y": 4107,
+    "max_y": 5059
+  },
+  {
+    "name": "Castle Ensis",
+    "regions": [
+      6820
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4875,
+    "max_x": 5343,
+    "min_y": 3247,
+    "max_y": 3662
+  },
+  {
+    "name": "Scadu Altus",
+    "regions": [
+      2500,
+      6900,
+      6902,
+      6903
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4800,
+    "max_x": 6330,
+    "min_y": 2575,
+    "max_y": 3935
+  },
+  {
+    "name": "Scadu Altus Dungeons",
+    "regions": [
+      4002,
+      4101,
+      4202
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4800,
+    "max_x": 6330,
+    "min_y": 2575,
+    "max_y": 3935
+  },
+  {
+    "name": "Shadow Keep",
+    "regions": [
+      2100,
+      2101
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 5201,
+    "max_x": 5776,
+    "min_y": 2348,
+    "max_y": 2822
+  },
+  {
+    "name": "Shadow Keep, West Rampart",
+    "regions": [
+      2102
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4830,
+    "max_x": 5525,
+    "min_y": 2440,
+    "max_y": 2745
+  },
+  {
+    "name": "Scaduview",
+    "regions": [
+      6920,
+      6930,
+      2100010,
+      2100015,
+      2101010,
+      2101013
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 5283,
+    "max_x": 6694,
+    "min_y": 1971,
+    "max_y": 3067
+  },
+  {
+    "name": "Rauh Ruins and Base",
+    "regions": [
+      6901,
+      6940,
+      6941
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4037,
+    "max_x": 5468,
+    "min_y": 2384,
+    "max_y": 3433
+  },
+  {
+    "name": "Rauh Ruins and Base Dungeons",
+    "regions": [
+      4001,
+      4203
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 4037,
+    "max_x": 5468,
+    "min_y": 2384,
+    "max_y": 3433
+  },
+  {
+    "name": "Abyssal Woods",
+    "regions": [
+      6860
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 5196,
+    "max_x": 6536,
+    "min_y": 3550,
+    "max_y": 4542
+  },
+  {
+    "name": "Enir-Ilim",
+    "regions": [
+      2001,
+      2000011,
+      2000012
+    ],
+    "layer": 2,
+    "layer_height": 8704,
+    "min_x": 3892,
+    "max_x": 4362,
+    "min_y": 3156,
+    "max_y": 3735
+  }
+]
