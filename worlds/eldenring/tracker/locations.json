@@ -285,10 +285,10 @@
     ]
   },
   {
-    "name": "LG/WS: Strength-knot Crystal Tear - on cliff NW of WS",
+    "name": "LG/WS: Strength-knot Crystal Tear - in basin on cliff NW of WS",
     "sections": [
       {
-        "name": "LG/WS: Strength-knot Crystal Tear - on cliff NW of WS"
+        "name": "LG/WS: Strength-knot Crystal Tear - in basin on cliff NW of WS"
       }
     ],
     "map_locations": [
@@ -5781,10 +5781,10 @@
     ]
   },
   {
-    "name": "WP/DHFR: Faith-knot Crystal Tear - N of DHFR",
+    "name": "WP/DHFR: Faith-knot Crystal Tear - N of DHFR in basin",
     "sections": [
       {
-        "name": "WP/DHFR: Faith-knot Crystal Tear - N of DHFR"
+        "name": "WP/DHFR: Faith-knot Crystal Tear - N of DHFR in basin"
       }
     ],
     "map_locations": [
@@ -5865,10 +5865,10 @@
     ]
   },
   {
-    "name": "WP/CMR: Map: Weeping Peninsula - to SW",
+    "name": "WP/CMR: Map: Weeping Peninsula - map pillar to SW",
     "sections": [
       {
-        "name": "WP/CMR: Map: Weeping Peninsula - to SW"
+        "name": "WP/CMR: Map: Weeping Peninsula - map pillar to SW"
       }
     ],
     "map_locations": [
@@ -9972,10 +9972,10 @@
     ]
   },
   {
-    "name": "LL/AGT: Map: Liurnia, North - near grace",
+    "name": "LL/AGT: Map: Liurnia, North - map pillar near grace",
     "sections": [
       {
-        "name": "LL/AGT: Map: Liurnia, North - near grace"
+        "name": "LL/AGT: Map: Liurnia, North - map pillar near grace"
       }
     ],
     "map_locations": [
@@ -10353,10 +10353,10 @@
     ]
   },
   {
-    "name": "LL/LLS: Map: Liurnia, East - to N",
+    "name": "LL/LLS: Map: Liurnia, East - map pillar to N",
     "sections": [
       {
-        "name": "LL/LLS: Map: Liurnia, East - to N"
+        "name": "LL/LLS: Map: Liurnia, East - map pillar to N"
       },
       {
         "name": "LL/LLS: Idus Sword - to N, W of map pillar"
@@ -14388,7 +14388,7 @@
         "name": "CL/SASB: Cracked Pot - Nomadic Merchant to SW"
       },
       {
-        "name": "CL/SASB: Map: Caelid - to SW"
+        "name": "CL/SASB: Map: Caelid - map pillar to SW"
       }
     ],
     "map_locations": [
@@ -14400,10 +14400,10 @@
     ]
   },
   {
-    "name": "CL/SASB: Windy Crystal Tear - to S",
+    "name": "CL/SASB: Windy Crystal Tear - to S in basin",
     "sections": [
       {
-        "name": "CL/SASB: Windy Crystal Tear - to S"
+        "name": "CL/SASB: Windy Crystal Tear - to S in basin"
       }
     ],
     "map_locations": [
@@ -15849,10 +15849,10 @@
     ]
   },
   {
-    "name": "CL/DW: Map: Dragonbarrow - to E",
+    "name": "CL/DW: Map: Dragonbarrow - map pillar to E",
     "sections": [
       {
-        "name": "CL/DW: Map: Dragonbarrow - to E"
+        "name": "CL/DW: Map: Dragonbarrow - map pillar to E"
       }
     ],
     "map_locations": [
@@ -15960,10 +15960,10 @@
     ]
   },
   {
-    "name": "DB/(SE): Battlemage Hugues - Sellia Evergaol",
+    "name": "DB/(SE): Battlemage Hugues - boss drop Evergaol",
     "sections": [
       {
-        "name": "DB/(SE): Battlemage Hugues - Sellia Evergaol"
+        "name": "DB/(SE): Battlemage Hugues - boss drop Evergaol"
       }
     ],
     "map_locations": [
@@ -21996,10 +21996,10 @@
     ]
   },
   {
-    "name": "MtG/RI: Map: Mt. Gelmir - to W by map pillar",
+    "name": "MtG/RI: Map: Mt. Gelmir - map pillar to W",
     "sections": [
       {
-        "name": "MtG/RI: Map: Mt. Gelmir - to W by map pillar"
+        "name": "MtG/RI: Map: Mt. Gelmir - map pillar to W"
       }
     ],
     "map_locations": [
@@ -24327,10 +24327,10 @@
     ]
   },
   {
-    "name": "CO/OWPT: Map: Leyndell, Royal Capital - by map pillar",
+    "name": "CO/OWPT: Map: Leyndell, Royal Capital - map pillar",
     "sections": [
       {
-        "name": "CO/OWPT: Map: Leyndell, Royal Capital - by map pillar"
+        "name": "CO/OWPT: Map: Leyndell, Royal Capital - map pillar"
       },
       {
         "name": "CO/OWPT: Golden Seed 1 - seedtree"
@@ -34413,10 +34413,10 @@
     ]
   },
   {
-    "name": "GP/(EH): Fort of Reprimand Spiritspring Stone to NW",
+    "name": "GP/(EH): Fort of Reprimand Spiritspring Stone - stone to NW",
     "sections": [
       {
-        "name": "GP/(EH): Fort of Reprimand Spiritspring Stone to NW"
+        "name": "GP/(EH): Fort of Reprimand Spiritspring Stone - stone to NW"
       }
     ],
     "map_locations": [
@@ -35133,10 +35133,10 @@
     ]
   },
   {
-    "name": "GP/SR: Map: Gravesite Plain - S of SR",
+    "name": "GP/SR: Map: Gravesite Plain - map pillar S of SR",
     "sections": [
       {
-        "name": "GP/SR: Map: Gravesite Plain - S of SR"
+        "name": "GP/SR: Map: Gravesite Plain - map pillar S of SR"
       }
     ],
     "map_locations": [
@@ -37557,10 +37557,10 @@
     ]
   },
   {
-    "name": "CC/CCC: Map: Southern Shore - to N on path",
+    "name": "CC/CCC: Map: Southern Shore - map pillar to N on path",
     "sections": [
       {
-        "name": "CC/CCC: Map: Southern Shore - to N on path"
+        "name": "CC/CCC: Map: Southern Shore - map pillar to N on path"
       },
       {
         "name": "CC/CCC: Grave Glovewort [9] - to N on giant coffin"
@@ -39387,10 +39387,10 @@
     ]
   },
   {
-    "name": "SA/(MR): Scaduview Cross Spiritspring Stone to SE",
+    "name": "SA/(MR): Scaduview Cross Spiritspring Stone - stone to SE",
     "sections": [
       {
-        "name": "SA/(MR): Scaduview Cross Spiritspring Stone to SE"
+        "name": "SA/(MR): Scaduview Cross Spiritspring Stone - stone to SE"
       }
     ],
     "map_locations": [
@@ -39402,10 +39402,10 @@
     ]
   },
   {
-    "name": "SA/(RR): Rabbath's Rise Spiritspring Stone to S",
+    "name": "SA/(RR): Rabbath's Rise Spiritspring Stone - stone to S",
     "sections": [
       {
-        "name": "SA/(RR): Rabbath's Rise Spiritspring Stone to S"
+        "name": "SA/(RR): Rabbath's Rise Spiritspring Stone - stone to S"
       },
       {
         "name": "SA/(RR): Rabbath's Cannon - in chest top of rise"
@@ -43125,10 +43125,10 @@
     ]
   },
   {
-    "name": "ARR/CBME: Rauh Ruins Spiritspring Stone, drop to E till cliff then up ledge to N",
+    "name": "ARR/CBME: Rauh Ruins Spiritspring Stone - drop to E till cliff then up ledge to N",
     "sections": [
       {
-        "name": "ARR/CBME: Rauh Ruins Spiritspring Stone, drop to E till cliff then up ledge to N"
+        "name": "ARR/CBME: Rauh Ruins Spiritspring Stone - drop to E till cliff then up ledge to N"
       },
       {
         "name": "ARR/RARW: Knot Resin x3 - to W up stairs, outside to N, down right of rot area, down left path by pillar"
@@ -43779,10 +43779,10 @@
     ]
   },
   {
-    "name": "RB/(TTR): Rauh Base Spiritspring Stone to E",
+    "name": "RB/(TTR): Rauh Base Spiritspring Stone - stone to E",
     "sections": [
       {
-        "name": "RB/(TTR): Rauh Base Spiritspring Stone to E"
+        "name": "RB/(TTR): Rauh Base Spiritspring Stone - stone to E"
       }
     ],
     "map_locations": [

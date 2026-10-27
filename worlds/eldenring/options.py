@@ -119,7 +119,7 @@ class StoneswordMasterKey(Choice):
     default = 1
     
 class SeperateImbuedKey(DefaultOnToggle):
-    """Whether Imbued Keys are made into seperate keys for each imp statue."""
+    """Whether Imbued Keys are separated into distinct items, each linked to a specific imp statue at a belfry."""
     display_name = "Seperate Imbued Key"
 
 # MARK: Tarnished Pack
@@ -396,7 +396,7 @@ class BlizzardTrapChance(BaseTrapChance):
     display_name = "Blizzard Trap Chance"
     
 class HeavyTrapChance(BaseTrapChance):
-    """**Heavy Trap:** Gives the player heavy load regardless of equipment."""
+    """**Heavy Trap:** Gives the player heavy load regardless of equipment, lasting until death."""
     display_name = "Heavy Trap Chance"
     
 # game speed trap, speeds game up by 25% - 50%
@@ -546,8 +546,8 @@ class ERPriorityLocationGroups(PriorityLocations):
     - **DLC Map**: DLC Map pillars.
     - **DLC Chest**: DLC Chests.
     - **DLC Scarab**: DLC Scarabs.
-    - **Cross**: All cross items.
-    - **Fragment**: Scadu Fragments. *Includes enemy dropped ones.*
+    - **Cross**: Scadutree Fragments by Miquella's Crosses.
+    - **Fragment**: Other Scadutree Fragments. *Includes enemy dropped ones.*
     - **Revered**: Revered Spirit Ashes. *Includes enemy dropped ones.*
     - **Spiritspring Stones**: Spiritspring Stone if spiritspring_stones is on.
     """ 
