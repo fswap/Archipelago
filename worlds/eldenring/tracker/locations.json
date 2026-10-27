@@ -391,14 +391,11 @@
       },
       {
         "name": "LG/(SGr): Finger Severer - beside grace"
-      },
-      {
-        "name": "LG/SGr: Silver-Pickled Fowl Foot x2 - hidden drop down behind SGr entrance"
       }
     ],
     "map_locations": [
       {
-        "map": "Limgrave",
+        "map": "Limgrave Dungeons",
         "x": 596,
         "y": 1279
       }
@@ -773,6 +770,21 @@
         "map": "Limgrave",
         "x": 566,
         "y": 1140
+      }
+    ]
+  },
+  {
+    "name": "LG/SGr: Silver-Pickled Fowl Foot x2 - hidden drop down behind SGr entrance",
+    "sections": [
+      {
+        "name": "LG/SGr: Silver-Pickled Fowl Foot x2 - hidden drop down behind SGr entrance"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Limgrave",
+        "x": 613,
+        "y": 1313
       }
     ]
   },
