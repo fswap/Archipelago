@@ -815,7 +815,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(GR): Lordsworn's Greatsword - in NW caravan chest", "Lordsworn's Greatsword", key="604237,0:1042377070::", chest=True, targets=('lot:942370070')),
         ERLocationData("LG/(GR): Ash of War: Storm Stomp - underground chest", "Ash of War: Storm Stomp", key="604237,0:1042377110::", chest=True, targets=('lot:1042371011')),
         ERLocationData("LG/WS: Beast Liver - SE of WS", "Beast Liver", key="604238,0:1042387000::", targets=('lot:1042380000')),
-        ERLocationData("LG/(SGr): Golden Rune [1] - lower area", "Golden Rune [1]", key="604238,0:1042387010::", targets=('lot:1042380010')),
+        ERLocationData("LG/(SGa): Golden Rune [1] - lower area", "Golden Rune [1]", key="604238,0:1042387010::", targets=('lot:1042380010')),
         ERLocationData("LG/WS: Fire Arrow x5 - W of WS", "Fire Arrow x5", key="604238,0:1042387020::", targets=('lot:1042380020')),
         ERLocationData("LG/WS: Golden Rune [5] - graveyard SW of WS", "Golden Rune [5]", key="604238,0:1042387030::", targets=('lot:1042380030')),
         ERLocationData("LG/WS: Golden Rune [1] 1 - graveyard SW of WS", "Golden Rune [1]", key="604238,0:1042387040::", targets=('lot:1042380040')),
