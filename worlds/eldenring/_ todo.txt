@@ -19,10 +19,6 @@ finish region descriptions
 rest of keyitemshards at later point
 and presets for keyitemshards
 
-- After release stuff -
-
-
-
 - Ideas -
 
 progressive greatrunes

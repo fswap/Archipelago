@@ -5171,7 +5171,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DB/(IMS): Gravel Stone x10 - Isolated Merchant", "Gravel Stone x10", key="604841,0:0000000000:100875:", raceshop=True, shop=True, targets=('shop:100878')),
         ERLocationData("DB/IMS: Ash of War: Sky Shot - scarab W of IMS", "Ash of War: Sky Shot", key="604841,0:0000540412::", scarab=True, targets=('lot:40412')),
         ERLocationData("DB/(IMS): Gravity Stone Peddler's Bell Bearing - night boss drop", "Gravity Stone Peddler's Bell Bearing", key="604841,0:1048417800::", altboss=True, night=True, targets=('lot:1048410800')),
-        ERLocationData("DB/(SE): Battlemage Hugues - Sellia Evergaol", "Battlemage Hugues", key="604939,0:1049397850::", altboss=True, evergaol=True, targets=('lot:1049390850')),
+        ERLocationData("DB/(SE): Battlemage Hugues - boss drop Evergaol", "Battlemage Hugues", key="604939,0:1049397850::", altboss=True, evergaol=True, targets=('lot:1049390850')),
         ERLocationData("DB/DW: Somber Smithing Stone [8] - scarab to NE", "Somber Smithing Stone [8]", key="604941,0:0000540426::", scarab=True, targets=('lot:40426')),
         ERLocationData("DB/DT: Arteria Leaf x2 - chair circle S of DT", "Arteria Leaf x2", key="604941,0:1049417040::", targets=('lot:1049410040')),
         ERLocationData("DB/DT: Dragonwound Grease - chair circle S of DT", "Dragonwound Grease", key="604941,0:1049417070::", targets=('lot:1049410070')),

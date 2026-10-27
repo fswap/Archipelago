@@ -50,11 +50,18 @@ def find_description(initial: str) -> str:
         case "LG/WR": return "Waypoint Ruins landmark, Mid Limgrave."
         
         # stormhill
-        case "": return "."
-        case "": return "."
-        case "": return "."
-        case "": return "."
-        case "": return "."
+        case "LG/(SE)": return "Stormhill Evergaol, S Stormhill."
+        case "LG/(SG)": return "Stormgate landmark, S Stormhill."
+        case "LG/(SS)": return "Stormhill Shack landmark, W Stormhill."
+        case "LG/(WS)": return "Warmaster's Shack landmark, mid Stormhill."
+        case "LG/DC": return "Deathtouched Catacombs landmark, NE Stormhill."
+        case "LG/LC": return "Limgrave Colosseum landmark, N Stormhill."
+        case "LG/SB": return "Saintsbridge grace, E Stormhill."
+        case "LG/SS": return "Stormhill Shack grace, W Stormhill."
+        case "LG/SV": return "Stormveil landmark, area S of Margit arena."
+        case "LG/WS": return "Warmaster's Shack grace, mid Stormhill."
+        case "SV/CT": return "Castleward Tunnel grace, Stormveil enterance."
+        
         case "": return "."
                         
         # limgrave dungeons
