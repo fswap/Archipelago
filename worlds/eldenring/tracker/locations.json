@@ -252,10 +252,10 @@
     ]
   },
   {
-    "name": "LG/(SG): Arrow's Reach Talisman - chest above gate",
+    "name": "LG/(SGa): Arrow's Reach Talisman - chest above gate",
     "sections": [
       {
-        "name": "LG/(SG): Arrow's Reach Talisman - chest above gate"
+        "name": "LG/(SGa): Arrow's Reach Talisman - chest above gate"
       }
     ],
     "map_locations": [
@@ -384,16 +384,16 @@
     ]
   },
   {
-    "name": "LG/(SG): Tarnished's Furled Finger - beside grace",
+    "name": "LG/(SGr): Tarnished's Furled Finger - beside grace",
     "sections": [
       {
-        "name": "LG/(SG): Tarnished's Furled Finger - beside grace"
+        "name": "LG/(SGr): Tarnished's Furled Finger - beside grace"
       },
       {
-        "name": "LG/(SG): Finger Severer - beside grace"
+        "name": "LG/(SGr): Finger Severer - beside grace"
       },
       {
-        "name": "LG/SG: Silver-Pickled Fowl Foot x2 - hidden drop down behind SG entrance"
+        "name": "LG/SGr: Silver-Pickled Fowl Foot x2 - hidden drop down behind SGr entrance"
       }
     ],
     "map_locations": [
@@ -861,19 +861,19 @@
     ]
   },
   {
-    "name": "LG/(SG): Golden Rune [1] - lower area",
+    "name": "LG/(SGr): Golden Rune [1] - lower area",
     "sections": [
       {
-        "name": "LG/(SG): Golden Rune [1] - lower area"
+        "name": "LG/(SGr): Golden Rune [1] - lower area"
       },
       {
-        "name": "LG/(SG): Golden Rune [2] - off side of ruin above"
+        "name": "LG/(SGa): Golden Rune [2] - off side of ruin above"
       },
       {
-        "name": "LG/(SG): Lump of Flesh - lower area"
+        "name": "LG/(SGa): Lump of Flesh - lower area"
       },
       {
-        "name": "LG/(SG): Smoldering Butterfly x5 - on cliff above"
+        "name": "LG/(SGa): Smoldering Butterfly x5 - on cliff above"
       }
     ],
     "map_locations": [
