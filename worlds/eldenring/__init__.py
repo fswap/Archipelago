@@ -1696,13 +1696,10 @@ class EldenRing(World):
             self._add_entrance_rule("Lamenter's Gaol (Upper)", "Gaol Upper Level Key")
             self._add_entrance_rule("Lamenter's Gaol (Lower)", "Gaol Lower Level Key")
         
-        # no runes in shops, and remembrances
+        # no runes and remembrances in shops
         for loc in self.multiworld.get_unfilled_locations(self.player):
-            if loc.data.shop:
-                if self.options.remembrances_at_priority: # figure out a way to exclude remembrances from shops but let them be prio
-                    self._add_item_rule(loc.name, lambda item: (item.player != self.player and item.game != "Eldenring") or item.data.runes == None)
-                else:
-                    self._add_item_rule(loc.name, lambda item: (item.player != self.player and item.game != "Eldenring") or item.data.runes == None and not item.data.remembrance)
+            if loc.data.shop: 
+                self._add_item_rule(loc.name, lambda item: (item.player != self.player and item.game != "Eldenring") or item.data.runes == None and not item.data.remembrance)
         
         # Rykard and Serpent Rule
         if not self.options.rykard_encounter:
