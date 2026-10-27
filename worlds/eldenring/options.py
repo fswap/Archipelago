@@ -564,7 +564,7 @@ class ERImportantAtPriorityOnly(DefaultOnToggle):
     
     Creates extra locations at priority locations to contain all important items.
     If there are no priority locations in the starting region one will be added.
-    Base: "LG/(SG): Finger Severer - beside grace"
+    Base: "LG/(SGr): Finger Severer - beside grace"
     DLC: "GP/TPC: Scadutree Fragment - by cross"
     
     Generator likes to fail if there is to little priority locations, add more if it fails."""

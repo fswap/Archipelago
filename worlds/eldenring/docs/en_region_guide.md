@@ -84,6 +84,7 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 <tr><td><strong>LG/(FHE): </strong>Forlorn Hound Evergaol, S Limgrave.</td></tr>
 <tr><td><strong>LG/(GR): </strong>Gatefront Ruins landmark, Mid Limgrave.</td></tr>
 <tr><td><strong>LG/(MR): </strong>Mistwood Ruins landmark, E Limgrave.</td></tr>
+<tr><td><strong>LG/(SGr): </strong>Stranded Graveyard landmark, SW Limgrave.</td></tr>
 <tr><td><strong>LG/(SWV): </strong>Summonwater Village landmark, NE Limgrave.</td></tr>
 <tr><td><strong>LG/(TCM): </strong>Third Church of Marika landmark, E Limgrave.</td></tr>
 <tr><td><strong>LG/(WR): </strong>Waypoint Ruins landmark, Mid Limgrave.</td></tr>
@@ -103,7 +104,7 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 <tr><td><strong>LG/MO: </strong>Mistwood Outskirts grace, E Limgrave.</td></tr>
 <tr><td><strong>LG/MR: </strong>Waypoint Ruins landmark, Mid Limgrave.</td></tr>
 <tr><td><strong>LG/SC: </strong>Stormfoot Catacombs landmark, Mid Limgrave.</td></tr>
-<tr><td><strong>LG/SG: </strong>Stranded Graveyard landmark, SW Limgrave.</td></tr>
+<tr><td><strong>LG/SGr: </strong>Stranded Graveyard landmark, SW Limgrave.</td></tr>
 <tr><td><strong>LG/SR: </strong>Seaside Ruins grace, SW Limgrave.</td></tr>
 <tr><td><strong>LG/SRW: </strong>Siofra River Well landmark, E Limgrave.</td></tr>
 <tr><td><strong>LG/SWV: </strong>Summonwater Village landmark, NE Limgrave.</td></tr>
@@ -117,7 +118,7 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 
 </td></tr>
 <tr><td><strong>LG/(SE): </strong>Stormhill Evergaol, S Stormhill.</td></tr>
-<tr><td><strong>LG/(SG): </strong>Stormgate landmark, S Stormhill.</td></tr>
+<tr><td><strong>LG/(SGa): </strong>Stormgate landmark, S Stormhill.</td></tr>
 <tr><td><strong>LG/(SS): </strong>Stormhill Shack landmark, W Stormhill.</td></tr>
 <tr><td><strong>LG/(WS): </strong>Warmaster&#x27;s Shack landmark, mid Stormhill.</td></tr>
 <tr><td><strong>LG/DC: </strong>Deathtouched Catacombs landmark, NE Stormhill.</td></tr>

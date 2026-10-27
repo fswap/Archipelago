@@ -240,7 +240,7 @@ class EldenRing(World):
         if re_gen_passthrough and self.game in re_gen_passthrough:
             # Without updated UT, position tracking fails with: 'VisualTracker' object has no attribute 'location_icons'
             # It should be safe to import from tracker apworld during regen passthrough.
-            from worlds.tracker import UT_VERSION_TUPLE
+            from worlds.tracker import UT_VERSION_TUPLE # type: ignore
             if UT_VERSION_TUPLE < (0, 3, 7):
                 raise RuntimeError(f"At least Universal Tracker 0.3.7 is required but {UT_VERSION_TUPLE.as_simple_string()} is installed")
 
@@ -887,9 +887,9 @@ class EldenRing(World):
         if self.options.world_logic == "region_lock":
             # if starting region has no locations create one
             if self.base_enabled and self.options.dlc_start == 0 and len(self.prio_in_region["Limgrave"]) < 1: 
-                warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SG): Finger Severer - beside grace\".")
-                self.all_priority_locations.add("LG/(SG): Finger Severer - beside grace")
-                self.prio_in_region["Limgrave"].append("LG/(SG): Finger Severer - beside grace")
+                warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SGr): Finger Severer - beside grace\".")
+                self.all_priority_locations.add("LG/(SGr): Finger Severer - beside grace")
+                self.prio_in_region["Limgrave"].append("LG/(SGr): Finger Severer - beside grace")
                 
             if self.options.enable_dlc and len(self.prio_in_region["Gravesite Plain"]) < 1:
                 warning(f"Player {self.player_name} has no Priority locations within Gravesite Plain region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")

@@ -40,7 +40,8 @@ def find_description(initial: str) -> str:
         case "LG/MO": return "Mistwood Outskirts grace, E Limgrave."
         case "LG/MR": return "Waypoint Ruins landmark, Mid Limgrave."
         case "LG/SC": return "Stormfoot Catacombs landmark, Mid Limgrave."
-        case "LG/SG": return "Stranded Graveyard landmark, SW Limgrave."
+        case "LG/SGr": return "Stranded Graveyard landmark, SW Limgrave."
+        case "LG/(SGr)": return "Stranded Graveyard landmark, SW Limgrave."
         case "LG/SR": return "Seaside Ruins grace, SW Limgrave."
         case "LG/SRW": return "Siofra River Well landmark, E Limgrave."        
         case "LG/SWV": return "Summonwater Village landmark, NE Limgrave."
@@ -51,7 +52,7 @@ def find_description(initial: str) -> str:
         
         # stormhill
         case "LG/(SE)": return "Stormhill Evergaol, S Stormhill."
-        case "LG/(SG)": return "Stormgate landmark, S Stormhill."
+        case "LG/(SGa)": return "Stormgate landmark, S Stormhill."
         case "LG/(SS)": return "Stormhill Shack landmark, W Stormhill."
         case "LG/(WS)": return "Warmaster's Shack landmark, mid Stormhill."
         case "LG/DC": return "Deathtouched Catacombs landmark, NE Stormhill."
