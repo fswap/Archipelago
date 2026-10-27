@@ -28,6 +28,9 @@ class MapGroup:
     """Location names which should be placed in this map and not others.
     These do not need to be present in the region list."""
 
+    dungeon_locations: Optional[List[str]] = None
+    """Locations which should be put in the dungeon layer."""
+
     underground: bool = False
     """Whether the map is base game underground. Can be inferred but simple
     enough to put here."""
@@ -75,6 +78,9 @@ map_groups: List[MapGroup] = [
     }, [
         "LG/(BS): Stonesword Key - behind wooden platform",
         "LG/(BS): Smithing Stone [1] x3 - corpse hanging off edge",
+    ], [
+        "LG/(SGr): Tarnished's Furled Finger - beside grace",
+        "LG/(SGr): Finger Severer - beside grace",
     ], icon_size=120),
 
     # The canonical location is in the middle of the ocean (in-game map overrides this).
@@ -296,6 +302,8 @@ map_groups: List[MapGroup] = [
         "Rivermouth Cave": 4300,
     }, [
         "ER/ERD: Mushroom-Seller's Bell Bearing [2] - hanging pot to SE hanging on rock infront of waterfall",
+    ], [
+        "GP/(DP): Dragon-Hunter's Great Katana - boss drop",
     ], icon_size=120),
 
     MapGroup("Belurat", {
@@ -352,6 +360,8 @@ map_groups: List[MapGroup] = [
         "SA/HC: Shadow Realm Rune [2] - to SW in a spire below warp", # Ensis boundary
         "SA/(RR): Spellmachinist's Bell Bearing - very top of rise, drop down from HL/SV", # Rabbath dropdown
         "RR/(DC): Barbed Staff-Spear - boss drop", # Abyssal Woods boundary
+    ], [
+        "RR/(DC): Barbed Staff-Spear - boss drop",
     ]),
 
     MapGroup("Shadow Keep", {
@@ -515,13 +525,16 @@ def main(map_dir: str, tracker_dir: str, write_zip: bool):
     for group in map_groups:
         regions = frozenset(group.region_names())
         extra_regions = frozenset(silo_location_regions[loc] for loc in group.locations())
+        dungeon_locations = group.dungeon_locations or ()
 
         def location_included(location: ERLocationData) -> bool:
             if location.region_name not in regions or location.name in silo_locations:
                 return location.name in group.locations()
             return True
         def is_dungeon_region(region: str) -> bool:
-            return region in dungeon_regions and not group.combine_dungeon
+            return not group.combine_dungeon and region in dungeon_regions
+        def is_dungeon_location(location: ERLocationData) -> bool:
+            return not group.combine_dungeon and (location.dungeon or location.name in dungeon_locations)
         def get_play_regions(is_dungeon: bool) -> List[int]:
             return list(sorted(set(
                 area
@@ -543,11 +556,11 @@ def main(map_dir: str, tracker_dir: str, write_zip: bool):
         group_coords: List[ImageCoord] = []
         has_minidungeon = False
         for region in regions.union(extra_regions):
-            if is_dungeon_region(region):
-                has_minidungeon = True
             for location in location_tables[region]:
                 if not location_included(location):
                     continue
+                if not has_minidungeon and is_dungeon_location(location):
+                    has_minidungeon = True
                 coord = get_location_coord(location, offset)
                 if coord.image != base_name:
                     raise RuntimeError(f"{location.name} {location.key} in {region} is in {coord.image}, expected {base_name}")
@@ -594,7 +607,7 @@ def main(map_dir: str, tracker_dir: str, write_zip: bool):
                     continue
                 coord = get_location_coord(location, offset)
                 for image in images:
-                    if is_dungeon_region(region) != image.minidungeon:
+                    if is_dungeon_location(location) != image.minidungeon:
                         continue
                     if image.contains(coord):
                         shared = location.name in silo_locations or region_counts[region] > 1
