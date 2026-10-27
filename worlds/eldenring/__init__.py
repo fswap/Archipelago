@@ -196,8 +196,8 @@ class EldenRing(World):
         badly_placed_items: Dict[str, str] = {}
         if self.options.important_at_priority_only:
             for loc in self.multiworld.get_filled_locations(self.player):
-                if (not loc.locked and loc.item.classification == ItemClassification.progression and loc.progress_type != LocationProgressType.PRIORITY
-                    and loc.data.name not in self.all_possible_priority_locations): # not preplaced
+                if (not loc.locked and ItemClassification.progression in loc.item.classification and ItemClassification.deprioritized not in loc.item.classification
+                    and loc.name not in self.all_possible_priority_locations): # not preplaced
                     badly_placed_items[loc.name] = loc.item
                     # a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen
                     
@@ -801,9 +801,10 @@ class EldenRing(World):
                     break
         
         # need to modify progress type here after create_regions
-        for location in self.multiworld.get_locations(self.player):
-            if location.name in self.all_priority_locations:
-                location.progress_type = LocationProgressType.PRIORITY
+        if self.multiworld.players == 1: # only use prio on solo runs
+            for location in self.multiworld.get_locations(self.player):
+                if location.name in self.all_priority_locations:
+                    location.progress_type = LocationProgressType.PRIORITY
         
         # this can make more prio then prog exist, but it should be very little
         required_region_dupes = self._required_locations()
@@ -846,7 +847,8 @@ class EldenRing(World):
                                     ap_code = new_code),
                                 parent = region
                             )
-                            dupe_location.progress_type = LocationProgressType.PRIORITY
+                            if self.multiworld.players == 1: # only use prio on solo runs
+                                dupe_location.progress_type = LocationProgressType.PRIORITY
                             region.locations.append(dupe_location)
                             self.dupe_location_dictionary.update({dupe_location.data.name: dupe_location.data})
                             self.dupe_location_tables[region.name].append(dupe_location.data)
@@ -1734,11 +1736,16 @@ class EldenRing(World):
         if self.options.important_at_priority_only:
             if self.multiworld.players != 1:
                 for loc in self.multiworld.get_unfilled_locations(self.player):
-                    if loc.progress_type != LocationProgressType.PRIORITY:
-                        if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
-                            self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
-                            if self.options.other_world_useful_at_priority:
-                                self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
+                    if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
+                        self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
+                        if self.options.other_world_useful_at_priority:
+                            self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
+                    
+                    # if loc.progress_type != LocationProgressType.PRIORITY:
+                    #     if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
+                    #         self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
+                    #         if self.options.other_world_useful_at_priority:
+                    #             self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
         
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)

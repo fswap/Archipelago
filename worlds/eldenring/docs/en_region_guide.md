@@ -116,17 +116,17 @@ Regions | [Base Game Regions](#base-game-1) | [DLC Regions](#dlc-1)
 ### Stormhill
 
 </td></tr>
-<tr><td><strong>LG/(SE): </strong></td></tr>
-<tr><td><strong>LG/(SG): </strong></td></tr>
-<tr><td><strong>LG/(SS): </strong></td></tr>
-<tr><td><strong>LG/(WS): </strong></td></tr>
-<tr><td><strong>LG/DC: </strong></td></tr>
-<tr><td><strong>LG/LC: </strong></td></tr>
-<tr><td><strong>LG/SB: </strong></td></tr>
-<tr><td><strong>LG/SS: </strong></td></tr>
-<tr><td><strong>LG/SV: </strong></td></tr>
-<tr><td><strong>LG/WS: </strong></td></tr>
-<tr><td><strong>SV/CT: </strong></td></tr>
+<tr><td><strong>LG/(SE): </strong>Stormhill Evergaol, S Stormhill.</td></tr>
+<tr><td><strong>LG/(SG): </strong>Stormgate landmark, S Stormhill.</td></tr>
+<tr><td><strong>LG/(SS): </strong>Stormhill Shack landmark, W Stormhill.</td></tr>
+<tr><td><strong>LG/(WS): </strong>Warmaster&#x27;s Shack landmark, mid Stormhill.</td></tr>
+<tr><td><strong>LG/DC: </strong>Deathtouched Catacombs landmark, NE Stormhill.</td></tr>
+<tr><td><strong>LG/LC: </strong>Limgrave Colosseum landmark, N Stormhill.</td></tr>
+<tr><td><strong>LG/SB: </strong>Saintsbridge grace, E Stormhill.</td></tr>
+<tr><td><strong>LG/SS: </strong>Stormhill Shack grace, W Stormhill.</td></tr>
+<tr><td><strong>LG/SV: </strong>Stormveil landmark, area S of Margit arena.</td></tr>
+<tr><td><strong>LG/WS: </strong>Warmaster&#x27;s Shack grace, mid Stormhill.</td></tr>
+<tr><td><strong>SV/CT: </strong>Castleward Tunnel grace, Stormveil enterance.</td></tr>
 <tr><td><h3>
 
 ### Limgrave Dungeons
