@@ -1,20 +1,22 @@
 from typing import Any, Dict
 
 from Options import Accessibility, ProgressionBalancing
-from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLogic, SeparateProgression,\
+from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic, RegionSoftLogic, SeparateProgression,\
         GreatRunesRequiredLeyndell, GreatRunesRequiredMountain, GreatRunesRequiredErdtree,\
         RoyalAccess,\
-        StoneswordMasterKey,\
+        StoneswordMasterKey,SeperateImbuedKey,\
         EnemyRando, RandomEnemyPresetOption,\
-        RestrictiveBossPlacement, RykardEncounter, BossScalingPercent, DisableGargoylePoisonCloudDamage, NightBosses,\
+        MergeAllBosses, RestrictiveBossPlacement, RykardEncounter, BossScalingPercent, DisableGargoylePoisonCloudDamage, NightBosses,\
         DungeonSweep,\
         MaterialRando,\
         RandomizeStartingLoadout, RandomizeStartingKeepsakes,\
         RequireOneHandedStartingWeapons, RemoveWeaponAndSpellRequirements, NoEquipLoadOption, ReduceNonSomberUpgradeCost,\
         SnowFast,\
         AutoEquipOption, AutoUpgradeOption,\
-        DeathLink,\
-        EnableDLC,\
+        DeathLink, DeathLinkAmnesty,\
+        TotalTrapCount,\
+        NGPlusTrapChance, StatusTrapChance, BlindnessTrapChance, BlizzardTrapChance, HeavyTrapChance,\
+        EnableTarnishedPack, EnableDLC,\
         DLCMessmerKindle, DLCScadutreeFragments,\
         DLCTimingOption,\
         DLCMaxLevelWeapons,\
@@ -27,13 +29,14 @@ from .options import GoalOption, ExcludeDungeonBosses, WorldLogic, RegionSoftLog
         EarlyLegacyDungeonsEarly,\
         LocalItemOnly,\
         ERExcludeLocations, ExcludedLocationBehaviorOption, MissableLocationBehaviorOption,\
-        ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly,\
-        FlaskUpgradesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrystalTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
+        ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly, OtherWorldUsefulAtPriority,\
+        FlaskUpgradesAtPriority, WhetbladesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrystalTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
 
 template = {
     "progression_balancing":                ProgressionBalancing.default,
     "accessibility":                        Accessibility.option_full,
     "goal":                                 GoalOption,
+    "key_item_shards":                      KeyItemShards,
     "exclude_dungeon":                      ExcludeDungeonBosses,
     "world_logic":                          WorldLogic,
     "soft_logic":                           RegionSoftLogic,
@@ -43,7 +46,9 @@ template = {
     "great_runes_required_erdtree":         GreatRunesRequiredErdtree,
     "royal_access":                         RoyalAccess,
     "use_master_key":                       StoneswordMasterKey,
+    "seperate_imbued_key":                  SeperateImbuedKey,
     
+    "enable_tp_dlc":                        EnableTarnishedPack,
     "enable_dlc":                           EnableDLC,
     "dlc_start":                            DLCStart,
     "dlc_starting_items":                   DLCStartingItems,
@@ -58,6 +63,7 @@ template = {
     "spiritspring_stones":                  DLCSpiritspringStones,
     
     "enemy_rando":                          EnemyRando,
+    "merge_bosses":                         MergeAllBosses,
     "restrictive_bosses":                   RestrictiveBossPlacement,
     "rykard_encounter":                     RykardEncounter,
     "boss_scaling_percent":                 BossScalingPercent,
@@ -67,6 +73,14 @@ template = {
     "random_enemy_preset":                  RandomEnemyPresetOption,
     "material_rando":                       MaterialRando,
     "death_link":                           DeathLink,
+    "death_link_amnesty":                   DeathLinkAmnesty,
+    
+    "total_trap_count":                     TotalTrapCount,
+    "ngplus_trap_chance":                   NGPlusTrapChance,
+    "status_trap_chance":                   StatusTrapChance,
+    "blindness_trap_chance":                BlindnessTrapChance,
+    "blizzard_trap_chance":                 BlizzardTrapChance,
+    "heavy_trap_chance":                    HeavyTrapChance,
 
     "random_start":                         RandomizeStartingLoadout,
     "randomize_starting_keepsakes":         RandomizeStartingKeepsakes,
@@ -86,10 +100,13 @@ template = {
     "smooth_rune_items":                    SmoothRuneItems,
     "spell_shop_spells_only":               SpellShopSpellsOnly,
     "early_legacy_dungeons":                EarlyLegacyDungeonsEarly,
+    
     "priority_location_groups":             ERPriorityLocationGroups,
     "important_at_priority_only":           ERImportantAtPriorityOnly,
     "important_at_priority_early":          ERImportantAtPriorityEarly,
+    "other_world_useful_at_priority":       OtherWorldUsefulAtPriority,
     "flask_at_priority":                    FlaskUpgradesAtPriority,
+    "whetblades_at_priority":               WhetbladesAtPriority,
     "scadu_at_priority":                    ScaduAtPriority,
     "talisman_pouches_at_priority":         TalismanPouchesAtPriority,
     "crystal_tears_at_priority":            CrystalTearsAtPriority,
@@ -324,62 +341,6 @@ dlc_only = {
 }
 
 base_dlc = {
-    "progression_balancing":                ProgressionBalancing.default,
-    "accessibility":                        Accessibility.option_full,
-    "goal":                                 GoalOption.default,
-    "exclude_dungeon":                      ExcludeDungeonBosses.default,
-    "world_logic":                          WorldLogic.option_region_lock,
-    "soft_logic":                           RegionSoftLogic.option_true,
-    "great_runes_required_leyndell":        2,
-    "great_runes_required_mountain":        4,
-    "great_runes_required_erdtree":         7,
-    "royal_access":                         RoyalAccess.option_true,
-    "use_master_key":                       StoneswordMasterKey.option_vanilla,
-    
-    "enable_dlc":                           EnableDLC.option_true,
-    "dlc_start":                            DLCStart.option_normal,
-    "dlc_starting_items":                   [],
-    "dlc_starting_shop":                    DLCStartingShop.option_false,
-    "dlc_care_package":                     DLCCarePackage.option_false,
-    "dlc_initial_rune_level":               DLCInitialRuneLevel.default,
-    "dlc_messmer_kindle":                   DLCMessmerKindle.option_not_base,
-    "dlc_scadutree_fragments":              DLCScadutreeFragments.option_not_base,
-    "dlc_timing":                           DLCTimingOption.option_late,
-    "dlc_max_level_weapons":                DLCMaxLevelWeapons.option_false,
-    "dlc_abyssal_torrent":                  DLCAbyssalTorrent.option_true,
-    "spiritspring_stones":                  DLCSpiritspringStones.option_true,
-    
-    "enemy_rando":                          EnemyRando.option_true,
-    "restrictive_bosses":                   RestrictiveBossPlacement.option_true,
-    "rykard_encounter":                     RykardEncounter.option_true,
-    "boss_scaling_percent":                 BossScalingPercent.default,
-    "disable_gargoyle_poison_cloud_damage": DisableGargoylePoisonCloudDamage.default,
-    "night_bosses":                         NightBosses.option_always_on,
-    "dungeon_sweep":                        DungeonSweep.option_true,
-    "random_enemy_preset":                  RandomEnemyPresetOption.default,
-    "material_rando":                       MaterialRando.option_true,
-    "death_link":                           DeathLink.option_false,
-
-    "random_start":                         RandomizeStartingLoadout.option_true,
-    "randomize_starting_keepsakes":         RandomizeStartingKeepsakes.option_true,
-    "require_one_handed_starting_weapons":  RequireOneHandedStartingWeapons.option_false,
-    "remove_weapon_and_spell_requirements": RemoveWeaponAndSpellRequirements.option_false,
-    "no_equip_load":                        NoEquipLoadOption.option_false,
-    "reduce_non_somber_upgrade_cost":       ReduceNonSomberUpgradeCost.option_true,
-    "snowfast":                             SnowFast.option_true,
-    "auto_equip":                           AutoEquipOption.option_false,
-    "auto_upgrade":                         AutoUpgradeOption.option_true,
-    
-    "smithing_bell_bearing_option":         SmithingBellBearingOption.option_progression_randomize,
-    "smooth_upgrade_items":                 SmoothUpgradeItems.option_true,
-    "smooth_rune_items":                    SmoothRuneItems.option_true,
-    "spell_shop_spells_only":               SpellShopSpellsOnly.option_true,
-    "early_legacy_dungeons":                EarlyLegacyDungeonsEarly.option_true,
-    "priority_location_groups":             ERPriorityLocationGroups.default,
-    "local_item_only":                      LocalItemOnly.default,
-    "exclude_locations":                    ERExcludeLocations.default,
-    "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_forbid_useful,
-    "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
 all_bosses = {
@@ -445,8 +406,72 @@ all_bosses = {
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
-a_very_fun_template = { # todo, make super troll template
+pain = { # :)
+    "progression_balancing":                0,
+    "accessibility":                        Accessibility.option_full,
+    "goal":                                 ["All Base Boss", "All DLC Boss"],
+    "key_item_shards":                      { 
+                                            "RustyKeyShards": {"Req": 10, "Max": 10},
+                                            "RoldMedallionShards": {"Req": 10, "Max": 10},
+                                            "MessmerKindlingShards": {"Req": 10, "Max": 10}
+                                            },
+    "exclude_dungeon":                      ExcludeDungeonBosses.option_false,
+    "world_logic":                          WorldLogic.option_open_world,
+    "soft_logic":                           RegionSoftLogic.option_false,
+    "separate_progression":                 SeparateProgression.option_false,
+    "great_runes_required_leyndell":        6,
+    "great_runes_required_mountain":        -1,
+    "great_runes_required_erdtree":         7,
+    "royal_access":                         RoyalAccess.option_true,
+    "use_master_key":                       StoneswordMasterKey.option_vanilla,
+    "seperate_imbued_key":                  SeperateImbuedKey.option_false,
     
+    "enable_dlc":                           EnableDLC.option_true,
+    "dlc_messmer_kindle":                   DLCMessmerKindle.option_normal,
+    "dlc_scadutree_fragments":              DLCScadutreeFragments.option_normal,
+    "dlc_timing":                           DLCTimingOption.option_early,
+    "dlc_max_level_weapons":                DLCMaxLevelWeapons.option_false,
+    "dlc_abyssal_torrent":                  DLCAbyssalTorrent.option_false,
+    "spiritspring_stones":                  DLCSpiritspringStones.option_true,
+    
+    "restrictive_bosses":                   RestrictiveBossPlacement.option_false,
+    "rykard_encounter":                     RykardEncounter.option_false,
+    # "boss_scaling_percent":                 "100-200", # doesn't work yet
+    "disable_gargoyle_poison_cloud_damage": DisableGargoylePoisonCloudDamage.option_false,
+    "night_bosses":                         NightBosses.option_normal,
+    "dungeon_sweep":                        DungeonSweep.option_false,
+    "random_enemy_preset":                  RandomEnemyPresetOption.default, # this doesn't do anything but could be funny to edit
+    "death_link":                           DeathLink.option_true,
+    
+    "total_trap_count":                     1000,
+    "ngplus_trap_chance":                   NGPlusTrapChance.option_high,
+    "status_trap_chance":                   StatusTrapChance.option_high,
+    "blindness_trap_chance":                BlindnessTrapChance.option_high,
+    "blizzard_trap_chance":                 BlizzardTrapChance.option_high,
+    "heavy_trap_chance":                    HeavyTrapChance.option_high,
+
+    "random_start":                         RandomizeStartingLoadout.option_true,
+    "randomize_starting_keepsakes":         RandomizeStartingKeepsakes.option_true,
+    "require_one_handed_starting_weapons":  RequireOneHandedStartingWeapons.option_false,
+    "remove_weapon_and_spell_requirements": RemoveWeaponAndSpellRequirements.option_false,
+    "no_equip_load":                        NoEquipLoadOption.option_false,
+    "reduce_non_somber_upgrade_cost":       ReduceNonSomberUpgradeCost.option_false,
+    "snowfast":                             SnowFast.option_false,
+    "auto_equip":                           AutoEquipOption.option_true,
+    "auto_upgrade":                         AutoUpgradeOption.option_false,
+    
+    "crafting_kit_option":                  CraftingKitOption.option_randomize,
+    "physick_flask_option":                 PhysickFlaskOption.option_randomize,
+    "map_option":                           MapOption.option_randomize,
+    "smithing_bell_bearing_option":         SmithingBellBearingOption.option_randomize,
+    "spell_shop_spells_only":               SpellShopSpellsOnly.option_false,
+    "early_legacy_dungeons":                EarlyLegacyDungeonsEarly.option_false,
+    "priority_location_groups":             [],
+    "important_at_priority_only":           ERImportantAtPriorityOnly.option_false,
+    "local_item_only":                      [],
+    "exclude_locations":                    [],
+    "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_allow_useful,
+    "missable_location_behavior":           MissableLocationBehaviorOption.option_allow_useful,
 }
 
 er_options_presets: Dict[str, Dict[str, Any]] = {
@@ -456,5 +481,5 @@ er_options_presets: Dict[str, Dict[str, Any]] = {
     "[Short] DLC Only": dlc_only,
     "[Long] Base + DLC": base_dlc,
     "[Very Long] All Bosses": all_bosses,
-    # "Very Fun Template": a_very_fun_template
+    "Don't": pain,
 }
