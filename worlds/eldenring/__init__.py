@@ -241,8 +241,8 @@ class EldenRing(World):
             # Without updated UT, position tracking fails with: 'VisualTracker' object has no attribute 'location_icons'
             # It should be safe to import from tracker apworld during regen passthrough.
             from worlds.tracker import UT_VERSION_TUPLE # type: ignore
-            if UT_VERSION_TUPLE < (0, 3, 7):
-                raise RuntimeError(f"At least Universal Tracker 0.3.7 is required but {UT_VERSION_TUPLE.as_simple_string()} is installed")
+            if UT_VERSION_TUPLE < (0, 3, 8):
+                raise RuntimeError(f"At least Universal Tracker 0.3.8 is required but {UT_VERSION_TUPLE.as_simple_string()} is installed")
 
             self.soft_logic_enabled = False
             slot_data: dict[str, Any] = re_gen_passthrough[self.game]
