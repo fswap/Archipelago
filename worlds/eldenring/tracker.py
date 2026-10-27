@@ -5,15 +5,15 @@ import os
 import pkgutil
 from typing import Any, Dict, Set, List, Iterable, Optional, Union, Tuple
 
-tracker_external_data = False
+tracker_zip_has_json = False
 """Whether tracker data files are included in the image zip or not.
 
 This should be False for release builds."""
 
-zip_md5s = ["2f456c33a943eff836cca6f0e11262e4"]
-"""Image zip hashes compatible with this version of the repository.
+image_zip_md5s = ["2f456c33a943eff836cca6f0e11262e4"]
+"""Image zip hashes compatible with the current version of the apworld.
 
-A new zip should be generated when bounds.json changes."""
+New images are required when bounds.json changes."""
 
 
 @dataclass

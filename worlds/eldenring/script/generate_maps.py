@@ -13,7 +13,7 @@ from PIL import Image, ImageFile
 
 from worlds.eldenring.locations import ERLocationData, location_tables
 from worlds.eldenring.region_names import region_order_dlc
-from worlds.eldenring.tracker import MapBounds, tracker_external_data
+from worlds.eldenring.tracker import MapBounds, tracker_zip_has_json
 
 
 @dataclass
@@ -646,7 +646,7 @@ def main(map_dir: str, tracker_dir: str, write_zip: bool):
             node_json["map_locations"].append({"map": m_loc.image, "x": m_loc.x, "y": m_loc.y})
         locations_json.append(node_json)
 
-    data_dir = output_dir if tracker_external_data else tracker_dir
+    data_dir = output_dir if tracker_zip_has_json else tracker_dir
     with open(os.path.join(data_dir, "maps.json"), "w") as f:
         json.dump(maps_json, f, indent=2)
     with open(os.path.join(data_dir, "locations.json"), "w") as f:
@@ -668,7 +668,7 @@ def main(map_dir: str, tracker_dir: str, write_zip: bool):
             for info in zip.infolist():
                 info.date_time = (2022, 2, 25, 0, 0, 0)
 
-        if not tracker_external_data:
+        if not tracker_zip_has_json:
             hash = file_md5(output_zip)
             hash_name = f"ERMaps_{hash[0:8]}.zip"
             print(f"MD5 hash: {hash} -> {hash_name}")
