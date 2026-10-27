@@ -691,7 +691,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/SV: Bloodrose x3 - S of first SV boss arena E side item 3", "Bloodrose x3", key="604138,0:1041387200::", targets=('lot:1041382000')),
         ERLocationData("LG/SS: Lump of Flesh - under bridge NW of SS", "Lump of Flesh", key="604139,0:1041397000::", targets=('lot:1041390000')),
         ERLocationData("LG/(SE): Aspects of the Crucible: Tail - boss drop Evergaol", "Aspects of the Crucible: Tail", key="604237,0:0000530120::", altboss=True, evergaol=True, targets=('lot:30120')),
-        ERLocationData("LG/(SG): Arrow's Reach Talisman - chest above gate", "Arrow's Reach Talisman", key="604237,0:1042377300::", talisman=True, chest=True, targets=('lot:1042371300')),
+        ERLocationData("LG/(SGa): Arrow's Reach Talisman - chest above gate", "Arrow's Reach Talisman", key="604237,0:1042377300::", talisman=True, chest=True, targets=('lot:1042371300')),
         ERLocationData("LG/WS: Blue-Feathered Branchsword - night boss drop SE of WS", "Blue-Feathered Branchsword", key="604238,0:1042387400::", altboss=True, night=True, targets=('lot:1042380400')),
         ERLocationData("LG/(WS): Bone Peddler's Bell Bearing - night boss drop", "Bone Peddler's Bell Bearing", key="604238,0:1042387410::", altboss=True, night=True, targets=('lot:1042380410')),
         ERLocationData("LG/WS: Strength-knot Crystal Tear - in basin on cliff NW of WS", "Strength-knot Crystal Tear", key="604239,0:0000065210::", basin=True, targets=('lot:1042390000')),
@@ -743,8 +743,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SV/StC: Golden Rune [2] - on dropdown platform middle of big long room", "Golden Rune [2]", key="100000,0:0010007240::", targets=('lot:10000240')),
     ],
     "Limgrave":[ # limgrave                                               done
-        ERLocationData("LG/(SG): Tarnished's Furled Finger - beside grace", "Tarnished's Furled Finger", key="180000,0:0000060220::", targets=('lot:18000080')),
-        ERLocationData("LG/(SG): Finger Severer - beside grace", "Finger Severer", key="180000,0:0000060310::", targets=('lot:18000081')),
+        ERLocationData("LG/(SGr): Tarnished's Furled Finger - beside grace", "Tarnished's Furled Finger", key="180000,0:0000060220::", targets=('lot:18000080')),
+        ERLocationData("LG/(SGr): Finger Severer - beside grace", "Finger Severer", key="180000,0:0000060310::", targets=('lot:18000081')),
 
         ERLocationData("LG/MO: Golden Seed - kill Kenneth Haight", "Golden Seed", key="100000,0:0000400220::", missable=True, death=True, targets=('lot:112200')),
         ERLocationData("LG/MO: Erdsteel Dagger - kill FH enemy, Kenneth Haight to NE", "Erdsteel Dagger", key="100000,0:0000400221::", missable=True, targets=('lot:102200')),
@@ -802,7 +802,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(CE): Spirit Calling Bell - talk to Ranni", "Spirit Calling Bell", key="604236,0:0000060110:101800,1042369416:", targets=('lot:103900', 'shop:101802')),
         ERLocationData("LG/(CE): Lone Wolf Ashes - talk to Ranni", "Lone Wolf Ashes", key="604236,0:0000400390:101800,1042369416:", targets=('lot:103901', 'shop:101803')),
         ERLocationData("LG/TFS: Golden Halberd - first field boss", "Golden Halberd", key="604236,0:0000530100::", altboss=True, targets=('lot:30100')),
-        ERLocationData("LG/SG: Silver-Pickled Fowl Foot x2 - hidden drop down behind SG entrance", "Silver-Pickled Fowl Foot x2", key="604236,0:1042367010::", targets=('lot:1042360010')),
+        ERLocationData("LG/SGr: Silver-Pickled Fowl Foot x2 - hidden drop down behind SGr entrance", "Silver-Pickled Fowl Foot x2", key="604236,0:1042367010::", targets=('lot:1042360010')),
         ERLocationData("LG/(CE): Golden Rune [2] - out front", "Golden Rune [2]", key="604236,0:1042367030::", targets=('lot:1042360030')),
         ERLocationData("LG/CE: Golden Rune [1] - E of CE", "Golden Rune [1]", key="604236,0:1042367040::", targets=('lot:1042360040')),
         ERLocationData("LG/DBR: Smithing Stone [1] - W of DBR", "Smithing Stone [1]", key="604236,0:1042367050::", targets=('lot:1042360050')),
@@ -815,7 +815,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/(GR): Lordsworn's Greatsword - in NW caravan chest", "Lordsworn's Greatsword", key="604237,0:1042377070::", chest=True, targets=('lot:942370070')),
         ERLocationData("LG/(GR): Ash of War: Storm Stomp - underground chest", "Ash of War: Storm Stomp", key="604237,0:1042377110::", chest=True, targets=('lot:1042371011')),
         ERLocationData("LG/WS: Beast Liver - SE of WS", "Beast Liver", key="604238,0:1042387000::", targets=('lot:1042380000')),
-        ERLocationData("LG/(SG): Golden Rune [1] - lower area", "Golden Rune [1]", key="604238,0:1042387010::", targets=('lot:1042380010')),
+        ERLocationData("LG/(SGr): Golden Rune [1] - lower area", "Golden Rune [1]", key="604238,0:1042387010::", targets=('lot:1042380010')),
         ERLocationData("LG/WS: Fire Arrow x5 - W of WS", "Fire Arrow x5", key="604238,0:1042387020::", targets=('lot:1042380020')),
         ERLocationData("LG/WS: Golden Rune [5] - graveyard SW of WS", "Golden Rune [5]", key="604238,0:1042387030::", targets=('lot:1042380030')),
         ERLocationData("LG/WS: Golden Rune [1] 1 - graveyard SW of WS", "Golden Rune [1]", key="604238,0:1042387040::", targets=('lot:1042380040')),
@@ -825,9 +825,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/WS: Golden Rune [2] 2 - graveyard SW of WS", "Golden Rune [2]", key="604238,0:1042387090::", targets=('lot:1042380090')),
         ERLocationData("LG/WS: Golden Rune [1] 3 - graveyard SW of WS", "Golden Rune [1]", key="604238,0:1042387100::", targets=('lot:1042380100')),
         ERLocationData("LG/WS: Golden Rune [1] 4 - graveyard SW of WS", "Golden Rune [1]", key="604238,0:1042387110::", targets=('lot:1042380110')),
-        ERLocationData("LG/(SG): Golden Rune [2] - off side of ruin above", "Golden Rune [2]", key="604238,0:1042387120::", targets=('lot:1042380120')),
-        ERLocationData("LG/(SG): Lump of Flesh - lower area", "Lump of Flesh", key="604238,0:1042387140::", targets=('lot:1042380140')),
-        ERLocationData("LG/(SG): Smoldering Butterfly x5 - on cliff above", "Smoldering Butterfly x5", key="604238,0:1042387200::", targets=('lot:1042382000')),
+        ERLocationData("LG/(SGa): Golden Rune [2] - off side of ruin above", "Golden Rune [2]", key="604238,0:1042387120::", targets=('lot:1042380120')),
+        ERLocationData("LG/(SGa): Lump of Flesh - lower area", "Lump of Flesh", key="604238,0:1042387140::", targets=('lot:1042380140')),
+        ERLocationData("LG/(SGa): Smoldering Butterfly x5 - on cliff above", "Smoldering Butterfly x5", key="604238,0:1042387200::", targets=('lot:1042382000')),
         ERLocationData("LG/WS: Smithing Stone [1] x5 - breakable statue SE of WS", "Smithing Stone [1] x5", key="604238,0:1042387600::", breakable=True, targets=('lot:1042380600')),
         ERLocationData("LG/WS: Smithing Stone [2] - breakable statue SE of WS", "Smithing Stone [2]", key="604238,0:1042387600::", breakable=True, targets=('lot:1042380601')),
         ERLocationData("LG/SR: Crab Eggs - to S", "Crab Eggs", key="604335,0:1043357000::", targets=('lot:1043350000')),
@@ -6251,7 +6251,7 @@ dupable_locations: Dict[str, int] = {}
 for k in ERPriorityLocationGroups.valid_keys:
     dupable_locations.update({loc: 0 for loc in location_name_groups[k] if not location_dictionary[loc].disallow_duplicates})
 # locations that required_locations might need
-dupable_locations.update({"LG/(SG): Finger Severer - beside grace": 0, "GP/TPC: Scadutree Fragment - by cross": 0})
+dupable_locations.update({"LG/(SGr): Finger Severer - beside grace": 0, "GP/TPC: Scadutree Fragment - by cross": 0})
 
 # make sure no lot gets over 8 locations
 for loc in dupable_locations.copy():

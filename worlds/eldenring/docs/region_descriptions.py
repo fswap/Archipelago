@@ -40,7 +40,8 @@ def find_description(initial: str) -> str:
         case "LG/MO": return "Mistwood Outskirts grace, E Limgrave."
         case "LG/MR": return "Waypoint Ruins landmark, Mid Limgrave."
         case "LG/SC": return "Stormfoot Catacombs landmark, Mid Limgrave."
-        case "LG/SG": return "Stranded Graveyard landmark, SW Limgrave."
+        case "LG/SGr": return "Stranded Graveyard landmark, SW Limgrave."
+        case "LG/(SGr)": return "Stranded Graveyard landmark, SW Limgrave."
         case "LG/SR": return "Seaside Ruins grace, SW Limgrave."
         case "LG/SRW": return "Siofra River Well landmark, E Limgrave."        
         case "LG/SWV": return "Summonwater Village landmark, NE Limgrave."
@@ -51,7 +52,7 @@ def find_description(initial: str) -> str:
         
         # stormhill
         case "LG/(SE)": return "Stormhill Evergaol, S Stormhill."
-        case "LG/(SG)": return "Stormgate landmark, S Stormhill."
+        case "LG/(SGa)": return "Stormgate landmark, S Stormhill."
         case "LG/(SS)": return "Stormhill Shack landmark, W Stormhill."
         case "LG/(WS)": return "Warmaster's Shack landmark, mid Stormhill."
         case "LG/DC": return "Deathtouched Catacombs landmark, NE Stormhill."
@@ -61,8 +62,6 @@ def find_description(initial: str) -> str:
         case "LG/SV": return "Stormveil landmark, area S of Margit arena."
         case "LG/WS": return "Warmaster's Shack grace, mid Stormhill."
         case "SV/CT": return "Castleward Tunnel grace, Stormveil enterance."
-        
-        case "": return "."
                         
         # limgrave dungeons
         case "LG/(CC)": return "Coastal Cave, SW Limgrave."
@@ -76,15 +75,38 @@ def find_description(initial: str) -> str:
         case "LG/(DC)": return "Deathtouched Catacombs, E Stormhill."
         case "LG/(FHG)": return "Fringefolk Hero's Grave, W Limgrave."
         
+        # stormveil
+        case "SV/GC": return "Gateside Chamber grace."
+        case "SV/LC": return "Liftside Chamber grace."
+        case "SV/LTB": return "Limgrave Tower Bridge grace."
+        case "SV/RT": return "Rampart Tower grace."
+        case "SV/SMG": return "Stormveil Main Gate grace."
+        case "SV/SeC": return "Secluded Cell grace."
+        case "SV/StC": return "Stormveil Cliffside grace."
+        case "SV/GG": return "Godrick the Grafted grace, in Godrick's arena."
+        case "SV/LL": return "Liurnia side of Stormveil, after Godrick's arena."
+        case "SV/(DTL)": return "Divine Tower of Limgrave landmark."
+        
+        
         # weeping
         case "WP/BS": return "Bridge of Sacrifice grace."
         
-        # roundtable doesn't need one, self explainatory
+        # weeping dungeons
+        case "WP/(IC)": return "Impaler's Catacombs, NE Weeping."
+        case "WP/(TCC)": return "Tombsward Catacombs, mid Weeping."
+        case "WP/(TCV)": return "Tombsward Cave, W Weeping."
+        case "WP/(MT)": return "Morne Tunnel, mid Weeping."
+        case "WP/(EC)": return "Earthbore Cave, N Weeping."
         
-        # stormveil
-        case "SV/GG": return "Godrick the Grafted grace in Godrick's arena."
+        # siofra
+        case "SR/(HG)": return "Hallowhorn Grounds landmark, SE Siofra."
+        case "SR/BW": return "Below The Well grace, N Siofra."
+        case "SR/SRB": return "Siofra River Bank grace, S Siofra."
+        case "SR/SRWD": return "Siofra River Well Depths grace, SW Siofra."
+        case "SR/WW": return "Worshippers' Woods grace, mid Siofra."
         
-        
+        case "": return "."
+
         # liurnia
         
         # study hall
@@ -116,7 +138,7 @@ def find_description(initial: str) -> str:
         # DLC
         
         # gravesite plains
-        case "": return ""
+        case "": return "."
         
         
         
