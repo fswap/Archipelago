@@ -1,0 +1,366 @@
+[
+  {
+    "img": "Limgrave.png",
+    "name": "Limgrave",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Limgrave.png",
+    "name": "Limgrave Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Roundtable Hold.png",
+    "name": "Roundtable Hold",
+    "location_size": 3,
+    "location_icon_size": 30,
+    "location_border_thickness": 1
+  },
+  {
+    "img": "Stormveil Castle.png",
+    "name": "Stormveil Castle",
+    "location_size": 3,
+    "location_icon_size": 60,
+    "location_border_thickness": 1
+  },
+  {
+    "img": "Weeping Peninsula.png",
+    "name": "Weeping Peninsula",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Weeping Peninsula.png",
+    "name": "Weeping Peninsula Dungeons",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Siofra.png",
+    "name": "Siofra",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Liurnia of The Lakes.png",
+    "name": "Liurnia of The Lakes",
+    "location_size": 15,
+    "location_icon_size": 160,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Liurnia of The Lakes.png",
+    "name": "Liurnia of The Lakes Dungeons",
+    "location_size": 15,
+    "location_icon_size": 160,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Raya Lucaria Academy.png",
+    "name": "Raya Lucaria Academy",
+    "location_size": 5,
+    "location_icon_size": 60,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Ruin-Strewn Precipice.png",
+    "name": "Ruin-Strewn Precipice",
+    "location_size": 5,
+    "location_icon_size": 30,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Caelid.png",
+    "name": "Caelid",
+    "location_size": 15,
+    "location_icon_size": 160,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Caelid.png",
+    "name": "Caelid Dungeons",
+    "location_size": 15,
+    "location_icon_size": 160,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Deeproot Depths.png",
+    "name": "Deeproot Depths",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Ainsel River.png",
+    "name": "Ainsel River",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Lake of Rot.png",
+    "name": "Lake of Rot",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Ainsel River Boss.png",
+    "name": "Ainsel River Boss",
+    "location_size": 10,
+    "location_icon_size": 60,
+    "location_border_thickness": 3
+  },
+  {
+    "img": "Moonlight Altar.png",
+    "name": "Moonlight Altar",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Altus Plateau.png",
+    "name": "Altus Plateau",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Altus Plateau.png",
+    "name": "Altus Plateau Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Mt. Gelmir.png",
+    "name": "Mt. Gelmir",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Mt. Gelmir.png",
+    "name": "Mt. Gelmir Dungeons",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Volcano Manor.png",
+    "name": "Volcano Manor",
+    "location_size": 5,
+    "location_icon_size": 30,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Capital Outskirts.png",
+    "name": "Capital Outskirts",
+    "location_size": 10,
+    "location_icon_size": 80,
+    "location_border_thickness": 3
+  },
+  {
+    "img": "Capital Outskirts.png",
+    "name": "Capital Outskirts Dungeons",
+    "location_size": 10,
+    "location_icon_size": 80,
+    "location_border_thickness": 3
+  },
+  {
+    "img": "Leyndell, Royal Capital.png",
+    "name": "Leyndell, Royal Capital",
+    "location_size": 3,
+    "location_icon_size": 60,
+    "location_border_thickness": 1
+  },
+  {
+    "img": "Subterranean Shunning-Grounds.png",
+    "name": "Subterranean Shunning-Grounds",
+    "location_size": 3,
+    "location_icon_size": 60,
+    "location_border_thickness": 1
+  },
+  {
+    "img": "Post-Leyndell.png",
+    "name": "Post-Leyndell",
+    "location_size": 10,
+    "location_icon_size": 80,
+    "location_border_thickness": 3
+  },
+  {
+    "img": "Mountaintops of the Giants.png",
+    "name": "Mountaintops of the Giants",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Mountaintops of the Giants.png",
+    "name": "Mountaintops of the Giants Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Farum Azula.png",
+    "name": "Farum Azula",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Consecrated Snowfield.png",
+    "name": "Consecrated Snowfield",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Consecrated Snowfield.png",
+    "name": "Consecrated Snowfield Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Mohgwyn Palace.png",
+    "name": "Mohgwyn Palace",
+    "location_size": 3,
+    "location_icon_size": 30,
+    "location_border_thickness": 1
+  },
+  {
+    "img": "Miquella's Haligtree.png",
+    "name": "Miquella's Haligtree",
+    "location_size": 5,
+    "location_icon_size": 80,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Leyndell, Ashen Capital.png",
+    "name": "Leyndell, Ashen Capital",
+    "location_size": 5,
+    "location_icon_size": 60,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Gravesite Plain.png",
+    "name": "Gravesite Plain",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Gravesite Plain.png",
+    "name": "Gravesite Plain Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Belurat.png",
+    "name": "Belurat",
+    "location_size": 5,
+    "location_icon_size": 60,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Cerulean and Charo.png",
+    "name": "Cerulean and Charo",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Cerulean and Charo.png",
+    "name": "Cerulean and Charo Dungeons",
+    "location_size": 15,
+    "location_icon_size": 120,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Jagged Peak.png",
+    "name": "Jagged Peak",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Castle Ensis.png",
+    "name": "Castle Ensis",
+    "location_size": 4,
+    "location_icon_size": 30,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Scadu Altus.png",
+    "name": "Scadu Altus",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Scadu Altus.png",
+    "name": "Scadu Altus Dungeons",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Shadow Keep.png",
+    "name": "Shadow Keep",
+    "location_size": 3,
+    "location_icon_size": 30,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Shadow Keep, West Rampart.png",
+    "name": "Shadow Keep, West Rampart",
+    "location_size": 5,
+    "location_icon_size": 30,
+    "location_border_thickness": 2
+  },
+  {
+    "img": "Scaduview.png",
+    "name": "Scaduview",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Rauh Ruins and Base.png",
+    "name": "Rauh Ruins and Base",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Rauh Ruins and Base.png",
+    "name": "Rauh Ruins and Base Dungeons",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Abyssal Woods.png",
+    "name": "Abyssal Woods",
+    "location_size": 15,
+    "location_icon_size": 80,
+    "location_border_thickness": 4
+  },
+  {
+    "img": "Enir-Ilim.png",
+    "name": "Enir-Ilim",
+    "location_size": 5,
+    "location_icon_size": 60,
+    "location_border_thickness": 2
+  }
+]
