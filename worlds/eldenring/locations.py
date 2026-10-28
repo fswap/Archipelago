@@ -496,9 +496,9 @@ def missable_capital(self: ERLocationData, options: EROptions) -> bool:
 # for descriptions 
 # [area acronym]/[grace or location acronym]: [original item] - [what gives item, if it does] [direction from grace] or [very brief description]
 
-# CD/AFCHN: Lifesteal Fist - scarab to NW         # grace             to DIR      
-# LG/WR: Golden Rune [1] - graveyard S of WR      # location          DIR of location acro
-# LG/(CE): Smithing Stone [1] - on anvil          # within location   (location acro) at start
+# CL/ACHN: Ash of War: Lifesteal Fist - scarab to N  # grace             to DIR      
+# LG/WR: Golden Rune [1] - graveyard S of WR         # location          DIR of location acro
+# LG/(CE): Smithing Stone [1] - on anvil             # within location   (location acro) at start
 
 # the rare hostile npc's that aren't red      # hostile npc drop
 # invaders / red npc's                        # invader drop
@@ -1629,7 +1629,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/AHJ: Great Heal - Brother Corhyn shop to N by map pillar", "Great Heal", key="110000,0:0000000000:100350,1040529255:", missable=True, incantations=True, shop=True, targets=('shop:100358')),
         ERLocationData("AP/AHJ: Lightning Fortification - Brother Corhyn shop to N by map pillar", "Lightning Fortification", key="110000,0:0000000000:100350,1040529255:", missable=True, incantations=True, shop=True, targets=('shop:100359')),
         ERLocationData("AP/FSG: Discus of Light - Brother Corhyn shop FSG waygate", "Discus of Light", key="110000,0:0000000000:100350,1040549205:", missable=True, incantations=True, shop=True, targets=('shop:100360')),
-        ERLocationData("TSC/CI: Dancer's Castanets - given by Patches just outside boss arena", "Dancer's Castanets", key="160000,0:0000400181::", missable=True, targets=('lot:101810', 'lot:111815')),
+        ERLocationData("TSC/SCIG: Dancer's Castanets - given by Patches just outside boss arena", "Dancer's Castanets", key="160000,0:0000400181::", missable=True, targets=('lot:101810', 'lot:111815')),
         ERLocationData("AP/PR: Perfume Bottle - under table middle of ruins", "Perfume Bottle", key="603651,0:0000066730::", targets=('lot:1036510020')),
         ERLocationData("AP/PR: Perfumer's Cookbook [1] - in chest middle of ruins", "Perfumer's Cookbook [1]", key="603651,0:0000067840::", chest=True, cookbook=True, targets=('lot:1036510010')),
         ERLocationData("AP/PR: Golden Rune [5] - on a ledge S side of ruins", "Golden Rune [5]", key="603651,0:1036517000::", targets=('lot:1036510000')),
@@ -5137,11 +5137,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
     "Great-Jar":[ # caelid_greatjar                                       done
         ERLocationData("CL/CCO: Ritual Thrusting Shield - in colo behind Great-Jar", "Ritual Thrusting Shield", key="604742,0:1047427000::", tp_dlc=True, targets=('lot:1047420000')),
         ERLocationData("CL/CCO: Great-Jar's Arsenal - beat Great-Jar's knights", "Great-Jar's Arsenal", key="604741,0:0000400470::", npc=True, targets=('lot:104700')),
-        ERLocationData("CL/DW: Map: Dragonbarrow - map pillar to E", "Map: Dragonbarrow", key="604940,0:0000062041::", map=True, targets=('lot:1049400500')),
-        ERLocationData("CL/DW: Golden Rune [5] - in lake to E", "Golden Rune [5]", key="604940,0:1049407000::", targets=('lot:1049400000')),
-        ERLocationData("CL/DW: Gravel Stone - in lake to E", "Gravel Stone", key="604940,0:1049407010::", targets=('lot:1049400010')),
-        ERLocationData("CL/DW: Sliver of Meat x3 - in lake to E", "Sliver of Meat x3", key="604940,0:1049407020::", targets=('lot:1049400020')),
-        ERLocationData("CL/SE: Smithing Stone [5] x3 - breakable statue to N", "Smithing Stone [5] x3", key="604940,0:1049407040::", breakable=True, targets=('lot:1049400040')),
     ],
     "Forbidden Lands":[ # mountaintops_start                              done
         ERLocationData("FL/FL: Drawstring Fire Grease x2 - to W", "Drawstring Fire Grease x2", key="604751,0:1047517000::", targets=('lot:1047510000')),
@@ -5224,6 +5219,12 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DB/LR: Golden Rune [1] - graveyard SW of LR", "Golden Rune [1]", key="605241,0:1052417030::", targets=('lot:1052410030')),
         ERLocationData("DB/LR: Ash of War: Bloodhound's Step - night boss drop N of LR", "Ash of War: Bloodhound's Step", key="605241,0:1052417100::", altboss=True, night=True, targets=('lot:1052410100')),
         ERLocationData("DB/FG: Starlight Shards - to NE", "Starlight Shards", key="605243,0:1052437000::", targets=('lot:1052430000')),
+    
+        ERLocationData("DB/DW: Map: Dragonbarrow - map pillar to E", "Map: Dragonbarrow", key="604940,0:0000062041::", map=True, targets=('lot:1049400500')),
+        ERLocationData("DB/DW: Golden Rune [5] - in lake to E", "Golden Rune [5]", key="604940,0:1049407000::", targets=('lot:1049400000')),
+        ERLocationData("DB/DW: Gravel Stone - in lake to E", "Gravel Stone", key="604940,0:1049407010::", targets=('lot:1049400010')),
+        ERLocationData("DB/DW: Sliver of Meat x3 - in lake to E", "Sliver of Meat x3", key="604940,0:1049407020::", targets=('lot:1049400020')),
+        ERLocationData("DB/SE: Smithing Stone [5] x3 - breakable statue to N", "Smithing Stone [5] x3", key="604940,0:1049407040::", breakable=True, targets=('lot:1049400040')),
     ],
     "Mountaintops of the Giants":[ # mountaintops                         done
         ERLocationData("MotG/(GLR): Map: Mountaintops of the Giants, West - map pillar NE of GLR", "Map: Mountaintops of the Giants, West", key="604953,0:0000062050::", map=True, targets=('lot:1049530700')),
@@ -5416,7 +5417,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("ARR/RARW: Scadutree Fragment - to W up stairs, by NW monument", "Scadutree Fragment", key="614445,0:2044457000::", fragment=True, targets=('lot:2044450000')),
         ERLocationData("ARR/CBME: Four-Toed Fowl Foot x3 - to N downstairs, outside to S, drop right of elevator, forward 2 down 1", "Four-Toed Fowl Foot x3", key="614445,0:2044457010::", targets=('lot:2044450010')),
         ERLocationData("ARR/RARW: Spiritgrave Stone x2 - to W up stairs, down left hall", "Spiritgrave Stone x2", key="614445,0:2044457020::", targets=('lot:2044450020')),
-        ERLocationData("ARR/CMBE: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left", "Talisman of All Crucibles", key="614445,0:2044457900::", talisman=True, chest=True, targets=('lot:2044450900')),
+        ERLocationData("ARR/CBME: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left", "Talisman of All Crucibles", key="614445,0:2044457900::", talisman=True, chest=True, targets=('lot:2044450900')),
         ERLocationData("ARR/RARW: Spirit Calculus x3 - enemy drop to W up stairs, on right", "Spirit Calculus x3", key="614445,0:2044457950::", targets=('lot:524094724')),
         ERLocationData("ARR/RARW: Greater Potentate's Cookbook [9] - to W up stairs, outside to N, rot area, right path, right room, outside to NE", "Greater Potentate's Cookbook [9]", key="614446,0:0000068640::", cookbook=True, targets=('lot:2044460100')),
         ERLocationData("ARR/RARW: Revered Spirit Ash - to W up stairs, outside to N in gazebo", "Revered Spirit Ash", key="614446,0:2044467000::", revered=True, targets=('lot:2044460000')),

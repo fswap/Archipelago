@@ -5,6 +5,7 @@ import os
 import html
 
 from worlds.eldenring.locations import location_tables
+from worlds.eldenring.region_names import region_order, region_order_dlc
 
 # region to inital to description
 region_initals_to_description: Dict[str, Dict[str, str]] = {}
@@ -74,6 +75,8 @@ def find_description(initial: str) -> str:
         case "LG/(HC)": return "Highroad Cave, N Limgrave."
         case "LG/(DC)": return "Deathtouched Catacombs, E Stormhill."
         case "LG/(FHG)": return "Fringefolk Hero's Grave, W Limgrave."
+        
+        case "RH": return "Roundtable Hold."
         
         # stormveil
         case "SV/GC": return "Gateside Chamber grace."
@@ -297,24 +300,33 @@ if __name__ == '__main__':
                 region_initals_to_description[region][initial] = find_description(initial)
                 all_initials.append(initial) # removes dupe initials
                 
-    table = "## Base Game\n<table>\n"
+    table = "## Base Game\n<table border=2px soild white style=\"width:100%\">\n"
     last_region = ""
     for (region, inital_dict) in sorted(
         region_initals_to_description.items(),
         key = lambda pair: location_tables[pair[0]][0].region_value
     ):
         if region == "Roundtable Hold DLC Only":
-            table += f"</table><br><div>\n\n## DLC\n\n</div><table>\n"
+            table += f"</table><br><div>\n\n## DLC\n\n</div><table border=2px soild white style=\"width:100%\">\n"
         if last_region != find_label(region):
             last_region = find_label(region)
-            table += f"<tr><td><h3>\n\n### {html.escape(last_region)}\n\n</td></tr>\n"
+            table += f"<th colspan=\"2\" style=\"text-align: center\">\n\n### {html.escape(last_region)}\n\n</th>\n"
         for (initial, description) in sorted(
             inital_dict.items(),
             key = lambda pair: pair[0]
         ):
-            table += f"<tr><td><strong>{html.escape(initial)}: </strong>{html.escape(description)}</td></tr>\n"
+            table += f"<tr style=\"height:45px\"><td style=\"text-align: center\"><strong>{html.escape(initial)}</strong></td><td> {html.escape(description)}</td></tr>\n"
     table += "</table>\n"
-    # print(table)
+    
+    table += "\n\n## List of All Regions\n"
+    table += "<table>\n<tr><th>All Base Game Regions</th></tr>\n"
+    for region in region_order:
+        table += f"<tr><td>{region}</td></tr>\n"
+    table += "<tr><th>All DLC Regions</th></tr>\n"
+    table += "<tr><td>Roundtable Hold DLC Only</td></tr>\n"
+    for region in region_order_dlc:
+        table += f"<tr><td>{region}</td></tr>\n"
+    table += "</table>\n"
 
     with open(
         os.path.join(os.path.dirname(__file__), 'en_region_guide.md'),

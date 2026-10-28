@@ -2575,7 +2575,7 @@ class EldenRing(World):
             self._add_location_rule([ # patches request
             ], lambda state: self._can_go_to(state, "Volcano Manor Drawing Room"))
             
-            self._add_location_rule(["TSC/CI: Dancer's Castanets - given by Patches just outside boss arena",
+            self._add_location_rule(["TSC/SCIG: Dancer's Castanets - given by Patches just outside boss arena",
             ], lambda state: self._can_go_to(state, "Volcano Manor Upper")
                 and self._can_go_to(state, "Volcano Manor Drawing Room"))
             

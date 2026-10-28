@@ -15861,10 +15861,10 @@
     ]
   },
   {
-    "name": "CL/DW: Map: Dragonbarrow - map pillar to E",
+    "name": "DB/DW: Map: Dragonbarrow - map pillar to E",
     "sections": [
       {
-        "name": "CL/DW: Map: Dragonbarrow - map pillar to E"
+        "name": "DB/DW: Map: Dragonbarrow - map pillar to E"
       }
     ],
     "map_locations": [
@@ -15876,16 +15876,16 @@
     ]
   },
   {
-    "name": "CL/DW: Golden Rune [5] - in lake to E",
+    "name": "DB/DW: Golden Rune [5] - in lake to E",
     "sections": [
       {
-        "name": "CL/DW: Golden Rune [5] - in lake to E"
+        "name": "DB/DW: Golden Rune [5] - in lake to E"
       },
       {
-        "name": "CL/DW: Gravel Stone - in lake to E"
+        "name": "DB/DW: Gravel Stone - in lake to E"
       },
       {
-        "name": "CL/DW: Sliver of Meat x3 - in lake to E"
+        "name": "DB/DW: Sliver of Meat x3 - in lake to E"
       }
     ],
     "map_locations": [
@@ -15897,10 +15897,10 @@
     ]
   },
   {
-    "name": "CL/SE: Smithing Stone [5] x3 - breakable statue to N",
+    "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N",
     "sections": [
       {
-        "name": "CL/SE: Smithing Stone [5] x3 - breakable statue to N"
+        "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N"
       }
     ],
     "map_locations": [
@@ -19239,10 +19239,10 @@
     ]
   },
   {
-    "name": "TSC/CI: Dancer's Castanets - given by Patches just outside boss arena",
+    "name": "TSC/SCIG: Dancer's Castanets - given by Patches just outside boss arena",
     "sections": [
       {
-        "name": "TSC/CI: Dancer's Castanets - given by Patches just outside boss arena"
+        "name": "TSC/SCIG: Dancer's Castanets - given by Patches just outside boss arena"
       },
       {
         "name": "TSC/SCIG: Smithing Stone [5] - in courtyard before boss elevator in NW corner"
@@ -43206,10 +43206,10 @@
     ]
   },
   {
-    "name": "ARR/CMBE: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left",
+    "name": "ARR/CBME: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left",
     "sections": [
       {
-        "name": "ARR/CMBE: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left"
+        "name": "ARR/CBME: Talisman of All Crucibles - in chest to N downstairs, outside to S, drop right of elevator, follow path to elevator, continue down S pillar walkway, inside hole on left"
       }
     ],
     "map_locations": [
