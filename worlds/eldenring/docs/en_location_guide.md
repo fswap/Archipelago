@@ -12,10 +12,11 @@
 Look up acronyms in the [Region Guide](./en_region_guide.md).
 
 ### Examples
-* **CD/AFCHN: Lifesteal Fist - scarab to NW**
-<br> from grace AFCHN head in compass direction to find scarab
-* **LG/WR: Golden Rune [1] - graveyard S of WR**
+* **CL/ACHN: Ash of War: Lifesteal Fist - scarab to N**
+<br> from grace ACHN head in compass direction to find scarab
+* **LG/WR: Golden Rune [1] 1 - graveyard S of WR**
 <br> from landmark WR (because acronym is in the description) head in compass direction to find graveyard
+<br> a number after the item (`1`, `2`, ...) tells apart copies of the same item in one spot
 * **LG/(CE): Smithing Stone [1] - on anvil**
 <br> within landmark CE the item is on an anvil
 
