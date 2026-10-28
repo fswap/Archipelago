@@ -202,7 +202,7 @@ great_rune_hunt = {
     "great_runes_required_mountain":        -1,
     "great_runes_required_erdtree":         0,
     "royal_access":                         RoyalAccess.option_true,
-    "use_master_key":                       StoneswordMasterKey.option_vanilla,
+    "use_master_key":                       StoneswordMasterKey.default,
     
     "enable_dlc":                           EnableDLC.option_false,
     
@@ -249,7 +249,7 @@ base_game_only = {
     "great_runes_required_mountain":        4,
     "great_runes_required_erdtree":         7,
     "royal_access":                         RoyalAccess.option_true,
-    "use_master_key":                       StoneswordMasterKey.option_vanilla,
+    "use_master_key":                       StoneswordMasterKey.default,
     
     "enable_dlc":                           EnableDLC.option_false,
     
@@ -354,7 +354,7 @@ all_bosses = {
     "great_runes_required_mountain":        4,
     "great_runes_required_erdtree":         7,
     "royal_access":                         RoyalAccess.option_true,
-    "use_master_key":                       StoneswordMasterKey.option_vanilla,
+    "use_master_key":                       StoneswordMasterKey.default,
     
     "enable_dlc":                           EnableDLC.option_true,
     "dlc_start":                            DLCStart.option_normal,

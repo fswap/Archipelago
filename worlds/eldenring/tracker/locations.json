@@ -16071,13 +16071,13 @@
         "name": "DB/(FF): Dectus Medallion (Right) - chest top of ladder"
       },
       {
+        "name": "DB/(FF): Golden Rune [9] - enemy drop 1 in lower room"
+      },
+      {
         "name": "DB/(FF): Golden Rune [9] - enemy drop 2 in lower room"
       },
       {
         "name": "DB/(FF): Golden Rune [9] - enemy drop 3 in lower room"
-      },
-      {
-        "name": "DB/FF: Golden Rune [9] - enemy drop SE of FF"
       }
     ],
     "map_locations": [
@@ -16089,10 +16089,10 @@
     ]
   },
   {
-    "name": "DB/(FF): Golden Rune [9] - enemy drop 1 in lower room",
+    "name": "DB/FF: Golden Rune [9] - enemy drop SE of FF",
     "sections": [
       {
-        "name": "DB/(FF): Golden Rune [9] - enemy drop 1 in lower room"
+        "name": "DB/FF: Golden Rune [9] - enemy drop SE of FF"
       }
     ],
     "map_locations": [
