@@ -2080,7 +2080,7 @@ location_tables: Dict[str, List[DS3LocationData]] = {
         DS3LocationData("FS: Morne's Great Hammer - Eygon", "Morne's Great Hammer", npc=True),
         DS3LocationData("FS: Moaning Shield - Eygon", "Moaning Shield", npc=True),
 
-        # Shrine Handmaid after killing Dragonslayer Armour (or Eygon of Carim)
+        # Shrine Handmaid after killing Dancer of the Boreal Valley
         DS3LocationData("FS: Dancer's Crown - shop after killing LC entry boss", "Dancer's Crown",
                         boss=True, shop=True),
         DS3LocationData("FS: Dancer's Armor - shop after killing LC entry boss", "Dancer's Armor",
@@ -2092,13 +2092,13 @@ location_tables: Dict[str, List[DS3LocationData]] = {
 
         # Shrine Handmaid after killing Dragonslayer Armour (or Eygon of Carim)
         DS3LocationData("FS: Morne's Helm - shop after killing Eygon or LC boss", "Morne's Helm",
-                        boss=True, shop=True, missable=True),
+                        boss=True, shop=True),
         DS3LocationData("FS: Morne's Armor - shop after killing Eygon or LC boss", "Morne's Armor",
-                        boss=True, shop=True, missable=True),
+                        boss=True, shop=True),
         DS3LocationData("FS: Morne's Gauntlets - shop after killing Eygon or LC boss",
-                        "Morne's Gauntlets", boss=True, shop=True, missable=True),
+                        "Morne's Gauntlets", boss=True, shop=True),
         DS3LocationData("FS: Morne's Leggings - shop after killing Eygon or LC boss",
-                        "Morne's Leggings", boss=True, shop=True, missable=True),
+                        "Morne's Leggings", boss=True, shop=True),
     ],
     "Consumed King's Garden": [
         DS3LocationData("CKG: Soul of Consumed Oceiros", "Soul of Consumed Oceiros",
