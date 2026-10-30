@@ -561,6 +561,7 @@ class DarkSouls3World(World):
         self._add_crow_rules()
         self._add_allow_useful_location_rules()
         self._add_early_item_rules(randomized_items)
+        self._heal_upgrades()
 
         self._add_entrance_rule("Firelink Shrine Bell Tower", "Tower Key")
         self._add_entrance_rule("Undead Settlement", lambda state: (
@@ -1331,6 +1332,64 @@ class DarkSouls3World(World):
             or state.has("Logan's Scroll", self.player)
             or state.has("Crystal Scroll", self.player)
         )
+
+    def _heal_upgrades(self) -> None:
+            """Returns whether the player has the required heal upgrades."""
+            def scale(amount):
+                result = (amount * self.options.health_logic + 2) // 4
+                return result
+            if(self.options.health_logic):
+                self._add_entrance_rule("Undead Settlement", lambda state: (
+                    state.has("Estus Shard", self.player, scale(1)) and state.has("Undead Bone Shard", self.player, scale(0))
+                ))
+                self._add_entrance_rule("Road of Sacrifices", lambda state: (
+                    state.has("Estus Shard", self.player, scale(2)) and state.has("Undead Bone Shard", self.player, scale(1))
+                ))
+                self._add_entrance_rule("Farron Keep", lambda state: (
+                    state.has("Estus Shard", self.player, scale(3)) and state.has("Undead Bone Shard", self.player, scale(1))
+                ))
+                self._add_entrance_rule("Cathedral of the Deep", lambda state: (
+                    state.has("Estus Shard", self.player, scale(3)) and state.has("Undead Bone Shard", self.player, scale(1))
+                ))
+                self._add_entrance_rule("Catacombs of Carthus", lambda state: (
+                    state.has("Estus Shard", self.player, scale(4)) and state.has("Undead Bone Shard", self.player, scale(3))
+                ))
+                self._add_entrance_rule("Smouldering Lake", lambda state: (
+                    state.has("Estus Shard", self.player, scale(5)) and state.has("Undead Bone Shard", self.player, scale(4))
+                ))
+                self._add_entrance_rule("Irithyll of the Boreal Valley", lambda state: (
+                    state.has("Estus Shard", self.player, scale(6)) and state.has("Undead Bone Shard", self.player, scale(6))
+                ))
+                self._add_entrance_rule("Irithyll Dungeon", lambda state: (
+                    state.has("Estus Shard", self.player, scale(6)) and state.has("Undead Bone Shard", self.player, scale(7))
+                ))
+                self._add_entrance_rule("Anor Londo", lambda state: (
+                    state.has("Estus Shard", self.player, scale(6)) and state.has("Undead Bone Shard", self.player, scale(7))
+                ))
+                self._add_entrance_rule("Profaned Capital", lambda state: (
+                    state.has("Estus Shard", self.player, scale(7)) and state.has("Undead Bone Shard", self.player, scale(6))
+                ))
+                self._add_entrance_rule("Lothric Castle", lambda state: (
+                    state.has("Estus Shard", self.player, scale(8)) and state.has("Undead Bone Shard", self.player, scale(8))
+                ))
+                self._add_entrance_rule("Consumed King's Garden", lambda state: (
+                    state.has("Estus Shard", self.player, scale(8)) and state.has("Undead Bone Shard", self.player, scale(8))
+                ))
+                self._add_entrance_rule("Untended Graves", lambda state: (
+                    state.has("Estus Shard", self.player, scale(9)) and state.has("Undead Bone Shard", self.player, scale(8))
+                ))
+                self._add_entrance_rule("Archdragon Peak (Through Fort)", lambda state: (
+                    state.has("Estus Shard", self.player, scale(9)) and state.has("Undead Bone Shard", self.player, scale(8))
+                ))
+                self._add_entrance_rule("Grand Archives", lambda state: (
+                    state.has("Estus Shard", self.player, scale(9)) and state.has("Undead Bone Shard", self.player, scale(9))
+                ))
+                self._add_entrance_rule("Kiln of the First Flame", lambda state: (
+                    state.has("Estus Shard", self.player, scale(11)) and state.has("Undead Bone Shard", self.player, scale(10))
+                ))
+                self._add_entrance_rule("Painted World of Ariandel (Before Contraption)", lambda state: (
+                    state.has("Estus Shard", self.player, scale(11)) and state.has("Undead Bone Shard", self.player, scale(10))
+                ))
 
     def _add_location_rule(self, location: Union[str, List[str]], rule: Union[CollectionRule, str]) -> None:
         """Sets a rule for the given location if it that location is randomized.
