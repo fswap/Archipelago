@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict
 
 from Options import Choice, DefaultOnToggle, ExcludeLocations, NamedRange, OptionDict, \
-    OptionGroup, OptionSet, PerGameCommonOptions, Range, Removed, Toggle, OptionError
+    OptionGroup, OptionSet, PerGameCommonOptions, Range, Removed, Toggle, OptionError, LocalItems
 
 from .Bosses import all_bosses
 
@@ -60,6 +60,10 @@ class EarlySmallLothricBanner(Choice):
     option_early_local = 2
     default = option_off
 
+class EarlyCoiledSword(Toggle):
+    """Force Coiled Sword into an early sphere in your world."""
+    display_name = "Early Coiled Sword"
+    default = True
 
 class LateBasinOfVowsOption(Choice):
     """Guarantee that you don't need to enter Lothric Castle until later in the run.
@@ -376,6 +380,9 @@ class RandomEnemyPresetOption(OptionDict):
 
 
 ## Item & Location
+class DS3LocalItems(LocalItems):
+    """Force these items to be native to their world"""
+    default = frozenset({"Coiled Sword"})
 
 class DS3ExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important item."""
@@ -429,6 +436,7 @@ class DarkSouls3Options(PerGameCommonOptions):
     # Game Options
     goal: GoalOption
     early_banner: EarlySmallLothricBanner
+    local_coiled_sword: EarlyCoiledSword
     late_basin_of_vows: LateBasinOfVowsOption
     late_dlc: LateDLCOption
     death_link: DeathLink
@@ -470,6 +478,7 @@ class DarkSouls3Options(PerGameCommonOptions):
     random_enemy_preset: RandomEnemyPresetOption
 
     # Item & Location
+    local_items: DS3LocalItems
     exclude_locations: DS3ExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
@@ -527,6 +536,7 @@ option_groups = [
         RandomEnemyPresetOption,
     ]),
     OptionGroup("Item & Location Options", [
+        DS3LocalItems,
         DS3ExcludeLocations,
         ExcludedLocationBehaviorOption,
         MissableLocationBehaviorOption,
