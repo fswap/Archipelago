@@ -674,10 +674,8 @@ class DarkSouls3World(World):
             "UG: Wolf Knight Gauntlets - shop after killing FK boss",
             "UG: Wolf Knight Leggings - shop after killing FK boss"
         ], lambda state: self._can_get(state, "FK: Cinders of a Lord - Abyss Watcher"))
-        self._add_location_rule([
+        self._add_location_rule(
             "ID: Prisoner Chief's Ashes - B2 near, locked cell by stairs",
-            "ID: Rusted Coin - after bonfire, first cell on left"
-            ],
             "Jailer's Key Ring"
         )
         self._add_entrance_rule("Karla's Shop", "Jailer's Key Ring")
