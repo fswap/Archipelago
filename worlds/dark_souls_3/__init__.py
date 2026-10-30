@@ -614,9 +614,11 @@ class DarkSouls3World(World):
                 and (
                     "Transposing Kiln" not in randomized_items
                     or state.has("Transposing Kiln", self.player)
+                    or self.options.smooth_logic == False
                 ) and (
                     "Pyromancy Flame" not in randomized_items
                     or state.has("Pyromancy Flame", self.player)
+                    or self.options.smooth_logic == False
                 )
                 # This isn't really necessary, but it ensures that the game logic knows players will
                 # want to do Lothric Castle after at least being _able_ to access Catacombs. This is
@@ -695,9 +697,11 @@ class DarkSouls3World(World):
                 and (
                     "Transposing Kiln" not in randomized_items
                     or state.has("Transposing Kiln", self.player)
+                    or self.options.smooth_logic == False
                 ) and (
                     "Pyromancy Flame" not in randomized_items
                     or state.has("Pyromancy Flame", self.player)
+                    or self.options.smooth_logic == False
                 )
                 # This isn't really necessary, but it ensures that the game logic knows players will
                 # want to do Lothric Castle after at least being _able_ to access Catacombs. This is
@@ -1302,12 +1306,12 @@ class DarkSouls3World(World):
     def _add_early_item_rules(self, randomized_items: Set[str]) -> None:
         """Adds rules to make sure specific items are available early."""
 
-        if "Pyromancy Flame" in randomized_items:
+        if (("Pyromancy Flame" in randomized_items) and self.options.smooth_logic):
             # Make this available early because so many items are useless without it.
             self._add_entrance_rule("Road of Sacrifices", "Pyromancy Flame")
             self._add_entrance_rule("Consumed King's Garden", "Pyromancy Flame")
             self._add_entrance_rule("Grand Archives", "Pyromancy Flame")
-        if "Transposing Kiln" in randomized_items:
+        if (("Transposing Kiln" in randomized_items) and self.options.smooth_logic):
             # Make this available early so players can make use of their boss souls.
             self._add_entrance_rule("Road of Sacrifices", "Transposing Kiln")
             self._add_entrance_rule("Consumed King's Garden", "Transposing Kiln")
