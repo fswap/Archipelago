@@ -125,7 +125,7 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 <tr style="height:45px"><td style="text-align: center"><strong>LG/LC</strong></td><td> Limgrave Colosseum landmark, N Stormhill.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>LG/SB</strong></td><td> Saintsbridge grace, E Stormhill.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>LG/SS</strong></td><td> Stormhill Shack grace, W Stormhill.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LG/SV</strong></td><td> Stormveil landmark, area S of Margit arena.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LG/SV</strong></td><td> Stormveil landmark, area S of Margit arena or right of Stormveil on the bridge to Liurnia.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>LG/WS</strong></td><td> Warmaster&#x27;s Shack grace, mid Stormhill.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>SV/CT</strong></td><td> Castleward Tunnel grace, Stormveil enterance.</td></tr>
 <th colspan="2" style="text-align: center">

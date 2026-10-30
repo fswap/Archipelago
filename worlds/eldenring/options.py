@@ -659,7 +659,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **Out of the Way**: Locations that take a bit to get.
     - **Drop**: One time drop items from enemies.
     - **Dungeon**: All locations in mini dungeons. *Caves, Catas, Tunnels, ect..*
-    - **Region Name**: Any individual region in the Region Guide.
+    - **Region Name**: Any individual region in the Region Guide, these are very specific.
     
     - **Post Leyndell**: Used for great rune hunt, excludes everything after Leyndell. *-untested*
     """ # - **Post Stormveil**: Used for short runs, excludes everything after Stormveil.   needs code to stop rules past stormveil, leyndell and dlc

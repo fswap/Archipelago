@@ -368,6 +368,12 @@ class ERLocationData:
             else:
                 names.append("DLC Boss Reward")
         
+        if self.drop or "enemy drop" in self.name or "hostile npc drop" in self.name or "invader drop" in self.name:
+            self.drop = True
+            names.append("Drop")
+        if "- Enia" in self.name:
+            self.conditional = True
+        
         if self.achievement: names.append("Achievement Boss")      
         if self.remembrance and self.dlc: names.append("DLC Remembrance Boss")
         
@@ -399,7 +405,6 @@ class ERLocationData:
                 names.append("Shop")
             self.disallow_duplicates = True
         if self.outoftheway: names.append("Out of the Way")
-        if self.drop: names.append("Drop")
         if self.hidden: names.append("Hidden")
         if self.blizzard: names.append("Blizzard")
         if self.dlc: names.append("DLC")
@@ -5015,7 +5020,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CO/HMS: Golden Rune [4] - to SE end of left cliff behind gravestone", "Golden Rune [4]", key="604453,0:1044537010::", targets=('lot:1044530010')),
         ERLocationData("CO: Dragon Greatclaw - capital great rune gate boss drop", "Dragon Greatclaw", key="604552,0:0000530315::", altboss=True, missable=True, targets=('lot:30315')),
         ERLocationData("CO: Dragonclaw Shield - capital great rune gate boss drop", "Dragonclaw Shield", key="604552,0:0000530315::", altboss=True, missable=True, targets=('lot:30316')),
-        ERLocationData("CO/AHG: Gravity Stone Fan x3 - NE of AHG up on left cliff", "Gravity Stone Fan x3", key="604552,0:1045527000::", targets=('lot:1045520000')),
+        ERLocationData("CO/AHG: Gravity Stone Fan x3 - NW of AHG up on left cliff", "Gravity Stone Fan x3", key="604552,0:1045527000::", targets=('lot:1045520000')),
         ERLocationData("CO: Gravel Stone - around right cliff from capital great rune gate", "Gravel Stone", key="604552,0:1045527010::", targets=('lot:1045520010')),
         ERLocationData("CO/AHG: Smithing Stone [6] x2 - breakable statue N of AHG", "Smithing Stone [6] x2", key="604552,0:1045527020::", targets=('lot:1045520020')),
         ERLocationData("CO/ME: Smithing Stone [5] - to SE on rock", "Smithing Stone [5]", key="604552,0:1045527030::", targets=('lot:1045520030')),
@@ -6241,13 +6246,6 @@ for location_name, location_table in location_tables.items():
         if not location_data.is_event
     ])
     
-    # Add enemy drop to drop tag so it can be exclued
-    if location_name.__contains__("enemy drop") or location_name.__contains__("hostile npc drop") or location_name.__contains__("invader drop"):
-        location_data.drop = True    
-        
-    if location_name.__contains__("- Enia"):
-        location_data.conditional = True
-        
 dupable_locations: Dict[str, int] = {}
 for k in ERPriorityLocationGroups.valid_keys:
     dupable_locations.update({loc: 0 for loc in location_name_groups[k] if not location_dictionary[loc].disallow_duplicates})

@@ -1742,7 +1742,11 @@ class EldenRing(World):
                     #         self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
                     #         if self.options.other_world_useful_at_priority:
                     #             self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
-        
+        else:
+            for loc in self.multiworld.get_unfilled_locations(self.player):
+                if loc.name in self.options.exclude_locations.value: 
+                    self._add_item_rule(loc.name, lambda item: not item.advancement and not item.useful)
+            
         # Ending Goal
         self.multiworld.completion_condition[self.player] = lambda state: self._is_complete(state)
     

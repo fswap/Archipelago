@@ -60,7 +60,7 @@ def find_description(initial: str) -> str:
         case "LG/LC": return "Limgrave Colosseum landmark, N Stormhill."
         case "LG/SB": return "Saintsbridge grace, E Stormhill."
         case "LG/SS": return "Stormhill Shack grace, W Stormhill."
-        case "LG/SV": return "Stormveil landmark, area S of Margit arena."
+        case "LG/SV": return "Stormveil landmark, area S of Margit arena or right of Stormveil on the bridge to Liurnia."
         case "LG/WS": return "Warmaster's Shack grace, mid Stormhill."
         case "SV/CT": return "Castleward Tunnel grace, Stormveil enterance."
                         
