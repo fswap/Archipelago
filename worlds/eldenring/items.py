@@ -7,6 +7,8 @@ from logging import warning
 from BaseClasses import Item, ItemClassification
 from .options import EROptions, shard_list
 
+soft_logic_item = "Soft Logic"
+
 class ERItemCategory(IntEnum):
     GOODS = 1
     WEAPON = 2
@@ -2278,6 +2280,7 @@ _vanilla_items = [
     ERItemData("Jarwight Puppet", 263000, ERItemCategory.GOODS, spirit_ashes=True),
     
     ERItemData("Dummy item", 0, ERItemCategory.GOODS, skip=True), # used in dlc roundtable, and dupe priority locations
+    ERItemData(soft_logic_item, 0, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Progressive Items
     

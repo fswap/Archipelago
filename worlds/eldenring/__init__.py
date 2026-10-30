@@ -14,7 +14,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location, all_boss_locations_dictionary, boss_name_to_data
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups, soft_logic_item
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, dupable_locations
 from .region_names import region_order, region_order_dlc
 from .options import EROptions, EnableDLC, option_groups, shard_list
@@ -163,6 +163,7 @@ class EldenRing(World):
     
     # UT stuff
     soft_logic_enabled: bool = None
+    glitches_item_name = soft_logic_item
     location_id_to_alias: Dict[int, str] = {}
     ut_can_gen_without_yaml = True
     tracker_world: ClassVar = {
@@ -1446,8 +1447,10 @@ class EldenRing(World):
             
             # altus before caelid
             if self.options.soft_logic:
-                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau"))
+                self._add_entrance_rule("Caelid", lambda state: self._can_go_to(state, "Altus Plateau") or state.has(soft_logic_item, self.player))
                 self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Caelid"))
+                self._add_entrance_rule("Dragonbarrow", lambda state: self._can_go_to(state, "Leyndell, Royal Capital") or state.has(soft_logic_item, self.player))
+                self.multiworld.register_indirect_condition(self.get_region("Leyndell, Royal Capital"), self.get_entrance("Go To Dragonbarrow"))
             # wailing dunes hard requires altus
             self._add_location_rule("CL/(RC): Smithing Stone [6] - in church during festival", lambda state: self._can_go_to(state, "Altus Plateau"))
             self._add_entrance_rule("Wailing Dunes", lambda state: self._can_go_to(state, "Altus Plateau"))
@@ -1456,8 +1459,7 @@ class EldenRing(World):
             
             if not self.options.enemy_rando and self.soft_logic_enabled: # boss rules
                 self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player)
-                                        )
+                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
                 if not self.options.rykard_encounter:
                     self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
                                             "Serpent-Hunter")
@@ -1563,7 +1565,7 @@ class EldenRing(World):
             
             self._add_entrance_rule("Mountaintops of the Giants", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold"))
             if self.options.soft_logic:
-                self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold"))
+                self._add_entrance_rule("Consecrated Snowfield", lambda state: self._has_key_or_shards(state, "Rold Medallion", "rold") or state.has(soft_logic_item, self.player))
             
             self._add_entrance_rule("Hidden Path to the Haligtree", lambda state: 
                 state.has("Haligtree Secret Medallion (Left)", self.player) and state.has("Haligtree Secret Medallion (Right)", self.player))
@@ -1587,10 +1589,10 @@ class EldenRing(World):
                     self._add_entrance_rule("Gravesite Plain", # DLC requires all bell bearings if starting in base game
                         lambda state: self._bell_bearings_required(state, 4, False) and self._bell_bearings_required(state, 5, True))
             
-            if self.options.early_legacy_dungeons and self.soft_logic_enabled:
-                self._add_entrance_rule("Liurnia of The Lakes", lambda state: self._has_key_or_shards(state, "Rusty Key"))
-                self._add_entrance_rule("Caelid", lambda state: self._has_key_or_shards(state, "Rusty Key"))
-                self._add_entrance_rule("Altus Plateau", "Academy Glintstone Key")
+            if self.options.early_legacy_dungeons:
+                self._add_entrance_rule("Liurnia of The Lakes", lambda state: self._has_key_or_shards(state, "Rusty Key") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Caelid", lambda state: self._has_key_or_shards(state, "Rusty Key") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Altus Plateau", lambda state: state.has("Academy Glintstone Key", self.player) or state.has(soft_logic_item, self.player))
         
             if location_dictionary["LL/(RC): Pureblood Knight's Medal - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"].should_randomize(self.options, self.all_excluded_locations):
                 if self.options.dlc_start == 0 and self.options.enable_dlc:
@@ -1696,7 +1698,8 @@ class EldenRing(World):
             # DLC region rules
             
             if self.options.soft_logic: # jagged peak is a later game area, make it not first
-                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_go_to(state, "Belurat") or self._can_go_to(state, "Ellac River") or self._can_go_to(state, "Castle Ensis"))
+                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_go_to(state, "Belurat") 
+                    or self._can_go_to(state, "Ellac River") or self._can_go_to(state, "Castle Ensis") or state.has(soft_logic_item, self.player))
             
             self._add_entrance_rule("Belurat Swamp", lambda state: # the long drop down path lets you go here
                 state.has("Well Depths Key", self.player) or self._can_go_to(state, "Enir-Ilim"))
