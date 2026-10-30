@@ -477,7 +477,7 @@ class DarkSouls3World(World):
         # If the Coiled Sword is vanilla, it is early enough and doesn't need to be placed.
         # Don't place this in the multiworld because it's necessary almost immediately, and don't
         # mark it as a blocker for HWL because having a miniscule Sphere 1 screws with progression balancing.
-        if self._is_location_available("CA: Coiled Sword - boss drop"):
+        if (self._is_location_available("CA: Coiled Sword - boss drop") and self.options.local_coiled_sword):
             self._fill_local_item("Coiled Sword", ["Cemetery of Ash", "Firelink Shrine"])
 
         # If the HWL Raw Gem is vanilla, it is early enough and doesn't need to be removed. If
@@ -562,6 +562,7 @@ class DarkSouls3World(World):
         self._add_allow_useful_location_rules()
         self._add_early_item_rules(randomized_items)
 
+        self._add_entrance_rule("High Wall of Lothric", "Coiled Sword")
         self._add_entrance_rule("Firelink Shrine Bell Tower", "Tower Key")
         self._add_entrance_rule("Undead Settlement", lambda state: (
             state.has("Small Lothric Banner", self.player)
@@ -605,6 +606,7 @@ class DarkSouls3World(World):
             and state.has("Cinders of a Lord - Aldrich", self.player)
             and state.has("Cinders of a Lord - Lothric Prince", self.player)
             and state.has("Transposing Kiln", self.player)
+            and state.has("Coiled Sword", self.player)
         ))
 
         if self.options.late_basin_of_vows:
@@ -663,6 +665,11 @@ class DarkSouls3World(World):
                         from_region="Kiln of the First Flame")
 
         # Define the access rules to some specific locations
+        self._add_location_rule([
+            "FS: Cracked Red Eye Orb - Leonhard"
+        ], lambda state: (
+            self._can_get(state, "HWL: Soul of Boreal Valley Vordt")
+        ))
         self._add_location_rule("HWL: Red Eye Orb - wall tower, miniboss", "Lift Chamber Key")
         self._add_location_rule("ID: Bellowing Dragoncrest Ring - drop from B1 towards pit",
                                 "Jailbreaker's Key")
