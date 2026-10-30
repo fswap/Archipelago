@@ -239,6 +239,15 @@ class MaxLevelsIn10WeaponPoolOption(Range):
 
 ## Item Smoothing
 
+class SmoothLogicOption(Toggle):
+    """Include Pyromancy Flame and Transposing Kiln in the logic.
+
+    With this on, these 2 items become a requirement to reach areas like Road of Sacrifices,
+    Consumed King's Gardens and Grand Archives 
+    """
+    display_name = "Enable Smooth Logic"
+    default = False
+
 class SmoothSoulItemsOption(DefaultOnToggle):
     """Distribute soul items in a similar order as the base game.
 
@@ -454,6 +463,7 @@ class DarkSouls3Options(PerGameCommonOptions):
     max_levels_in_10: MaxLevelsIn10WeaponPoolOption
 
     # Item Smoothing
+    smooth_logic: SmoothLogicOption
     smooth_soul_items: SmoothSoulItemsOption
     smooth_upgrade_items: SmoothUpgradeItemsOption
     smooth_upgraded_weapons: SmoothUpgradedWeaponsOption
@@ -511,6 +521,7 @@ option_groups = [
         MaxLevelsIn10WeaponPoolOption,
     ]),
     OptionGroup("Item Smoothing", [
+        SmoothLogicOption,
         SmoothSoulItemsOption,
         SmoothUpgradeItemsOption,
         SmoothUpgradedWeaponsOption,
