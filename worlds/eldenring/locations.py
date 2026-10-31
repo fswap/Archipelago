@@ -3049,7 +3049,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CL/SSR: Sacramental Bud - NW of SSR up roots", "Sacramental Bud", key="604839,0:1048397000::", targets=('lot:1048390000')),
         ERLocationData("CL/DSW: Somber Smithing Stone [5] - to S after one way drop", "Somber Smithing Stone [5]", key="604839,0:1048397010::", targets=('lot:1048390010')),
         ERLocationData("CL/(CR): Great Dragonfly Head x3 - in SE ruin", "Great Dragonfly Head x3", key="604839,0:1048397040::", targets=('lot:1048390040')),
-        ERLocationData("CL/DSW: Stonesword Key - to S", "Stonesword Key", key="604839,0:1048397050::", targets=('lot:1048390050')),
         ERLocationData("CL/(SSR): Rock Sling - in chest underground", "Rock Sling", key="604839,0:1048397900::", chest=True, targets=('lot:1048390900')),
         ERLocationData("CL/(CR): Fire Blossom x3 - enemy drop 3 E side", "Fire Blossom x3", key="604839,0:1048407980::", targets=('lot:446040052')),
         ERLocationData("CL/(CR): Smoldering Butterfly x5 - enemy drop 3 E side", "Smoldering Butterfly x5", key="604839,0:1048407980::", targets=('lot:446040051')),
@@ -3058,7 +3057,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CL/DW: Golden Rune [2] - graveyard to S", "Golden Rune [2]", key="604840,0:1048407030::", targets=('lot:1048400030')),
         ERLocationData("CL/CR: Sacramental Bud - on giant skull SE of CR", "Sacramental Bud", key="604840,0:1048407040::", targets=('lot:1048400040')),
         ERLocationData("CL/CR: Hefty Beast Bone x3 - E of CR", "Hefty Beast Bone x3", key="604840,0:1048407050::", targets=('lot:1048400050')),
-        ERLocationData("CL/DSW: Spiked Palisade Shield - to W follow ravine", "Spiked Palisade Shield", key="604840,0:1048407060::", targets=('lot:1048400060')),
         ERLocationData("CL/(CR): Visage Shield - in chest after boss", "Visage Shield", key="604840,0:1048407900::", chest=True, targets=('lot:1048400900')),
         ERLocationData("CL/(CR): Fire Blossom x3 - enemy drop 1 near underground entrance", "Fire Blossom x3", key="604840,0:1048407990::", targets=('lot:446040042')),
         ERLocationData("CL/(CR): Smoldering Butterfly x5 - enemy drop 1 near underground entrance", "Smoldering Butterfly x5", key="604840,0:1048407990::", targets=('lot:446040041')),
@@ -5142,6 +5140,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
     "Great-Jar":[ # caelid_greatjar                                       done
         ERLocationData("CL/CCO: Ritual Thrusting Shield - in colo behind Great-Jar", "Ritual Thrusting Shield", key="604742,0:1047427000::", tp_dlc=True, targets=('lot:1047420000')),
         ERLocationData("CL/CCO: Great-Jar's Arsenal - beat Great-Jar's knights", "Great-Jar's Arsenal", key="604741,0:0000400470::", npc=True, targets=('lot:104700')),
+        ERLocationData("CL/DSW: Spiked Palisade Shield - to W follow ravine", "Spiked Palisade Shield", key="604840,0:1048407060::", targets=('lot:1048400060')),
+        ERLocationData("CL/DSW: Stonesword Key - to S", "Stonesword Key", key="604839,0:1048397050::", targets=('lot:1048390050')),
     ],
     "Forbidden Lands":[ # mountaintops_start                              done
         ERLocationData("FL/FL: Drawstring Fire Grease x2 - to W", "Drawstring Fire Grease x2", key="604751,0:1047517000::", targets=('lot:1047510000')),
