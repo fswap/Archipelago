@@ -62,7 +62,7 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 - RR: [Recluses' River](#recluses-river)
 - AW: [Abyssal Woods](#abyssal-woods)
 - MM: [Midra's Manse](#midras-manse)
-- EI: [Enir Ilim](#enir-ilim)
+- EI: [Enir-Ilim](#enir-ilim)
 
 <br>
 <br>

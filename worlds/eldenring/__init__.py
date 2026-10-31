@@ -300,13 +300,15 @@ class EldenRing(World):
                 or self.options.excluded_location_behavior >= 3 and # don't do_not_randomize or omit prog or useful
                 (ItemClassification.progression in item_table[location_dictionary[loc].default_item_name].is_important(self.options)
                 or ItemClassification.useful in item_table[location_dictionary[loc].default_item_name].is_important(self.options))
-                or self.options.missable_location_behavior >= 3 and location_dictionary[loc].missable)):
+                or self.options.missable_location_behavior >= 3 and location_dictionary[loc].missable)
+                or self.base_enabled and loc in [t.name for t in location_tables["Roundtable Hold DLC Only"]]):
                 self.all_excluded_locations.remove(loc)
         
-        for group in self.settings.force_local_items: # add forced setting groups
-            if group not in item_name_groups:
-                warning(f"host.yaml warning: {group} is not a vaild group.")
-            else: self.options.local_item_only.value.update(item_name_groups[group])
+        if isinstance(self.settings.force_local_items, List): # make sure its a list
+            for group in self.settings.force_local_items: # add forced setting groups
+                if group not in item_name_groups:
+                    warning(f"ER host.yaml warning: {group} is not a vaild group.")
+                else: self.options.local_item_only.value.update(item_name_groups[group])
         
         for item in self.options.local_item_only.value:
             if item in item_table and item_table[item].classification not in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
