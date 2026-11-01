@@ -594,6 +594,10 @@ class OtherWorldUsefulAtPriority(DefaultOnToggle):
     You probaly don't want this off, but also can cause gen fails due to lots of item rules."""
     display_name = "Other World Useful At Priority"
 
+class NoFillerAtPriority(Toggle):
+    """Don't place filler items at Priority locations, you'll find weapons and armour more often."""
+    display_name = "No Filler At Priority"
+
 class FlaskUpgradesAtPriority(DefaultOnToggle):
     "Should flask upgrades be randomized to important locations."
     display_name = "Flask Upgrades at Priority"
@@ -789,6 +793,7 @@ class EROptions(PerGameCommonOptions):
     important_at_priority_only: ERImportantAtPriorityOnly
     important_at_priority_early: ERImportantAtPriorityEarly
     other_world_useful_at_priority: OtherWorldUsefulAtPriority
+    no_filler_at_priority: NoFillerAtPriority
     flask_at_priority: FlaskUpgradesAtPriority
     whetblades_at_priority: WhetbladesAtPriority
     scadu_at_priority: ScaduAtPriority
@@ -869,7 +874,6 @@ option_groups = [
         HeavyTrapChance,
     ]),
     # OptionGroup("DLC Traps", [
-    #     BlindnessTrapChance
     # ]),
     OptionGroup("Item & Location Options", [
         CraftingKitOption,
@@ -890,6 +894,7 @@ option_groups = [
         ERImportantAtPriorityOnly,
         ERImportantAtPriorityEarly,
         OtherWorldUsefulAtPriority,
+        NoFillerAtPriority,
         FlaskUpgradesAtPriority,
         WhetbladesAtPriority,
         ScaduAtPriority,

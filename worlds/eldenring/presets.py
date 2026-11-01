@@ -29,7 +29,7 @@ from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic
         EarlyLegacyDungeonsEarly,\
         LocalItemOnly,\
         ERExcludeLocations, ExcludedLocationBehaviorOption, MissableLocationBehaviorOption,\
-        ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly, OtherWorldUsefulAtPriority,\
+        ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly, OtherWorldUsefulAtPriority, NoFillerAtPriority,\
         FlaskUpgradesAtPriority, WhetbladesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrystalTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
 
 template = {
@@ -105,6 +105,7 @@ template = {
     "important_at_priority_only":           ERImportantAtPriorityOnly,
     "important_at_priority_early":          ERImportantAtPriorityEarly,
     "other_world_useful_at_priority":       OtherWorldUsefulAtPriority,
+    "no_filler_at_priority":                NoFillerAtPriority,
     "flask_at_priority":                    FlaskUpgradesAtPriority,
     "whetblades_at_priority":               WhetbladesAtPriority,
     "scadu_at_priority":                    ScaduAtPriority,

@@ -5,7 +5,6 @@ location script/
 script/
 target script/
 tests/
-AGENTS.txt
 *.vscode
 *.apworld
 region lock ideas.md

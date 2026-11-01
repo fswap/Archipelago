@@ -107,6 +107,9 @@ class ERItemData:
     
     great_rune: bool = False
     """Whether this is a Great rune."""
+    
+    ammo: bool = False
+    """Whether this is ammo for a weapon."""
 
     def __post_init__(self):
         self.ap_code = self.ap_code or ERItemData.__item_id
@@ -675,34 +678,34 @@ _vanilla_items = [
     ERItemData("Hand Ballista", 44000000, ERItemCategory.WEAPON),
     ERItemData("Jar Cannon", 44010000, ERItemCategory.WEAPON),
     #ammo
-    *ERItemData("Arrow", 50000000, ERItemCategory.WEAPON).counts_filler([10]),
-    *ERItemData("Fire Arrow", 50010000, ERItemCategory.WEAPON).counts([5, 10, 12, 15]),
-    *ERItemData("Serpent Arrow", 50020000, ERItemCategory.WEAPON).counts([8, 10, 15]),
-    *ERItemData("St. Trina's Arrow", 50040000, ERItemCategory.WEAPON).counts([10, 20]),
-    *ERItemData("Shattershard Arrow (Fletched)", 50060000, ERItemCategory.WEAPON).counts([6, 10]),
-    *ERItemData("Rainbow Stone Arrow (Fletched)", 50080000, ERItemCategory.WEAPON).counts([10]),
-    *ERItemData("Golden Arrow", 50090000, ERItemCategory.WEAPON).counts_filler([5, 6, 10, 14, 15]),
-    *ERItemData("Dwelling Arrow", 50100000, ERItemCategory.WEAPON).counts([8, 10 ,30]),
-    *ERItemData("Spiritflame Arrow", 50240000, ERItemCategory.WEAPON).counts([10, 15]),
-    *ERItemData("Great Arrow", 51000000, ERItemCategory.WEAPON).counts_filler([5, 8, 10, 15, 20]),
-    ERItemData("Golem's Great Arrow", 51010000, ERItemCategory.WEAPON),
-    *ERItemData("Golden Great Arrow", 51020000, ERItemCategory.WEAPON).counts_filler([10]),
-    ERItemData("Golem's Magic Arrow", 51030000, ERItemCategory.WEAPON),
-    *ERItemData("Radahn's Spear", 51040000, ERItemCategory.WEAPON).counts([4, 6, 10]),
+    *ERItemData("Arrow", 50000000, ERItemCategory.WEAPON, ammo=True).counts_filler([10]),
+    *ERItemData("Fire Arrow", 50010000, ERItemCategory.WEAPON, ammo=True).counts([5, 10, 12, 15]),
+    *ERItemData("Serpent Arrow", 50020000, ERItemCategory.WEAPON, ammo=True).counts([8, 10, 15]),
+    *ERItemData("St. Trina's Arrow", 50040000, ERItemCategory.WEAPON, ammo=True).counts([10, 20]),
+    *ERItemData("Shattershard Arrow (Fletched)", 50060000, ERItemCategory.WEAPON, ammo=True).counts([6, 10]),
+    *ERItemData("Rainbow Stone Arrow (Fletched)", 50080000, ERItemCategory.WEAPON, ammo=True).counts([10]),
+    *ERItemData("Golden Arrow", 50090000, ERItemCategory.WEAPON, ammo=True).counts_filler([5, 6, 10, 14, 15]),
+    *ERItemData("Dwelling Arrow", 50100000, ERItemCategory.WEAPON, ammo=True).counts([8, 10 ,30]),
+    *ERItemData("Spiritflame Arrow", 50240000, ERItemCategory.WEAPON, ammo=True).counts([10, 15]),
+    *ERItemData("Great Arrow", 51000000, ERItemCategory.WEAPON, ammo=True).counts_filler([5, 8, 10, 15, 20]),
+    ERItemData("Golem's Great Arrow", 51010000, ERItemCategory.WEAPON, ammo=True),
+    *ERItemData("Golden Great Arrow", 51020000, ERItemCategory.WEAPON, ammo=True).counts_filler([10]),
+    ERItemData("Golem's Magic Arrow", 51030000, ERItemCategory.WEAPON, ammo=True),
+    *ERItemData("Radahn's Spear", 51040000, ERItemCategory.WEAPON, ammo=True).counts([4, 6, 10]),
     #ammo bolts
-    *ERItemData("Bolt", 52000000, ERItemCategory.WEAPON).counts([10]),
-    ERItemData("Lightning Bolt", 52010000, ERItemCategory.WEAPON),
-    *ERItemData("Perfumer's Bolt", 52020000, ERItemCategory.WEAPON).counts([20]),
-    *ERItemData("Black-Key Bolt", 52030000, ERItemCategory.WEAPON).counts_filler([10, 20]),
-    *ERItemData("Burred Bolt", 52040000, ERItemCategory.WEAPON).counts([5, 10]),
-    *ERItemData("Meteor Bolt", 52050000, ERItemCategory.WEAPON).counts([5]),
-    *ERItemData("Explosive Bolt", 52060000, ERItemCategory.WEAPON).counts([6]),
-    *ERItemData("Golden Bolt", 52070000, ERItemCategory.WEAPON).counts_filler([10]),
-    *ERItemData("Lordsworn's Bolt", 52080000, ERItemCategory.WEAPON).counts([10]),
-    *ERItemData("Flaming Bolt", 52190000, ERItemCategory.WEAPON).counts([10]),
-    *ERItemData("Ballista Bolt", 53000000, ERItemCategory.WEAPON).counts([5, 8, 15]),
-    *ERItemData("Lightning Greatbolt", 53010000, ERItemCategory.WEAPON).counts([3, 5, 6, 10, 14]),
-    *ERItemData("Explosive Greatbolt", 53020000, ERItemCategory.WEAPON).counts([5]),
+    *ERItemData("Bolt", 52000000, ERItemCategory.WEAPON, ammo=True).counts([10]),
+    ERItemData("Lightning Bolt", 52010000, ERItemCategory.WEAPON, ammo=True),
+    *ERItemData("Perfumer's Bolt", 52020000, ERItemCategory.WEAPON, ammo=True).counts([20]),
+    *ERItemData("Black-Key Bolt", 52030000, ERItemCategory.WEAPON, ammo=True).counts_filler([10, 20]),
+    *ERItemData("Burred Bolt", 52040000, ERItemCategory.WEAPON, ammo=True).counts([5, 10]),
+    *ERItemData("Meteor Bolt", 52050000, ERItemCategory.WEAPON, ammo=True).counts([5]),
+    *ERItemData("Explosive Bolt", 52060000, ERItemCategory.WEAPON, ammo=True).counts([6]),
+    *ERItemData("Golden Bolt", 52070000, ERItemCategory.WEAPON, ammo=True).counts_filler([10]),
+    *ERItemData("Lordsworn's Bolt", 52080000, ERItemCategory.WEAPON, ammo=True).counts([10]),
+    *ERItemData("Flaming Bolt", 52190000, ERItemCategory.WEAPON, ammo=True).counts([10]),
+    *ERItemData("Ballista Bolt", 53000000, ERItemCategory.WEAPON, ammo=True).counts([5, 8, 15]),
+    *ERItemData("Lightning Greatbolt", 53010000, ERItemCategory.WEAPON, ammo=True).counts([3, 5, 6, 10, 14]),
+    *ERItemData("Explosive Greatbolt", 53020000, ERItemCategory.WEAPON, ammo=True).counts([5]),
 
     # MARK: Armor
     ERItemData("Iron Helmet", 40000, ERItemCategory.ARMOR),

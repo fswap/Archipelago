@@ -1741,12 +1741,11 @@ class EldenRing(World):
                         self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
                         if self.options.other_world_useful_at_priority:
                             self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
-                    
-                    # if loc.progress_type != LocationProgressType.PRIORITY:
-                    #     if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
-                    #         self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
-                    #         if self.options.other_world_useful_at_priority:
-                    #             self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
+                    else:
+                        if self.options.no_filler_at_priority: 
+                            self._add_item_rule(loc.name, lambda item: item.game != self.game 
+                                or item.data.category != ERItemCategory.GOODS and not item.data.ammo # don't place filler goods or ammo at prio
+                                or item.advancement or item.useful)
         else:
             for loc in self.multiworld.get_unfilled_locations(self.player):
                 if loc.name in self.options.exclude_locations.value: 
@@ -3489,6 +3488,7 @@ class EldenRing(World):
                 "important_at_priority_only": self.options.important_at_priority_only.value,
                 "important_at_priority_early": self.options.important_at_priority_early.value,
                 "other_world_useful_at_priority": self.options.other_world_useful_at_priority.value,
+                "no_filler_at_priority": self.options.no_filler_at_priority.value,
                 "flask_at_priority": self.options.flask_at_priority.value,
                 "whetblades_at_priority": self.options.whetblades_at_priority.value,
                 "scadu_at_priority": self.options.scadu_at_priority.value,
