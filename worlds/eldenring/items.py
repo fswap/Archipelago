@@ -3051,16 +3051,16 @@ _tarnished_items = [
 #MARK: Traps
 
 vanilla_traps = [
-    ERItemData("Example Vanilla Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("NG+ Trap", 7830600, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("Status Trap", 7830601, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("Blindness Trap", 7830602, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("Blizzard Trap", 7830603, ERItemCategory.GOODS, ItemClassification.trap),
-    ERItemData("Heavy Trap", 7830604, ERItemCategory.GOODS, ItemClassification.trap),
+    # ERItemData("Example Vanilla Trap", 99999, ERItemCategory.GOODS, classification=ItemClassification.trap),
+    ERItemData("NG+ Trap", 7830600, ERItemCategory.GOODS, classification=ItemClassification.trap),
+    ERItemData("Status Trap", 7830601, ERItemCategory.GOODS, classification=ItemClassification.trap),
+    ERItemData("Blindness Trap", 7830602, ERItemCategory.GOODS, classification=ItemClassification.trap),
+    ERItemData("Blizzard Trap", 7830603, ERItemCategory.GOODS, classification=ItemClassification.trap),
+    ERItemData("Heavy Trap", 7830604, ERItemCategory.GOODS, classification=ItemClassification.trap),
 ]
 
 dlc_traps = [
-    ERItemData("Example DLC Trap", 99999, ERItemCategory.GOODS, ItemClassification.trap),
+    # ERItemData("Example DLC Trap", 99999, ERItemCategory.GOODS, classification=ItemClassification.trap),
 ]
 
 for item in _dlc_items + dlc_traps:
@@ -3109,3 +3109,10 @@ item_table = {item_data.name: item_data for item_data in _all_items + all_traps}
 item_table_vanilla = {item_data.name: item_data for item_data in _vanilla_items}
 item_table_dlc = {item_data.name: item_data for item_data in _dlc_items}
 item_table_tp_dlc = {item_data.name: item_data for item_data in _tarnished_items}
+
+# alreadydone = [] # prints all item names list
+# for item in item_table:
+#     if item_table[item].base_name not in alreadydone and not item_table[item].skip:
+#         alreadydone.append(item_table[item].base_name)
+#         new_name = item_table[item].base_name.replace("\"", "\\\"")
+#         print(f"\"{new_name}\",")

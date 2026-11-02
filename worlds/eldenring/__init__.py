@@ -746,6 +746,14 @@ class EldenRing(World):
         self._add_traps(filler)
         
         self.multiworld.itempool += self.itempool
+            
+        for early_item in self.options.early_items.value:
+            item_count = self.options.early_items.value[early_item]
+            if isinstance(item_count, int):
+                self.multiworld.early_items[self.player][early_item] = min(max(item_count, 0), len([i for i in self.itempool if i.data.base_name == early_item]))
+                # print(f"Early {early_item} count: {min(max(item_count, 0), len([i for i in self.itempool if i.data.base_name == early_item]))}")
+            else: 
+                warning(f"{early_item} item has non int value {item_count}")
         
         print(f"EldenRing {self.player_name} (Priority locations: {len(self.all_priority_locations)}, Important items: {len([i for i in self.itempool if (
             ItemClassification.progression in i.classification and not ItemClassification.deprioritized in i.classification 
@@ -3482,6 +3490,7 @@ class EldenRing(World):
                 "smooth_rune_items": self.options.smooth_rune_items.value,
                 "spell_shop_spells_only": self.options.spell_shop_spells_only.value,
                 "early_legacy_dungeons": self.options.early_legacy_dungeons.value,
+                "early_items": self.options.early_items.value,
                 "local_item_only": self.options.local_item_only.value,
                 
                 "priority_location_groups": self.options.priority_location_groups.value,

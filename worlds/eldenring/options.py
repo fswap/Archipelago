@@ -7,6 +7,7 @@ from Options import Choice, DeathLink, DefaultOnToggle, PriorityLocations, Exclu
     
 from .bosses import all_bosses
 from .region_names import region_order, region_order_dlc
+from .item_names import all_item_names
 
 # MARK: Game Options
 
@@ -628,6 +629,20 @@ class RemembrancesAtPriority(Toggle):
 
 # MARK: Excludes and Behavior
 
+class EarlyItems(OptionDict):
+    """Which items do you want to be early and how many.
+    If you make to many items early the gen can fail, try to keep the count low.
+
+    Common early items:
+    - Talisman Pouch
+    - Sacred Tear
+    
+    *Item name: count*"""
+    display_name = "Early Items"
+    supports_weighting = False
+    default = {"Talisman Pouch": 2, "Sacred Tear": 4}
+    valid_keys = all_item_names
+
 class LocalItemOnly(LocalItems):
     """Which categories should be local only, useful and progression excluded.
     
@@ -801,7 +816,10 @@ class EROptions(PerGameCommonOptions):
     crystal_tears_at_priority: CrystalTearsAtPriority
     memory_stones_at_priority: MemoryStonesAtPriority
     remembrances_at_priority: RemembrancesAtPriority
+    
+    early_items: EarlyItems
     local_item_only: LocalItemOnly
+    
     exclude_locations: ERExcludeLocations
     excluded_location_behavior: ExcludedLocationBehaviorOption
     missable_location_behavior: MissableLocationBehaviorOption
@@ -884,10 +902,8 @@ option_groups = [
         SmoothRuneItems,
         SpellShopSpellsOnly,
         EarlyLegacyDungeonsEarly,
+        EarlyItems,
         LocalItemOnly,
-        ERExcludeLocations,
-        ExcludedLocationBehaviorOption,
-        MissableLocationBehaviorOption,
     ]),
     OptionGroup("Priority Location Rules", [
         ERPriorityLocationGroups,
@@ -902,5 +918,10 @@ option_groups = [
         CrystalTearsAtPriority,
         MemoryStonesAtPriority,
         RemembrancesAtPriority,
-    ])
+    ]),
+    OptionGroup("Exclude Rules", [
+        ERExcludeLocations,
+        ExcludedLocationBehaviorOption,
+        MissableLocationBehaviorOption,
+    ]),
 ]

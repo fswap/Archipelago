@@ -27,7 +27,7 @@ from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic
         SmoothUpgradeItems, SmoothRuneItems,\
         SpellShopSpellsOnly,\
         EarlyLegacyDungeonsEarly,\
-        LocalItemOnly,\
+        EarlyItems, LocalItemOnly,\
         ERExcludeLocations, ExcludedLocationBehaviorOption, MissableLocationBehaviorOption,\
         ERPriorityLocationGroups, ERImportantAtPriorityOnly, ERImportantAtPriorityEarly, OtherWorldUsefulAtPriority, NoFillerAtPriority,\
         FlaskUpgradesAtPriority, WhetbladesAtPriority, ScaduAtPriority, TalismanPouchesAtPriority, CrystalTearsAtPriority, MemoryStonesAtPriority, RemembrancesAtPriority
@@ -113,6 +113,8 @@ template = {
     "crystal_tears_at_priority":            CrystalTearsAtPriority,
     "memory_stones_at_priority":            MemoryStonesAtPriority,
     "remembrances_at_priority":             RemembrancesAtPriority,
+    
+    "early_items":                          EarlyItems.default,
     "local_item_only":                      LocalItemOnly.default,
     "exclude_locations":                    ERExcludeLocations.default,
     "excluded_location_behavior":           ExcludedLocationBehaviorOption,
