@@ -595,7 +595,7 @@ class OtherWorldUsefulAtPriority(DefaultOnToggle):
     display_name = "Other World Useful At Priority"
 
 class NoFillerAtPriority(Toggle):
-    """Don't place filler items at Priority locations, you'll find weapons and armour more often."""
+    """Don't place ER filler items at Priority locations, you'll find ER weapons and armor more often."""
     display_name = "No Filler At Priority"
 
 class FlaskUpgradesAtPriority(DefaultOnToggle):

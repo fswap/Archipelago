@@ -3302,8 +3302,8 @@ class EldenRing(World):
                 smooth_items(sorted([
                     item for item in all_item_order 
                     if item.upgrade_item and item.is_important(er_world.options) != ItemClassification.progression
-                ], key=lambda item, world=er_world: world.random.randrange(max(item.upgrade_tier -1, 1), min(item.upgrade_tier +1, 5), 1))) 
-                # sort by upgrade tier, and shuffle +-1
+                ], key=lambda item, world=er_world: world.random.randrange(max(item.upgrade_tier -2, 1), min(item.upgrade_tier +2, 5), 1))) 
+                # sort by upgrade tier, and shuffle +-2
 
             if er_world.options.smooth_rune_items:
                 smooth_items(sorted([
