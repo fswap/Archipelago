@@ -1292,7 +1292,7 @@ class EldenRing(World):
         # no traps? return
         if len(trap_pool) == 0: return
         
-        trap_count = 5 # update when new traps
+        trap_count = 5 # % of pool to fill with even traps 5 = 20%
         
         all_traps = []
         for trap_name in trap_pool:

@@ -58,7 +58,8 @@ shard_list = { # item name: option name
 }
     
 class ExcludeDungeonBosses(DefaultOnToggle):
-    """Exclude mini dungeon bosses from Goal. ex: Catacomb, Cave, Tunnels etc.., and **not** Underground, Ruins or Evergaol bosses."""
+    """Exclude mini dungeon bosses from Goal. ex: Catacomb, Cave, Tunnels etc.., and **not** Underground, Ruins or Evergaol bosses.
+    This does not effect priority locations."""
     display_name = "Exclude Mini Dungeon Bosses"
 
 class WorldLogic(Choice):
@@ -630,7 +631,7 @@ class RemembrancesAtPriority(Toggle):
 # MARK: Excludes and Behavior
 
 class EarlyItems(OptionDict):
-    """Which items do you want to be early and how many.
+    """Which items do you want to be in sphere 1 and how many.
     If you make to many items early the gen can fail, try to keep the count low.
 
     Common early items:
@@ -640,7 +641,7 @@ class EarlyItems(OptionDict):
     *Item name: count*"""
     display_name = "Early Items"
     supports_weighting = False
-    default = {"Talisman Pouch": 2, "Sacred Tear": 4}
+    default = {"Talisman Pouch": 1, "Sacred Tear": 4}
     valid_keys = all_item_names
 
 class LocalItemOnly(LocalItems):

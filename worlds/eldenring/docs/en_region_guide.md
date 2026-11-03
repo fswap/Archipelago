@@ -169,34 +169,34 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 ### Weeping Peninsula
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(AV)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(CBC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(CM)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(CP)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(DHFR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(FCM)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(FLT)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(IMS)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(OR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(TwR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(WE)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/(WR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/AV</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/BCPG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/BS</strong></td><td> Bridge of Sacrifice grace.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/CM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/CMR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/CP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/DHFR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/EC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/FLT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/ME</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/MT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/OR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/SLT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/ToR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/TwR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>WP/WR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(AV)</strong></td><td> Ailing Village landmark, mid Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(CBC)</strong></td><td> Callu Baptismal Church, mid Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(CM)</strong></td><td> Castle Morne landmark, S Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(CP)</strong></td><td> Church of Pilgrimage landmark, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(DHFR)</strong></td><td> Demi-Human Forest Ruins landmark, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(FCM)</strong></td><td> Fourth Church of Marika landmark, NW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(FLT)</strong></td><td> Forest Lookout Tower landmark, NE Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(IMS)</strong></td><td> Isolated Merchant&#x27;s Shack landmark, W Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(OR)</strong></td><td> Oridys&#x27;s Rise landmark, E Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(TwR)</strong></td><td> Tombsward Ruins landmark, NW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(WE)</strong></td><td> Weeping Evergaol, NW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/(WR)</strong></td><td> Witchbane Ruins landmark, NW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/AV</strong></td><td> Ailing Village landmark, mid Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/BCPG</strong></td><td> Beside the Crater-Pocked Glade grace, NE Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/BS</strong></td><td> Bridge of Sacrifice grace, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/CM</strong></td><td> Castle Morne landmark, S Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/CMR</strong></td><td> Castle Morne Rampart grace, E Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/CP</strong></td><td> Church of Pilgrimage grace, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/DHFR</strong></td><td> Demi-Human Forest Ruins landmark, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/EC</strong></td><td> Earthbore Cave landmark, N Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/FLT</strong></td><td> Forest Lookout Tower landmark, NE Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/ME</strong></td><td> Minor Erdtree, mid Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/MT</strong></td><td> Morne Tunnel landmark, mid Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/OR</strong></td><td> Oridys&#x27;s Rise landmark, E Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/SLT</strong></td><td> South of the Lookout Tower grace, NE Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/ToR</strong></td><td> Tower of Return landmark, SW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/TwR</strong></td><td> Tombsward Ruins landmark, NW Weeping.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>WP/WR</strong></td><td> Witchbane Ruins landmark, NW Weeping.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Weeping Peninsula Dungeons

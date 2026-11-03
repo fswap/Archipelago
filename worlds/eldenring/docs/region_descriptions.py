@@ -92,7 +92,34 @@ def find_description(initial: str) -> str:
         
         
         # weeping
-        case "WP/BS": return "Bridge of Sacrifice grace."
+        case "WP/(AV)": return "Ailing Village landmark, mid Weeping."
+        case "WP/(CBC)": return "Callu Baptismal Church, mid Weeping."
+        case "WP/(CM)": return "Castle Morne landmark, S Weeping."
+        case "WP/(CP)": return "Church of Pilgrimage landmark, N Weeping."
+        case "WP/(DHFR)": return "Demi-Human Forest Ruins landmark, N Weeping."
+        case "WP/(FCM)": return "Fourth Church of Marika landmark, NW Weeping."
+        case "WP/(FLT)": return "Forest Lookout Tower landmark, NE Weeping."
+        case "WP/(IMS)": return "Isolated Merchant's Shack landmark, W Weeping."
+        case "WP/(OR)": return "Oridys's Rise landmark, E Weeping."
+        case "WP/(TwR)": return "Tombsward Ruins landmark, NW Weeping."
+        case "WP/(WE)": return "Weeping Evergaol, NW Weeping."
+        case "WP/(WR)": return "Witchbane Ruins landmark, NW Weeping."
+        case "WP/AV": return "Ailing Village landmark, mid Weeping."
+        case "WP/BCPG": return "Beside the Crater-Pocked Glade grace, NE Weeping."
+        case "WP/BS": return "Bridge of Sacrifice grace, N Weeping."
+        case "WP/CM": return "Castle Morne landmark, S Weeping."
+        case "WP/CMR": return "Castle Morne Rampart grace, E Weeping."
+        case "WP/CP": return "Church of Pilgrimage grace, N Weeping."
+        case "WP/DHFR": return "Demi-Human Forest Ruins landmark, N Weeping."
+        case "WP/EC": return "Earthbore Cave landmark, N Weeping."
+        case "WP/FLT": return "Forest Lookout Tower landmark, NE Weeping."
+        case "WP/ME": return "Minor Erdtree, mid Weeping."
+        case "WP/MT": return "Morne Tunnel landmark, mid Weeping."
+        case "WP/OR": return "Oridys's Rise landmark, E Weeping."
+        case "WP/SLT": return "South of the Lookout Tower grace, NE Weeping."
+        case "WP/ToR": return "Tower of Return landmark, SW Weeping."
+        case "WP/TwR": return "Tombsward Ruins landmark, NW Weeping."
+        case "WP/WR": return "Witchbane Ruins landmark, NW Weeping."
         
         # weeping dungeons
         case "WP/(IC)": return "Impaler's Catacombs, NE Weeping."
@@ -108,6 +135,7 @@ def find_description(initial: str) -> str:
         case "SR/SRWD": return "Siofra River Well Depths grace, SW Siofra."
         case "SR/WW": return "Worshippers' Woods grace, mid Siofra."
         
+        case "": return "."
         case "": return "."
 
         # liurnia
