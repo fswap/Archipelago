@@ -5045,9 +5045,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("CS/YAR: Smithing Stone [8] - NW of YAR, right of big tree by small one", "Smithing Stone [8]", key="604756,0:1047567310::", targets=('lot:1047560310')),
         ERLocationData("CS/YAR: Thawfrost Boluses x2 - NW of YAR, on stump S side of second big tree", "Thawfrost Boluses x2", key="604756,0:1047567320::", targets=('lot:1047560320')),
         ERLocationData("CS/YAR: Crystal Dart x4 - NW of YAR, NE of big tree", "Crystal Dart x4", key="604756,0:1047567330::", targets=('lot:1047560330')),
-        ERLocationData("CS/YAR: Sanguine Noble Hood - invader drop NW of Yar, between big trees", "Sanguine Noble Hood", key="604756,0:1047567700::", targets=('lot:1047560700')),
-        ERLocationData("CS/YAR: Sanguine Noble Robe - invader drop NW of Yar, between big trees", "Sanguine Noble Robe", key="604756,0:1047567700::", targets=('lot:1047560701')),
-        ERLocationData("CS/YAR: Sanguine Noble Waistcloth - invader drop NW of Yar, between big trees", "Sanguine Noble Waistcloth", key="604756,0:1047567700::", targets=('lot:1047560702')),
+        ERLocationData("CS/YAR: Sanguine Noble Hood - invader drop NW of YAR, between big trees", "Sanguine Noble Hood", key="604756,0:1047567700::", targets=('lot:1047560700')),
+        ERLocationData("CS/YAR: Sanguine Noble Robe - invader drop NW of YAR, between big trees", "Sanguine Noble Robe", key="604756,0:1047567700::", targets=('lot:1047560701')),
+        ERLocationData("CS/YAR: Sanguine Noble Waistcloth - invader drop NW of YAR, between big trees", "Sanguine Noble Waistcloth", key="604756,0:1047567700::", targets=('lot:1047560702')),
         ERLocationData("CS/AD: Golden Rune [7] - to SE on right cliff wall", "Golden Rune [7]", key="604757,0:1047577300::", targets=('lot:1047570300')),
         ERLocationData("CS/AD: Golden Rune [12] - to SE on cliff ledge", "Golden Rune [12]", key="604757,0:1047577310::", targets=('lot:1047570310')),
         # Latenna

@@ -195,10 +195,12 @@ class EldenRing(World):
 
     def post_fill(self):
         badly_placed_items: Dict[str, str] = {}
-        if self.options.important_at_priority_only:
+        if self.options.important_at_priority_only and self.multiworld.players == 1: # only applies to solo gen
             for loc in self.multiworld.get_filled_locations(self.player):
                 if (not loc.locked and ItemClassification.progression in loc.item.classification and ItemClassification.deprioritized not in loc.item.classification
                     and loc.name not in self.all_possible_priority_locations): # not preplaced
+                    # print(loc.item.classification.name)
+                    # print(loc.progress_type.name)
                     badly_placed_items[loc.name] = loc.item
                     # a location that is not prio got a prio item and wasn't preplaced !!!!!!! fail gen
                     
@@ -1748,7 +1750,7 @@ class EldenRing(World):
                     if loc.name not in self.all_possible_priority_locations: # not prog or own deprio
                         self._add_item_rule(loc.name, lambda item: not item.advancement or item.deprioritized and item.player == self.player)
                         if self.options.other_world_useful_at_priority:
-                            self._add_item_rule(loc.name, lambda item: not item.useful and item.player != self.player or item.player == self.player)
+                            self._add_item_rule(loc.name, lambda item: not item.useful and not item.advancement and item.player != self.player or item.player == self.player)
                     else:
                         if self.options.no_filler_at_priority: 
                             self._add_item_rule(loc.name, lambda item: item.game != self.game 
