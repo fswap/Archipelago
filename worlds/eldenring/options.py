@@ -679,13 +679,24 @@ class ERExcludeLocations(ExcludeLocations):
     - **Furnace Golem**: DLC Furnace Golems.
     - **Out of the Way**: Locations that take a bit to get.
     - **Drop**: One time drop items from enemies.
-    - **Dungeon**: All locations in mini dungeons. *Caves, Catas, Tunnels, ect..*
+    - **Dungeon**: All locations in mini dungeons.
+      - **Cave**: All caves.
+      - **Tunnel**: All tunnels.
+      - **Grave**: All hero's graves
+      - **Catacombs**: All catacombs.
+      - **Gaol**: All gaols.
+      - **Forge**: All ruined forges.
+    
     - **Region Name**: Any individual region in the Region Guide, these are very specific.
+    *if a region has a ' in it use qutoes like: \"Dragon's Pit\"*
     
     - **Post Leyndell**: Used for great rune hunt, excludes everything after Leyndell. *-untested*
     """ # - **Post Stormveil**: Used for short runs, excludes everything after Stormveil.   needs code to stop rules past stormveil, leyndell and dlc
     default = frozenset({"Hidden", "Rise", "Drop", "Dungeon"}) # "Post Stormveil"
-    valid_keys = {"DLC", "Hidden", "Rise", "Blizzard", "Scarab", "Furnace Golem", "Out of the Way", "Drop", "Dungeon", "Post Leyndell"
+    valid_keys = {
+        "DLC", "Hidden", "Rise", "Blizzard", "Scarab", "Furnace Golem", "Out of the Way", "Drop", 
+        "Dungeon", "Cave", "Tunnel", "Grave", "Catacombs", "Gaol", "Forge",
+        "Post Leyndell"
         } | {region for region in region_order + region_order_dlc}
     
     # testing "All Locations"

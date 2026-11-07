@@ -416,6 +416,11 @@ class EldenRing(World):
             
         # Base game Regions
         if self.base_enabled:
+            # areas with multi connections, there are rules for these
+            create_connection("Limgrave", "Deeproot Depths")
+            create_connection("Limgrave", "Volcano Manor")
+            
+            
             create_connection("Limgrave", "Fringefolk Hero's Grave")
             create_connection("Limgrave", "Stormhill")
             create_connection("Limgrave", "Coastal Cave")
@@ -427,10 +432,7 @@ class EldenRing(World):
             create_connection("Limgrave", "Highroad Cave")
             create_connection("Limgrave", "Deathtouched Catacombs")
             
-            
             create_connection("Coastal Cave", "Church of Dragon Communion")
-            
-
                 
             create_connection("Stormhill", "Stormveil Start")
             create_connection("Stormveil Start", "Stormveil Castle")
@@ -496,7 +498,6 @@ class EldenRing(World):
             
             create_connection("Limgrave", "Nokron, Eternal City Start")
             create_connection("Nokron, Eternal City Start", "Nokron, Eternal City")
-            create_connection("Nokron, Eternal City", "Deeproot Depths")
             
             create_connection("Deeproot Depths", "Deeproot Depths Boss")
             create_connection("Deeproot Depths", "Ainsel River Main")
@@ -524,14 +525,8 @@ class EldenRing(World):
             create_connection("Mt. Gelmir", "Volcano Manor Entrance")
             
             create_connection("Volcano Manor Entrance", "Volcano Manor Drawing Room")
-            create_connection("Volcano Manor Drawing Room", "Volcano Manor")
             create_connection("Volcano Manor", "Volcano Manor Upper")
-        
-            create_connection("Raya Lucaria Academy Main", "Volcano Manor Dungeon")
-            
-            
-            
-            
+            create_connection("Volcano Manor", "Volcano Manor Dungeon")
             
             create_connection("Altus Plateau", "Capital Outskirts")
             # Capital Outskirts
@@ -1447,15 +1442,19 @@ class EldenRing(World):
             self._add_shop_rules()
             
             # indirect connections
-
             self.multiworld.register_indirect_condition(self.get_region("Altus Plateau"), self.get_entrance("Go To Wailing Dunes"))
-            self.multiworld.register_indirect_condition(self.get_region("Limgrave"), self.get_entrance("Go To Sellia Crystal Tunnel"))
-            self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths Upper"), self.get_entrance("Go To Deeproot Depths"))
-            self.multiworld.register_indirect_condition(self.get_region("Deeproot Depths"), self.get_entrance("Go To Leyndell, Royal Capital"))
-            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor"), self.get_entrance("Go To Volcano Manor Dungeon"))
-            self.multiworld.register_indirect_condition(self.get_region("Raya Lucaria Academy Main"), self.get_entrance("Go To Volcano Manor Dungeon"))
-            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Volcano Manor"))
-            self.multiworld.register_indirect_condition(self.get_region("Volcano Manor Dungeon"), self.get_entrance("Go To Altus Plateau"))
+            
+            self.multiworld.register_indirect_condition(self.get_region("Mt. Gelmir"), self.get_entrance("Go To Volcano Manor"))
+            self.multiworld.register_indirect_condition(self.get_region("Raya Lucaria Academy Main"), self.get_entrance("Go To Volcano Manor"))
+            self._add_entrance_rule("Volcano Manor", lambda state: 
+                state.has("Drawing-Room Key", self.player) and self._can_go_to(state, "Mt. Gelmir") 
+                or self._can_go_to(state, "Raya Lucaria Academy Main"))
+            # item requires raya
+            self._add_location_rule("(VM)/RLA: Smoldering Butterfly x5 - to E after warp", lambda state: self._can_go_to(state, "Raya Lucaria Academy Main"))
+            
+            self.multiworld.register_indirect_condition(self.get_region("Subterranean Shunning-Grounds"), self.get_entrance("Go To Deeproot Depths"))
+            self.multiworld.register_indirect_condition(self.get_region("Nokron, Eternal City"), self.get_entrance("Go To Deeproot Depths"))
+            self._add_entrance_rule("Deeproot Depths", lambda state: self._can_go_to(state, "Nokron, Eternal City") or self._can_go_to(state, "Subterranean Shunning-Grounds"))
             
             # altus before caelid
             if self.options.soft_logic:
@@ -1556,12 +1555,6 @@ class EldenRing(World):
             self._add_entrance_rule("Deeproot Depths Upper", lambda state: self._can_go_to(state, "Frenzied Flame Proscription"))
             
             self._add_entrance_rule("Moonlight Altar", "Dark Moon Ring")
-                    
-            # also from RLA side you can get back into main hall through imp statue
-            self._add_entrance_rule("Volcano Manor", 
-                lambda state: state.has("Drawing-Room Key", self.player) or self._can_go_to(state, "Volcano Manor Dungeon"))
-            self._add_entrance_rule("Volcano Manor Dungeon", 
-                lambda state: self._can_go_to(state, "Raya Lucaria Academy Main") or self._can_go_to(state, "Volcano Manor"))
             
             self._add_entrance_rule("Leyndell, Royal Capital", lambda state: self._has_enough_great_runes(state, self.options.great_runes_required_leyndell.value))
             
@@ -1799,6 +1792,7 @@ class EldenRing(World):
                     and state.has("Dectus Medallion (Right)", self.player))
                 self._add_entrance_rule("Mt. Gelmir", "Mt. Gelmir Lock")
                 self._add_entrance_rule("Volcano Manor Entrance", "Volcano Lock")
+                self._add_entrance_rule("Volcano Manor", "Volcano Lock")
                 self._add_entrance_rule("Volcano Manor Dungeon", "Volcano Lock")
                 
                 self._add_entrance_rule("Subterranean Shunning-Grounds", "Sewer Lock")

@@ -215,6 +215,24 @@ class ERLocationData:
     dungeon: bool = False
     """Whether this locations is inside of a dungeon."""
     
+    cave: bool = False
+    """Whether this locations is inside of a cave."""
+    
+    tunnel: bool = False
+    """Whether this locations is inside of a tunnel."""
+        
+    grave: bool = False
+    """Whether this locations is inside of a grave."""
+    
+    catacombs: bool = False
+    """Whether this locations is inside of a catacombs."""
+    
+    gaol: bool = False
+    """Whether this locations is inside of a gaol."""
+    
+    forge: bool = False
+    """Whether this locations is inside of a forge."""
+            
     unsweepable: bool = False
     """Whether this locations is inside of a dungeon and cannot be picked up via sweep."""
     
@@ -374,6 +392,15 @@ class ERLocationData:
         if "- Enia" in self.name:
             self.conditional = True
         
+        if self.dungeon: 
+            names.append("Dungeon")
+            if self.cave: names.append("Cave")
+            elif self.tunnel: names.append("Tunnel")
+            elif self.grave: names.append("Grave")
+            elif self.catacombs: names.append("Catacombs")
+            elif self.gaol: names.append("Gaol")
+            elif self.forge: names.append("Forge")
+        
         if self.achievement: names.append("Achievement Boss")      
         if self.remembrance and self.dlc: names.append("DLC Remembrance Boss")
         
@@ -386,7 +413,6 @@ class ERLocationData:
         if self.progression: names.append("Progression")
         if self.hostile_npc: names.append("Hostile NPC Rewards")
         if self.npc: names.append("Friendly NPC Rewards")
-        if self.dungeon: names.append("Dungeon")
         if self.rise: names.append("Rise")
         if self.chest: 
             if self.dlc:
@@ -6021,11 +6047,29 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
 }
 
-
 for i, region in enumerate(region_order + region_order_dlc):
     for location in location_tables[region]: 
         location.region_value = i
         location.region_name = region
+        if not location.criticalpath:
+            if "Cave" in region or region in ["Sellia Hideaway", "Perfumer's Grotto", "Dragon's Pit"]:
+                location.cave = True
+                location.dungeon = True
+            elif "Tunnel" in region:
+                location.tunnel = True
+                location.dungeon = True
+            elif " Grave" in region:
+                location.grave = True
+                location.dungeon = True
+            elif "Catacombs" in region or region in ["Auriza Side Tomb", "Hidden Path to the Haligtree"]:
+                location.catacombs = True
+                location.dungeon = True
+            elif " Gaol" in region:
+                location.gaol = True
+                location.dungeon = True
+            elif "Ruined Forge" in region:
+                location.forge = True
+                location.dungeon = True
 
 for region in region_order:
     for location in location_tables[region]:
@@ -6057,98 +6101,6 @@ for region in [# conditional locations
 ]:
     for location in location_tables[region]:
         location.conditional = True
-        
-for region in [ # dungeons
-    # base
-    "Coastal Cave",
-    "Church of Dragon Communion",
-    "Groveside Cave",
-    "Stormfoot Catacombs",
-    "Limgrave Tunnels",
-    "Murkwater Cave",
-    "Murkwater Catacombs",
-    "Highroad Cave",
-    "Deathtouched Catacombs",
-    "Fringefolk Hero's Grave",
-    
-    "Impaler's Catacombs",
-    "Tombsward Catacombs",
-    "Tombsward Cave",
-    "Morne Tunnel",
-    "Earthbore Cave",
-    
-    "Road's End Catacombs",
-    "Black Knife Catacombs",
-    "Cliffbottom Catacombs",
-    "Stillwater Cave",
-    "Lakeside Crystal Cave",
-    "Academy Crystal Cave",
-    "Raya Lucaria Crystal Tunnel",
-    
-    "Caelid Catacombs",
-    "Gaol Cave",
-    "Sellia Crystal Tunnel",
-    "Abandoned Cave",
-    "Minor Erdtree Catacombs",
-    "Gael Tunnel",
-    
-    "War-Dead Catacombs",
-    
-    "Dragonbarrow Cave",
-    "Sellia Hideaway",
-    
-    "Sainted Hero's Grave",
-    "Unsightly Catacombs",
-    "Perfumer's Grotto",
-    "Sage's Cave",
-    "Old Altus Tunnel",
-    "Altus Tunnel",
-    
-    "Wyndham Catacombs",
-    "Gelmir Hero's Grave",
-    "Seethewater Cave",
-    "Volcano Cave",
-    
-    "Auriza Hero's Grave",
-    "Auriza Side Tomb",
-    "Sealed Tunnel",
-    
-    "Leyndell Catacombs",
-    
-    "Hidden Path to the Haligtree",
-    
-    "Giants' Mountaintop Catacombs",
-    "Spiritcaller Cave",
-    
-    "Giant-Conquering Hero's Grave",
-    
-    "Consecrated Snowfield Catacombs",
-    "Cave of the Forlorn",
-    "Yelough Anix Tunnel",
-    
-    # DLC
-    "Fog Rift Catacombs",
-    "Belurat Gaol",
-    "Dragon's Pit",
-    "Ruined Forge Lava Intake",
-    
-    "Lamenter's Gaol (Entrance)",
-    "Lamenter's Gaol (Upper)", #main
-    "Lamenter's Gaol (Lower)", #boss
-    
-    "Bonny Gaol",
-    "Ruined Forge of Starfall Past",
-    
-    "Scorpion River Catacombs",
-    "Taylew's Ruined Forge",
-    
-    "Rivermouth Cave",
-    
-    "Darklight Catacombs",
-]:
-    for location in location_tables[region]:
-        if not location.criticalpath: # don't exclude critical path bosses
-            location.dungeon = True
 
 for location in location_tables["Leyndell, Royal Capital"]:
     if not location.missable: location.missable = missable_capital
@@ -6178,6 +6130,12 @@ location_name_groups: Dict[str, Set[str]] = {
     "Out of the Way": set(),
     "Drop": set(),
     "Dungeon": set(),
+    "Cave": set(),
+    "Tunnel": set(),
+    "Grave": set(),
+    "Catacombs": set(),
+    "Gaol": set(),
+    "Forge": set(),
     "Rise": set(),
     "Breakable": set(),
     "Hidden": set(),
