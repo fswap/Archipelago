@@ -1,6 +1,6 @@
 # Elden Ring Boss Guide
 
-[Game Guide](./en_Elden_Ring) | [Setup Guide](./en_setup_guide) | [Region Guide](./en_region_guide) | [Location Guide](./en_location_guide) | Goal Bosses Guide
+[Game Guide](./en_Elden_Ring.md) | [Setup Guide](./en_setup_guide.md) | [Region Guide](./en_region_guide.md) | [Location Guide](./en_location_guide.md) | Goal Bosses Guide
 
 ## Goal Boss Groups
 

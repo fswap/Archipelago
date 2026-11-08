@@ -1,6 +1,6 @@
 # Elden Ring Setup Guide
 
-[Game Guide](./en_Elden_Ring) | Setup Guide | [Region Guide](./en_region_guide) | [Location Guide](./en_location_guide) | [Goal Bosses Guide](./en_goal_bosses_guide)
+[Game Guide](./en_Elden_Ring.md) | Setup Guide | [Region Guide](./en_region_guide.md) | [Location Guide](./en_location_guide.md) | [Goal Bosses Guide](./en_goal_bosses_guide.md)
 
 ## Required software
 
@@ -21,7 +21,7 @@ Alternatively, you can install ArchipelagoLauncher as documented in [Archipelago
 
 For more information about yaml and how to edit it, see Archipelago's [Advanced Yaml Guide](https://archipelago.gg/tutorial/Archipelago/advanced_settings_en) and check your files using the [validator](https://archipelago.gg/check).
 
-For actually selecting game options, check out the [game guide](./en_Elden_Ring) to learn which features and modes are supported by the randomizer. Make sure to disable `enable_dlc` if you don't have the [Shadow of the Erdtree DLC](https://store.steampowered.com/app/2778580/ELDEN_RING_Shadow_of_the_Erdtree/) installed, and only enable `enable_tp_dlc` if you have the [Tarnished Pack DLC](https://store.steampowered.com/app/3655690/ELDEN_RING_Tarnished_Pack/), or else your run will not be completable.
+For actually selecting game options, check out the [game guide](./en_Elden_Ring.md) to learn which features and modes are supported by the randomizer. Make sure to disable `enable_dlc` if you don't have the [Shadow of the Erdtree DLC](https://store.steampowered.com/app/2778580/ELDEN_RING_Shadow_of_the_Erdtree/) installed, and only enable `enable_tp_dlc` if you have the [Tarnished Pack DLC](https://store.steampowered.com/app/3655690/ELDEN_RING_Tarnished_Pack/), or else your run will not be completable.
 
 Enemy randomizer is enabled by default with the `enemy_rando` setting. Enemy randomizer settings can be further customized in the "Generating mod files" steps and can be changed in the middle of a run, including disabling/enabling it in the middle of a run.
 
@@ -73,7 +73,7 @@ There is some support for showing priority locations in the tracker tab, though 
 
 Additionally, you can add in-game map icons for priority locations that disappear when the locations have been locally checked with the "Add markers for all unchecked priority locations" option in randomizer. It does *not* show which locations are currently in-logic, as some locations may be either inaccessible or unnecessary if released from other worlds.
 
-See also the [Location Guide](./en_location_guide) to understand the format of tracked and hinted locations.
+See also the [Location Guide](./en_location_guide.md) to understand the format of tracked and hinted locations.
 
 ### Can I play on Linux?
 
