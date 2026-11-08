@@ -3146,21 +3146,24 @@ class EldenRing(World):
     def write_spoiler(self, spoiler_handle: TextIO) -> None:
         text = ""
         
+        if self.options.important_at_priority_only:
+            text += f"\nTotal priority locations: {len(self.all_priority_locations)}\n"
+        
         if self.goal_bosses:
-            text += f"\n{self.player_name}'s goal bosses: {sorted([boss.name for boss in self.goal_bosses
+            text += f"\nGoal bosses: {sorted([boss.name for boss in self.goal_bosses
             ], key=lambda boss: location_dictionary[boss_name_to_data[boss].locations[0]].region_value if boss_name_to_data[boss].locations else 999)}\n"
         
         if self.serpent_location and self.serpent_location != default_serpent_location:
-            text += f"\nSerpent takes the place of {self.serpent_location.name} in {self.player_name}'s world\n"
+            text += f"\nSerpent takes the place of {self.serpent_location.name} in {self.player_name}'s world.\n"
         
         if self.rykard_location and self.rykard_location != default_rykard_location:
-            text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world\n"
+            text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world.\n"
 
-        if self.options.excluded_location_behavior == "forbid_useful":
-            text += f"\n{self.player_name}'s world excluded: {sorted(self.all_excluded_locations)}\n"
+        # if self.options.excluded_location_behavior == "forbid_useful":
+        #     text += f"\nExcluded locations: {sorted(self.all_excluded_locations)}\n"
 
         if text:
-            text = "\n" + text + "\n"
+            text = f"\nEldenRing {self.player_name}'s spoiler:\n" + text + "\n"
             spoiler_handle.write(text)
 
     def _location_status(

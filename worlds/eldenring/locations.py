@@ -5667,7 +5667,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
     ],
     "Scadu Altus":[ # scadualtus                                          done
         ERLocationData("SA/(MR): Scaduview Cross Spiritspring Stone - stone to SE", "Scaduview Cross Spiritspring Stone", key='614944,0:1032507001::', spiritspring_stone=True),
-        ERLocationData("SA/(RR): Rabbath's Rise Spiritspring Stone - stone to S", "Rabbath's Rise Spiritspring Stone", key='615147,0:1032507002::', spiritspring_stone=True),
+        ERLocationData("SA/(RR): Rabbath's Rise Spiritspring Stone - stone in rise behind illusory wall", "Rabbath's Rise Spiritspring Stone", key='615147,0:1032507002::', spiritspring_stone=True),
         
         ERLocationData("SK/SKMG: Aspects of the Crucible: Thorns - boss drop", "Aspects of the Crucible: Thorns", key="210000,0:0000510440::", boss=True, enemyfragment=True, targets=('lot:10440')),
         ERLocationData("SA/HC: Lacerating Crossed-Tree - given by Leda after invading Hornsent alongside her", "Lacerating Crossed-Tree", key="120500,0:0000400590::", missable=True, exclusive=True, targets=('lot:105900')),

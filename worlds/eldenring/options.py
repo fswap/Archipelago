@@ -347,7 +347,7 @@ class RandomEnemyPresetOption(OptionDict): # unsupported, do UI editing for now
     visibility = Visibility.none
 
 class MaterialRando(DefaultOnToggle):
-    """Randomizes the indefinitely spawning materials."""
+    """Randomizes the indefinitely spawning materials among themselves."""
     display_name = "Material Randomizer"
 
 class DeathLinkAmnesty(Range): # unsupported, till after first release
