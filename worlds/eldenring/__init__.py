@@ -1,20 +1,19 @@
 from collections.abc import Sequence
 from collections import defaultdict
 from enum import Enum
-from itertools import combinations
 from dataclasses import replace, dataclass, asdict
-import settings, typing, Utils, math, json
+import settings, typing, json
 from logging import warning
 from typing import cast, Any, Callable, Dict, Set, List, Optional, TextIO, Union, Tuple, ClassVar
 
-from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, ItemClassification
-from Fill import remaining_fill, fill_restrictive, sweep_from_pool, FillError
+from BaseClasses import CollectionState, MultiWorld, Region, Location, LocationProgressType, Entrance, Tutorial, ItemClassification
+from Fill import remaining_fill
 
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
 from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location, all_boss_locations_dictionary, boss_name_to_data
-from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_table_vanilla, item_table_dlc, item_table_tp_dlc, item_name_groups, soft_logic_item
+from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_name_groups, soft_logic_item
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, dupable_locations
 from .region_names import region_order, region_order_dlc
 from .options import EROptions, EnableDLC, option_groups, shard_list
@@ -64,6 +63,16 @@ class EldenRingSettings(settings.Group):
 class EldenRingWeb(WebWorld):
     rich_text_options_doc = True
     theme = "stone"
+    setup_en = Tutorial(
+        "Multiworld Setup Guide",
+        "A guide to setting up the Archipelago Elden Ring randomizer.",
+        "English",
+        "en_setup_guide.md",
+        "setup/en",
+        ["thefifthmatt", "Bedrock"]
+    )
+    
+    tutorials = [setup_en]
     option_groups = option_groups
     options_presets = er_options_presets
     item_descriptions = item_descriptions

@@ -141,8 +141,8 @@ class ERItemData:
         if self.classification == ItemClassification.progression:
             names.append("Progression")
 
-        if self.great_rune:
-            names.append("Great Runes")
+        if self.great_rune: names.append("Next Great Rune") 
+        if self.lock: names.append("Next Region lock")  
 
         names.append({
             ERItemCategory.GOODS: "Goods",
@@ -3077,7 +3077,8 @@ item_name_groups: Dict[str, Set] = {
     "Accessories": set(),
     "Ash of war": set(),
     
-    "Great Runes": set(),
+    "Next Great Rune": set(),
+    "Next Region lock": set(),
     
     "Filler": set(),
     "Non-Filler": set(),
