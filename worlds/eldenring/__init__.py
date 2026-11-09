@@ -3548,6 +3548,8 @@ class EldenRing(World):
     def custom_ut_sort(self, region_label: str, location_label: str) -> str | int:
         if "(*)" in location_label: # this works, lmao, removes the (*)
             location_label = location_label[:-4]
+        if "extra item" in location_label:
+            location_label = location_label[:-14]
         value = location_dictionary[location_label].region_value
         if not self.options.important_at_priority_only: return value
         if location_label not in self.all_possible_priority_locations:

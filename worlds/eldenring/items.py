@@ -141,8 +141,8 @@ class ERItemData:
         if self.classification == ItemClassification.progression:
             names.append("Progression")
 
-        if self.great_rune: names.append("Next Great Rune") 
-        if self.lock: names.append("Next Region lock")  
+        if self.great_rune: names.append("Great Rune") 
+        if self.lock: names.append("Region lock")  
 
         names.append({
             ERItemCategory.GOODS: "Goods",
@@ -1505,14 +1505,14 @@ _vanilla_items = [
     ERItemData("Lantern", 2070, ERItemCategory.GOODS, skip=True), # force give to player
     ERItemData("Blasphemous Claw", 2080, ERItemCategory.GOODS),
 
-    ERItemData("Deathroot", 2090, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Deathroot", 2090, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     *ERItemData("Soft Cotton", 2100, ERItemCategory.GOODS, replacable=True).counts([2, 3, 6]),
     *ERItemData("Soap", 2120, ERItemCategory.GOODS, replacable=True).counts([3, 4]),
     ERItemData("Celestial Dew", 2130, ERItemCategory.GOODS),
 
     ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
-    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, boss_tools=True,classification=ItemClassification.useful),
-    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS), # is modified in is_important
+    ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
+    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS, classification=ItemClassification.useful), # is modified in is_important
 
     ERItemData("Prattling Pate \"Hello\"", 2200, ERItemCategory.GOODS, skip=True),
     ERItemData("Prattling Pate \"Thank you\"", 2201, ERItemCategory.GOODS, skip=True),
@@ -1697,7 +1697,7 @@ _vanilla_items = [
     ERItemData("Triple Rings of Light", 6701, ERItemCategory.GOODS, incantation=True),
     ERItemData("Radagon's Rings of Light", 6710, ERItemCategory.GOODS, incantation=True),
     ERItemData("Elden Stars", 6720, ERItemCategory.GOODS, incantation=True),
-    ERItemData("Law of Regression", 6730, ERItemCategory.GOODS, incantation=True, classification=ItemClassification.progression), # leyndell statue, and goldmask quest
+    ERItemData("Law of Regression", 6730, ERItemCategory.GOODS, incantation=True, classification=ItemClassification.progression_deprioritized), # leyndell statue, and goldmask quest
     ERItemData("Immutable Shield", 6740, ERItemCategory.GOODS, incantation=True),
     ERItemData("Litany of Proper Death", 6750, ERItemCategory.GOODS, incantation=True),
     ERItemData("Law of Causality", 6760, ERItemCategory.GOODS, incantation=True),
@@ -1816,13 +1816,13 @@ _vanilla_items = [
     ERItemData("Meeting Place Map", 8198, ERItemCategory.GOODS, skip=True),
     ERItemData("Discarded Palace Key", 8199, ERItemCategory.GOODS, classification=ItemClassification.progression),
 
-    ERItemData("\"Homing Instinct\" Painting", 8200, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Resurrection\" Painting", 8201, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Champion's Song\" Painting", 8202, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Sorcerer\" Painting", 8203, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Prophecy\" Painting", 8204, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Flightless Bird\" Painting", 8205, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Redmane\" Painting", 8206, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("\"Homing Instinct\" Painting", 8200, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Resurrection\" Painting", 8201, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Champion's Song\" Painting", 8202, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Sorcerer\" Painting", 8203, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Prophecy\" Painting", 8204, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Flightless Bird\" Painting", 8205, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Redmane\" Painting", 8206, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
 
     ERItemData("Zorayas's Letter", 8221, ERItemCategory.GOODS, skip=True),
     ERItemData("Alexander's Innards", 8222, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
@@ -2810,7 +2810,7 @@ _dlc_items = [
     ERItemData("Gaol Lower Level Key", 2008006, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Cross Map", 2008007, ERItemCategory.GOODS, skip=True),
     ERItemData("Hole-Laden Necklace", 2008008, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Heart of Bayle", 2008011, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Heart of Bayle", 2008011, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("New Cross Map", 2008012, ERItemCategory.GOODS, skip=True),
     ERItemData("Storeroom Key", 2008013, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Secret Rite Scroll", 2008014, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
@@ -2832,9 +2832,9 @@ _dlc_items = [
     ERItemData("Prayer Room Key", 2008036, ERItemCategory.GOODS, classification=ItemClassification.progression),
     ERItemData("Tower of Shadow Message", 2008037, ERItemCategory.GOODS, skip=True),
 
-    ERItemData("\"Incursion\" Painting", 2008200, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"The Sacred Tower\" Painting", 2008201, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("\"Domain of Dragons\" Painting", 2008202, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("\"Incursion\" Painting", 2008200, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"The Sacred Tower\" Painting", 2008201, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
+    ERItemData("\"Domain of Dragons\" Painting", 2008202, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
 
     ERItemData("Map: Gravesite Plain", 2008600, ERItemCategory.GOODS, map=True, classification=ItemClassification.useful),
     ERItemData("Map: Scadu Altus", 2008601, ERItemCategory.GOODS, map=True, classification=ItemClassification.useful),
@@ -3077,8 +3077,8 @@ item_name_groups: Dict[str, Set] = {
     "Accessories": set(),
     "Ash of war": set(),
     
-    "Next Great Rune": set(),
-    "Next Region lock": set(),
+    "Great Rune": set(),
+    "Region lock": set(),
     
     "Filler": set(),
     "Non-Filler": set(),
