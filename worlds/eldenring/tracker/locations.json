@@ -5697,10 +5697,10 @@
     ]
   },
   {
-    "name": "WP/AV: Yellow Ember - on way to AV, W of AV",
+    "name": "WP/AV: Yellow Ember - on way to AV, SW of AV",
     "sections": [
       {
-        "name": "WP/AV: Yellow Ember - on way to AV, W of AV"
+        "name": "WP/AV: Yellow Ember - on way to AV, SW of AV"
       }
     ],
     "map_locations": [
@@ -5763,10 +5763,10 @@
     ]
   },
   {
-    "name": "WP/AV: Golden Rune [2] - on way to AV, SW of AV",
+    "name": "WP/AV: Golden Rune [2] - on way to AV, W of AV",
     "sections": [
       {
-        "name": "WP/AV: Golden Rune [2] - on way to AV, SW of AV"
+        "name": "WP/AV: Golden Rune [2] - on way to AV, W of AV"
       }
     ],
     "map_locations": [
@@ -34656,10 +34656,10 @@
     ]
   },
   {
-    "name": "GP/CRT: Revered Spirit Ash - to SE, overlooking WNM",
+    "name": "GP/CT: Revered Spirit Ash - to SE, overlooking WNM",
     "sections": [
       {
-        "name": "GP/CRT: Revered Spirit Ash - to SE, overlooking WNM"
+        "name": "GP/CT: Revered Spirit Ash - to SE, overlooking WNM"
       }
     ],
     "map_locations": [
@@ -42423,19 +42423,19 @@
     ]
   },
   {
-    "name": "SK/SFF: Hefty Cracked Pot - to NW down elevator, on bed",
+    "name": "SK/SFiF: Hefty Cracked Pot - to NW down elevator, on bed",
     "sections": [
       {
-        "name": "SK/SFF: Hefty Cracked Pot - to NW down elevator, on bed"
+        "name": "SK/SFiF: Hefty Cracked Pot - to NW down elevator, on bed"
       },
       {
-        "name": "SK/SFF: Gold-Pickled Fowl Foot - to NW down elevator, to W in dead-end"
+        "name": "SK/SFiF: Gold-Pickled Fowl Foot - to NW down elevator, to W in dead-end"
       },
       {
-        "name": "SK/SFF: Raw Meat Dumpling - enemy drop to NW down elevator, to W in dead-end"
+        "name": "SK/SFiF: Raw Meat Dumpling - enemy drop to NW down elevator, to W in dead-end"
       },
       {
-        "name": "SK/SFF: Living Jar Shard - enemy drop to NW down elevator, to W in dead-end"
+        "name": "SK/SFiF: Living Jar Shard - enemy drop to NW down elevator, to W in dead-end"
       }
     ],
     "map_locations": [
@@ -42447,10 +42447,10 @@
     ]
   },
   {
-    "name": "SK/SFF: Battlefield Priest's Cookbook [4] - to NW down elevator, behind illusory wall next to stairs",
+    "name": "SK/SFiF: Battlefield Priest's Cookbook [4] - to NW down elevator, behind illusory wall next to stairs",
     "sections": [
       {
-        "name": "SK/SFF: Battlefield Priest's Cookbook [4] - to NW down elevator, behind illusory wall next to stairs"
+        "name": "SK/SFiF: Battlefield Priest's Cookbook [4] - to NW down elevator, behind illusory wall next to stairs"
       }
     ],
     "map_locations": [
@@ -42462,13 +42462,13 @@
     ]
   },
   {
-    "name": "SK/SFF: Ash of War: Wall of Sparks - to NW down elevator, on balcony",
+    "name": "SK/SiFF: Ash of War: Wall of Sparks - to NW down elevator, on balcony",
     "sections": [
       {
-        "name": "SK/SFF: Ash of War: Wall of Sparks - to NW down elevator, on balcony"
+        "name": "SK/SFiF: Ash of War: Wall of Sparks - to NW down elevator, on balcony"
       },
       {
-        "name": "SK/SFF: Iris of Grace - to NW down elevator, by altar"
+        "name": "SK/SFiF: Iris of Grace - to NW down elevator, by altar"
       }
     ],
     "map_locations": [
@@ -42480,10 +42480,10 @@
     ]
   },
   {
-    "name": "SK/SFF: Innard Meat - to NW down elevator, down stairs on right",
+    "name": "SK/SFiF: Innard Meat - to NW down elevator, down stairs on right",
     "sections": [
       {
-        "name": "SK/SFF: Innard Meat - to NW down elevator, down stairs on right"
+        "name": "SK/SFiF: Innard Meat - to NW down elevator, down stairs on right"
       }
     ],
     "map_locations": [

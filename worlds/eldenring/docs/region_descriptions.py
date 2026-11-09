@@ -86,8 +86,8 @@ def find_description(initial: str) -> str:
         case "SV/SMG": return "Stormveil Main Gate grace."
         case "SV/SeC": return "Secluded Cell grace."
         case "SV/StC": return "Stormveil Cliffside grace."
-        case "SV/GG": return "Godrick the Grafted grace, in Godrick's arena."
-        case "SV/LL": return "Liurnia side of Stormveil, after Godrick's arena."
+        case "SV/GG": return "Godrick the Grafted grace, after mainboss."
+        case "SV/LL": return "Liurnia side of Stormveil, after mainboss arena."
         case "SV/(DTL)": return "Divine Tower of Limgrave landmark."
         
         
@@ -166,37 +166,208 @@ def find_description(initial: str) -> str:
         
         case "FP/(GCHG)": return "Giant-Conquering Hero's Grave."
         
+        
         # DLC
+        # unformatted base of these made by mika
         
-        # gravesite plains
-        case "": return "."
+        case "RH/DLC": return "Roundtable Hold but only DLC items."
         
+        # gravesite plain
+        case "GP/(AAV)": return "Abandoned Ailing Village landmark, N Gravesite."
+        case "GP/(AS)": return "Artist's Shack landmark, S Gravesite."
+        case "GP/(CB)": return "Church of Benediction landmark, S Gravesite."
+        case "GP/(CC)": return "Church of Consolation landmark, E Gravesite."
+        case "GP/(EG)": return "Ellac Greatbridge landmark, N Gravesite."
+        case "GP/(EH)": return "Elder's Hovel landmark, NE Gravesite."
+        case "GP/(PT)": return "Prospect Town landmark, SW Gravesite."
+        case "GP/(RDTR)": return "Run-Down Traveler's Rest landmark, N Gravesite."
+        case "GP/(SP)": return "Supressing Pillar landmark, SE Gravesite."
+        case "GP/(SR)": return "Scorched Ruins landmark, mid Gravesite."
+        case "GP/(WNM)": return "Western Nameless Mausoleum landmark, W Gravesite."
+        case "GP/AS": return "Artist's Shack landmark, S Gravesite."
+        case "GP/BG": return "Belurat Gaol landmark, NW Gravesite."
+        case "GP/CB": return "Church of Benediction landmark, S Gravesite."
+        case "GP/CC": return "Church of Consolation landmark, E Gravesite."
+        case "GP/CF": return "Castle Front grace, N Gravesite."
+        case "GP/CT": return "Cliffroad Terminus grace, SW Gravesite."
+        case "GP/GN": return "Greatbridge, North grace, N Gravesite."
+        case "GP/GP": return "Gravesite Plain grace, SW Gravesite."
+        case "GP/MGC": return "Main Gate Cross grace, W Gravesite."
+        case "GP/PPC": return "Pillar Path Cross grace, E Gravesite."
+        case "GP/PPW": return "Pillar Path Waypoint grace, E Gravesite."
+        case "GP/PT": return "Prospect Town landmark, SW Gravesite."
+        case "GP/SP": return "Supressing Pillar landmark, SE Gravesite."
+        case "GP/SR": return "Scorched Ruins landmark, mid Gravesite."
+        case "GP/TPC": return "Three-Path Cross grace, mid Gravesite."
+    
+        # gravesite plain dungeons
+        case "GP/(FRC)": return "Fog Rift Catacombs, N Gravesite."
+        case "GP/(BG)": return "Belurat Gaol, NW Gravesite."
+        case "GP/(DP)": return "Dragon's Pit, SE Gravesite."
+        case "GP/(RFLI)": return "Ruined Forge Lava Intake, E Gravesite."
+
+        # belurat
+        case "BTS/BTS": return "Belurat, Tower Settlement grace."
+        case "BTS/SF": return "Stagefront grace."
+        case "BTS/SPA": return "Small Private Altar grace."
+        case "BTS/TDB": return "Theater of the Divine Beast grace, after mainboss."
+
+        # ensis
+        case "CE/CEC": return "Castle Ensis Checkpoint grace."
+        case "CE/CF": return "Castle Front grace."
+        case "CE/CLC": return "Castle-Lord's Chamber grace."
+        case "CE/(FRF)": return "Fog Rift Fort landmark, from Scadu Altus"
+
+        # jagged peak
+        case "JP/DPT": return "Dragon's Pit Terminus grace."
+        case "JP/FJP": return "Foot of the Jagged Peak grace, on route to Jagged Peak."
+        case "JP/GADC": return "Grand Altar of Dragon Communion grace, S Jagged Peak."
+        case "JP/JPM": return "Jagged Peak Mountainside grace, mid up Jagged Peak."
+        case "JP/JPS": return "Jagged Peak Summit grace, before mainboss."
+
+        # charos hidden grave
+        case "CHG/CHG": return "Charo's Hidden Grave grace, mid Charo's."
+        case "CHG/LG": return "Lamentor's Gaol landmark, NW Charo's."
         
-        
-        
-        
-        
-        case "CHG/(LG)": return "Lamenter's Gaol."
-        
-        case "SA/(BG)": return "Bonny Gaol."
-        case "SA/(RFSP)": return "Ruined Forge of Starfall Past."
-        case "SA/ARR": return "Rauh Ruins Limited, use infused stonesword key."
-        
+        case "CHG/(LG)": return "Lamenter's Gaol, NW Charo's."
+
+        # scadu altus
+        case "SA/(BV)": return "Bonny Village landmark, SE Scadu."
+        case "SA/(CC)": return "Church of the Crusade landmark, NW Scadu."
+        case "SA/(FR)": return "Fort of Reprimand landmark, S Scadu."
+        case "SA/(MR)": return "Moorth Ruins landmark, mid Scadu."
+        case "SA/(RR)": return "Rabbath's Rise landmark, NE Scadu."
+        case "SA/(WH)": return "Whipping Hut landmark, SE Scadu."
+        case "SA/BFR": return "Behind the Fort of Reprimand grace, S Scadu."
+        case "SA/BLV": return "Bridge Leading to Village grace, E Scadu."
+        case "SA/BV": return "Bonny Village grace, SE Scadu."
+        case "SA/CC": return "Church of the Crusade landmark, NW Scadu."
+        case "SA/CDH": return "Church District Highroad grace, NE Scadu."
+        case "SA/CMM": return "Cathedral of Manus Metyr landmark, E Scadu."
+        case "SA/FR": return "Fort of Reprimand landmark, S Scadu."
+        case "SA/HC": return "Highroad Cross grace, SW Scadu."
+        case "SA/MHS": return "Moorth Highway, South grace, S Scadu."
+        case "SA/MR": return "Moorth Ruins grace, mid Scadu."
+        case "SA/RFSP": return "Ruined Forge of Starfall Past landmark, SW Scadu."
+        case "SA/SAW": return "Scadu Altus, West grace, W Scadu."
+        case "SA/SC": return "Scaduview Cross grace, up sealed spiritspring SE Scadu."
+            
+        # scadu altus dungeons
+        case "SA/(BG)": return "Bonny Gaol, S Scadu."
+        case "SA/(RFSP)": return "Ruined Forge of Starfall Past, SW Scadu."
+        case "SA/ARR": return "Rauh Ruins Limited, use imbued stonesword key SW Scadu."
+
+        # cathedral of manus metyr
         case "FRM": return "Finger Ruins of Miyr."
-        case "SA/(CMM)": return "Cathedral of Manus Metyr."
+        case "SA/(CMM)": return "Cathedral of Manus Metyr landmark, E Scadu."
         
-        case "RB/(SRC)": return "Scorpion River Catacombs."
-        case "RB/(TRF)": return "Taylew's Ruined Forge."
+        # rauh base
+        case "RB/(NNM)": return "Northern Nameless Mausoleum landmark, up sealed spiritspring SE Rauh Base."
+        case "RB/(TTR)": return "Temple Town Ruins landmark, S Rauh Base."
+        case "RB/ARB": return "Ancient Ruins Base grace, NE Rauh Base."
+        case "RB/NNM": return "Northern Nameless Mausoleum landmark, up sealed spiritspring SE Rauh Base."
+        case "RB/RN": return "Ravine North grace, NW Rauh Base."
+        case "RB/SRC": return "Scorpion River Catacombs landmark, W Rauh Base."
+        case "RB/TRF": return "Taylew's Ruined Forge landmark, NE Rauh Base."
+        case "RB/TTR": return "Temple Town Ruins landmark or grace, S Rauh Base."
+    
+        # rauh base dungeons
+        case "RB/(SRC)": return "Scorpion River Catacombs, W Rauh Base."
+        case "RB/(TRF)": return "Taylew's Ruined Forge, NE Rauh Base."
+               
+        # ellac river
+        case "ER/ERC": return "Ellac River Cave grace, mid Ellac."
+        case "ER/ERD": return "Ellac River Downstream grace, S Ellac."
+        case "ER/RC": return "Rivermouth Cave landmark, NW Ellac."
+            
+        # ellac river dungeon
+        case "ER/(RC)": return "Rivermouth Cave, NW Ellac."
         
-        case "FRR": return "Finger Ruins of Rhia."
-        case "FRR/(FWH)": return "Finger-Weaver's Hovel landmark, SE Finger Ruins of Rhia."
+        # cerulean coast
+        case "CC/CC": return "Cerulean Coast grace, N Cerulean."
+        case "CC/CCC": return "Cerulean Coast Cross grace, E Cerulean."
+        case "CC/CCW": return "Cerulean Coast West grace, W Cerulean."
+        case "CC/FRR": return "Finger Ruins of Rhia grace, NE Cerulean."
+        case "FRR": return "Finger Ruins of Rhia landmark."
+        case "FRR/(FWH)": return "Finger-Weaver's Hovel landmark, SW Rhia."
+
+        # stone coffin
+        case "SCF/FC": return "Fissure Cross grace, second grace."
+        case "SCF/FD": return "Fissure Depths grace, before mainboss."
+        case "SCF/FW": return "Fissure Waypoint grace, third grace."
+        case "SCF/GDP": return "Garden of Deep Purple grace, after mainboss."
+        case "SCF/SCF": return "Stone Coffin Fissure grace, entrance."
+
+        # shadow keep
+        case "SK/MGP": return "Main Gate Plaza grace, after first boss."
+        case "SK/SKMG": return "Shadow Keep Main Gate grace, before first boss."
+        case "Cross": return "by any cross after Shadow Keep mainboss."
+        case "SK/DCE": return "Dark Chamber Entrance grace, before mainboss."
+        case "SK/SFiF": return "Storehouse, First Floor grace, storehouse main entrance."
+        case "SK/SFoF": return "Storehouse, Fourth Floor grace, by cross."
+        case "SK/SSF": return "Storehouse, Seventh Floor grace, by Freyja."
+        case "SK/SBS": return "Storehouse, Back Section grace, from Church District."
+        case "SK/SL": return "Storehouse, Loft grace, before rafters section."
+        case "ScV/SKBG": return "Shadow Keep, Back Gate grace, before Scaduview."
+        case "SK/WR": return "West Rampart grace, route to Ancient Ruins."
+        case "SK/CDE": return "Church District Entrance grace."
+        case "SK/SC": return "Sunken Chapel grace, drained Church District."
+        case "SK/TWS": return "Tree-Worship Sanctum grace, before Scadutree Base."
+
+        # scaduview
+        case "ScV/(AS)": return "Albinauric's Shack landmark, after boss."
+        case "ScV/(SC)": return "Scadutree Chalice landmark."
+
+        # scadutree base
+        case "SB/TWS": return "Tree-Worship Sanctum grace."
+
+        # ancient ruins
+        case "ARR/ARGS": return "Ancient Ruins, Grand Stairway grace, upper section to alt boss."
+        case "ARR/CBME": return "Church of the Bud, Main Entrance grace, before mainboss."
+        case "ARR/RARE": return "Rauh Ancient Ruins, East grace, before bridge crossing."
+        case "ARR/RARW": return "Rauh Ancient Ruins, West grace, S after bridge crossing."
+        case "ARR/VMT": return "Viaduct Minor Tower grace, entrance to Ancient Ruins."
+            
+        # hinterland
+        case "HL/(SV)": return "Shaman Village landmark, S Hinterland."
+        case "HL/FH": return "Fingerstone Hill grace, near crater."
+        case "HL/HB": return "Hinterland Bridge grace, after bridge."
+        case "HL/HL": return "Hinterland grace, entrance to Hinterland."
+        case "FRD": return "Finger Ruins of Dheo landmark."
+
+        # recluses river
+        case "RR/(ENM)": return "Eastern Nameless Mausoleum landmark, SE Recluses."
+        case "RR/(RU)": return "Ruins of Unte landmark, NE Recluses."
+        case "RR/(VF)": return "Village of the Flies landmark, SW Recluses."
+        case "RR/CWH": return "Castle Watering Hole grace, entrance to Recluses."
+        case "RR/RRD": return "Recluses' River Downstream grace, S Recluses."
+        case "RR/RRU": return "Recluses' River Upstream grace, mid Recluses."
+        case "RR/RU": return "Ruins of Unte landmark, NE Recluses."
         
-        case "ER/(RC)": return "Rivermouth Cave."
-        
-        case "FRD": return "Finger Ruins of Dheo."
-        
-        
-        case "": return ""
+        # recluses river dungeon
+        case "RR/(DC)": return "Darklight Catacombs, S Recluses."
+
+        # abyssal woods
+        case "AW/(AC)": return "Abandoned Church landmark, SE Woods."
+        case "AW/AC": return "Abandoned Church landmark, SE Woods."
+        case "AW/AW": return "Abyssal Woods grace, mid Woods."
+        case "AW/DF": return "Divided Falls grace, NW Woods."
+        case "AW/MM": return "Midra's Manse landmark, SW Woods."
+        case "AW/WT": return "Woodland Trail grace, E Woods."
+
+        # midras manse
+        case "MM/MH": return "Manse hall grace, entrance to Manse."
+        case "MM/ML": return "Midra's Library grace, midway point."
+        case "MM/SFC": return "Second Floor Chamber grace, before mainboss."
+
+        # enir-ilim
+        case "BTS|EI/SR": return "Spiral Rise grace, locations on the path down to Belurat."
+        case "EI/CCA": return "Cleansing Chamber Anteroom grace, before npc boss."
+        case "EI/DGFS": return "Divine Gate Front Staircase grace, before mainboss."
+        case "EI/FR": return "First Rise grace, second grace."
+        case "EI/GD": return "Gate of Divinty grace, after mainboss."
+        case "EI/OW": return "Enir-Ilim: Outer Wall, entrance to Enir-Ilim"
+        case "EI/SR": return "Spiral Rise grace, by cross."
     
     return ""
 

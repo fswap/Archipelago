@@ -161,8 +161,8 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 <tr style="height:45px"><td style="text-align: center"><strong>SV/SMG</strong></td><td> Stormveil Main Gate grace.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>SV/SeC</strong></td><td> Secluded Cell grace.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>SV/StC</strong></td><td> Stormveil Cliffside grace.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SV/GG</strong></td><td> Godrick the Grafted grace, in Godrick&#x27;s arena.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SV/LL</strong></td><td> Liurnia side of Stormveil, after Godrick&#x27;s arena.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SV/GG</strong></td><td> Godrick the Grafted grace, after mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SV/LL</strong></td><td> Liurnia side of Stormveil, after mainboss arena.</td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>SV/(DTL)</strong></td><td> Divine Tower of Limgrave landmark.</td></tr>
 <th colspan="2" style="text-align: center">
 
@@ -829,289 +829,288 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 ### Roundtable Hold DLC Only
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RH/DLC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RH/DLC</strong></td><td> Roundtable Hold but only DLC items.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Gravesite Plain
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(AAV)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(AS)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(CB)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(CC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(EG)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(EH)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(PT)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(RDTR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(SP)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(SR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(WNM)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/AS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/BG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/CB</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/CC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/CF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/CRT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/GN</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/GP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/MGC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/PPC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/PPW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/PT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/SP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/SR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/TPC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(AAV)</strong></td><td> Abandoned Ailing Village landmark, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(AS)</strong></td><td> Artist&#x27;s Shack landmark, S Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(CB)</strong></td><td> Church of Benediction landmark, S Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(CC)</strong></td><td> Church of Consolation landmark, E Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(EG)</strong></td><td> Ellac Greatbridge landmark, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(EH)</strong></td><td> Elder&#x27;s Hovel landmark, NE Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(PT)</strong></td><td> Prospect Town landmark, SW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(RDTR)</strong></td><td> Run-Down Traveler&#x27;s Rest landmark, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(SP)</strong></td><td> Supressing Pillar landmark, SE Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(SR)</strong></td><td> Scorched Ruins landmark, mid Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(WNM)</strong></td><td> Western Nameless Mausoleum landmark, W Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/AS</strong></td><td> Artist&#x27;s Shack landmark, S Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/BG</strong></td><td> Belurat Gaol landmark, NW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/CB</strong></td><td> Church of Benediction landmark, S Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/CC</strong></td><td> Church of Consolation landmark, E Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/CF</strong></td><td> Castle Front grace, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/CT</strong></td><td> Cliffroad Terminus grace, SW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/GN</strong></td><td> Greatbridge, North grace, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/GP</strong></td><td> Gravesite Plain grace, SW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/MGC</strong></td><td> Main Gate Cross grace, W Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/PPC</strong></td><td> Pillar Path Cross grace, E Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/PPW</strong></td><td> Pillar Path Waypoint grace, E Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/PT</strong></td><td> Prospect Town landmark, SW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/SP</strong></td><td> Supressing Pillar landmark, SE Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/SR</strong></td><td> Scorched Ruins landmark, mid Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/TPC</strong></td><td> Three-Path Cross grace, mid Gravesite.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Gravesite Plain Dungeons
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(FRC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(BG)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(DP)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>GP/(RFLI)</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(FRC)</strong></td><td> Fog Rift Catacombs, N Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(BG)</strong></td><td> Belurat Gaol, NW Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(DP)</strong></td><td> Dragon&#x27;s Pit, SE Gravesite.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>GP/(RFLI)</strong></td><td> Ruined Forge Lava Intake, E Gravesite.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Belurat
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>BTS/BTS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>BTS/SF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>BTS/SPA</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>BTS/TDB</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>BTS/BTS</strong></td><td> Belurat, Tower Settlement grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>BTS/SF</strong></td><td> Stagefront grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>BTS/SPA</strong></td><td> Small Private Altar grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>BTS/TDB</strong></td><td> Theater of the Divine Beast grace, after mainboss.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Castle Ensis
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>CE/CEC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CE/CF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CE/CLC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CE/CEC</strong></td><td> Castle Ensis Checkpoint grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CE/CF</strong></td><td> Castle Front grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CE/CLC</strong></td><td> Castle-Lord&#x27;s Chamber grace.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Fog Rift Fort
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>CE/(FRF)</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CE/(FRF)</strong></td><td> Fog Rift Fort landmark, from Scadu Altus</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Jagged Peak
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>JP/DPT</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>JP/FJP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>JP/GADC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>JP/JPM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>JP/JPS</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>JP/DPT</strong></td><td> Dragon&#x27;s Pit Terminus grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>JP/FJP</strong></td><td> Foot of the Jagged Peak grace, on route to Jagged Peak.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>JP/GADC</strong></td><td> Grand Altar of Dragon Communion grace, S Jagged Peak.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>JP/JPM</strong></td><td> Jagged Peak Mountainside grace, mid up Jagged Peak.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>JP/JPS</strong></td><td> Jagged Peak Summit grace, before mainboss.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Charo&#x27;s Hidden Grave
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>CHG/CHG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CHG/LG</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CHG/CHG</strong></td><td> Charo&#x27;s Hidden Grave grace, mid Charo&#x27;s.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CHG/LG</strong></td><td> Lamentor&#x27;s Gaol landmark, NW Charo&#x27;s.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Charo&#x27;s Hidden Grave Dungeon
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>CHG/(LG)</strong></td><td> Lamenter&#x27;s Gaol.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CHG/(LG)</strong></td><td> Lamenter&#x27;s Gaol, NW Charo&#x27;s.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Scadu Altus
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(BV)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(CC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(FR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(MR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(RR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(WH)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/BFR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/BLV</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/BV</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/CC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/CDH</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/CMM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/FR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/HC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/MHS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/MR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/RFSP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/SAW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/SC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(BV)</strong></td><td> Bonny Village landmark, SE Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(CC)</strong></td><td> Church of the Crusade landmark, NW Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(FR)</strong></td><td> Fort of Reprimand landmark, S Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(MR)</strong></td><td> Moorth Ruins landmark, mid Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(RR)</strong></td><td> Rabbath&#x27;s Rise landmark, NE Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(WH)</strong></td><td> Whipping Hut landmark, SE Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/BFR</strong></td><td> Behind the Fort of Reprimand grace, S Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/BLV</strong></td><td> Bridge Leading to Village grace, E Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/BV</strong></td><td> Bonny Village grace, SE Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/CC</strong></td><td> Church of the Crusade landmark, NW Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/CDH</strong></td><td> Church District Highroad grace, NE Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/CMM</strong></td><td> Cathedral of Manus Metyr landmark, E Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/FR</strong></td><td> Fort of Reprimand landmark, S Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/HC</strong></td><td> Highroad Cross grace, SW Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/MHS</strong></td><td> Moorth Highway, South grace, S Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/MR</strong></td><td> Moorth Ruins grace, mid Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/RFSP</strong></td><td> Ruined Forge of Starfall Past landmark, SW Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/SAW</strong></td><td> Scadu Altus, West grace, W Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/SC</strong></td><td> Scaduview Cross grace, up sealed spiritspring SE Scadu.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Scadu Altus Dungeons
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(BG)</strong></td><td> Bonny Gaol.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(RFSP)</strong></td><td> Ruined Forge of Starfall Past.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/ARR</strong></td><td> Rauh Ruins Limited, use infused stonesword key.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(BG)</strong></td><td> Bonny Gaol, S Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(RFSP)</strong></td><td> Ruined Forge of Starfall Past, SW Scadu.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/ARR</strong></td><td> Rauh Ruins Limited, use imbued stonesword key SW Scadu.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Cathedral of Manus Metyr
 
 </th>
 <tr style="height:45px"><td style="text-align: center"><strong>FRM</strong></td><td> Finger Ruins of Miyr.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SA/(CMM)</strong></td><td> Cathedral of Manus Metyr.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SA/(CMM)</strong></td><td> Cathedral of Manus Metyr landmark, E Scadu.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Rauh Base
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/(NNM)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/(TTR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/ARB</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/NNM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/RN</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/SRC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/TRF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/TTR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/(NNM)</strong></td><td> Northern Nameless Mausoleum landmark, up sealed spiritspring SE Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/(TTR)</strong></td><td> Temple Town Ruins landmark, S Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/ARB</strong></td><td> Ancient Ruins Base grace, NE Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/NNM</strong></td><td> Northern Nameless Mausoleum landmark, up sealed spiritspring SE Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/RN</strong></td><td> Ravine North grace, NW Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/SRC</strong></td><td> Scorpion River Catacombs landmark, W Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/TRF</strong></td><td> Taylew&#x27;s Ruined Forge landmark, NE Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/TTR</strong></td><td> Temple Town Ruins landmark or grace, S Rauh Base.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Rauh Base Dungeons
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/(SRC)</strong></td><td> Scorpion River Catacombs.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RB/(TRF)</strong></td><td> Taylew&#x27;s Ruined Forge.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/(SRC)</strong></td><td> Scorpion River Catacombs, W Rauh Base.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RB/(TRF)</strong></td><td> Taylew&#x27;s Ruined Forge, NE Rauh Base.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Ellac River
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>ER/ERC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ER/ERD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ER/RC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ER/ERC</strong></td><td> Ellac River Cave grace, mid Ellac.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ER/ERD</strong></td><td> Ellac River Downstream grace, S Ellac.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ER/RC</strong></td><td> Rivermouth Cave landmark, NW Ellac.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Ellac River Dungeon
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>ER/(RC)</strong></td><td> Rivermouth Cave.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ER/(RC)</strong></td><td> Rivermouth Cave, NW Ellac.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Cerulean Coast
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>CC/CC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CC/CCC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CC/CCW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>CC/FRR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>FRR</strong></td><td> Finger Ruins of Rhia.</td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>FRR/(FWH)</strong></td><td> Finger-Weaver&#x27;s Hovel landmark, SE Finger Ruins of Rhia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CC/CC</strong></td><td> Cerulean Coast grace, N Cerulean.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CC/CCC</strong></td><td> Cerulean Coast Cross grace, E Cerulean.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CC/CCW</strong></td><td> Cerulean Coast West grace, W Cerulean.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>CC/FRR</strong></td><td> Finger Ruins of Rhia grace, NE Cerulean.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>FRR</strong></td><td> Finger Ruins of Rhia landmark.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>FRR/(FWH)</strong></td><td> Finger-Weaver&#x27;s Hovel landmark, SW Rhia.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Stone Coffin Fissure
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>SCF/FC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SCF/FD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SCF/FW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SCF/GDP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SCF/SCF</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SCF/FC</strong></td><td> Fissure Cross grace, second grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SCF/FD</strong></td><td> Fissure Depths grace, before mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SCF/FW</strong></td><td> Fissure Waypoint grace, third grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SCF/GDP</strong></td><td> Garden of Deep Purple grace, after mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SCF/SCF</strong></td><td> Stone Coffin Fissure grace, entrance.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Shadow Keep
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/MGP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SKMG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>Cross</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/DCE</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SFiF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SFoF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SSF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SBS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SL</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ScV/SKBG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SFF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/WR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/CDE</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/SC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>SK/TWS</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/MGP</strong></td><td> Main Gate Plaza grace, after first boss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SKMG</strong></td><td> Shadow Keep Main Gate grace, before first boss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>Cross</strong></td><td> by any cross after Shadow Keep mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/DCE</strong></td><td> Dark Chamber Entrance grace, before mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SFiF</strong></td><td> Storehouse, First Floor grace, storehouse main entrance.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SFoF</strong></td><td> Storehouse, Fourth Floor grace, by cross.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SSF</strong></td><td> Storehouse, Seventh Floor grace, by Freyja.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SBS</strong></td><td> Storehouse, Back Section grace, from Church District.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SL</strong></td><td> Storehouse, Loft grace, before rafters section.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ScV/SKBG</strong></td><td> Shadow Keep, Back Gate grace, before Scaduview.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/WR</strong></td><td> West Rampart grace, route to Ancient Ruins.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/CDE</strong></td><td> Church District Entrance grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/SC</strong></td><td> Sunken Chapel grace, drained Church District.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SK/TWS</strong></td><td> Tree-Worship Sanctum grace, before Scadutree Base.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Scaduview
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>ScV/(AS)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ScV/(SC)</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ScV/(AS)</strong></td><td> Albinauric&#x27;s Shack landmark, after boss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ScV/(SC)</strong></td><td> Scadutree Chalice landmark.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Scadutree Base
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>SB/TWS</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>SB/TWS</strong></td><td> Tree-Worship Sanctum grace.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Ancient Ruins of Rauh
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>ARR/ARGS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ARR/CBME</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ARR/RARE</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ARR/RARW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>ARR/VMT</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ARR/ARGS</strong></td><td> Ancient Ruins, Grand Stairway grace, upper section to alt boss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ARR/CBME</strong></td><td> Church of the Bud, Main Entrance grace, before mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ARR/RARE</strong></td><td> Rauh Ancient Ruins, East grace, before bridge crossing.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ARR/RARW</strong></td><td> Rauh Ancient Ruins, West grace, S after bridge crossing.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>ARR/VMT</strong></td><td> Viaduct Minor Tower grace, entrance to Ancient Ruins.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Hinterland
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>HL/(SV)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>HL/FH</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>HL/HB</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>HL/HL</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>FRD</strong></td><td> Finger Ruins of Dheo.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>HL/(SV)</strong></td><td> Shaman Village landmark, S Hinterland.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>HL/FH</strong></td><td> Fingerstone Hill grace, near crater.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>HL/HB</strong></td><td> Hinterland Bridge grace, after bridge.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>HL/HL</strong></td><td> Hinterland grace, entrance to Hinterland.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>FRD</strong></td><td> Finger Ruins of Dheo landmark.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Recluses&#x27; River
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/(ENM)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/(RU)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/(VF)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/CWH</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/RRD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/RRU</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/RU</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/(ENM)</strong></td><td> Eastern Nameless Mausoleum landmark, SE Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/(RU)</strong></td><td> Ruins of Unte landmark, NE Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/(VF)</strong></td><td> Village of the Flies landmark, SW Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/CWH</strong></td><td> Castle Watering Hole grace, entrance to Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/RRD</strong></td><td> Recluses&#x27; River Downstream grace, S Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/RRU</strong></td><td> Recluses&#x27; River Upstream grace, mid Recluses.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/RU</strong></td><td> Ruins of Unte landmark, NE Recluses.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Recluses&#x27; River Dungeon
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RR/(DC)</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RR/(DC)</strong></td><td> Darklight Catacombs, S Recluses.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Abyssal Woods
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/(AC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/AC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/AW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/DF</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/MM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AW/WT</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/(AC)</strong></td><td> Abandoned Church landmark, SE Woods.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/AC</strong></td><td> Abandoned Church landmark, SE Woods.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/AW</strong></td><td> Abyssal Woods grace, mid Woods.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/DF</strong></td><td> Divided Falls grace, NW Woods.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/MM</strong></td><td> Midra&#x27;s Manse landmark, SW Woods.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AW/WT</strong></td><td> Woodland Trail grace, E Woods.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Midra&#x27;s Manse
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>MM/MH</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>MM/ML</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>MM/SFC</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>MM/MH</strong></td><td> Manse hall grace, entrance to Manse.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>MM/ML</strong></td><td> Midra&#x27;s Library grace, midway point.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>MM/SFC</strong></td><td> Second Floor Chamber grace, before mainboss.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Enir-Ilim
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>BTS|EI/SR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/CCA</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/DGFS</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/FR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/GD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/OW</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>EI/SR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>BTS|EI/SR</strong></td><td> Spiral Rise grace, locations on the path down to Belurat.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/CCA</strong></td><td> Cleansing Chamber Anteroom grace, before npc boss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/DGFS</strong></td><td> Divine Gate Front Staircase grace, before mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/FR</strong></td><td> First Rise grace, second grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/GD</strong></td><td> Gate of Divinty grace, after mainboss.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/OW</strong></td><td> Enir-Ilim: Outer Wall, entrance to Enir-Ilim</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>EI/SR</strong></td><td> Spiral Rise grace, by cross.</td></tr>
 </table>
 
 
