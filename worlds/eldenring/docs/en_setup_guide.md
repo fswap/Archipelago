@@ -115,4 +115,6 @@ If the launcher button shows the me3 console but doesn't actually start the game
 
 If you see an error message pop up in-game followed by the game closing, this is likely a client error. Further information may be logged in the `dll\log` directory. Note the client dll is currently a debug build because the release build crashes, which will be addressed in the future.
 
+If you get an `Failed to load save data. Save data is corrupted.` error this is most likely due to windows anti-virus deleting `er_archipelago.dll` in `randomizer/dll`, you can restore the file or just extract it again and it'll work.
+
 Otherwise, if the game stutters and crashes while using enemy randomizer, make sure you're launching the game with `RandomizerCrashFix.dll`. Also, verify integrity of installed files in Steam, because they can get accidentally corrupted surprisingly often.
