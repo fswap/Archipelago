@@ -17,6 +17,7 @@ from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic
         TotalTrapCount,\
         NGPlusTrapChance, StatusTrapChance, BlindnessTrapChance, BlizzardTrapChance, HeavyTrapChance,\
         EnableTarnishedPack, EnableDLC,\
+        AddDLCItems, AddBaseItems,\
         DLCMessmerKindle, DLCScadutreeFragments,\
         DLCTimingOption,\
         DLCMaxLevelWeapons,\
@@ -50,7 +51,9 @@ template = {
     
     "enable_tp_dlc":                        EnableTarnishedPack,
     "enable_dlc":                           EnableDLC,
+    "add_dlc_items":                        AddDLCItems,
     "dlc_start":                            DLCStart,
+    "add_base_items":                       AddBaseItems,
     "dlc_starting_items":                   DLCStartingItems,
     "dlc_starting_shop":                    DLCStartingShop,
     "dlc_care_package":                     DLCCarePackage,
@@ -298,7 +301,7 @@ dlc_only = {
     "soft_logic":                           RegionSoftLogic.default,
     
     "enable_dlc":                           EnableDLC.option_true,
-    "dlc_start":                            DLCStart.option_dlc_start,
+    "dlc_start":                            DLCStart.option_true,
     "dlc_starting_items":                   ["Sacred Tears", "Golden Seeds", "Talisman Pouches", "Memory Stones", "Whetblades", "Upgrade Bell Bearings"],
     "dlc_starting_shop":                    DLCStartingShop.option_true,
     "dlc_care_package":                     DLCCarePackage.option_false,
@@ -360,7 +363,7 @@ all_bosses = {
     "use_master_key":                       StoneswordMasterKey.default,
     
     "enable_dlc":                           EnableDLC.option_true,
-    "dlc_start":                            DLCStart.option_normal,
+    "dlc_start":                            DLCStart.default,
     "dlc_starting_items":                   [],
     "dlc_starting_shop":                    DLCStartingShop.option_false,
     "dlc_care_package":                     DLCCarePackage.option_false,

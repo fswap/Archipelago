@@ -137,6 +137,11 @@ class EnableDLC(DefaultOnToggle):
     """Enable Shadow of the Erdtree DLC"""
     display_name = "Enable DLC"
 
+class AddDLCItems(Toggle):
+    """Adds DLC items into the itempool but excludes all DLC locations, **needs DLC enabled**.
+    \nThis also allows DLC bosses to appear in base game."""
+    display_name = "Add DLC Items"
+
 class SeparateProgression(Toggle):
     """Separate Progression.
 
@@ -202,18 +207,13 @@ class DLCSpiritspringStones(Toggle):
     
 # MARK: DLC Start
 
-class DLCStart(Choice):
-    """Where the run starts.
-    
-    - **Normal:** Start in Limgrave.
-    - **DLC Start:** Start in Gravesite Plain, with no access to base game.
-    - **DLC Start With Base:** Start in either Stranded Graveyard or Gravesite Plain.
-    """
+class DLCStart(Toggle):
+    """Start in the DLC, **needs DLC enabled**."""
     display_name = "DLC Start"
-    option_normal = 0
-    option_dlc_start = 1
-    option_dlc_start_with_base = 2
-    default = 0
+    
+class AddBaseItems(Toggle):
+    """Adds base game items into the itempool when **DLC Start** is enabled."""
+    display_name = "Add Base Game Items"
     
 class DLCStartingItems(OptionList):
     """Choose what base game items to start with in DLC Start.
@@ -671,7 +671,6 @@ class LocalItemOnly(LocalItems):
 
 class ERExcludeLocations(ExcludeLocations):
     """Prevent these locations from having an important item.
-    - **DLC**: If you want DLC items but dont wanna do DLC.
     - **Hidden**: Hard to find locations.
     - **Rise**: Chests at the top of rises.
     - **Blizzard**: The hard to see area of snowfield.
@@ -694,21 +693,13 @@ class ERExcludeLocations(ExcludeLocations):
     """ # - **Post Stormveil**: Used for short runs, excludes everything after Stormveil.   needs code to stop rules past stormveil, leyndell and dlc
     default = frozenset({"Hidden", "Rise", "Drop", "Dungeon"}) # "Post Stormveil"
     valid_keys = {
-        "DLC", "Hidden", "Rise", "Blizzard", "Scarab", "Furnace Golem", "Out of the Way", "Drop", 
+        "Hidden", "Rise", "Blizzard", "Scarab", "Furnace Golem", "Out of the Way", "Drop", 
         "Dungeon", "Cave", "Tunnel", "Grave", "Catacombs", "Gaol", "Forge",
         "Post Leyndell"
         } | {region for region in region_order + region_order_dlc}
     
     # testing "All Locations"
     valid_keys_casefold = False
-    
-    unconverted_groups = set() # this is so dumb but it works, i need the unconverted group names
-    def verify_keys(self) -> None:
-        super().verify_keys()
-        self.unconverted_groups = self.value
-        
-    def excluded_groups(self):
-        return self.unconverted_groups
 
 class ExcludedLocationBehaviorOption(Choice):
     """How to choose items for excluded locations in ER.
@@ -765,7 +756,9 @@ class EROptions(PerGameCommonOptions):
     
     enable_tp_dlc: EnableTarnishedPack
     enable_dlc: EnableDLC
+    add_dlc_items: AddDLCItems
     dlc_start: DLCStart
+    add_base_items: AddBaseItems
     dlc_starting_items: DLCStartingItems
     dlc_starting_shop: DLCStartingShop
     dlc_care_package: DLCCarePackage
@@ -880,6 +873,7 @@ option_groups = [
     OptionGroup("DLC", [
         EnableTarnishedPack,
         EnableDLC,
+        AddDLCItems,
         SeparateProgression,
         DLCMessmerKindle,
         DLCScadutreeFragments,
@@ -890,6 +884,7 @@ option_groups = [
     ]),
     OptionGroup("DLC Start", [
         DLCStart,
+        AddBaseItems,
         DLCStartingItems,
         DLCStartingShop,
         DLCCarePackage,

@@ -195,7 +195,7 @@ class ERItemData:
                 return True
         
         # code to skip certain dlc items
-        if self.is_dlc and "DLC" in options.exclude_locations.excluded_groups():
+        if self.is_dlc and options.add_dlc_items and not options.dlc_start:
             if self.scadu or self.base_name == "Revered Spirit Ash":
                 return True
         
@@ -212,16 +212,6 @@ class ERItemData:
             if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
             if self.boss_tools and options.enemy_rando.value == 0: return ItemClassification.progression
         
-        if self.is_dlc and "DLC" in options.exclude_locations.excluded_groups():
-            return ItemClassification.filler
-        
-        if options.enable_dlc:
-            if options.dlc_start == 1 and self.base_name == "Starlight Shards": return ItemClassification.filler
-            if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
-            if self.name == "Pureblood Knight's Medal" and (options.world_logic == 0
-                    or options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start.value == 1)):
-                return ItemClassification.progression
-        
         if options.important_at_priority_only:
             if options.flask_at_priority and self.base_name in {"Golden Seed", "Sacred Tear"}:
                 return ItemClassification.progression
@@ -236,6 +226,19 @@ class ERItemData:
             if options.remembrances_at_priority and self.remembrance:
                 return ItemClassification.progression
         
+        if self.is_dlc and options.add_dlc_items and not options.dlc_start:
+            return ItemClassification.filler
+        elif not self.is_dlc and options.enable_dlc and options.dlc_start and options.add_base_items:
+            if self.base_name not in ("Dragon Heart", "Crafting Kit"):
+                return ItemClassification.filler
+        
+        if options.enable_dlc:
+            if options.dlc_start and self.base_name == "Starlight Shards": return ItemClassification.filler
+            if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
+            if self.name == "Pureblood Knight's Medal" and (options.world_logic == 0
+                    or options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start)):
+                return ItemClassification.progression
+
         return self.classification
 
 class ERItem(Item):

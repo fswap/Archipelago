@@ -490,7 +490,7 @@ class ERLocation(Location):
 
 def disable_base(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when Base is disabled."""
-    return options.enable_dlc.value and options.dlc_start.value == 1
+    return options.enable_dlc.value and options.dlc_start.value and not options.add_base_items.value
 
 def disable_dlc(self: ERLocationData, options: EROptions) -> bool:
     """A utility function for locations that are omitted when DLC is disabled."""
