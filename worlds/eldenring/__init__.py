@@ -280,6 +280,14 @@ class EldenRing(World):
             elif not self.options.enemy_rando:
                 self.rykard_location = default_rykard_location
                 self.serpent_location = default_serpent_location
+            
+            # if adding items from base or dlc exclude those locations
+            if self.options.enable_dlc and self.options.dlc_start and self.options.add_base_items:
+                for region in region_order:
+                    self.options.exclude_locations.value.update([l.name for l in location_tables[region]])
+            elif self.options.enable_dlc and not self.options.dlc_start and self.options.add_dlc_items:
+                for region in region_order_dlc:
+                    self.options.exclude_locations.value.update([l.name for l in location_tables[region]])
         
         for region in location_tables: # make sure table has all values
             self.dupe_location_tables.setdefault(region, [])
@@ -1311,7 +1319,8 @@ class EldenRing(World):
         """Removes certain items from the item pool and manually places them in the local world.
 
         We can't do this in pre_fill because the itempool may not be modified after create_items.
-        """ # fill local before adding to inventory
+        """ 
+        # fill local before adding to inventory
         if self.base_enabled:
             if self.options.crafting_kit_option.value == 1:
                 self._fill_local_item("Crafting Kit", region_order, lambda location: location.region_value <= 44)
@@ -1329,7 +1338,7 @@ class EldenRing(World):
             if self.options.dlc_messmer_kindle.value == 1 or self.options.dlc_messmer_kindle.value == 2 and self.multiworld.players == 1:
                 [self._fill_local_item(item, region_order_dlc) for item in self.itempool 
                  if item.data.name == "Messmer's Kindling" or item.data.name == "Messmer's Kindling Shard"]
-            if self.options.dlc_start != 0:
+            if self.options.dlc_start:
                 [self._add_to_inventory(self.create_item(item)) for item in (
                     "Spectral Steed Whistle",
                     "Spirit Calling Bell",

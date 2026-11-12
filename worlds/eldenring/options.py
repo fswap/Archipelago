@@ -456,6 +456,7 @@ class CraftingKitOption(Choice):
     - **Randomize:** Can be anywhere.
     - **Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
     - **Do Not Randomize:** Leave it at its normal spot, if DLC Only is on it'll be in Roundtable Twin Maiden Shop.
+    *If not randomized and doing dlc start with base items, Crafting Kit will place at Kale.*
     """
     display_name = "Crafting Kit Behavior"
     option_randomize = 0
@@ -469,6 +470,7 @@ class PhysickFlaskOption(Choice):
     - **Randomize:** Can be anywhere.
     - **Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
     - **Do Not Randomize:** Leave it at its normal spot, if DLC Only is on it'll be in Roundtable Twin Maiden Shop.
+    *If not randomized and doing dlc start with base items, Flask of Wondrous Physick will place at its normal spot.*
     """
     display_name = "Flask of Wondrous Physick Behavior"
     option_randomize = 0
