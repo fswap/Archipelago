@@ -1369,7 +1369,7 @@ class DarkSouls3World(World):
                 self._add_entrance_rule("Profaned Capital", lambda state: (
                     state.has("Estus Shard", self.player, scale(7)) and state.has("Undead Bone Shard", self.player, scale(6))
                 ))
-                self._add_entrance_rule("Lothric Castle", lambda state: (
+                self._add_location_rule("HWL: Soul of the Dancer", lambda state: (
                     state.has("Estus Shard", self.player, scale(8)) and state.has("Undead Bone Shard", self.player, scale(8))
                 ))
                 self._add_entrance_rule("Consumed King's Garden", lambda state: (
