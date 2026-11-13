@@ -60,6 +60,24 @@ class EarlySmallLothricBanner(Choice):
     option_early_local = 2
     default = option_off
 
+class HealthUpgradesLogic(Choice):
+    """Guarantee that you need a certain amount of health upgrades before an area becomes in logic.
+    
+    - **Off:** This would disable all the logic behind health upgrades, so it would be possible that you are 
+    required to beat Ringed City bosses without any health upgrade.
+    - **Very easy:** The areas require an amount of healing upgrades similar to a vanilla route. And the
+    dlcs would require all of them.
+    - **Easy:** The amount is reduced to 75% compared to Very Easy
+    - **Normal:** The amount is reduced to 50% compared to Very Easy
+    - **Hard:** The amount is reduced to 25% compared to Very Easy
+    """
+    display_name = "Health Upgrades Logic"
+    option_off = 0
+    option_very_easy = 4
+    option_easy = 3
+    option_normal = 2
+    option_hard = 1
+    default = option_very_easy
 
 class LateBasinOfVowsOption(Choice):
     """Guarantee that you don't need to enter Lothric Castle until later in the run.
@@ -429,6 +447,7 @@ class DarkSouls3Options(PerGameCommonOptions):
     # Game Options
     goal: GoalOption
     early_banner: EarlySmallLothricBanner
+    health_logic: HealthUpgradesLogic
     late_basin_of_vows: LateBasinOfVowsOption
     late_dlc: LateDLCOption
     death_link: DeathLink
