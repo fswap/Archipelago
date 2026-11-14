@@ -395,7 +395,7 @@ class EldenRing(World):
         elif boss.dlc and self.dlc_enabled or not boss.dlc: return True
         return False
 
-    #MARK: Connections
+    # MARK: Connections
     def create_regions(self) -> None:
         # Create Vanilla Regions
         regions: Dict[str, Region] = {"Menu": self.create_region("Menu", {})}
@@ -1635,7 +1635,7 @@ class EldenRing(World):
         if self.dlc_enabled:
                 
             # not dlc only
-            if self.options.dlc_start != 1:
+            if not self.options.dlc_start:
                 if (self.options.dlc_scadutree_fragments.value
                     or self.options.dlc_messmer_kindle.value
                     or self.options.separate_progression.value): # only do loop if one of these are on

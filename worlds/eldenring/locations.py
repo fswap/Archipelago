@@ -3389,7 +3389,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("BTS/SPA: Golden Horn Tender x2 - to SW, from bridge go to SW rooftops", "Golden Horn Tender x2", key="200000,0:0020007110::", targets=('lot:20000111')),
         ERLocationData("BTS/BTS: Revered Spirit Ash x2 - to SE, statue by stairs", "Revered Spirit Ash x2", key="200000,0:0020007170::", revered=True, targets=('lot:20000170')),
         ERLocationData("BTS/BTS: Messmerfire Grease - to SE, down ladder", "Messmerfire Grease", key="200000,0:0020007200::", targets=('lot:20000200')),
-        ERLocationData("BTS/SPA: Rada Fruit - to NE, S section of invader courtyard", "Rada Fruit", key="200000,0:0020007380::", targets=('lot:20000380')),
+        # fake item ERLocationData("BTS/SPA: Rada Fruit - to NE, S section of invader courtyard", "Rada Fruit", key="200000,0:0020007380::", targets=('lot:20000380')),
         ERLocationData("BTS/SPA: Black Pyrefly x3 - to NE, N section of invader courtyard", "Black Pyrefly x3", key="200000,0:0020007400::", targets=('lot:20000400')),
         ERLocationData("BTS/SPA: Ash of War: Shriek of Sorrow - to NE, tree in invader courtyard", "Ash of War: Shriek of Sorrow", key="200000,0:0020007410::", targets=('lot:20000410')),
         ERLocationData("BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard", "Dewgem x3", key="200000,0:0020007420::", targets=('lot:20000420')),
@@ -3926,9 +3926,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/(SHG): Root Resin x3 - after ladder drop down on bridge", "Root Resin x3", key="300800,0:0030087040::", targets=('lot:30080040')),
         ERLocationData("AP/(SHG): Prattling Pate \"Let's get to it\" - big dead-end room after bridge", "Prattling Pate \"Let's get to it\"", key="300800,0:0030087050::", targets=('lot:30080050')),
         ERLocationData("AP/(SHG): Human Bone Shard x5 - after ladder drop down", "Human Bone Shard x5", key="300800,0:0030087060::", targets=('lot:30080060')),
-        #idk if the order in smithbox is correct for these
-        ERLocationData("AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down, only after boss door is open", "Ghost Glovewort [4]", key="300800,0:0030087970::", targets=('lot:402030021')),
-        ERLocationData("AP/(SHG): Ghost Glovewort [4] - enemy drop left path under stairs", "Ghost Glovewort [4]", key="300800,0:0030087980::", targets=('lot:402030011')),
+        ERLocationData("AP/(SHG): Ghost Glovewort [4] - enemy drop left path under stairs", "Ghost Glovewort [4]", key="300800,0:0030087970::", targets=('lot:402030021')),
+        ERLocationData("AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down, only after boss door is open", "Ghost Glovewort [4]", key="300800,0:0030087980::", targets=('lot:402030011')),
         ERLocationData("AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down", "Ghost Glovewort [4]", key="300800,0:0030087990::", targets=('lot:402030001')),
     ],
     "Gelmir Hero's Grave":[ # gelmir_grave                                done

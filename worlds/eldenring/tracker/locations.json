@@ -21291,7 +21291,7 @@
         "name": "AP/(SHG): Human Bone Shard x5 - after ladder drop down"
       },
       {
-        "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop left path under stairs"
+        "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down, only after boss door is open"
       },
       {
         "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down"
@@ -21312,10 +21312,10 @@
     ]
   },
   {
-    "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down, only after boss door is open",
+    "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop left path under stairs",
     "sections": [
       {
-        "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop after ladder drop down, only after boss door is open"
+        "name": "AP/(SHG): Ghost Glovewort [4] - enemy drop left path under stairs"
       }
     ],
     "map_locations": [
@@ -36495,11 +36495,8 @@
     ]
   },
   {
-    "name": "BTS/SPA: Rada Fruit - to NE, S section of invader courtyard",
+    "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard",
     "sections": [
-      {
-        "name": "BTS/SPA: Rada Fruit - to NE, S section of invader courtyard"
-      },
       {
         "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard"
       }
