@@ -29352,10 +29352,10 @@
         "name": "FP/GCHG: Drawstring Holy Grease x2 - E of GCHG, to E after jump near rocks"
       },
       {
-        "name": "FP/CR: Somber Smithing Stone [7] 1 - enemy drop N of CR, group of 3 on rock"
+        "name": "FP/GCHG: Somber Smithing Stone [7] - enemy drop E of GCHG, to E after jump by rock"
       },
       {
-        "name": "FP/CR: Somber Smithing Stone [7] 2 - enemy drop N of CR, group of 3 on rock"
+        "name": "FP/GCHG: Somber Smithing Stone [7] - enemy drop E of GCHG, to E after jump under arch"
       }
     ],
     "map_locations": [
@@ -29433,16 +29433,16 @@
     ]
   },
   {
-    "name": "FP/CR: Somber Smithing Stone [7] 3 - enemy drop N of CR, group of 3 on rock",
+    "name": "FP/CR: Somber Smithing Stone [7] 1 - enemy drop N of CR, group of 3 on rock",
     "sections": [
       {
+        "name": "FP/CR: Somber Smithing Stone [7] 1 - enemy drop N of CR, group of 3 on rock"
+      },
+      {
+        "name": "FP/CR: Somber Smithing Stone [7] 2 - enemy drop N of CR, group of 3 on rock"
+      },
+      {
         "name": "FP/CR: Somber Smithing Stone [7] 3 - enemy drop N of CR, group of 3 on rock"
-      },
-      {
-        "name": "FP/GCHG: Somber Smithing Stone [7] - enemy drop E of GCHG, to E after jump under arch"
-      },
-      {
-        "name": "FP/GCHG: Somber Smithing Stone [7] - enemy drop E of GCHG, to E after jump by rock"
       }
     ],
     "map_locations": [

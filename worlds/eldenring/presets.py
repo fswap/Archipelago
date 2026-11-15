@@ -292,6 +292,9 @@ base_game_only = {
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
 
+base_game_only_add_dlc = base_game_only.copy()
+base_game_only_add_dlc.update({"add_dlc_items": 'true', "enable_dlc": 'true'})
+
 dlc_only = {
     "progression_balancing":                ProgressionBalancing.default,
     "accessibility":                        Accessibility.option_full,
@@ -340,11 +343,16 @@ dlc_only = {
     "spell_shop_spells_only":               SpellShopSpellsOnly.default,
     "early_legacy_dungeons":                EarlyLegacyDungeonsEarly.default,
     "priority_location_groups":             ["DLC Boss Reward", "Cross", "Revered", "DLC Key Items", "DLC Map", "DLC Shop"],
+    
+    "early_items":                          {"Scadutree Fragment": 9},
     "local_item_only":                      LocalItemOnly.default,
     "exclude_locations":                    ERExcludeLocations.default,
     "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_forbid_useful,
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }
+
+dlc_only_add_base = dlc_only.copy()
+dlc_only_add_base.update({"add_base_items": 'true'})
 
 base_dlc = {
 }
@@ -483,9 +491,11 @@ pain = { # :)
 er_options_presets: Dict[str, Dict[str, Any]] = {
     "[Random] All Random": all_random_options,
     "[Short] Great Rune Hunt": great_rune_hunt,
-    "[Medium] Base Game Only": base_game_only,
+    "[Med] Base Game Only": base_game_only,
+    "[Med] Base Game Only with DLC items": base_game_only_add_dlc,
     "[Short] DLC Only": dlc_only,
+    "[Short] DLC Only with Base game items": dlc_only_add_base,
     "[Long] Base + DLC": base_dlc,
-    "[Very Long] All Bosses": all_bosses,
+    "[V Long] All Bosses": all_bosses,
     "Don't": pain,
 }

@@ -639,11 +639,12 @@ class EarlyItems(OptionDict):
     Common early items:
     - Talisman Pouch
     - Sacred Tear
+    - Scadutree Fragment
     
     *Item name: count*"""
     display_name = "Early Items"
     supports_weighting = False
-    default = {"Talisman Pouch": 1, "Sacred Tear": 4}
+    default = {"Talisman Pouch": 1, "Sacred Tear": 2}
     valid_keys = all_item_names
 
 class LocalItemOnly(LocalItems):
