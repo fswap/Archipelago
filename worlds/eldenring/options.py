@@ -559,7 +559,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     
     display_name = "Priority Location Groups"
     default = ["Key Items", "DLC Key Items", "Boss Reward", "DLC Boss Reward", "Seedtree", "Map", "DLC Map", "Church", "Cross", "Fragment"]
-    valid_keys = ["Chest", "Scarab", "Seedtree", "Basin", "Church", "Map", "DLC Map", "Key Items", "DLC Key Items", 
+    valid_keys = ["Chest", "DLC Chest", "Scarab", "DLC Scarab", "Seedtree", "Basin", "Church", "Map", "DLC Map", "Key Items", "DLC Key Items", 
         "Fragment", "Cross", "Revered", "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward",
         "Shop", "DLC Shop", "Spiritspring Stones"]
     valid_keys_casefold = False
