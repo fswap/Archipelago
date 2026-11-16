@@ -338,15 +338,15 @@ dlc_only = {
     "auto_upgrade":                         AutoUpgradeOption.option_true,
     
     "smithing_bell_bearing_option":         SmithingBellBearingOption.default,
-    "smooth_upgrade_items":                 SmoothUpgradeItems.option_true,
-    "smooth_rune_items":                    SmoothRuneItems.option_true,
+    "smooth_upgrade_items":                 SmoothUpgradeItems.option_false,
+    "smooth_rune_items":                    SmoothRuneItems.option_false,
     "spell_shop_spells_only":               SpellShopSpellsOnly.default,
     "early_legacy_dungeons":                EarlyLegacyDungeonsEarly.default,
-    "priority_location_groups":             ["DLC Boss Reward", "Cross", "Revered", "DLC Key Items", "DLC Map", "DLC Shop"],
+    "priority_location_groups":             ["DLC Boss Reward", "Fragment", "Revered", "DLC Key Items", "DLC Map", "DLC Shop"],
     
-    "early_items":                          {"Scadutree Fragment": 9},
+    "early_items":                          {"Scadutree Fragment": 7},
     "local_item_only":                      LocalItemOnly.default,
-    "exclude_locations":                    ERExcludeLocations.default,
+    "exclude_locations":                    {"Hidden", "Dungeon"},
     "excluded_location_behavior":           ExcludedLocationBehaviorOption.option_forbid_useful,
     "missable_location_behavior":           MissableLocationBehaviorOption.option_forbid_useful,
 }

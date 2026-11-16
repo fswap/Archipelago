@@ -294,6 +294,9 @@ class EldenRing(World):
         
         self.dlc_enabled = self.options.enable_dlc and not (not self.options.dlc_start and self.options.add_dlc_items)
         self.base_enabled = not (self.dlc_enabled and self.options.dlc_start)
+        if not self.dlc_enabled or not self.base_enabled:
+            self.options.separate_progression.value = False
+        
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         
@@ -780,17 +783,18 @@ class EldenRing(World):
         
         dlc_priority = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and self.dlc_enabled]
         base_priority = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and self.base_enabled]
-        early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44 and self.base_enabled] # lim, storm, weep, liurnia, raya
-        early_dlc = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and location_dictionary[loc].region_value <= len(region_order) + 9 
-                     and location_dictionary[loc].region_value > len(region_order) and self.options.enable_dlc] # grave, belurat, dragon pit, ensis
         
-        if self.base_enabled or self.options.dlc_start == 0 and self.dlc_enabled: early_dlc = [] # start not in dlc, no early dlc
-        else: early_base = [] # base off or dlc start, no early base
+        early_base = []
+        early_dlc = []
+        if self.base_enabled or not self.options.dlc_start and self.dlc_enabled: 
+            early_base = [loc for loc in self.all_priority_locations if not location_dictionary[loc].dlc and location_dictionary[loc].region_value <= 44 and self.base_enabled] # lim, storm, weep, liurnia, raya
+        else: 
+            early_dlc = [loc for loc in self.all_priority_locations if location_dictionary[loc].dlc and location_dictionary[loc].region_value <= len(region_order) + 9 
+                and location_dictionary[loc].region_value > len(region_order) and self.options.enable_dlc] # grave, belurat, dragon pit, ensis
         
         loc_needed = len([i for i in important_items if not i.data.is_dlc and not i.found_in_dlc]) - len(base_priority)
         dlc_loc_needed = len([i for i in important_items if (i.data.is_dlc or i.found_in_dlc) and self.dlc_enabled]) - len(dlc_priority)
-        
-        if not self.base_enabled: # if base injected in dlc only, make them dlc
+        if not self.base_enabled: # if adding base game items, we need more dlc priority
             dlc_loc_needed += loc_needed
             loc_needed = 0
         
@@ -800,21 +804,21 @@ class EldenRing(World):
         # save all possible prio locations
         self.all_possible_priority_locations = self.all_priority_locations.copy()
         # make sure not to many priority locations exist
-        if self.multiworld.players != 1:
-            for player, world in self.multiworld.worlds.items():
-                # if important_at_priority_only is off or game isn't eldenring add restriction rules
-                if world.game == "EldenRing" and not world.options.important_at_priority_only or world.game != "EldenRing":
-                    while loc_needed < 0:
-                        removed = self.random.choice(sorted(base_priority))
-                        base_priority.remove(removed)
-                        self.all_priority_locations.remove(removed)
-                        loc_needed += 1
-                    while dlc_loc_needed < 0:
-                        removed = self.random.choice(sorted(dlc_priority))
-                        dlc_priority.remove(removed)
-                        self.all_priority_locations.remove(removed)
-                        dlc_loc_needed += 1
-                    break
+        # if self.multiworld.players != 1:
+        #     for player, world in self.multiworld.worlds.items():
+        #         # if important_at_priority_only is off or game isn't eldenring add restriction rules
+        #         if world.game == "EldenRing" and not world.options.important_at_priority_only or world.game != "EldenRing":
+        #             while loc_needed < 0:
+        #                 removed = self.random.choice(sorted(base_priority))
+        #                 base_priority.remove(removed)
+        #                 self.all_priority_locations.remove(removed)
+        #                 loc_needed += 1
+        #             while dlc_loc_needed < 0:
+        #                 removed = self.random.choice(sorted(dlc_priority))
+        #                 dlc_priority.remove(removed)
+        #                 self.all_priority_locations.remove(removed)
+        #                 dlc_loc_needed += 1
+        #             break
         
         # need to modify progress type here after create_regions
         if self.multiworld.players == 1: # only use prio on solo runs
@@ -1207,7 +1211,7 @@ class EldenRing(World):
                 ) and shard_list[shard] in self.options.key_item_shards.value and self.options.key_item_shards.value[shard_list[shard]]['Max'] > 1:
                 all_injectable_items += [item_table[shard] for i in range(self.options.key_item_shards.value[shard_list[shard]]['Max'])]
         
-        if not self.base_enabled:
+        if not self.base_enabled and not self.options.add_base_items:
             dlc_start_lower: list[str] = [i.lower() for i in self.options.dlc_starting_items.value]
             # if not started with add to injection since base game items dont exist
             if "sacred tears" not in dlc_start_lower: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
@@ -1405,13 +1409,10 @@ class EldenRing(World):
         "Add item to starting inventory."
         if item in self.itempool:
             self.itempool.remove(item)
-        # only precollect important?
-        # if item.classification not in (ItemClassification.progression, ItemClassification.progression_deprioritized) and 
         if item.data.map:
             self.all_starting_items.append(self._er_item_full_id(item.data))
         else:
-            self.multiworld.push_precollected(item)
-            
+            self.multiworld.push_precollected(item)   
 
     def create_item(self, item: Union[str, ERItemData]) -> ERItem:
         new_item = ERItem(self.player, item if isinstance(item, ERItemData) else item_table[item])
@@ -1757,7 +1758,7 @@ class EldenRing(World):
                     else:
                         if self.options.no_filler_at_priority: 
                             self._add_item_rule(loc.name, lambda item: item.game != self.game 
-                                or item.data.category != ERItemCategory.GOODS and not item.data.ammo # don't place filler goods or ammo at prio
+                                or item.data.category != 1 and not item.data.ammo # don't place filler goods or ammo at prio
                                 or item.advancement or item.useful)
         else:
             for loc in self.multiworld.get_unfilled_locations(self.player):
@@ -3543,7 +3544,7 @@ class EldenRing(World):
             "allStartingItems": self.all_starting_items, # list of _er_item_full_id
             "duplicatedLocations": duplicated_locations,
             "dungeonSweepLocations": [json.dumps(asdict(f)) for f in dungeon_sweep_flag_to_locations],
-            "versions": ">=0.1 <0.2",
+            "versions": ">=0.2 <0.3",
         }
 
         return slot_data

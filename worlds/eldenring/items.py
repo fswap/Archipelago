@@ -75,6 +75,9 @@ class ERItemData:
     lock: bool = False
     """Region lock items"""
     
+    other_lock: bool = False
+    """Other Region lock items"""
+    
     spiritspring: bool = False
     """Spiritspring stones"""
     
@@ -141,8 +144,8 @@ class ERItemData:
         if self.classification == ItemClassification.progression:
             names.append("Progression")
 
-        if self.great_rune: names.append("Great Rune") 
-        if self.lock: names.append("Region lock")  
+        if self.great_rune: names.append("Great Rune")
+        if self.lock or self.other_lock: names.append("Region lock")
 
         names.append({
             ERItemCategory.GOODS: "Goods",
@@ -197,6 +200,14 @@ class ERItemData:
         # code to skip certain dlc items
         if self.is_dlc and options.add_dlc_items and not options.dlc_start:
             if self.scadu or self.base_name == "Revered Spirit Ash":
+                return True
+        elif not self.is_dlc and options.enable_dlc and options.add_base_items and options.dlc_start:
+            if (("Sacred Tears" in options.dlc_starting_items.value and self.base_name == "Sacred Tear")
+                or ("Golden Seeds" in options.dlc_starting_items.value and self.base_name == "Golden Seed")
+                or ("Talisman Pouches" in options.dlc_starting_items.value and self.base_name == "Talisman Pouch")
+                or ("Memory Stones" in options.dlc_starting_items.value and self.base_name == "Memory Stone")
+                or ("Whetblades" in options.dlc_starting_items.value and self.whetblade)
+                or ("Upgrade Bell Bearings" in options.dlc_starting_items.value and self.upgrade_bell_bearing)):
                 return True
         
         if (options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
@@ -1758,13 +1769,13 @@ _vanilla_items = [
     ERItemData("Stonesword Key", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Stonesword Key x3", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=3, base_name="Stonesword Key"),
     ERItemData("Stonesword Key x5", 8000, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, count=5, base_name="Stonesword Key"),
-    ERItemData("Rusty Key", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Dectus Medallion (Left)", 8105, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Dectus Medallion (Right)", 8106, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Rold Medallion", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Academy Glintstone Key", 8109, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Carian Inverted Statue", 8111, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Dark Moon Ring", 8121, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Rusty Key", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Dectus Medallion (Left)", 8105, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Dectus Medallion (Right)", 8106, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Rold Medallion", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Academy Glintstone Key", 8109, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Carian Inverted Statue", 8111, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Dark Moon Ring", 8121, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Fingerprint Grape", 8126, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter from Volcano Manor (Istvan)", 8127, ERItemCategory.GOODS),
     ERItemData("Tonic of Forgetfulness", 8128, ERItemCategory.GOODS),
@@ -1772,7 +1783,7 @@ _vanilla_items = [
     ERItemData("Irina's Letter", 8131, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter from Volcano Manor (Rileigh)", 8132, ERItemCategory.GOODS),
     ERItemData("Red Letter", 8133, ERItemCategory.GOODS),
-    ERItemData("Drawing-Room Key", 8134, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Drawing-Room Key", 8134, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Rya's Necklace", 8136, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Volcano Manor Invitation", 8137, ERItemCategory.GOODS),
     ERItemData("Amber Starlight", 8142, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
@@ -1803,8 +1814,8 @@ _vanilla_items = [
     ERItemData("Black Knifeprint", 8172, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter to Bernahl", 8173, ERItemCategory.GOODS),
     ERItemData("Academy Glintstone Key (Thops)", 8174, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Haligtree Secret Medallion (Left)", 8175, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Haligtree Secret Medallion (Right)", 8176, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Haligtree Secret Medallion (Left)", 8175, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Haligtree Secret Medallion (Right)", 8176, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Mending Rune of Perfect Order", 8182, ERItemCategory.GOODS),
     ERItemData("Mending Rune of the Death-Prince", 8183, ERItemCategory.GOODS),
     ERItemData("Mending Rune of the Fell Curse", 8184, ERItemCategory.GOODS),
@@ -1815,7 +1826,7 @@ _vanilla_items = [
     ERItemData("Cursemark of Death", 8191, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Seedbed Curse", 8193, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("The Stormhawk King", 8194, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
-    ERItemData("Sewer-Gaol Key", 8197, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Sewer-Gaol Key", 8197, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Meeting Place Map", 8198, ERItemCategory.GOODS, skip=True),
     ERItemData("Discarded Palace Key", 8199, ERItemCategory.GOODS, classification=ItemClassification.progression),
 
@@ -2294,8 +2305,8 @@ _vanilla_items = [
     ERItemData("Progressive Somberstone Bell Bearing", 9999999, ERItemCategory.GOODS, classification=ItemClassification.progression),
     
     # MARK: Key Shards
-    ERItemData("Rusty Key Shard", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Rusty Key Shard", 8010, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Rold Medallion Shard", 8107, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     
     # MARK: Imbued Keys
     ERItemData("Chapel Sword Key", 7830700, ERItemCategory.GOODS, classification=ItemClassification.progression),
@@ -2808,21 +2819,21 @@ _dlc_items = [
     # Key and Quest
     ERItemData("Miquella's Great Rune", 2008000, ERItemCategory.GOODS, classification=ItemClassification.useful),
     ERItemData("Igon's Furled Finger", 2008003, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
-    ERItemData("Well Depths Key", 2008004, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Gaol Upper Level Key", 2008005, ERItemCategory.GOODS, classification=ItemClassification.progression),
-    ERItemData("Gaol Lower Level Key", 2008006, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Well Depths Key", 2008004, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Gaol Upper Level Key", 2008005, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
+    ERItemData("Gaol Lower Level Key", 2008006, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Cross Map", 2008007, ERItemCategory.GOODS, skip=True),
-    ERItemData("Hole-Laden Necklace", 2008008, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Hole-Laden Necklace", 2008008, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Heart of Bayle", 2008011, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("New Cross Map", 2008012, ERItemCategory.GOODS, skip=True),
-    ERItemData("Storeroom Key", 2008013, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Storeroom Key", 2008013, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Secret Rite Scroll", 2008014, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter for Freyja", 2008015, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Ruins Map", 2008016, ERItemCategory.GOODS, skip=True),
     ERItemData("Ruins Map (2nd)", 2008017, ERItemCategory.GOODS, skip=True),
     ERItemData("Ruins Map (3rd)", 2008018, ERItemCategory.GOODS, skip=True),
     ERItemData("Black Syrup", 2008019, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
-    ERItemData("Messmer's Kindling", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Messmer's Kindling", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Furnace Keeper's Note", 2008025, ERItemCategory.GOODS, skip=True),
     ERItemData("Castle Cross Message", 2008027, ERItemCategory.GOODS, skip=True),
     ERItemData("Ancient Ruins Cross Message", 2008028, ERItemCategory.GOODS, skip=True),
@@ -2832,7 +2843,7 @@ _dlc_items = [
     ERItemData("Torn Diary Page", 2008032, ERItemCategory.GOODS),
     ERItemData("Larval Tear (DLC)", 2008033, ERItemCategory.GOODS),
     ERItemData("Message from Leda", 2008034, ERItemCategory.GOODS, skip=True),
-    ERItemData("Prayer Room Key", 2008036, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Prayer Room Key", 2008036, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Tower of Shadow Message", 2008037, ERItemCategory.GOODS, skip=True),
 
     ERItemData("\"Incursion\" Painting", 2008200, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
@@ -2860,7 +2871,7 @@ _dlc_items = [
     ERItemData("May the Best Win", 20090, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, inject=False), # fight dane
     ERItemData("The Two Fingers", 20090, ERItemCategory.GOODS, skip=True),
     ERItemData("Let Us Go Together", 20090, ERItemCategory.GOODS, skip=True),
-    ERItemData("O Mother", 2009004, ERItemCategory.GOODS, classification=ItemClassification.progression), # hinterlands
+    ERItemData("O Mother", 2009004, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True), # hinterlands
 
     ERItemData("Forager Brood Cookbook [6]", 2009301, ERItemCategory.GOODS),
     ERItemData("Forager Brood Cookbook [1]", 2009302, ERItemCategory.GOODS),
@@ -2999,7 +3010,7 @@ _dlc_items = [
     ERItemData("Ancient Ruins Lock", 7830361, ERItemCategory.GOODS, classification=ItemClassification.progression, lock=True),
     
     # MARK: DLC Key Shards
-    ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Messmer's Kindling Shard", 2008021, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     
     # MARK: DLC Imbued Keys
     ERItemData("Ancient Sword Key", 7830703, ERItemCategory.GOODS, classification=ItemClassification.progression),

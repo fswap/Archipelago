@@ -224,7 +224,7 @@ class DLCStartingItems(OptionList):
     - **Talisman Pouches**
     - **Memory Stones**
     - **Whetblades**
-    - **Upgrade Bell Bearings** *You don't any 1's in DLC only.*
+    - **Upgrade Bell Bearings** *You don't get any 1's in DLC only.*
     """
     display_name = "DLC Start Starting Items"
     supports_weighting = False
