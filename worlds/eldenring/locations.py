@@ -2426,7 +2426,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("DD/AR: Nascent Butterfly x3 - to SW on top of building", "Nascent Butterfly x3", key="120300,0:0012037220::", targets=('lot:12030220')),
         ERLocationData("DD/TNEC: Somber Smithing Stone [7] - to NW, in W structure", "Somber Smithing Stone [7]", key="120300,0:0012037230::", targets=('lot:12030230')),
         ERLocationData("DD/TNEC: Somber Smithing Stone [7] - to NW on ledge under NE side of roots", "Somber Smithing Stone [7]", key="120300,0:0012037240::", targets=('lot:12030240')),
-        ERLocationData("DD/TNEC: Somber Smithing Stone [7] - to NE, in NE structure", "Somber Smithing Stone [7]", key="120300,0:0012037250::", targets=('lot:12030250')),
+        ERLocationData("DD/TNEC: Somber Smithing Stone [7] - to NW, in NE structure", "Somber Smithing Stone [7]", key="120300,0:0012037250::", targets=('lot:12030250')),
         ERLocationData("DD/TNEC: Fan Daggers x4 - to N in a cave S of the walking mausoleum", "Fan Daggers x4", key="120300,0:0012037260::", targets=('lot:12030260')),
         ERLocationData("DD/TNEC: Somber Smithing Stone [6] - way to N in a tilled structure", "Somber Smithing Stone [6]", key="120300,0:0012037270::", targets=('lot:12030270')),
         ERLocationData("DD/TNEC: Golden Rune [8] - to NW on the NE end of the roots", "Golden Rune [8]", key="120300,0:0012037280::", targets=('lot:12030280')),
