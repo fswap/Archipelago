@@ -6058,7 +6058,7 @@ for i, region in enumerate(region_order + region_order_dlc):
             elif "Tunnel" in region:
                 location.tunnel = True
                 location.dungeon = True
-            elif " Grave" in region:
+            elif " Grave" in region and region != "Charo's Hidden Grave":
                 location.grave = True
                 location.dungeon = True
             elif "Catacombs" in region or region in ["Auriza Side Tomb", "Hidden Path to the Haligtree"]:

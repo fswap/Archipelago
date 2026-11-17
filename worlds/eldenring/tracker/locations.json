@@ -2693,7 +2693,7 @@
     ],
     "map_locations": [
       {
-        "map": "Limgrave Dungeons",
+        "map": "Limgrave",
         "x": 246,
         "y": 1488
       }
@@ -2711,7 +2711,7 @@
     ],
     "map_locations": [
       {
-        "map": "Limgrave Dungeons",
+        "map": "Limgrave",
         "x": 244,
         "y": 1565
       }
@@ -2726,7 +2726,7 @@
     ],
     "map_locations": [
       {
-        "map": "Limgrave Dungeons",
+        "map": "Limgrave",
         "x": 192,
         "y": 1486
       }
@@ -2741,7 +2741,7 @@
     ],
     "map_locations": [
       {
-        "map": "Limgrave Dungeons",
+        "map": "Limgrave",
         "x": 293,
         "y": 1567
       }
@@ -14274,21 +14274,6 @@
     ]
   },
   {
-    "name": "CL/DSW: Spiked Palisade Shield - to W follow ravine",
-    "sections": [
-      {
-        "name": "CL/DSW: Spiked Palisade Shield - to W follow ravine"
-      }
-    ],
-    "map_locations": [
-      {
-        "map": "Caelid",
-        "x": 579,
-        "y": 890
-      }
-    ]
-  },
-  {
     "name": "CL/(CR): Visage Shield - in chest after boss",
     "sections": [
       {
@@ -15861,53 +15846,17 @@
     ]
   },
   {
-    "name": "DB/DW: Map: Dragonbarrow - map pillar to E",
+    "name": "CL/DSW: Spiked Palisade Shield - to W follow ravine",
     "sections": [
       {
-        "name": "DB/DW: Map: Dragonbarrow - map pillar to E"
+        "name": "CL/DSW: Spiked Palisade Shield - to W follow ravine"
       }
     ],
     "map_locations": [
       {
         "map": "Caelid",
-        "x": 918,
-        "y": 911
-      }
-    ]
-  },
-  {
-    "name": "DB/DW: Golden Rune [5] - in lake to E",
-    "sections": [
-      {
-        "name": "DB/DW: Golden Rune [5] - in lake to E"
-      },
-      {
-        "name": "DB/DW: Gravel Stone - in lake to E"
-      },
-      {
-        "name": "DB/DW: Sliver of Meat x3 - in lake to E"
-      }
-    ],
-    "map_locations": [
-      {
-        "map": "Caelid",
-        "x": 1000,
-        "y": 956
-      }
-    ]
-  },
-  {
-    "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N",
-    "sections": [
-      {
-        "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N"
-      }
-    ],
-    "map_locations": [
-      {
-        "map": "Caelid",
-        "x": 880,
-        "y": 1049
+        "x": 579,
+        "y": 890
       }
     ]
   },
@@ -16071,13 +16020,13 @@
         "name": "DB/(FF): Dectus Medallion (Right) - chest top of ladder"
       },
       {
-        "name": "DB/(FF): Golden Rune [9] - enemy drop 1 in lower room"
-      },
-      {
         "name": "DB/(FF): Golden Rune [9] - enemy drop 2 in lower room"
       },
       {
         "name": "DB/(FF): Golden Rune [9] - enemy drop 3 in lower room"
+      },
+      {
+        "name": "DB/(FF): Golden Rune [9] - enemy drop 1 in lower room"
       }
     ],
     "map_locations": [
@@ -16358,6 +16307,57 @@
         "map": "Caelid",
         "x": 1708,
         "y": 321
+      }
+    ]
+  },
+  {
+    "name": "DB/DW: Map: Dragonbarrow - map pillar to E",
+    "sections": [
+      {
+        "name": "DB/DW: Map: Dragonbarrow - map pillar to E"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Caelid",
+        "x": 918,
+        "y": 911
+      }
+    ]
+  },
+  {
+    "name": "DB/DW: Golden Rune [5] - in lake to E",
+    "sections": [
+      {
+        "name": "DB/DW: Golden Rune [5] - in lake to E"
+      },
+      {
+        "name": "DB/DW: Gravel Stone - in lake to E"
+      },
+      {
+        "name": "DB/DW: Sliver of Meat x3 - in lake to E"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Caelid",
+        "x": 1000,
+        "y": 956
+      }
+    ]
+  },
+  {
+    "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N",
+    "sections": [
+      {
+        "name": "DB/SE: Smithing Stone [5] x3 - breakable statue to N"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Caelid",
+        "x": 880,
+        "y": 1049
       }
     ]
   },
@@ -36495,21 +36495,6 @@
     ]
   },
   {
-    "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard",
-    "sections": [
-      {
-        "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard"
-      }
-    ],
-    "map_locations": [
-      {
-        "map": "Belurat",
-        "x": 346,
-        "y": 290
-      }
-    ]
-  },
-  {
     "name": "BTS/SPA: Black Pyrefly x3 - to NE, N section of invader courtyard",
     "sections": [
       {
@@ -36521,6 +36506,21 @@
         "map": "Belurat",
         "x": 353,
         "y": 259
+      }
+    ]
+  },
+  {
+    "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard",
+    "sections": [
+      {
+        "name": "BTS/SPA: Dewgem x3 - to NE, S section of invader courtyard"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Belurat",
+        "x": 346,
+        "y": 290
       }
     ]
   },
@@ -39513,6 +39513,21 @@
     ]
   },
   {
+    "name": "SA/SAW: Grave Glovewort [8] - to S by grave down below, cross river and head down - Scadu Altus",
+    "sections": [
+      {
+        "name": "SA/SAW: Grave Glovewort [8] - to S by grave down below, cross river and head down"
+      }
+    ],
+    "map_locations": [
+      {
+        "map": "Scadu Altus",
+        "x": 219,
+        "y": 782
+      }
+    ]
+  },
+  {
     "name": "SA/HC: Smithing Stone [8] x9 - enemy drop to NW down in river",
     "sections": [
       {
@@ -42459,7 +42474,7 @@
     ]
   },
   {
-    "name": "SK/SiFF: Ash of War: Wall of Sparks - to NW down elevator, on balcony",
+    "name": "SK/SFiF: Ash of War: Wall of Sparks - to NW down elevator, on balcony",
     "sections": [
       {
         "name": "SK/SFiF: Ash of War: Wall of Sparks - to NW down elevator, on balcony"
