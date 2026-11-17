@@ -358,6 +358,7 @@ map_groups: List[MapGroup] = [
         "Darklight Catacombs": 4002,
     }, [
         "SA/HC: Shadow Realm Rune [2] - to SW in a spire below warp", # Ensis boundary
+        "SA/SAW: Grave Glovewort [8] - to S by grave down below, cross river and head down", # Ensis boundary
         "SA/(RR): Spellmachinist's Bell Bearing - very top of rise, drop down from HL/SV", # Rabbath dropdown
         "RR/(DC): Barbed Staff-Spear - boss drop", # Abyssal Woods boundary
     ], [
