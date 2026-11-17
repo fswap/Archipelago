@@ -289,6 +289,13 @@ class EldenRing(World):
                 for region in region_order_dlc:
                     self.options.exclude_locations.value.update([l.name for l in location_tables[region]])
         
+            # only convert local items when not doing UT
+            for item in self.options.local_item_only.value:
+                if item in item_table and item_table[item].classification not in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
+                    self.options.local_items.value.add(item)
+        
+        self.local_items = self.options.local_items.value
+        
         for region in location_tables: # make sure table has all values
             self.dupe_location_tables.setdefault(region, [])
         
@@ -324,11 +331,6 @@ class EldenRing(World):
                 if group not in item_name_groups:
                     warning(f"ER host.yaml warning: {group} is not a vaild group.")
                 else: self.options.local_item_only.value.update(item_name_groups[group])
-        
-        for item in self.options.local_item_only.value:
-            if item in item_table and item_table[item].classification not in (ItemClassification.progression, ItemClassification.progression_deprioritized, ItemClassification.useful):
-                self.options.local_items.value.add(item)
-        self.local_items = self.options.local_items.value
         
         # verify shard counts
         for (shard, shard_dict) in self.options.key_item_shards.value.items():
@@ -1194,7 +1196,7 @@ class EldenRing(World):
             for item_name in item_table:
                 if ((self.base_enabled and item_table[item_name].lock and not item_table[item_name].is_dlc) 
                 or (self.dlc_enabled and item_table[item_name].lock and item_table[item_name].is_dlc)):
-                    if item_name != "Gravesite Lock" or self.base_enabled:
+                    if item_name != "Gravesite Lock" or self.base_enabled and self.dlc_enabled and not self.options.dlc_start:
                         all_injectable_items += [item_table[item_name]]
         
         if self.options.seperate_imbued_key:

@@ -1866,7 +1866,7 @@ _vanilla_items = [
     ERItemData("Map: Deeproot Depths", 8617, ERItemCategory.GOODS, map=True, classification=ItemClassification.useful),
     ERItemData("Map: Consecrated Snowfield", 8618, ERItemCategory.GOODS, map=True, classification=ItemClassification.useful),
 
-    ERItemData("Mirage Riddle", 8660, ERItemCategory.GOODS),
+    ERItemData("Mirage Riddle", 8660, ERItemCategory.GOODS, skip=True),
     ERItemData("Note: Hidden Cave", 8700, ERItemCategory.GOODS, skip=True),
     ERItemData("Note: Imp Shades", 8701, ERItemCategory.GOODS, skip=True),
     ERItemData("Note: Flask of Wondrous Physick", 8702, ERItemCategory.GOODS, skip=True),

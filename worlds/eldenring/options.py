@@ -641,6 +641,7 @@ class EarlyItems(OptionDict):
     - Sacred Tear
     - Whetstone Knife
     - Spirit Calling Bell
+    - Memory Stone
     - "Sentry's Torch", *shows invis assassin*
     
     Common early DLC items:
@@ -649,7 +650,7 @@ class EarlyItems(OptionDict):
     - "Margit's Shackle" or "Mohg's Shackle", *for spiritspring stones in dlc start, if base game items are on*
     
     *Item name: count* 
-    or if a ' / " is in the name do "Margit's Shackle" or '"Homing Instinct" Painting'
+    or if one of these (' : ") is in the name do "Margit's Shackle" / '"Homing Instinct" Painting' or either for :
     """
     display_name = "Early Items"
     supports_weighting = False
