@@ -309,6 +309,9 @@ class ERLocationData:
     spiritspring_stone: bool = False
     """Whether this location is a spiritspring stone."""
     
+    horn: bool = False
+    """Finger ruin horns."""
+    
     @property
     def is_event(self) -> bool:
         """Whether this location represents an event rather than a specific item pickup."""
@@ -425,7 +428,7 @@ class ERLocationData:
             else:
                 names.append("Scarab")
         if self.progshop: 
-            if self.dlc:
+            if self.dlc or self.name in [l.name for l in location_tables["Roundtable Hold"]]:
                 names.append("DLC Shop")
             else:
                 names.append("Shop")
@@ -449,6 +452,10 @@ class ERLocationData:
         if self.spiritspring_stone: 
             names.append("Spiritspring Stones")
             self.disallow_duplicates = True
+        if self.horn: names.append("Horns")
+        if self.painting:
+            if self.dlc: names.append("DLC Painting")
+            else: names.append("Painting")
         
         if self.region_value >= len(region_order) - 21 and self.region_value <= len(region_order):
             names.append("Post Leyndell")
@@ -5954,7 +5961,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("FRR/(FWH): Finger-Weaver's Cookbook [1] - in shack", "Finger-Weaver's Cookbook [1]", key="614938,0:0000068920::", cookbook=True, targets=('lot:2049380050')),
         ERLocationData("CC/FRR: Shadow Realm Rune [2] - to S on beach", "Shadow Realm Rune [2]", key="615038,0:2050387000::", targets=('lot:2050380000')),
         ERLocationData("CC/FRR: Grave Glovewort [9] - to SW top of coffin boat", "Grave Glovewort [9]", key="615038,0:2050387010::", targets=('lot:2050380010')),
-        ERLocationData("FRR: Crimson Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center", "Crimson Seed Talisman +1", key="615040,0:2050407000::", talisman=True, missable=True, targets=('lot:2050400000')),
+        ERLocationData("FRR: Crimson Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center", "Crimson Seed Talisman +1", key="615040,0:2050407000::", talisman=True, horn=True, targets=('lot:2050400000')),
     ],
     "Recluses' River":[ # scadualtus_recluse                              done
         # these suck
@@ -6043,7 +6050,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("SA/(CMM): Finger-Weaver's Cookbook [2] - left of hanging bell under CMM", "Finger-Weaver's Cookbook [2]", key="615146,0:0000068580::", cookbook=True, targets=('lot:2051460010')),
     ],
     "Finger Ruins of Dheo":[ # hinterland_dheo                            done
-        ERLocationData("FRD: Cerulean Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center", "Cerulean Seed Talisman +1", key="615346,0:2053467600::", talisman=True, missable=True, targets=('lot:2053460600')),
+        ERLocationData("FRD: Cerulean Seed Talisman +1 - use Hole-Laden Necklace at the hanging bell in the center", "Cerulean Seed Talisman +1", key="615346,0:2053467600::", talisman=True, horn=True, targets=('lot:2053460600')),
     ],
 }
 
@@ -6121,11 +6128,13 @@ location_name_groups: Dict[str, Set[str]] = {
     "DLC Shop": set(),
     "DLC Chest": set(),
     "DLC Scarab": set(),
+    "DLC Painting": set(),
     "Furnace Golem": set(),
     "Hostile NPC Rewards": set(),
     "Friendly NPC Rewards": set(),
     "Chest": set(),
     "Scarab": set(),
+    "Painting": set(),
     "Shop": set(),
     "Out of the Way": set(),
     "Drop": set(),
@@ -6149,6 +6158,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Fragment": set(),
     "Revered": set(),
     "Spiritspring Stones": set(),
+    "Horns": set(),
     
     "Goods": set(),
     "Weapons": set(),

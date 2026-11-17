@@ -209,6 +209,9 @@ class ERItemData:
                 or ("Whetblades" in options.dlc_starting_items.value and self.whetblade)
                 or ("Upgrade Bell Bearings" in options.dlc_starting_items.value and self.upgrade_bell_bearing)):
                 return True
+        elif (options.enable_dlc and options.dlc_start
+            and self.base_name == "Flask of Wondrous Physick" and "Physick Flask" in options.dlc_starting_items.value):
+            return True
         
         if (options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
         or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"

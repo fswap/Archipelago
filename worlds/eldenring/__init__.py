@@ -307,6 +307,8 @@ class EldenRing(World):
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
         
+        self.options.priority_location_groups.value.update(self.options.priority_locations.value)
+        self.options.priority_locations.value.clear()
         self.all_priority_locations.update(self.options.priority_location_groups.value)
         for loc in self.all_priority_locations.copy():
             if (loc not in location_dictionary 
@@ -1335,7 +1337,7 @@ class EldenRing(World):
         else:
             if self.options.crafting_kit_option.value == 1:
                 self._fill_local_item("Crafting Kit", ["Gravesite Plain"])
-            if self.options.physick_flask_option.value == 1:
+            if self.options.physick_flask_option.value == 1 and "Physick Flask" not in self.options.dlc_starting_items.value:
                 self._fill_local_item("Flask of Wondrous Physick", ["Gravesite Plain"])
 
         if self.dlc_enabled:

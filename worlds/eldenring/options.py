@@ -221,6 +221,7 @@ class DLCStartingItems(OptionList):
     
     - **Sacred Tears**
     - **Golden Seeds**
+    - **Physick Flask**
     - **Talisman Pouches**
     - **Memory Stones**
     - **Whetblades**
@@ -231,7 +232,7 @@ class DLCStartingItems(OptionList):
     default = ["Talisman Pouches", "Whetblades", "Upgrade Bell Bearings"]
 
     valid_keys = ["Sacred Tears", "Golden Seeds", "Talisman Pouches", 
-                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings"]
+                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings", "Physick Flask"]
     valid_keys_casefold = False
 
 class DLCStartingShop(Toggle):
@@ -297,7 +298,7 @@ class NightBosses(Choice):
     option_always_on = 1
     # Require Item: Bosses only spawn after finding an item.   just an idea from Spencenox, not implimented
     # option_require_item = 2
-    default = 0
+    default = 1
 
 class DungeonSweep(Toggle): # unsupported, till after first release
     """After killing the boss of a mini dungeon collect all remaining items within that dungeon automatically."""
@@ -532,6 +533,8 @@ class ERPriorityLocationGroups(PriorityLocations):
     If you add more priority locations then progression items, random priority locations will contain normal items.
     Otherwise your world would contain a lot of other worlds progression.
     
+    You can also add locations to default AP priority_locations option and it'll work for ER priority handling.
+    
     Base Game
     - **Achievement Boss**: Base game Achievement bosses.
     - **Boss Reward**: Base game bosses. *Use exclude_locations: 'Dungeon' for overworld bosses only.*
@@ -540,6 +543,7 @@ class ERPriorityLocationGroups(PriorityLocations):
     - **Map**: Base game Map pillars.
     - **Chest**: Base game Chests.
     - **Scarab**: Base game Scarabs.
+    - **Painting**: Paintings, not the rewards.
     - **Seedtree**: Golden Seed trees.
     - **Church**: Sacred Tears.
     - **Basin**: Basins that contain tears.
@@ -551,17 +555,19 @@ class ERPriorityLocationGroups(PriorityLocations):
     - **DLC Map**: DLC Map pillars.
     - **DLC Chest**: DLC Chests.
     - **DLC Scarab**: DLC Scarabs.
+    - **DLC Painting**: DLC Paintings, not the rewards.
     - **Cross**: Scadutree Fragments by Miquella's Crosses.
     - **Fragment**: Other Scadutree Fragments. *Includes enemy dropped ones.*
     - **Revered**: Revered Spirit Ashes. *Includes enemy dropped ones.*
     - **Spiritspring Stones**: Spiritspring Stone if spiritspring_stones is on.
+    - **Horns**: The horns in the finger ruins.
     """ 
     
     display_name = "Priority Location Groups"
     default = ["Key Items", "DLC Key Items", "Boss Reward", "DLC Boss Reward", "Seedtree", "Map", "DLC Map", "Church", "Cross", "Fragment"]
     valid_keys = ["Chest", "DLC Chest", "Scarab", "DLC Scarab", "Seedtree", "Basin", "Church", "Map", "DLC Map", "Key Items", "DLC Key Items", 
         "Fragment", "Cross", "Revered", "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward",
-        "Shop", "DLC Shop", "Spiritspring Stones"]
+        "Shop", "DLC Shop", "Spiritspring Stones", "Horns", "Painting", "DLC Painting"]
     valid_keys_casefold = False
     
 class ERImportantAtPriorityOnly(DefaultOnToggle):
@@ -650,7 +656,7 @@ class EarlyItems(OptionDict):
     - "Margit's Shackle" or "Mohg's Shackle", *for spiritspring stones in dlc start, if base game items are on*
     
     *Item name: count* 
-    or if one of these (' : ") is in the name do "Margit's Shackle" / '"Homing Instinct" Painting' or either for :
+    or if one of these ( ' " : [ ) is in the name do "Margit's Shackle" / '"Homing Instinct" Painting' or either for : or [
     """
     display_name = "Early Items"
     supports_weighting = False
