@@ -634,14 +634,23 @@ class RemembrancesAtPriority(Toggle):
 
 class EarlyItems(OptionDict):
     """Which items do you want to be in sphere 1 and how many.
-    If you make to many items early the gen can fail, try to keep the count low.
+    If you make to many progression items early and you don't have enough priority locations the gen can fail, try to keep the count low.
 
-    Common early items:
+    Common early base game items:
     - Talisman Pouch
     - Sacred Tear
-    - Scadutree Fragment
+    - Whetstone Knife
+    - Spirit Calling Bell
+    - "Sentry's Torch", *shows invis assassin*
     
-    *Item name: count*"""
+    Common early DLC items:
+    - Scadutree Fragment
+    - Revered Spirit Ash
+    - "Margit's Shackle" or "Mohg's Shackle", *for spiritspring stones in dlc start, if base game items are on*
+    
+    *Item name: count* 
+    or if a ' / " is in the name do "Margit's Shackle" or '"Homing Instinct" Painting'
+    """
     display_name = "Early Items"
     supports_weighting = False
     default = {"Talisman Pouch": 1, "Sacred Tear": 2}

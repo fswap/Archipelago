@@ -2460,10 +2460,16 @@ class EldenRing(World):
             ], lambda state: state.has("Amber Starlight", self.player) and state.has("Starlight Shards", self.player, 3)
                 and state.has("Seluvis's Potion", self.player))
             
-            # Pidia
+            # Pidia / Seluvis
             
-            self._add_location_rule(["LL/(CM): Dolores the Sleeping Arrow Puppet - dropped by Pidia after Seluvis dies"
-            ], lambda state: state.has("Fingerslayer Blade", self.player) and self._can_go_to(state, "Ainsel River Main")
+            self._add_location_rule([
+                "LL/(CM): Dolores the Sleeping Arrow Puppet - dropped by Pidia after Seluvis dies",
+                "LL/(SR): Preceptor's Big Hat - Seluvis death", 
+                "LL/(SR): Preceptor's Long Gown - Seluvis death",
+                "LL/(SR): Preceptor's Gloves - Seluvis death",
+                "LL/(SR): Preceptor's Trousers - Seluvis death",
+                "LL/(SR): Nepheli Loux Puppet - on Seluvis's body"
+            ], lambda state: state.has("Fingerslayer Blade", self.player) and self._can_go_to(state, "Wailing Dunes")
                 or state.has("Amber Draught", self.player))
             
             # MARK: Blaidd / Iji
@@ -3544,7 +3550,7 @@ class EldenRing(World):
             "allStartingItems": self.all_starting_items, # list of _er_item_full_id
             "duplicatedLocations": duplicated_locations,
             "dungeonSweepLocations": [json.dumps(asdict(f)) for f in dungeon_sweep_flag_to_locations],
-            "versions": ">=0.2 <0.3",
+            "versions": ">=0.1.4 <0.3",
         }
 
         return slot_data

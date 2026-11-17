@@ -1813,7 +1813,7 @@ _vanilla_items = [
     ERItemData("Chrysalids' Memento", 8171, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Black Knifeprint", 8172, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Letter to Bernahl", 8173, ERItemCategory.GOODS),
-    ERItemData("Academy Glintstone Key (Thops)", 8174, ERItemCategory.GOODS, classification=ItemClassification.progression),
+    ERItemData("Academy Glintstone Key (Thops)", 8174, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized),
     ERItemData("Haligtree Secret Medallion (Left)", 8175, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Haligtree Secret Medallion (Right)", 8176, ERItemCategory.GOODS, classification=ItemClassification.progression, other_lock=True),
     ERItemData("Mending Rune of Perfect Order", 8182, ERItemCategory.GOODS),
