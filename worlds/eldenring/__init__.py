@@ -777,6 +777,8 @@ class EldenRing(World):
         
         print(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
+        # print(set(w for w in item_table if item_table[w].category == 2 and not item_table[w].ammo and w not in [i.data.name for i in self.itempool]))
+        
     def _create_dupe_locations(self) -> None:
         """Create duplicate locations."""
         important_items = []
@@ -1216,6 +1218,9 @@ class EldenRing(World):
                 all_injectable_items += [item_table[shard] for i in range(self.options.key_item_shards.value[shard_list[shard]]['Max'])]
         
         if not self.base_enabled and not self.options.add_base_items:
+            all_injectable_items += [
+                item_table["Glovewort Picker's Bell Bearing [1]"], item_table["Glovewort Picker's Bell Bearing [2]"], item_table["Glovewort Picker's Bell Bearing [3]"], 
+                item_table["Ghost-Glovewort Picker's Bell Bearing [1]"], item_table["Ghost-Glovewort Picker's Bell Bearing [2]"], item_table["Ghost-Glovewort Picker's Bell Bearing [3]"]]
             dlc_start_lower: list[str] = [i.lower() for i in self.options.dlc_starting_items.value]
             # if not started with add to injection since base game items dont exist
             if "sacred tears" not in dlc_start_lower: all_injectable_items += [item_table["Sacred Tear"] for i in range(12)]
@@ -3506,6 +3511,7 @@ class EldenRing(World):
                 "remove_weapon_and_spell_requirements": self.options.remove_weapon_and_spell_requirements.value,
                 "no_equip_load": self.options.no_equip_load.value,
                 "reduce_non_somber_upgrade_cost": self.options.reduce_non_somber_upgrade_cost.value,
+                "random_drops": self.options.random_drops.value,
                 "snowfast": self.options.snowfast.value,
                 "auto_equip": self.options.auto_equip.value,
                 "auto_upgrade": self.options.auto_upgrade.value,

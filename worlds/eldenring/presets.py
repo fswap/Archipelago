@@ -10,7 +10,7 @@ from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic
         DungeonSweep,\
         MaterialRando,\
         RandomizeStartingLoadout, RandomizeStartingKeepsakes,\
-        RequireOneHandedStartingWeapons, RemoveWeaponAndSpellRequirements, NoEquipLoadOption, ReduceNonSomberUpgradeCost,\
+        RequireOneHandedStartingWeapons, RemoveWeaponAndSpellRequirements, NoEquipLoadOption, ReduceNonSomberUpgradeCost, AddRandomWeaponDrops,\
         SnowFast,\
         AutoEquipOption, AutoUpgradeOption,\
         DeathLink, DeathLinkAmnesty,\
@@ -91,6 +91,7 @@ template = {
     "remove_weapon_and_spell_requirements": RemoveWeaponAndSpellRequirements,
     "no_equip_load":                        NoEquipLoadOption,
     "reduce_non_somber_upgrade_cost":       ReduceNonSomberUpgradeCost,
+    "random_drops":                         AddRandomWeaponDrops,
     "snowfast":                             SnowFast,
     "auto_equip":                           AutoEquipOption,
     "auto_upgrade":                         AutoUpgradeOption,

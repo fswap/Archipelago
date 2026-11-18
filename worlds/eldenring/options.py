@@ -439,6 +439,10 @@ class ReduceNonSomberUpgradeCost(DefaultOnToggle):
     """Reduce regular Smithing Stone costs for non-somber weapons to one stone per weapon level."""
     display_name = "Reduce Upgrade Cost for Non-Somber Weapons"
 
+class AddRandomWeaponDrops(DefaultOnToggle):
+    """Add random weapon drops into the itempool."""
+    display_name = "Add Random Weapon Drops"
+
 class SnowFast(Toggle):
     """Adds Mountaintops of the Giants shortcuts for faster traversal."""
     display_name = "Add Shortcuts in Mountaintops for Faster Traversal"
@@ -668,12 +672,14 @@ class LocalItemOnly(LocalItems):
     
     - [Est Items] **Item Group**    *done on full game*
     - [472] **Weapons**: All Weapons and Ammo.
+      - [87] **Ammo**: Just Ammo.
     - [423] **Armor**: All Armors.
     - [160] **Accessories**: All Talismans.
     - [105] **Ash of war**: All Ashes of War.
-    - [3250] **Goods**: The two below
-    - [1000] **Filler**: All Crafting Mats, and some craftables.
-    - [2200] **Non-Filler**: Below and Key Items which don't get made local.
+    - [3342] **Goods**: The two below
+    - [1426] **Filler**: All Crafting Mats, some craftables and consumables.
+      - [606] **Consumable**: All consumable items.
+    - [1913] **Non-Filler**: Below and Key Items which don't get made local.
       - [650] **Runes**: All Rune items.
       - [585] **Smithing Stones**: Smithing Stones and Somber Stones.
       - [220] **Spells**: Incantations and Sorceries.
@@ -684,7 +690,7 @@ class LocalItemOnly(LocalItems):
     """
     display_name = "Local Item Only"
     default = ["Filler", "Ash of war", "Gloveworts", "Ashes"]
-    valid_keys = ["Weapons", "Armor", "Accessories", "Ash of war", "Goods", "Filler", "Non-Filler",
+    valid_keys = ["Weapons", "Ammo", "Armor", "Accessories", "Ash of war", "Goods", "Filler", "Consumable", "Non-Filler",
                   "Smithing Stones", "Gloveworts", "Spells", "Ashes", "Runes"]
     valid_keys_casefold = False
 
@@ -815,6 +821,7 @@ class EROptions(PerGameCommonOptions):
     remove_weapon_and_spell_requirements: RemoveWeaponAndSpellRequirements
     no_equip_load: NoEquipLoadOption
     reduce_non_somber_upgrade_cost: ReduceNonSomberUpgradeCost
+    random_drops: AddRandomWeaponDrops
     snowfast: SnowFast
     auto_equip: AutoEquipOption
     auto_upgrade: AutoUpgradeOption
@@ -881,6 +888,7 @@ option_groups = [
         RemoveWeaponAndSpellRequirements,
         NoEquipLoadOption,
         ReduceNonSomberUpgradeCost,
+        AddRandomWeaponDrops,
         SnowFast,
         AutoEquipOption,
         AutoUpgradeOption,
