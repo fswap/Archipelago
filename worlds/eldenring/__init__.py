@@ -28,17 +28,20 @@ class EldenRingSettings(settings.Group):
         
         - [Est Items] **Item Group**    *done on full game*
         - [472] **Weapons**: All Weapons and Ammo.
+            - [87] **Ammo**: Just Ammo.
         - [423] **Armor**: All Armors.
         - [160] **Accessories**: All Talismans.
         - [105] **Ash of war**: All Ashes of War.
-        - [3250] **Goods**: The two below
-        - [1000] **Filler**: All Crafting Mats, and some craftables.
-        - [2200] **Non-Filler**: Below and Key Items which don't get made local.
+        - [3342] **Goods**: The two below
+        - [1426] **Filler**: All Crafting Mats, some craftables and consumables.
+            - [606] **Consumable**: All consumable items.
+        - [1913] **Non-Filler**: Below and Key Items which don't get made local.
             - [650] **Runes**: All Rune items.
             - [585] **Smithing Stones**: Smithing Stones and Somber Stones.
             - [220] **Spells**: Incantations and Sorceries.
             - [86] **Gloveworts**: Grave and Ghost Gloveworts.
-            - [82] **Ashes**: Spirit Ashes."""
+            - [82] **Ashes**: Spirit Ashes.
+        """
     
     class ForceRegionLock(settings.Bool):
         """Forces region_lock on, since sphere 1 would have ~2.1k checks."""
@@ -593,8 +596,7 @@ class EldenRing(World):
             create_connection("Miquella's Haligtree", "Elphael, Brace of the Haligtree")
             
             if self.base_enabled:
-                if (self.options.dlc_timing == 2
-                    or not location_dictionary["LL/(RC): Pureblood Knight's Medal - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"].should_randomize(self.options, self.all_excluded_locations)):
+                if self.options.dlc_timing == 2 or not location_dictionary["LL/(RC): Pureblood Knight's Medal - talk to Varré after invading Magnus in AP and returning the bloodsoaked Lord of Blood's Favor"].should_randomize(self.options, self.all_excluded_locations):
                     create_connection("Consecrated Snowfield", "Mohgwyn Palace")
                 elif self.options.dlc_timing == 1:
                     create_connection("Altus Plateau", "Mohgwyn Palace")

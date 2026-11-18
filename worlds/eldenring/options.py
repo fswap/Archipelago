@@ -182,8 +182,8 @@ class DLCTimingOption(Choice):
 
     - **Early:** 'Pureblood Knight Medal' will spawn in an early sphere, unless MissableLocationBehaviorOption
       is set to do_not_randomize, it'll be at its normal spot.
-    - **Mid:** You won't have Mohgwyn Palace access until after getting to Altus.
-    - **Late:** You won't have Mohgwyn Palace access until after getting to Snowfield.
+    - **Mid:** You won't need to go to Mohgwyn Palace until after getting to Altus.
+    - **Late:** You won't need to go to Mohgwyn Palace until after getting to Snowfield.
     """
     display_name = "DLC Timing"
     option_early = 0

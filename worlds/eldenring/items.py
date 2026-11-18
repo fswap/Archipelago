@@ -261,9 +261,6 @@ class ERItemData:
         if options.enable_dlc:
             if options.dlc_start and self.base_name == "Starlight Shards": return ItemClassification.filler
             if options.scadu_at_priority and options.important_at_priority_only and self.scadu: return ItemClassification.progression
-            if self.name == "Pureblood Knight's Medal" and (options.world_logic == 0
-                    or options.dlc_timing.value != 2 and not (options.enable_dlc and options.dlc_start)):
-                return ItemClassification.progression
 
         return self.classification
 
@@ -574,7 +571,7 @@ _vanilla_items = [
     ERItemData("St. Trina's Torch", 24040000, ERItemCategory.WEAPON),
     ERItemData("Ghostflame Torch", 24050000, ERItemCategory.WEAPON),
     ERItemData("Beast-Repellent Torch", 24060000, ERItemCategory.WEAPON),
-    ERItemData("Sentry's Torch", 24070000, ERItemCategory.WEAPON, classification=ItemClassification.useful),
+    ERItemData("Sentry's Torch", 24070000, ERItemCategory.WEAPON, classification=ItemClassification.progression),
     #shield
     ERItemData("Buckler", 30000000, ERItemCategory.WEAPON),
     ERItemData("Perfumer's Shield", 30010000, ERItemCategory.WEAPON, weapon_inject=True),
@@ -1541,7 +1538,7 @@ _vanilla_items = [
 
     ERItemData("Margit's Shackle", 2140, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
     ERItemData("Mohg's Shackle", 2150, ERItemCategory.GOODS, boss_tools=True, classification=ItemClassification.useful),
-    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS, classification=ItemClassification.useful), # is modified in is_important
+    ERItemData("Pureblood Knight's Medal", 2160, ERItemCategory.GOODS, classification=ItemClassification.progression),
 
     ERItemData("Prattling Pate \"Hello\"", 2200, ERItemCategory.GOODS, skip=True),
     ERItemData("Prattling Pate \"Thank you\"", 2201, ERItemCategory.GOODS, skip=True),
