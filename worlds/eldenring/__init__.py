@@ -767,17 +767,17 @@ class EldenRing(World):
             else: 
                 warning(f"{early_item} item has non int value {item_count}")
         
-        print(f"EldenRing {self.player_name} (Base Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and not location_dictionary[l].dlc or l in self.dupe_location_dictionary and not self.dupe_location_dictionary[l].dlc])
+        warning(f"\nEldenRing {self.player_name} (Base Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and not location_dictionary[l].dlc or l in self.dupe_location_dictionary and not self.dupe_location_dictionary[l].dlc])
             }, Base Important items: {len([i for i in self.itempool if (
             ItemClassification.progression in i.classification and not ItemClassification.deprioritized in i.classification 
             or self.options.other_world_useful_at_priority and ItemClassification.useful in i.classification) and not i.data.is_dlc])})")
         
-        print(f"EldenRing {self.player_name} (DLC Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and location_dictionary[l].dlc or l in self.dupe_location_dictionary and self.dupe_location_dictionary[l].dlc])
+        warning(f"EldenRing {self.player_name} (DLC Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and location_dictionary[l].dlc or l in self.dupe_location_dictionary and self.dupe_location_dictionary[l].dlc])
             }, DLC Important items: {len([i for i in self.itempool if (
             ItemClassification.progression in i.classification and not ItemClassification.deprioritized in i.classification 
             or self.options.other_world_useful_at_priority and ItemClassification.useful in i.classification) and i.data.is_dlc])})")
         
-        print(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
+        warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}\n")
         
         # print(set(w for w in item_table if item_table[w].category == 2 and not item_table[w].ammo and w not in [i.data.name for i in self.itempool]))
         
@@ -1467,11 +1467,14 @@ class EldenRing(World):
             
             self.multiworld.register_indirect_condition(self.get_region("Mt. Gelmir"), self.get_entrance("Go To Volcano Manor"))
             self.multiworld.register_indirect_condition(self.get_region("Raya Lucaria Academy Main"), self.get_entrance("Go To Volcano Manor"))
-            self._add_entrance_rule("Volcano Manor", lambda state: 
-                state.has("Drawing-Room Key", self.player) and self._can_go_to(state, "Mt. Gelmir") 
-                or self._can_go_to(state, "Raya Lucaria Academy Main"))
-            # item requires raya
-            self._add_location_rule("(VM)/RLA: Smoldering Butterfly x5 - to E after warp", lambda state: self._can_go_to(state, "Raya Lucaria Academy Main"))
+            if not self.options.deathless:
+                self._add_entrance_rule("Volcano Manor", lambda state: 
+                    state.has("Drawing-Room Key", self.player) and self._can_go_to(state, "Mt. Gelmir") 
+                    or self._can_go_to(state, "Raya Lucaria Academy Main"))
+                # item requires raya
+                self._add_location_rule("(VM)/RLA: Smoldering Butterfly x5 - to E after warp", lambda state: self._can_go_to(state, "Raya Lucaria Academy Main"))
+            else:
+                self._add_entrance_rule("Volcano Manor", lambda state: state.has("Drawing-Room Key", self.player) and self._can_go_to(state, "Mt. Gelmir"))
             
             self.multiworld.register_indirect_condition(self.get_region("Subterranean Shunning-Grounds"), self.get_entrance("Go To Deeproot Depths"))
             self.multiworld.register_indirect_condition(self.get_region("Nokron, Eternal City"), self.get_entrance("Go To Deeproot Depths"))
@@ -3463,6 +3466,7 @@ class EldenRing(World):
                 "key_item_shards": self.options.key_item_shards.value,
                 "exclude_dungeon": self.options.exclude_dungeon.value,
                 "world_logic": self.options.world_logic.value,
+                "deathless": self.options.deathless.value,
                 "soft_logic": self.options.soft_logic.value,
                 "separate_progression": self.options.separate_progression.value,
                 "great_runes_required_leyndell": self.options.great_runes_required_leyndell.value,

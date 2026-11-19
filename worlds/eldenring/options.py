@@ -73,6 +73,10 @@ class WorldLogic(Choice):
     option_open_world = 1
     default = 0
     
+class DeathlessRouting(Toggle):
+    """Make sure you don't need to die to complete the game."""
+    display_name = "Deathless Routing"
+    
 class RegionSoftLogic(DefaultOnToggle):
     """You will always get Altus access before needing to go to Caelid,
     Leyndell access before needing to go Dragonbarrow and
@@ -770,6 +774,7 @@ class EROptions(PerGameCommonOptions):
     key_item_shards: KeyItemShards
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
+    deathless: DeathlessRouting
     soft_logic: RegionSoftLogic
     separate_progression: SeparateProgression
     great_runes_required_leyndell: GreatRunesRequiredLeyndell
@@ -861,6 +866,7 @@ option_groups = [
         KeyItemShards,
         ExcludeDungeonBosses,
         WorldLogic,
+        DeathlessRouting,
         RegionSoftLogic,
         GreatRunesRequiredLeyndell,
         GreatRunesRequiredMountain,

@@ -330,6 +330,7 @@ class ERLocationData:
 
     def is_missable(self, options: EROptions) -> bool:
         """Whether this location is missable given a set of options."""
+        if self.key == "160000,0:0016007310::" and options.deathless: return True # item behind raya tp
         return self.missable if isinstance(self.missable, bool) else self.missable(self, options)
 
     def should_omit(self, options: EROptions, excludes: Set[str]) -> bool:
@@ -428,10 +429,12 @@ class ERLocationData:
             else:
                 names.append("Scarab")
         if self.progshop: 
-            if self.dlc or self.name in [l.name for l in location_tables["Roundtable Hold"]]:
+            if self.dlc:
                 names.append("DLC Shop")
             else:
                 names.append("Shop")
+                if self.name in [l.name for l in location_tables["Roundtable Hold"]]: 
+                    names.append("DLC Shop")
             self.disallow_duplicates = True
         if self.outoftheway: names.append("Out of the Way")
         if self.hidden: names.append("Hidden")

@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from Options import Accessibility, ProgressionBalancing
-from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic, RegionSoftLogic, SeparateProgression,\
+from .options import GoalOption, KeyItemShards, ExcludeDungeonBosses, WorldLogic, DeathlessRouting, RegionSoftLogic, SeparateProgression,\
         GreatRunesRequiredLeyndell, GreatRunesRequiredMountain, GreatRunesRequiredErdtree,\
         RoyalAccess,\
         StoneswordMasterKey,SeperateImbuedKey,\
@@ -40,6 +40,7 @@ template = {
     "key_item_shards":                      KeyItemShards,
     "exclude_dungeon":                      ExcludeDungeonBosses,
     "world_logic":                          WorldLogic,
+    "deathless":                            DeathlessRouting,
     "soft_logic":                           RegionSoftLogic,
     "separate_progression":                 SeparateProgression,
     "great_runes_required_leyndell":        GreatRunesRequiredLeyndell,
