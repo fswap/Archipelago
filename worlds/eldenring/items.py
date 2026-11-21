@@ -234,9 +234,9 @@ class ERItemData:
 
     def is_important(self, options: EROptions) -> ItemClassification:
         "Is this item important based on options."
-        if not (options.enable_dlc and options.dlc_start.value == 1):
-            if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
-            if self.boss_tools and options.enemy_rando.value == 0: return ItemClassification.progression
+        if not (options.enable_dlc and options.dlc_start):
+            if self.boss_tools and not options.enemy_rando: return ItemClassification.progression
+        if self.upgrade_bell_bearing and options.smithing_bell_bearing_option.value == 1: return ItemClassification.progression
         
         if options.important_at_priority_only:
             if options.flask_at_priority and self.base_name in {"Golden Seed", "Sacred Tear"}:
@@ -255,7 +255,7 @@ class ERItemData:
         if self.is_dlc and options.add_dlc_items and not options.dlc_start:
             return ItemClassification.filler
         elif not self.is_dlc and options.enable_dlc and options.dlc_start and options.add_base_items:
-            if self.base_name not in ("Dragon Heart", "Crafting Kit"):
+            if self.base_name not in ("Dragon Heart", "Crafting Kit", "Serpent-Hunter", "Sentry's Torch"):
                 return ItemClassification.filler
         
         if options.enable_dlc:

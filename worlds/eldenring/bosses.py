@@ -1279,12 +1279,15 @@ dlc_bosses = [
 
 default_rykard_location = None
 default_serpent_location = None
+default_invis_assassin_location = None
 for boss in base_bosses:
     boss.type.append("All Base")
     if boss.name == "Rykard, Lord of Blasphemy (VM)":
         default_rykard_location = boss
     if boss.name == "God-Devouring Serpent (VM)":
         default_serpent_location = boss
+    if boss.name == "Black Knife Assassin (AP/SCV)":
+        default_invis_assassin_location = boss
 for boss in dlc_bosses: 
     boss.dlc = True
     boss.type.append("All DLC")

@@ -12,7 +12,7 @@ from Fill import remaining_fill
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import CollectionRule, ItemRule, add_rule, add_item_rule
 
-from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location, all_boss_locations_dictionary, boss_name_to_data
+from .bosses import ERBossInfo, all_bosses, base_bosses, dlc_bosses, default_rykard_location, default_serpent_location, default_invis_assassin_location, all_boss_locations_dictionary, boss_name_to_data
 from .items import ERItem, ERItemData, ERItemCategory, filler_item_names_dlc, filler_item_names_vanilla, item_descriptions, item_table, item_name_groups, soft_logic_item
 from .locations import ERLocation, ERLocationData, location_tables, location_descriptions, location_dictionary, location_name_groups, dupable_locations
 from .region_names import region_order, region_order_dlc
@@ -168,10 +168,7 @@ class EldenRing(World):
     
     rykard_location: ERBossInfo = None
     serpent_location: ERBossInfo = None
-    """If enemy randomization is enabled, this is the boss who Rykard should replace.
-    
-    This is used to determine where the Serpent-Hunter can be placed.
-    """
+    invis_assassin_location: ERBossInfo = None
     
     # UT stuff
     soft_logic_enabled: bool = None
@@ -265,24 +262,32 @@ class EldenRing(World):
                 if opt is not None:
                     setattr(self.options, key, opt.from_any(value))
         
-            # Inform Universal Tracker where Rykard is being randomized to.
-            if slot_options["enemy_rando"] and slot_options["rykard_encounter"] == False:
-                force_bosses = slot_data["forceBosses"]
+            # Inform Universal Tracker where enemies are being randomized to.
+            if slot_options["enemy_rando"] and slot_data["forceBosses"]:
+                force_bosses: Dict = slot_data["forceBosses"]
                 for boss in all_bosses:
-                    if boss.id in force_bosses and force_bosses[boss.id] == default_rykard_location.id:
-                        self.rykard_location = boss
-                    if boss.id in force_bosses and force_bosses[boss.id] == default_serpent_location.id:
-                        self.serpent_location = boss
+                    if slot_options["rykard_encounter"] == False:
+                        if str(boss.id) in force_bosses.keys() and force_bosses[str(boss.id)] == default_rykard_location.id:
+                            self.rykard_location = boss
+                        elif str(boss.id) in force_bosses.keys() and force_bosses[str(boss.id)] == default_serpent_location.id:
+                            self.serpent_location = boss
+                    if str(boss.id) in force_bosses.keys() and force_bosses[str(boss.id)] == default_invis_assassin_location.id:
+                        self.invis_assassin_location = boss
         else:
-            # Randomize Rykard and Serpent manually so that we know where to place the Serpent-Hunter.
-            if self.options.enemy_rando and not self.options.rykard_encounter: # only force if not given SH
-                self.rykard_location = self.random.choice(
-                    [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
-                self.serpent_location = self.random.choice(
-                    [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
-            elif not self.options.enemy_rando:
+            # Randomize bosses manually so that we know where to place the required items.
+            if self.options.enemy_rando:
+                if not self.options.rykard_encounter:
+                    self.rykard_location = self.random.choice(
+                        [boss for boss in all_bosses if self._allow_boss_for_rykard(boss)])
+                    self.serpent_location = self.random.choice(
+                        [boss for boss in all_bosses if self._allow_boss_for_rykard(boss) and boss.name != self.rykard_location.name])
+            
+                self.invis_assassin_location = self.random.choice([boss for boss in all_bosses 
+                    if self.options.rykard_encounter or boss.name not in [self.rykard_location.name, self.serpent_location.name]])
+            else:
                 self.rykard_location = default_rykard_location
                 self.serpent_location = default_serpent_location
+                self.invis_assassin_location = default_invis_assassin_location
             
             # if adding items from base or dlc exclude those locations
             if self.options.enable_dlc and self.options.dlc_start and self.options.add_base_items:
@@ -1243,7 +1248,9 @@ class EldenRing(World):
                     item_table["Smithing-Stone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [1]"],
                     item_table["Somberstone Miner's Bell Bearing [2]"],item_table["Somberstone Miner's Bell Bearing [3]"],
                     item_table["Somberstone Miner's Bell Bearing [4]"],item_table["Somberstone Miner's Bell Bearing [5]"]]
-            if self.options.enemy_rando and not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
+            if self.options.enemy_rando: 
+                if not self.options.rykard_encounter: all_injectable_items += [item_table["Serpent-Hunter"]]
+                all_injectable_items += [item_table["Sentry's Torch"]]
         
         if self.base_enabled:
             if self.options.use_master_key.value == 1: all_injectable_items += [item_table[item] for item in item_table if item_table[item].master_key]
@@ -1493,35 +1500,36 @@ class EldenRing(World):
             
             # Custom Rules
             
-            if not self.options.enemy_rando and self.soft_logic_enabled: # boss rules
-                self._add_entrance_rule("Stormveil Start", "Margit's Shackle")
-                self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player))
-                if not self.options.rykard_encounter:
-                    self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
-                                            "Serpent-Hunter")
-            elif not self.options.rykard_encounter and self.soft_logic_enabled:
-                # places blocked by bosses, if rykard or serpent is here the place requires serpent-hunter
-                self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop"))
-                self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop"))
-                self._add_entrance_rule("Nokron, Eternal City", lambda state: self._can_get(state, "NR/NEC: Silver Tear Mask - boss drop"))
-                self._add_entrance_rule("Deeproot Depths", lambda state: self._can_get(state, "NR/(SA): Gargoyle's Greatsword - boss drop"))
-                self._add_entrance_rule("War-Dead Catacombs", lambda state: self._can_get(state, "CL/(WD): Radahn's Great Rune - mainboss drop"))
+            if not self.options.enemy_rando: # boss rules
+                if self.soft_logic_enabled:
+                    self._add_entrance_rule("Stormveil Start", lambda state: state.has("Margit's Shackle", self.player) or state.has(soft_logic_item, self.player))
+                    self._add_entrance_rule("Mohgwyn Palace", lambda state: state.has("Mohg's Shackle", self.player) and state.has("Purifying Crystal Tear", self.player) or state.has(soft_logic_item, self.player))
+                    if not self.options.rykard_encounter:
+                        self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
+                                                lambda state: state.has("Serpent-Hunter", self.player) or state.has(soft_logic_item, self.player))
+            else:
+                # places blocked by bosses
+                self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Nokron, Eternal City", lambda state: self._can_get(state, "NR/NEC: Silver Tear Mask - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Deeproot Depths", lambda state: self._can_get(state, "NR/(SA): Gargoyle's Greatsword - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("War-Dead Catacombs", lambda state: self._can_get(state, "CL/(WD): Radahn's Great Rune - mainboss drop") or state.has(soft_logic_item, self.player))
                 if self.options.world_logic.value != "region_lock":
                     self._add_entrance_rule("Altus Plateau", lambda state: self._can_get(state, "RSP/RSPO: Dragon Heart - boss drop") or 
-                        state.has("Dectus Medallion (Left)", self.player) and state.has("Dectus Medallion (Right)", self.player))
-                self._add_entrance_rule("Volcano Manor Upper", lambda state: self._can_get(state, "VM/GH: Godskin Stitcher - boss drop"))
+                        state.has("Dectus Medallion (Left)", self.player) and state.has("Dectus Medallion (Right)", self.player) or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Volcano Manor Upper", lambda state: self._can_get(state, "VM/GH: Godskin Stitcher - boss drop") or state.has(soft_logic_item, self.player))
                 # self._add_entrance_rule("Leyndell, Royal Capital", lambda state: 
-                #     self._can_get(state, "DD/AR: Fia's Mist - boss drop") or self._can_get(state, "CO: Dragon Greatclaw - capital great rune gate boss drop"))
-                self._add_entrance_rule("Leyndell, Royal Capital Throne", lambda state: self._can_get(state, "LRC/WCR: Talisman Pouch - mainboss drop"))
-                self._add_entrance_rule("Divine Tower of East Altus", lambda state: self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop"))
+                #     self._can_get(state, "DD/AR: Fia's Mist - boss drop") or self._can_get(state, "CO: Dragon Greatclaw - capital great rune gate boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Leyndell, Royal Capital Throne", lambda state: self._can_get(state, "LRC/WCR: Talisman Pouch - mainboss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Divine Tower of East Altus", lambda state: self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop") or state.has(soft_logic_item, self.player))
                 self._add_entrance_rule("Frenzied Flame Proscription", lambda state: self._can_get(state, "LRC/QB: Morgott's Great Rune - mainboss drop")
-                                        and self._can_get(state, "SSG/FD: Bloodflame Talons - boss drop"))
-                self._add_entrance_rule("Elphael, Brace of the Haligtree", lambda state: self._can_get(state, "MH/HTP: Loretta's War Sickle - boss drop"))
-                self._add_entrance_rule("Farum Azula", lambda state: self._can_get(state, "FP/FF: Remembrance of the Fire Giant - mainboss drop"))
-                self._add_entrance_rule("Farum Azula Main", lambda state: self._can_get(state, "FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop"))
-                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._can_get(state, "FA/BGB: Remembrance of the Black Blade - mainboss drop"))
-                self._add_entrance_rule("Leyndell, Ashen Capital Throne", lambda state: self._can_get(state, "LAC/LCA: Scepter of the All-Knowing - boss drop"))
-                self._add_entrance_rule("Erdtree", lambda state: self._can_get(state, "LAC/QB: Remembrance of Hoarah Loux - mainboss drop"))
+                                        and self._can_get(state, "SSG/FD: Bloodflame Talons - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Elphael, Brace of the Haligtree", lambda state: self._can_get(state, "MH/HTP: Loretta's War Sickle - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Farum Azula", lambda state: self._can_get(state, "FP/FF: Remembrance of the Fire Giant - mainboss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Farum Azula Main", lambda state: self._can_get(state, "FA/DTT: Smithing-Stone Miner's Bell Bearing [4] - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Leyndell, Ashen Capital", lambda state: self._can_get(state, "FA/BGB: Remembrance of the Black Blade - mainboss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Leyndell, Ashen Capital Throne", lambda state: self._can_get(state, "LAC/LCA: Scepter of the All-Knowing - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Erdtree", lambda state: self._can_get(state, "LAC/QB: Remembrance of Hoarah Loux - mainboss drop") or state.has(soft_logic_item, self.player))
 
             # Item Rules
             
@@ -1701,12 +1709,12 @@ class EldenRing(World):
                     ], "Rauh Ruins Spiritspring Stone")
                 
             # rykard
-            if self.options.enemy_rando and not self.options.rykard_encounter and self.soft_logic_enabled:
-                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop"))
-                self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop"))
-                self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop"))
-                self._add_entrance_rule("Abyssal Woods", lambda state: self._can_get(state, "RR/(DC): Barbed Staff-Spear - boss drop"))
-                self._add_entrance_rule("Enir-Ilim", lambda state: self._can_get(state, "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop"))
+            if self.options.enemy_rando:
+                self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Abyssal Woods", lambda state: self._can_get(state, "RR/(DC): Barbed Staff-Spear - boss drop") or state.has(soft_logic_item, self.player))
+                self._add_entrance_rule("Enir-Ilim", lambda state: self._can_get(state, "ARR/CBME: Remembrance of the Saint of the Bud - mainboss drop") or state.has(soft_logic_item, self.player))
             
             # dlc paintings
             self._add_location_rule("GP/BG: Serpent Crest Shield - painting reward SE of BG", "\"Incursion\" Painting")
@@ -1752,9 +1760,11 @@ class EldenRing(World):
         # Rykard and Serpent Rule
         if not self.options.rykard_encounter:
             if self.rykard_location and (self.rykard_location.dlc and self.dlc_enabled or not self.rykard_location.dlc and self.base_enabled):
-                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.rykard_location.locations, lambda state: state.has("Serpent-Hunter", self.player) or state.has(soft_logic_item, self.player))
             if self.serpent_location and (self.serpent_location.dlc and self.dlc_enabled or not self.serpent_location.dlc and self.base_enabled):
-                if len(self.rykard_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player))
+                if len(self.serpent_location.locations) != 0: self._add_location_rule(self.serpent_location.locations, lambda state: state.has("Serpent-Hunter", self.player) or state.has(soft_logic_item, self.player))
+        if self.invis_assassin_location and (self.invis_assassin_location.dlc and self.dlc_enabled or not self.invis_assassin_location.dlc and self.base_enabled):
+            if len(self.invis_assassin_location.locations) != 0: self._add_location_rule(self.invis_assassin_location.locations, lambda state: state.has("Sentry's Torch", self.player) or state.has(soft_logic_item, self.player))
             
         # Create duplicate location rules
         if len(self.all_duplicate_locations) > 0:
@@ -2268,25 +2278,23 @@ class EldenRing(World):
             
             # MARK: Rogier
             
-            self._add_location_rule(["RH: Rogier's Letter - after giving Black Knifeprint, talk to Ranni, talk to Rogier again", 
-            ], lambda state: self._can_go_to(state, "Stormveil Castle") and self._can_go_to(state, "Liurnia of The Lakes")
-                            and state.has("Black Knifeprint", self.player))
-            
             self._add_location_rule([
+                "RH: Rogier's Letter - after giving Black Knifeprint, talk to Ranni, talk to Rogier again",
                 "RH: Spellblade's Pointed Hat - found on Rogier's body",
                 "RH: Spellblade's Traveling Attire - found on Rogier's body",
                 "RH: Spellblade's Gloves - found on Rogier's body",
                 "RH: Spellblade's Trousers - found on Rogier's body",
                 "RH: Rogier's Rapier - talk Rogier after beating SV mainboss or on his body after he dies"
-            ], lambda state: ( self._can_go_to(state, "Stormveil Castle") and state.has("Cursemark of Death", self.player)))
+            ], lambda state: self._can_go_to(state, "Stormveil Castle") and self._can_go_to(state, "Liurnia of The Lakes")
+                and state.has("Black Knifeprint", self.player))
             
             # MARK: Fia
             
             self._add_location_rule(["RH: Knifeprint Clue - talk to Fia multiple times", 
-            ], lambda state: ( self._can_go_to(state, "Stormveil Castle")))
+            ], lambda state: self._can_go_to(state, "Stormveil Castle"))
             
             self._add_location_rule(["RH: Sacrificial Twig - talk to Fia after giving Black Knifeprint to Rogier", 
-            ], lambda state: ( state.has("Black Knifeprint", self.player) and self._can_go_to(state, "Stormveil Castle")))
+            ], lambda state: state.has("Black Knifeprint", self.player) and self._can_go_to(state, "Stormveil Castle"))
             
             self._add_location_rule(["RH: Weathered Dagger - talk to Fia after reaching altus", 
             ], lambda state: self._can_go_to(state, "Altus Plateau"))
@@ -3200,6 +3208,9 @@ class EldenRing(World):
         
         if self.rykard_location and self.rykard_location != default_rykard_location:
             text += f"\nRykard takes the place of {self.rykard_location.name} in {self.player_name}'s world.\n"
+            
+        if self.invis_assassin_location and self.invis_assassin_location != default_invis_assassin_location:
+            text += f"\nInvisible Assassin takes the place of {self.invis_assassin_location.name} in {self.player_name}'s world.\n"
 
         # if self.options.excluded_location_behavior == "forbid_useful":
         #     text += f"\nExcluded locations: {sorted(self.all_excluded_locations)}\n"
@@ -3438,6 +3449,8 @@ class EldenRing(World):
             force_bosses[self.rykard_location.id] = default_rykard_location.id
         if self.serpent_location:
             force_bosses[self.serpent_location.id] = default_serpent_location.id
+        if self.invis_assassin_location:
+            force_bosses[self.invis_assassin_location.id] = default_invis_assassin_location.id
 
         @dataclass
         class sweep_flags:
