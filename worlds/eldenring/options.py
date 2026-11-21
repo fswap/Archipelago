@@ -132,7 +132,7 @@ class SeperateImbuedKey(DefaultOnToggle):
 # MARK: Tarnished Pack
 
 class EnableTarnishedPack(Toggle):
-    """Enable Tarnished Pack"""
+    """Enable Tarnished Pack DLC"""
     display_name = "Enable Tarnished Pack"
 
 # MARK: DLC
@@ -142,7 +142,7 @@ class EnableDLC(DefaultOnToggle):
     display_name = "Enable DLC"
 
 class AddDLCItems(Toggle):
-    """Adds DLC items into the itempool but excludes all DLC locations, **needs DLC enabled**.
+    """Adds DLC items into the itempool but excludes all DLC locations, **forces DLC on**.
     \nThis also allows DLC bosses to appear in base game."""
     display_name = "Add DLC Items"
 
@@ -463,7 +463,7 @@ class CraftingKitOption(Choice):
     """Choose how the Crafting Kit is handled.
 
     - **Randomize:** Can be anywhere.
-    - **Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
+    - **Local Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
     - **Do Not Randomize:** Leave it at its normal spot, if DLC Only is on it'll be in Roundtable Twin Maiden Shop.
     *If not randomized and doing dlc start with base items, Crafting Kit will place at Kale.*
     """
@@ -477,7 +477,7 @@ class PhysickFlaskOption(Choice):
     """Choose how the Flask of Wondrous Physick is handled.
 
     - **Randomize:** Can be anywhere.
-    - **Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
+    - **Local Early:** Make it anywhere before Altus and not in Caelid, if DLC Only it'll be in Gravesite Plain.
     - **Do Not Randomize:** Leave it at its normal spot, if DLC Only is on it'll be in Roundtable Twin Maiden Shop.
     *If not randomized and doing dlc start with base items, Flask of Wondrous Physick will place at its normal spot.*
     """
@@ -569,13 +569,14 @@ class ERPriorityLocationGroups(PriorityLocations):
     - **Revered**: Revered Spirit Ashes. *Includes enemy dropped ones.*
     - **Spiritspring Stones**: Spiritspring Stone if spiritspring_stones is on.
     - **Horns**: The horns in the finger ruins.
+    - **Forge Reward**: The reward for completing a forge.
     """ 
     
     display_name = "Priority Location Groups"
     default = ["Key Items", "DLC Key Items", "Boss Reward", "DLC Boss Reward", "Seedtree", "Map", "DLC Map", "Church", "Cross", "Fragment"]
     valid_keys = ["Chest", "DLC Chest", "Scarab", "DLC Scarab", "Seedtree", "Basin", "Church", "Map", "DLC Map", "Key Items", "DLC Key Items", 
         "Fragment", "Cross", "Revered", "Achievement Boss", "DLC Remembrance Boss", "Boss Reward", "DLC Boss Reward",
-        "Shop", "DLC Shop", "Spiritspring Stones", "Horns", "Painting", "DLC Painting"]
+        "Shop", "DLC Shop", "Spiritspring Stones", "Horns", "Painting", "DLC Painting", "Forge Reward"]
     valid_keys_casefold = False
     
 class ERImportantAtPriorityOnly(DefaultOnToggle):

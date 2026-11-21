@@ -302,6 +302,7 @@ class EldenRing(World):
         for region in location_tables: # make sure table has all values
             self.dupe_location_tables.setdefault(region, [])
         
+        if self.options.add_dlc_items: self.options.enable_dlc.value = 1
         self.dlc_enabled = self.options.enable_dlc and not (not self.options.dlc_start and self.options.add_dlc_items)
         self.base_enabled = not (self.dlc_enabled and self.options.dlc_start)
         if not self.dlc_enabled or not self.base_enabled:
@@ -767,7 +768,7 @@ class EldenRing(World):
             else: 
                 warning(f"{early_item} item has non int value {item_count}")
         
-        warning(f"\nEldenRing {self.player_name} (Base Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and not location_dictionary[l].dlc or l in self.dupe_location_dictionary and not self.dupe_location_dictionary[l].dlc])
+        warning(f"EldenRing {self.player_name} (Base Priority locations: {len([l for l in self.all_priority_locations if l in location_dictionary and not location_dictionary[l].dlc or l in self.dupe_location_dictionary and not self.dupe_location_dictionary[l].dlc])
             }, Base Important items: {len([i for i in self.itempool if (
             ItemClassification.progression in i.classification and not ItemClassification.deprioritized in i.classification 
             or self.options.other_world_useful_at_priority and ItemClassification.useful in i.classification) and not i.data.is_dlc])})")
@@ -777,7 +778,7 @@ class EldenRing(World):
             ItemClassification.progression in i.classification and not ItemClassification.deprioritized in i.classification 
             or self.options.other_world_useful_at_priority and ItemClassification.useful in i.classification) and i.data.is_dlc])})")
         
-        warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}\n")
+        warning(f"EldenRing {self.player_name} local items: {len([i for i in self.itempool if i.data.name in self.local_items])} of {len(self.itempool)}")
         
         # print(set(w for w in item_table if item_table[w].category == 2 and not item_table[w].ammo and w not in [i.data.name for i in self.itempool]))
         

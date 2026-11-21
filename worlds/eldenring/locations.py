@@ -456,6 +456,7 @@ class ERLocationData:
             names.append("Spiritspring Stones")
             self.disallow_duplicates = True
         if self.horn: names.append("Horns")
+        if self.forgereward: names.append("Forge Reward")
         if self.painting:
             if self.dlc: names.append("DLC Painting")
             else: names.append("Painting")
@@ -6162,6 +6163,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Revered": set(),
     "Spiritspring Stones": set(),
     "Horns": set(),
+    "Forge Reward": set(),
     
     "Goods": set(),
     "Weapons": set(),
