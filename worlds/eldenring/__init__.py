@@ -349,10 +349,10 @@ class EldenRing(World):
                 raise OptionError(f"Player {self.player_name} has {shard} that doesn't contain Req and Max entries.")
 
             if shard == "RoldMedallionShards" and shard_dict['Max'] > 1:
-                if self.options.great_runes_required_mountain.value >= 0:
+                if self.options.great_runes_required_mountain.value >= 1:
                     warning(f"EldenRing Player {self.player_name} has {shard_dict['Max']} RoldMedallionShards in key_item_shards, "
-                            f"so great_runes_required_mountain = {self.options.great_runes_required_mountain.value} will be ignored")
-                self.options.great_runes_required_mountain.value = -1
+                            f"so great_runes_required_mountain: {self.options.great_runes_required_mountain.value} will be ignored")
+                self.options.great_runes_required_mountain.value = 0
 
             for val in shard_dict:
                 max_shard_count = 10
@@ -971,14 +971,14 @@ class EldenRing(World):
                 
                 # before Leyndell
                 prio_locations = self._find_prio_locations("Capital Outskirts")
-                total_required += self.options.great_runes_required_leyndell
+                total_required += self.options.great_runes_required_leyndell.value
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before Mountaintops
                 prio_locations = self._find_prio_locations("Forbidden Lands")
                 option, min_shard = self._shard_exists("Rold Medallion Shard")
                 if option and option["Max"] > 1: total_required += min_shard
-                else: total_required += self.options.great_runes_required_mountain
+                else: total_required += self.options.great_runes_required_mountain.value
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
                 
                 # before farum            
@@ -993,7 +993,7 @@ class EldenRing(World):
                 
                 # before erdtree      
                 prio_locations = self._find_prio_locations("Leyndell, Ashen Capital")
-                total_required += self.options.great_runes_required_erdtree
+                total_required += self.options.great_runes_required_erdtree.value
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required))
  
             if self.options.separate_progression:
@@ -1801,7 +1801,7 @@ class EldenRing(World):
             
         match other_logic:
             case "rold":
-                if self.options.great_runes_required_mountain.value != -1:
+                if self.options.great_runes_required_mountain.value != 0:
                     return self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
         
         return state.has(item, self.player) # if no additional state or add state fails just return has item

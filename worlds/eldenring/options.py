@@ -95,12 +95,12 @@ class GreatRunesRequiredMountain(Range):
     """What is required to enter Mountaintops.
     This is ignored if Rold Medallion shards are used as both basically do the same thing.
 
-    - **Vanilla:** Rold Medallion is required.
-    - **0-7:** Rold Medallion is not required; require this many Great Runes instead."""
+    - **0:** Rold Medallion is required.
+    - **1-7:** Rold Medallion is not required; require this many Great Runes instead."""
     display_name = "Mountaintops Great Runes Required"
-    range_start = -1
+    range_start = 0
     range_end = 7
-    default = -1
+    default = 0
     
 class GreatRunesRequiredErdtree(Range):
     """How many great runes are required to access the Erdtree."""
