@@ -6198,7 +6198,7 @@ location_descriptions = {
     "Blizzard": "Locations in the hard to see blizzard area of snowfield.",
 }
 
-used_lots: Set[int] = set([40520, 40526, 1100019]) # unused lots
+used_lots: Set[int] = set([40520, 40526, 11000195]) # unused lots
 location_dictionary: Dict[str, ERLocationData] = {}
 for location_name, location_table in location_tables.items():
     location_dictionary.update({location_data.name: location_data for location_data in location_table})
