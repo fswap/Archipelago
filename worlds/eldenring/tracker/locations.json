@@ -37533,13 +37533,13 @@
     ]
   },
   {
-    "name": "CC/CC: Smithing Stone [6] x4 - to NE, on corpse by grafted gravestone",
+    "name": "CC/CCW: Smithing Stone [6] x4 - to NE, on corpse by grafted gravestone",
     "sections": [
       {
-        "name": "CC/CC: Smithing Stone [6] x4 - to NE, on corpse by grafted gravestone"
+        "name": "CC/CCW: Smithing Stone [6] x4 - to NE, on corpse by grafted gravestone"
       },
       {
-        "name": "CC/CC: Starlight Shards - enemy drop to NE in ravine by grafted gravestone"
+        "name": "CC/CCW: Starlight Shards - enemy drop to NE in ravine by grafted gravestone"
       }
     ],
     "map_locations": [
