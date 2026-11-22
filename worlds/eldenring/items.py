@@ -225,7 +225,7 @@ class ERItemData:
             and self.base_name == "Flask of Wondrous Physick" and "Physick Flask" in options.dlc_starting_items.value):
             return True
         
-        if (options.great_runes_required_mountain.value >= 1 and self.name == "Rold Medallion"
+        if (options.great_runes_required_mountain.value >= 0 and self.name == "Rold Medallion"
         or options.use_master_key.value != 0 and self.base_name == "Stonesword Key"
         or options.rykard_encounter and options.enemy_rando and self.name == "Serpent-Hunter"
         or options.smithing_bell_bearing_option.value == 3 and self.upgrade_bell_bearing

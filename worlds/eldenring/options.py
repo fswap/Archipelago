@@ -95,12 +95,12 @@ class GreatRunesRequiredMountain(Range):
     """What is required to enter Mountaintops.
     This is ignored if Rold Medallion shards are used as both basically do the same thing.
 
-    - **0:** Rold Medallion is required.
-    - **1-7:** Rold Medallion is not required; require this many Great Runes instead."""
+    - **-1:** Rold Medallion is required.
+    - **0-7:** Rold Medallion is not required; require this many Great Runes instead."""
     display_name = "Mountaintops Great Runes Required"
-    range_start = 0
+    range_start = -1
     range_end = 7
-    default = 0
+    default = -1
     
 class GreatRunesRequiredErdtree(Range):
     """How many great runes are required to access the Erdtree."""
@@ -225,18 +225,17 @@ class DLCStartingItems(OptionList):
     
     - **Sacred Tears**
     - **Golden Seeds**
-    - **Physick Flask**
     - **Talisman Pouches**
     - **Memory Stones**
     - **Whetblades**
     - **Upgrade Bell Bearings** *You don't get any 1's in DLC only.*
-    """
+    """ # - **Physick Flask**
     display_name = "DLC Start Starting Items"
     supports_weighting = False
     default = ["Talisman Pouches", "Whetblades", "Upgrade Bell Bearings"]
 
     valid_keys = ["Sacred Tears", "Golden Seeds", "Talisman Pouches", 
-                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings", "Physick Flask"]
+                  "Memory Stones", "Whetblades", "Upgrade Bell Bearings"] # , "Physick Flask"
     valid_keys_casefold = False
 
 class DLCStartingShop(Toggle):

@@ -349,10 +349,10 @@ class EldenRing(World):
                 raise OptionError(f"Player {self.player_name} has {shard} that doesn't contain Req and Max entries.")
 
             if shard == "RoldMedallionShards" and shard_dict['Max'] > 1:
-                if self.options.great_runes_required_mountain.value >= 1:
+                if self.options.great_runes_required_mountain.value >= 0:
                     warning(f"EldenRing Player {self.player_name} has {shard_dict['Max']} RoldMedallionShards in key_item_shards, "
                             f"so great_runes_required_mountain: {self.options.great_runes_required_mountain.value} will be ignored")
-                self.options.great_runes_required_mountain.value = 0
+                self.options.great_runes_required_mountain.value = -1
 
             for val in shard_dict:
                 max_shard_count = 10
@@ -921,7 +921,7 @@ class EldenRing(World):
         locations_needed = []
         if self.options.world_logic == "region_lock":
             # if starting region has no locations create one
-            if self.base_enabled and self.options.dlc_start == 0 and len(self.prio_in_region["Limgrave"]) < 1: 
+            if self.base_enabled and self.options.dlc_start and len(self.prio_in_region["Limgrave"]) < 1: 
                 warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SGr): Finger Severer - beside grace\".")
                 self.all_priority_locations.add("LG/(SGr): Finger Severer - beside grace")
                 self.prio_in_region["Limgrave"].append("LG/(SGr): Finger Severer - beside grace")
@@ -933,7 +933,7 @@ class EldenRing(World):
             
             total_required = 0
             
-            if self.base_enabled and self.options.dlc_start == 0:
+            if self.base_enabled and self.options.dlc_start:
                 
                 # before Liurnia
                 prio_locations = self._find_prio_locations("Limgrave")
@@ -1507,7 +1507,7 @@ class EldenRing(World):
                     if not self.options.rykard_encounter:
                         self._add_location_rule(["VM/AP: Rykard's Great Rune - mainboss drop", "VM/AP: Remembrance of the Blasphemous - mainboss drop"], 
                                                 lambda state: state.has("Serpent-Hunter", self.player) or state.has(soft_logic_item, self.player))
-            else:
+            elif self.soft_logic_enabled:
                 # places blocked by bosses
                 self._add_entrance_rule("Stormveil Castle", lambda state: self._can_get(state, "SV/CT: Talisman Pouch - boss drop") or state.has(soft_logic_item, self.player))
                 self._add_entrance_rule("Raya Lucaria Academy Main", lambda state: self._can_get(state, "RLA/SC: Memory Stone - boss drop") or state.has(soft_logic_item, self.player))
@@ -1708,8 +1708,8 @@ class EldenRing(World):
                     "ARR/CBME: Mottled Necklace +2 - in chest up sealed spiritspring, top of stairs, seal is to N downstairs, outside to left"
                     ], "Rauh Ruins Spiritspring Stone")
                 
-            # rykard
-            if self.options.enemy_rando:
+            # boss blocks
+            if self.options.enemy_rando and self.soft_logic_enabled:
                 self._add_entrance_rule("Jagged Peak Foot", lambda state: self._can_get(state, "GP/(DP): Dragon-Hunter's Great Katana - boss drop") or state.has(soft_logic_item, self.player))
                 self._add_entrance_rule("Shadow Keep", lambda state: self._can_get(state, "SK/SKMG: Aspects of the Crucible: Thorns - boss drop") or state.has(soft_logic_item, self.player))
                 self._add_entrance_rule("Scaduview", lambda state: self._can_get(state, "ScV/SKBG: Remembrance of the Wild Boar Rider - mainboss drop") or state.has(soft_logic_item, self.player))
@@ -1801,7 +1801,7 @@ class EldenRing(World):
             
         match other_logic:
             case "rold":
-                if self.options.great_runes_required_mountain.value != 0:
+                if self.options.great_runes_required_mountain.value != -1:
                     return self._has_enough_great_runes(state, self.options.great_runes_required_mountain.value)
         
         return state.has(item, self.player) # if no additional state or add state fails just return has item
@@ -3323,12 +3323,13 @@ class EldenRing(World):
                         continue
                     items_list = full_items_by_name[ordered_item.name]
                     item = items_list.pop(0)
-                    location = item.location
-                    converted_item_order.append(item)
-                    locations_to_smooth.append(location)
-                    # Un-place the item in preparation for placing all the items in a smoothed-out order.
-                    location.item = None
-                    item.location = None
+                    if not item.location.locked:
+                        location = item.location
+                        converted_item_order.append(item)
+                        locations_to_smooth.append(location)
+                        # Un-place the item in preparation for placing all the items in a smoothed-out order.
+                        location.item = None
+                        item.location = None
                     if not items_list:
                         # The list is now empty, so remove it to prevent being able to get and pop an empty list.
                         del full_items_by_name[ordered_item.name]
