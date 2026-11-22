@@ -921,12 +921,11 @@ class EldenRing(World):
         locations_needed = []
         if self.options.world_logic == "region_lock":
             # if starting region has no locations create one
-            if self.base_enabled and self.options.dlc_start and len(self.prio_in_region["Limgrave"]) < 1: 
+            if self.base_enabled and len(self.prio_in_region["Limgrave"]) < 1: 
                 warning(f"Player {self.player_name} has no Priority locations within Limgrave region. Adding priority location \"LG/(SGr): Finger Severer - beside grace\".")
                 self.all_priority_locations.add("LG/(SGr): Finger Severer - beside grace")
                 self.prio_in_region["Limgrave"].append("LG/(SGr): Finger Severer - beside grace")
-                
-            if self.dlc_enabled and len(self.prio_in_region["Gravesite Plain"]) < 1:
+            elif not self.base_enabled and len(self.prio_in_region["Gravesite Plain"]) < 1:
                 warning(f"Player {self.player_name} has no Priority locations within Gravesite Plain region. Adding priority location \"GP/TPC: Scadutree Fragment - by cross\".")
                 self.all_priority_locations.add("GP/TPC: Scadutree Fragment - by cross")
                 self.prio_in_region["Gravesite Plain"].append("GP/TPC: Scadutree Fragment - by cross")
@@ -1048,10 +1047,9 @@ class EldenRing(World):
                 else: total_required += 1 # kindle
                 locations_needed.extend(self._needed_locations(prio_locations, locations_needed, total_required)) 
         
-        
         return locations_needed
     
-    def _needed_locations(self, prio, loc_needed, req):
+    def _needed_locations(self, prio: List, loc_needed, req):
         """return locations needed"""
         needed = []
         if len(prio) - len(loc_needed) < req:
@@ -1071,7 +1069,7 @@ class EldenRing(World):
         prio_locations = []
         fall = False
         
-        if self.dlc_enabled:        
+        if self.dlc_enabled:
             
             if fall or region == "Ancient Ruins of Rauh":
                 fall = True
@@ -1110,7 +1108,7 @@ class EldenRing(World):
         if self.options.separate_progression and fall:
             fall = False
         
-        if self.base_enabled and self.options.dlc_start == 0:
+        if self.base_enabled:
             
             if fall or region == "DLC Path": # path to dlc regions
                 for r in ["Mohgwyn Palace","Consecrated Snowfield","Consecrated Snowfield Catacombs","Yelough Anix Tunnel",
