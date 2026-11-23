@@ -1655,7 +1655,10 @@ class EldenRing(World):
             
             if self.dlc_enabled: # final boss order
                 if self.options.final_boss_order == "base_first":
-                    self._add_location_rule("EI/DGFS: Remembrance of a God and a Lord - mainboss drop", lambda state: self._can_go_to(state, "Erdtree"))
+                    self._add_location_rule([
+                        "EI/DGFS: Remembrance of a God and a Lord - mainboss drop",
+                        "EI/GD: Circlet of Light - interact with memory after mainboss"
+                        ], lambda state: self._can_go_to(state, "Erdtree"))
                 elif self.options.final_boss_order == "dlc_first":
                     self._add_entrance_rule("Erdtree", lambda state: self._can_get(state, "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"))
         

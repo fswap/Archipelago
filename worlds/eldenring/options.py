@@ -720,6 +720,7 @@ class ERExcludeLocations(ExcludeLocations):
     - **Furnace Golem**: DLC Furnace Golems.
     - **Out of the Way**: Locations that take a bit to get.
     - **Drop**: One time drop items from enemies.
+    - **Final Boss**: Both final bosses.
     - **Dungeon**: All locations in mini dungeons.
       - **Cave**: All caves.
       - **Tunnel**: All tunnels.
@@ -736,7 +737,7 @@ class ERExcludeLocations(ExcludeLocations):
     default = frozenset({"Hidden", "Rise", "Drop", "Dungeon"}) # "Post Stormveil"
     valid_keys = {
         "Hidden", "Rise", "Blizzard", "Scarab", "Furnace Golem", "Out of the Way", "Drop", 
-        "Dungeon", "Cave", "Tunnel", "Grave", "Catacombs", "Gaol", "Forge",
+        "Final Boss", "Dungeon", "Cave", "Tunnel", "Grave", "Catacombs", "Gaol", "Forge",
         "Post Leyndell"
         } | {region for region in region_order + region_order_dlc}
     

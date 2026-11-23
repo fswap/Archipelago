@@ -405,6 +405,7 @@ class ERLocationData:
             elif self.gaol: names.append("Gaol")
             elif self.forge: names.append("Forge")
         
+        if self.end or self.dlc_end: names.append("Final Boss")
         if self.achievement: names.append("Achievement Boss")      
         if self.remembrance and self.dlc: names.append("DLC Remembrance Boss")
         
@@ -6122,6 +6123,7 @@ location_name_groups: Dict[str, Set[str]] = {
     "Prominent": set(),
     "Progression": set(),
     "Key Items": set(),
+    "Final Boss": set(),
     "Achievement Boss": set(),
     "Boss Reward": set(),
     "DLC": set(),
