@@ -25,6 +25,19 @@ class GoalOption(OptionSet):
     valid_keys = {type + " Boss" for boss in all_bosses if boss.flag for type in boss.type} | {"Random"}
     default = frozenset({"Final Boss", "DLC Final Boss"})
 
+class FinalBossOrder(Choice):
+    """Final Boss Order options
+    
+    **Either:** Allow completing either final boss first.
+    **Base First:** Require base game final boss first.
+    **DLC First:** Require DLC final boss first.
+    """
+    display_name = "Final Boss Order"
+    option_either = 0
+    option_base_first = 1
+    option_dlc_first = 2
+    default = 0
+
 class KeyItemShards(OptionDict): # max value is set in shard verify func in gen_early
     """
     Which key items should be broken up into shards and how many
@@ -771,6 +784,7 @@ class MissableLocationBehaviorOption(Choice):
 @dataclass
 class EROptions(PerGameCommonOptions):
     goal: GoalOption
+    final_boss_order: FinalBossOrder
     key_item_shards: KeyItemShards
     exclude_dungeon: ExcludeDungeonBosses
     world_logic: WorldLogic
@@ -863,6 +877,7 @@ class EROptions(PerGameCommonOptions):
 option_groups = [
     OptionGroup("Logic", [
         GoalOption,
+        FinalBossOrder,
         KeyItemShards,
         ExcludeDungeonBosses,
         WorldLogic,

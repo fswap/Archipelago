@@ -1652,6 +1652,12 @@ class EldenRing(World):
                 self._add_entrance_rule("Mohgwyn Palace", lambda state: self._can_go_to(state, "Consecrated Snowfield"))
                 self._add_entrance_rule("Gravesite Plain", lambda state: self._can_go_to(state, "Wailing Dunes"))
             else: self._add_entrance_rule("Mohgwyn Palace", lambda state: self._can_go_to(state, "Consecrated Snowfield"))
+            
+            if self.dlc_enabled: # final boss order
+                if self.options.final_boss_order == "base_first":
+                    self._add_location_rule("EI/DGFS: Remembrance of a God and a Lord - mainboss drop", lambda state: self._can_go_to(state, "Erdtree"))
+                elif self.options.final_boss_order == "dlc_first":
+                    self._add_entrance_rule("Erdtree", lambda state: self._can_get(state, "EI/DGFS: Remembrance of a God and a Lord - mainboss drop"))
         
         # MARK: DLC Rules
         if self.dlc_enabled:
@@ -3476,6 +3482,7 @@ class EldenRing(World):
 
         slot_data = {
             "options": {
+                "final_boss_order": self.options.final_boss_order.value,
                 "key_item_shards": self.options.key_item_shards.value,
                 "exclude_dungeon": self.options.exclude_dungeon.value,
                 "world_logic": self.options.world_logic.value,
