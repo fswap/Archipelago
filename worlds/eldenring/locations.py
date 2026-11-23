@@ -1518,7 +1518,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LL/CIn: Golden Rune [2] - graveyard S of CIn", "Golden Rune [2]", key="603748,0:1037487060::", targets=('lot:1037480060')),
         ERLocationData("LL/CIn: Golden Rune [4] - graveyard S of CIn", "Golden Rune [4]", key="603748,0:1037487070::", targets=('lot:1037480070')),
         ERLocationData("LL/CIn: Golden Rune [3] 4 - graveyard S of CIn", "Golden Rune [3]", key="603748,0:1037487080::", targets=('lot:1037480080')),
-        ERLocationData("LL/RVV: Golden Seed - seedtree to SW ", "Golden Seed", key="603750,0:1037507100::", seedtree=True, targets=('lot:1037500100')),
+        ERLocationData("LL/RVV: Golden Seed - seedtree to SW", "Golden Seed", key="603750,0:1037507100::", seedtree=True, targets=('lot:1037500100')),
         ERLocationData("LL/RVV: Ash of War: Barbaric Roar - scarab to N", "Ash of War: Barbaric Roar", key="603751,0:0000540224::", scarab=True, targets=('lot:40224')),
         ERLocationData("LL/CIr: Warming Stone x3 - W of CIr in graveyard", "Warming Stone x3", key="603839,0:1038397000::", targets=('lot:1038390000')),
         ERLocationData("LL/LLS: Glintstone Craftsman's Cookbook [1] - to S in camp", "Glintstone Craftsman's Cookbook [1]", key="603840,0:0000067410::", targets=('lot:1038400010')),
