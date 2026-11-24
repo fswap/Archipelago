@@ -308,7 +308,7 @@ dlc_only = {
     
     "enable_dlc":                           EnableDLC.option_true,
     "dlc_start":                            DLCStart.option_true,
-    "dlc_starting_items":                   ["Sacred Tears", "Golden Seeds", "Talisman Pouches", "Memory Stones", "Whetblades", "Upgrade Bell Bearings", "Physick Flask"],
+    "dlc_starting_items":                   ["Sacred Tears", "Golden Seeds", "Talisman Pouches", "Memory Stones", "Whetblades", "Upgrade Bell Bearings"], # , "Physick Flask"
     "dlc_starting_shop":                    DLCStartingShop.option_true,
     "dlc_care_package":                     DLCCarePackage.option_false,
     "dlc_initial_rune_level":               90,

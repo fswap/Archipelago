@@ -689,7 +689,7 @@ base_bosses = [
     # MARK: Capital Outskirts
     ERBossInfo("Deathbird (CO)", ["Capital Outskirts", "Overworld"], 1044530800, 1044530800,
         locations=[
-            "CO/HMS: Twinbird Kite Shield - night boss drop to NE in block flower field"
+            "CO/HMS: Twinbird Kite Shield - night boss drop to NE in black flower field"
         ]
     ),
     ERBossInfo("Bell Bearing Hunter (CO)", ["Capital Outskirts", "Overworld"], 1043530800, 1043530800,

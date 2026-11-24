@@ -24123,16 +24123,16 @@
         "name": "CO/(AST): Golden Rune [7] - after illusory wall chest"
       },
       {
-        "name": "CO/(AST): Raw Meat Dumpling - enemy drop after illusory wall chest, head N from place lever \"would\" be"
+        "name": "CO/(AST): Raw Meat Dumpling - enemy drop 2 sewer room after second trap chest"
       },
       {
-        "name": "CO/(AST): Living Jar Shard - enemy drop after illusory wall chest, head N from place lever \"would\" be"
+        "name": "CO/(AST): Living Jar Shard - enemy drop 2 sewer room after second trap chest"
       },
       {
-        "name": "CO/(AST): Raw Meat Dumpling - enemy drop illusory wall chest x2 then up ladder, follow to dead-end"
+        "name": "CO/(AST): Raw Meat Dumpling - enemy drop 1 sewer room after second trap chest"
       },
       {
-        "name": "CO/(AST): Living Jar Shard - enemy drop illusory wall chest x2 then up ladder, follow to dead-end"
+        "name": "CO/(AST): Living Jar Shard - enemy drop 1 sewer room after second trap chest"
       }
     ],
     "map_locations": [
@@ -24144,19 +24144,19 @@
     ]
   },
   {
-    "name": "CO/(AST): Ritual Pot - illusory wall chest x2 then up ladder, follow to dead-end",
+    "name": "CO/(AST): Ritual Pot - after illusory wall chest, head N from place lever \"would\" be",
     "sections": [
       {
-        "name": "CO/(AST): Ritual Pot - illusory wall chest x2 then up ladder, follow to dead-end"
+        "name": "CO/(AST): Ritual Pot - after illusory wall chest, head N from place lever \"would\" be"
       },
       {
         "name": "CO/(AST): Root Resin x2 - after illusory wall chest, head N from place lever \"would\" be"
       },
       {
-        "name": "CO/(AST): Raw Meat Dumpling - enemy drop 2 sewer room after second trap chest"
+        "name": "CO/(AST): Raw Meat Dumpling - enemy drop after illusory wall chest, head N from place lever \"would\" be"
       },
       {
-        "name": "CO/(AST): Living Jar Shard - enemy drop 2 sewer room after second trap chest"
+        "name": "CO/(AST): Living Jar Shard - enemy drop after illusory wall chest, head N from place lever \"would\" be"
       }
     ],
     "map_locations": [
@@ -24168,19 +24168,19 @@
     ]
   },
   {
-    "name": "CO/(AST): Ritual Pot - after illusory wall chest, head N from place lever \"would\" be",
+    "name": "CO/(AST): Ritual Pot - illusory wall chest x2 then up ladder, follow to dead-end",
     "sections": [
       {
-        "name": "CO/(AST): Ritual Pot - after illusory wall chest, head N from place lever \"would\" be"
+        "name": "CO/(AST): Ritual Pot - illusory wall chest x2 then up ladder, follow to dead-end"
       },
       {
         "name": "CO/(AST): Smithing Stone [5] - illusory wall chest x2 then up ladder, follow to dead-end"
       },
       {
-        "name": "CO/(AST): Raw Meat Dumpling - enemy drop 1 sewer room after second trap chest"
+        "name": "CO/(AST): Raw Meat Dumpling - enemy drop illusory wall chest x2 then up ladder, follow to dead-end"
       },
       {
-        "name": "CO/(AST): Living Jar Shard - enemy drop 1 sewer room after second trap chest"
+        "name": "CO/(AST): Living Jar Shard - enemy drop illusory wall chest x2 then up ladder, follow to dead-end"
       }
     ],
     "map_locations": [
@@ -24684,10 +24684,10 @@
     ]
   },
   {
-    "name": "CO/HMS: Twinbird Kite Shield - night boss drop to NE in block flower field",
+    "name": "CO/HMS: Twinbird Kite Shield - night boss drop to NE in black flower field",
     "sections": [
       {
-        "name": "CO/HMS: Twinbird Kite Shield - night boss drop to NE in block flower field"
+        "name": "CO/HMS: Twinbird Kite Shield - night boss drop to NE in black flower field"
       },
       {
         "name": "CO/HMS: Winged Crystal Tear - in basin to NE in black flower field"
