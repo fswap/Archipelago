@@ -302,25 +302,25 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 ### Liurnia of The Lakes Dungeons
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(REC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(BKC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(CC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(SC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(LCC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(ACC)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(RLCT)</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(REC)</strong></td><td> Road&#x27;s End Catacombs, W Liurnia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(BKC)</strong></td><td> Black Knife Catacombs, NE Liurnia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(CC)</strong></td><td> Cliffbottom Catacombs, SE Liurnia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(SC)</strong></td><td> Stillwater Cave, S Liurnia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(LCC)</strong></td><td> Lakeside Crystal Cave, SW Liurnia.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(ACC)</strong></td><td> Academy Crystal Cave, W under Raya.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(RLCT)</strong></td><td> Raya Lucaria Crystal Tunnel, NE Liurnia.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Caria Manor
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(RGE)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(RaR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(ReR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/(SR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/RMG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/RaR</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>LL/SR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(RGE)</strong></td><td> Royal Grave Evergaol, E of Manor.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(RaR)</strong></td><td> Ranni&#x27;s Rise landmark, W of Manor.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(ReR)</strong></td><td> Renna&#x27;s Rise landmark, NW of Manor.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/(SR)</strong></td><td> Seluvis&#x27;s Rise landmark, SW of Manor.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/RMG</strong></td><td> Royal Moongazing Grounds grace, boss arena.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/RaR</strong></td><td> Ranni&#x27;s Rise landmark, W of Manor.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>LL/SR</strong></td><td> Seluvis&#x27;s Rise landmark, SW of Manor.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Carian Study Hall
@@ -335,19 +335,19 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 ### Ainsel River
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>AR/(UPR)</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AR/ARD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AR/ARSG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AR/ARWD</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>AR/UPR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AR/(UPR)</strong></td><td> Uhl Palace Ruins landmark.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AR/ARD</strong></td><td> Ainsel River Downstream grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AR/ARSG</strong></td><td> Ainsel River Sluice Gate grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AR/ARWD</strong></td><td> Ainsel River Well Depths grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>AR/UPR</strong></td><td> Uhl Palace Ruins landmark.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Ruin-Strewn Precipice
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RSP/RSP</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RSP/RSPO</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RSP/RVV</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RSP/RSP</strong></td><td> Ruin-Strewn Precipice grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RSP/RSPO</strong></td><td> Ruin-Strewn Precipice Overlook grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RSP/RVV</strong></td><td> Ravine-Veiled Village grace.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### The Four Belfries
@@ -361,11 +361,11 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 ### Raya Lucaria Academy
 
 </th>
-<tr style="height:45px"><td style="text-align: center"><strong>RLA/CC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RLA/MAG</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RLA/SC</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RLA/DB</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>RLA/RLGL</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RLA/CC</strong></td><td> Church of the Cuckoo grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RLA/MAG</strong></td><td> Main Academy Gate grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RLA/SC</strong></td><td> Schoolhouse Classroom grace.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RLA/DB</strong></td><td> Debate Parlor grace, boss arena.</td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>RLA/RLGL</strong></td><td> Raya Lucaria Grand Library grace, mainboss arena.</td></tr>
 <th colspan="2" style="text-align: center">
 
 ### Caelid

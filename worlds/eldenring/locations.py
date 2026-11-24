@@ -1276,7 +1276,6 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RH/DLC: Rellana's Greaves - Enia shop, defeat CE/CLC mainboss", "Rellana's Greaves", key="111000,0:0000000000:9190,101500:", dlc=True, missable=True, shop=True, targets=('shop:101565')),
         
         ERLocationData("RH/DLC: Taunter's Tongue - invader drop", "Dummy item", key="111000,0:0000060300::", hostile_npc=True),
-        ERLocationData("RH/DLC: Talisman Pouch - talk to Enia", "Dummy item", key="111000,0:0000060500:101800,11109777:", npc=True), # not missable now?
         ERLocationData("RH/DLC: Cipher Pata - on bed in lower area", "Dummy item", key="111000,0:0011107000::"),
     ],
     "Liurnia of The Lakes":[ # liurnia                                    done

@@ -146,11 +146,58 @@ def find_description(initial: str) -> str:
         case "LL/(DV)": return "Divine Tower of Liurnia."
         case "LL/LTB": return "Liurnia Tower Bridge grace, after CSH."
         
+
+        
+        # liurnia dungeons
+        
+        case "LL/(REC)": return "Road's End Catacombs, W Liurnia."
+        case "LL/(BKC)": return "Black Knife Catacombs, NE Liurnia."
+        case "LL/(CC)": return "Cliffbottom Catacombs, SE Liurnia."
+        case "LL/(SC)": return "Stillwater Cave, S Liurnia."
+        case "LL/(LCC)": return "Lakeside Crystal Cave, SW Liurnia."
+        case "LL/(ACC)": return "Academy Crystal Cave, W under Raya."
+        case "LL/(RLCT)": return "Raya Lucaria Crystal Tunnel, NE Liurnia."
+        
+        # caria manor
+        
+        case "LL/(RGE)": return "Royal Grave Evergaol, E of Manor."
+        case "LL/(RaR)": return "Ranni's Rise landmark, W of Manor."
+        case "LL/(ReR)": return "Renna's Rise landmark, NW of Manor."
+        case "LL/(SR)": return "Seluvis's Rise landmark, SW of Manor."
+        case "LL/RMG": return "Royal Moongazing Grounds grace, boss arena."
+        case "LL/RaR": return "Ranni's Rise landmark, W of Manor."
+        case "LL/SR": return "Seluvis's Rise landmark, SW of Manor."
+        
+        # ainsel river
+        
+        case "AR/(UPR)": return "Uhl Palace Ruins landmark."
+        case "AR/ARD": return "Ainsel River Downstream grace."
+        case "AR/ARSG": return "Ainsel River Sluice Gate grace."
+        case "AR/ARWD": return "Ainsel River Well Depths grace."
+        case "AR/UPR": return "Uhl Palace Ruins landmark."
+        
+        # ruin strewn
+        
+        case "RSP/RSP": return "Ruin-Strewn Precipice grace."
+        case "RSP/RSPO": return "Ruin-Strewn Precipice Overlook grace."
+        case "RSP/RVV": return "Ravine-Veiled Village grace."
+        
+        # four belfries
+        
         case "LL/(TFB/CA)": return "The Four Belfries (Chapel of Anticipation)"
         case "LL/(TFB/NEC)": return "The Four Belfries (Nokron)"
         case "LL/(TFB/FA)": return "The Four Belfries (Farum Azula)"
         
+        # raya
         
+        case "RLA/CC": return "Church of the Cuckoo grace."
+        case "RLA/MAG": return "Main Academy Gate grace."
+        case "RLA/SC": return "Schoolhouse Classroom grace."
+        case "RLA/DB": return "Debate Parlor grace, boss arena."
+        case "RLA/RLGL": return "Raya Lucaria Grand Library grace, mainboss arena."
+        
+        case "": return "."
+
         
         case "CL/(WD)": return "Wailing Dunes."
         case "CL/(WDC)": return "War-Dead Catacombs, N of Wailing Dunes."
