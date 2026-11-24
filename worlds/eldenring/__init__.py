@@ -1535,12 +1535,12 @@ class EldenRing(World):
             self._add_location_rule([
                 "LL/(CFT): Cannon of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
                 "LL/(CFT): Gavel of Haima - in chest atop tower, requires using Erudition gesture while wearing any Glintstone Crown",
-                ],lambda state: state.has("Erudition", self.player) and
+                ],lambda state: #state.has("Erudition", self.player) and
                 (state.has("Twinsage Glintstone Crown", self.player) or state.has("Olivinus Glintstone Crown", self.player) or
                 state.has("Lazuli Glintstone Crown", self.player) or state.has("Karolos Glintstone Crown", self.player) or
                 state.has("Witch's Glintstone Crown", self.player)))
         
-            self._add_location_rule("LL/(CT): Memory Stone - top of tower, requires Erudition gesture", "Erudition")
+            #self._add_location_rule("LL/(CT): Memory Stone - top of tower, requires Erudition gesture", "Erudition")
             
             # MotG/SR spirit summon item
             self._add_location_rule(["MotG/(SR): Primal Glintstone Blade - in chest underground behind jellyfish seal"

@@ -2021,7 +2021,7 @@ _vanilla_items = [
     ERItemData("Prayer", 9041, ERItemCategory.GOODS, skip=True),
     ERItemData("Desperate Prayer", 9042, ERItemCategory.GOODS, skip=True),
     ERItemData("Rapture", 9043, ERItemCategory.GOODS, skip=True),
-    ERItemData("Erudition", 9045, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, inject=True),
+    ERItemData("Erudition", 9045, ERItemCategory.GOODS, classification=ItemClassification.progression_deprioritized, inject=False),
     ERItemData("Outer Order", 9046, ERItemCategory.GOODS, skip=True),
     ERItemData("Inner Order", 9047, ERItemCategory.GOODS, skip=True),
     ERItemData("Golden Order Totality", 9048, ERItemCategory.GOODS, skip=True),
