@@ -2627,7 +2627,7 @@ class EldenRing(World):
             # MARK: Tanith
             
             self._add_location_rule([ # or after rykard is dead
-                "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion",
+                "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion or in her chair after she leaves",
             ], lambda state: state.has("Serpent's Amnion", self.player) and self._can_go_to(state, "Volcano Manor Drawing Room"))
     
             self._add_location_rule([
