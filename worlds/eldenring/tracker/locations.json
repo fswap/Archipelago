@@ -19968,10 +19968,10 @@
     ]
   },
   {
-    "name": "AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spritsping",
+    "name": "AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spiritspring",
     "sections": [
       {
-        "name": "AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spritsping"
+        "name": "AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spiritspring"
       }
     ],
     "map_locations": [
@@ -23766,7 +23766,7 @@
         "name": "VM/PTC: Smithing Stone [6] x2 - in lower graveyard, middle island"
       },
       {
-        "name": "VM/GH: Great Omenkiller Cleaver - enemy drop, fall from GH roof to SW, in torture room"
+        "name": "VM/PTC: Great Omenkiller Cleaver - enemy drop by corpse fire middle of town"
       }
     ],
     "map_locations": [
@@ -23934,7 +23934,7 @@
         "name": "VM/GH: Albinauric Mask - fall from GH roof to SW, on guillotine"
       },
       {
-        "name": "VM/PTC: Great Omenkiller Cleaver - enemy drop by corpse fire middle of town"
+        "name": "VM/GH: Great Omenkiller Cleaver - enemy drop, fall from GH roof to SW, in torture room"
       }
     ],
     "map_locations": [

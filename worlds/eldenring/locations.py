@@ -1752,7 +1752,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/OAT: Black-Key Bolt x20 - invade Rileigh", "Black-Key Bolt x20", key="603953,0:1039537700::", targets=('lot:1039530701')),
         ERLocationData("AP/OAT: Crepus's Vial - invade Rileigh", "Crepus's Vial", key="603953,0:1039537700::", targets=('lot:1039530700')),
         
-        ERLocationData("AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spritsping", "Golden Rune [10]", key="603953,0:1039537750::", targets=('lot:430030413')),
+        ERLocationData("AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spiritspring", "Golden Rune [10]", key="603953,0:1039537750::", targets=('lot:430030413')),
         # shaded castle
         ERLocationData("TSC/SCIG: Perfume Bottle - top of lower shortcut ladder on ledge to W", "Perfume Bottle", key="603954,0:0000066770::", targets=('lot:1039540040')),
         ERLocationData("TSC/SCIG: Perfumer's Cookbook [2] - top of upper NW tower", "Perfumer's Cookbook [2]", key="603954,0:0000067850::", targets=('lot:1039540190')),
@@ -3350,8 +3350,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("VM/TE: Serpent's Amnion - on the altar", "Serpent's Amnion", key="160000,0:0016007710::", targets=('lot:16000710')),
         ERLocationData("VM/PTC: Raw Meat Dumpling - enemy drop NE side of lower graveyard", "Raw Meat Dumpling", key="160000,0:0016007930::", targets=('lot:449038002')),
         ERLocationData("VM/PTC: Living Jar Shard - enemy drop NE side of lower graveyard", "Living Jar Shard", key="160000,0:0016007930::", targets=('lot:449038001')),
-        ERLocationData("VM/GH: Great Omenkiller Cleaver - enemy drop, fall from GH roof to SW, in torture room", "Great Omenkiller Cleaver", key="160000,0:0016007960::", targets=('lot:482000600')),
-        ERLocationData("VM/PTC: Great Omenkiller Cleaver - enemy drop by corpse fire middle of town", "Great Omenkiller Cleaver", key="160000,0:0016007970::", targets=('lot:482000700')),
+        ERLocationData("VM/PTC: Great Omenkiller Cleaver - enemy drop by corpse fire middle of town", "Great Omenkiller Cleaver", key="160000,0:0016007960::", targets=('lot:482000600')),
+        ERLocationData("VM/GH: Great Omenkiller Cleaver - enemy drop, fall from GH roof to SW, in torture room", "Great Omenkiller Cleaver", key="160000,0:0016007970::", targets=('lot:482000700')),
         ERLocationData("VM/GH: Dragon Heart - enemy drop outside to E, ride elevator down, in cave", "Dragon Heart", key="160000,0:0016007999::", targets=('lot:16002000')),
     ],
     "Fringefolk Hero's Grave":[ # graveyard_grave                         done
