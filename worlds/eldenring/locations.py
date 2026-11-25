@@ -741,10 +741,10 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("LG/WS: Somber Smithing Stone [1] - scarab on ruin NE of WS", "Somber Smithing Stone [1]", key="604239,0:0000540146::", scarab=True, targets=('lot:40146')),
         ERLocationData("LG/WS: Lance - on ruin in enemy camp NE of WS", "Lance", key="604239,0:1042397010::", targets=('lot:1042390010')),
 
-        ERLocationData("LG/LC: Scaled Helm - invade Istvan SE of colo", "Scaled Helm", key="604239,0:1042397500::", targets=('lot:1042390500')),
-        ERLocationData("LG/LC: Scaled Armor - invade Istvan SE of colo", "Scaled Armor", key="604239,0:1042397500::", targets=('lot:1042390501')),
-        ERLocationData("LG/LC: Scaled Gauntlets - invade Istvan SE of colo", "Scaled Gauntlets", key="604239,0:1042397500::", targets=('lot:1042390502')),
-        ERLocationData("LG/LC: Scaled Greaves - invade Istvan SE of colo", "Scaled Greaves", key="604239,0:1042397500::", targets=('lot:1042390503')),
+        ERLocationData("LG/LC: Scaled Helm - invade Istvan SE of colo", "Scaled Helm", key="604239,0:1042397500::", missable=True, targets=('lot:1042390500')),
+        ERLocationData("LG/LC: Scaled Armor - invade Istvan SE of colo", "Scaled Armor", key="604239,0:1042397500::", missable=True, targets=('lot:1042390501')),
+        ERLocationData("LG/LC: Scaled Gauntlets - invade Istvan SE of colo", "Scaled Gauntlets", key="604239,0:1042397500::", missable=True, targets=('lot:1042390502')),
+        ERLocationData("LG/LC: Scaled Greaves - invade Istvan SE of colo", "Scaled Greaves", key="604239,0:1042397500::", missable=True, targets=('lot:1042390503')),
         
         ERLocationData("LG/LC: Hammer Talisman - invader drop", "Hammer Talisman", key="604239,0:1042397700::", enemytalisman=True, missable=True, targets=('lot:1042390700')),
         ERLocationData("LG/WS: Beast Crest Heater Shield - chest within enemy camp NE of WS", "Beast Crest Heater Shield", key="604239,0:1042397900::", chest=True, targets=('lot:1042390900')),
@@ -1749,8 +1749,8 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("AP/MR: Golden Rune [3] - SE of MR", "Golden Rune [3]", key="603953,0:1039537070::", targets=('lot:1039530070')),
         ERLocationData("AP/(MR): Mirage Riddle - imp statue holding book", "Mirage Riddle", key="603953,0:1039537080::", targets=('lot:1039530080')),
 
-        ERLocationData("AP/OAT: Black-Key Bolt x20 - invade Rileigh", "Black-Key Bolt x20", key="603953,0:1039537700::", targets=('lot:1039530701')),
-        ERLocationData("AP/OAT: Crepus's Vial - invade Rileigh", "Crepus's Vial", key="603953,0:1039537700::", targets=('lot:1039530700')),
+        ERLocationData("AP/OAT: Black-Key Bolt x20 - invade Rileigh", "Black-Key Bolt x20", key="603953,0:1039537700::", missable=True, targets=('lot:1039530701')),
+        ERLocationData("AP/OAT: Crepus's Vial - invade Rileigh", "Crepus's Vial", key="603953,0:1039537700::", missable=True, targets=('lot:1039530700')),
         
         ERLocationData("AP/WbR: Golden Rune [10] - enemy drop SW of WbR, by the top of a spiritspring", "Golden Rune [10]", key="603953,0:1039537750::", targets=('lot:430030413')),
         # shaded castle
@@ -2674,11 +2674,9 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("MtG/(HV): Errant Sorcerer Robe (Altered) - in shack NW side of village", "Errant Sorcerer Robe (Altered)", key="603752,0:1037527100::", targets=('lot:1037520102')),
    
         ERLocationData("MtG/PSA: Comet Azur - given by Azur", "Comet Azur", key="603753,0:0000400440::", targets=('lot:104400')),
-        ERLocationData("MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was", "Azur's Glintstone Crown", key="603753,0:0000400441::", targets=('lot:114410')),
-        ERLocationData("MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was", "Azur's Glintstone Robe", key="603753,0:0000400441::", targets=('lot:114411')),
-        ERLocationData("MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was", "Azur's Manchettes", key="603753,0:0000400441::", targets=('lot:114412')),
-        
-        
+        ERLocationData("MtG/PSA: Azur's Glintstone Crown - side with Sellen, where Azur was", "Azur's Glintstone Crown", key="603753,0:0000400441::", missable=True, targets=('lot:114410')),
+        ERLocationData("MtG/PSA: Azur's Glintstone Robe - side with Sellen, where Azur was", "Azur's Glintstone Robe", key="603753,0:0000400441::", missable=True, targets=('lot:114411')),
+        ERLocationData("MtG/PSA: Azur's Manchettes - side with Sellen, where Azur was", "Azur's Manchettes", key="603753,0:0000400441::", missable=True, targets=('lot:114412')),
         
         ERLocationData("MtG/GHG: Mushroom x6 - N of GHG", "Mushroom x6", key="603753,0:1037537000::", targets=('lot:1037530000')),
         ERLocationData("MtG/PSA: Golden Rune [6] - to NE on tip", "Golden Rune [6]", key="603753,0:1037537010::", targets=('lot:1037530010')),
@@ -2741,7 +2739,7 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("VM/VM: Recusant Finger - on the table in the drawing room", "Recusant Finger", key="160000,0:0000060260::", missable=True, targets=('lot:16000720')),
         ERLocationData("VM/VM: Perfume Bottle - in the first room on the right", "Perfume Bottle", key="160000,0:0000066700::", targets=('lot:16000110')),
         ERLocationData("VM/VM: Nomadic Warrior's Cookbook [21] - behind the illusory wall in the right room, all the way around down the dead-end", "Nomadic Warrior's Cookbook [21]", key="160000,0:0000067120::", cookbook=True, targets=('lot:16000090')),
-        ERLocationData("VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion", "Tonic of Forgetfulness", key="160000,0:0000400070::", targets=('lot:100700', 'lot:100726')),
+        ERLocationData("VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion or in her chair after she leaves", "Tonic of Forgetfulness", key="160000,0:0000400070::", targets=('lot:100700', 'lot:100726')),
         ERLocationData("VM/VM: Letter from Volcano Manor (Istvan) - on the table in the drawing room", "Letter from Volcano Manor (Istvan)", key="160000,0:0000400073::", missable=True, targets=('lot:100730')),
         ERLocationData("VM/VM: Letter from Volcano Manor (Rileigh) - on the table in the drawing room after request 1", "Letter from Volcano Manor (Rileigh)", key="160000,0:0000400074::", missable=True, targets=('lot:100740')),
         ERLocationData("VM/VM: Red Letter - on the table in the drawing room after request 2", "Red Letter", key="160000,0:0000400075::", missable=True, targets=('lot:100750')),
@@ -4690,13 +4688,13 @@ location_tables: Dict[str, List[ERLocationData]] = {
         ERLocationData("RSP/RSP: Smithing Stone [3] - on roof to N of camp area", "Smithing Stone [3]", key="392000,0:0039207140::", targets=('lot:39200140')),
         ERLocationData("RSP/RVV: Smithing Stone [3] - up to cave before elevator", "Smithing Stone [3]", key="392000,0:0039207150::", targets=('lot:39200150')),
         ERLocationData("RSP/RVV: Lightning Grease x2 - after first elevator in left side room", "Lightning Grease x2", key="392000,0:0039207160::", targets=('lot:39200160')),
-        ERLocationData("RSP/RSPO: Bull-Goat Helm - invade Tragoth", "Bull-Goat Helm", key="392000,0:0039207500::", targets=('lot:39200500')),
-        ERLocationData("RSP/RSPO: Bull-Goat Armor - invade Tragoth", "Bull-Goat Armor", key="392000,0:0039207500::", targets=('lot:39200501')),
-        ERLocationData("RSP/RSPO: Bull-Goat Gauntlets - invade Tragoth", "Bull-Goat Gauntlets", key="392000,0:0039207500::", targets=('lot:39200502')),
-        ERLocationData("RSP/RSPO: Bull-Goat Greaves - invade Tragoth", "Bull-Goat Greaves", key="392000,0:0039207500::", targets=('lot:39200503')),
-        ERLocationData("RSP/RSP: Golden Rune [6] - enemy drop on SW plaform of triangle roof", "Golden Rune [6]", key="392000,0:0039207970::", targets=('lot:420126020')),
+        ERLocationData("RSP/RSPO: Bull-Goat Helm - invade Tragoth", "Bull-Goat Helm", key="392000,0:0039207500::", missable=True, targets=('lot:39200500')),
+        ERLocationData("RSP/RSPO: Bull-Goat Armor - invade Tragoth", "Bull-Goat Armor", key="392000,0:0039207500::", missable=True, targets=('lot:39200501')),
+        ERLocationData("RSP/RSPO: Bull-Goat Gauntlets - invade Tragoth", "Bull-Goat Gauntlets", key="392000,0:0039207500::", missable=True, targets=('lot:39200502')),
+        ERLocationData("RSP/RSPO: Bull-Goat Greaves - invade Tragoth", "Bull-Goat Greaves", key="392000,0:0039207500::", missable=True, targets=('lot:39200503')),
+        ERLocationData("RSP/RSP: Golden Rune [6] - enemy drop 2 on platform in camp area", "Golden Rune [6]", key="392000,0:0039207970::", targets=('lot:420126020')),
         ERLocationData("RSP/RSP: Golden Rune [6] - enemy drop 1 on platform in camp area", "Golden Rune [6]", key="392000,0:0039207980::", targets=('lot:420126010')),
-        ERLocationData("RSP/RSP: Golden Rune [6] - enemy drop 2 on platform in camp area", "Golden Rune [6]", key="392000,0:0039207990::", targets=('lot:420126000')),
+        ERLocationData("RSP/RSP: Golden Rune [6] - enemy drop on SW plaform of triangle roof", "Golden Rune [6]", key="392000,0:0039207990::", targets=('lot:420126000')),
     ],
     
     # MARK: DLC Dungeons

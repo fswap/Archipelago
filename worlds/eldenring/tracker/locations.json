@@ -13419,7 +13419,7 @@
         "name": "RSP/RSP: Smithing Stone [3] - in tent in camp area"
       },
       {
-        "name": "RSP/RSP: Golden Rune [6] - enemy drop on SW plaform of triangle roof"
+        "name": "RSP/RSP: Golden Rune [6] - enemy drop 2 on platform in camp area"
       },
       {
         "name": "RSP/RSP: Golden Rune [6] - enemy drop 1 on platform in camp area"
@@ -13473,10 +13473,10 @@
     ]
   },
   {
-    "name": "RSP/RSP: Golden Rune [6] - enemy drop 2 on platform in camp area",
+    "name": "RSP/RSP: Golden Rune [6] - enemy drop on SW plaform of triangle roof",
     "sections": [
       {
-        "name": "RSP/RSP: Golden Rune [6] - enemy drop 2 on platform in camp area"
+        "name": "RSP/RSP: Golden Rune [6] - enemy drop on SW plaform of triangle roof"
       }
     ],
     "map_locations": [
@@ -23229,7 +23229,7 @@
         "name": "VM/VM: Nomadic Warrior's Cookbook [21] - behind the illusory wall in the right room, all the way around down the dead-end"
       },
       {
-        "name": "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion"
+        "name": "VM/VM: Tonic of Forgetfulness - given by Tanith after you give Rya Serpent's Amnion or in her chair after she leaves"
       },
       {
         "name": "VM/VM: Magma Shot - Tanith reward request 1"
