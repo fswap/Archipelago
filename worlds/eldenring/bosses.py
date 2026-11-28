@@ -856,7 +856,7 @@ base_bosses = [
     ),
     ERBossInfo("Borealis the Freezing Fog (MotG)", ["Mountaintops of the Giants", "Overworld"], 1054560800, 1254560800,
         locations=[
-            "MotG/FR: Dragon Heart - boss drop to SE"
+            "MotG/FL: Dragon Heart - boss drop to SE"
         ]
     ),
     ERBossInfo("Fire Giant (Phase 1) (FP)", [], 1052520801, None, allow_rykard=True, locations=[]),
