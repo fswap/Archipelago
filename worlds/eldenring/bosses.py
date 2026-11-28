@@ -378,7 +378,7 @@ base_bosses = [
         ]
     ),
     # other
-    ERBossInfo("Grafted Scion (CA)", ["Chapel of Anticipation"], 10010800, 10010800,
+    ERBossInfo("Grafted Scion (CA)", ["Liurnia of The Lakes", "Chapel of Anticipation"], 10010800, 10010800,
         locations=[
             "LL/(TFB/CA): Ornamental Straight Sword - boss drop",
             "LL/(TFB/CA): Golden Beast Crest Shield - boss drop"

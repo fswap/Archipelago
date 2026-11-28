@@ -29028,10 +29028,10 @@
     ]
   },
   {
-    "name": "MotG/FR: Golden Seed - seedtree to SW",
+    "name": "MotG/FL: Golden Seed - seedtree to SW",
     "sections": [
       {
-        "name": "MotG/FR: Golden Seed - seedtree to SW"
+        "name": "MotG/FL: Golden Seed - seedtree to SW"
       }
     ],
     "map_locations": [
@@ -29043,10 +29043,10 @@
     ]
   },
   {
-    "name": "MotG/FR: Smithing Stone [7] x3 - breakable statue to S below",
+    "name": "MotG/FL: Smithing Stone [7] x3 - breakable statue to S below",
     "sections": [
       {
-        "name": "MotG/FR: Smithing Stone [7] x3 - breakable statue to S below"
+        "name": "MotG/FL: Smithing Stone [7] x3 - breakable statue to S below"
       }
     ],
     "map_locations": [
@@ -29202,10 +29202,10 @@
     ]
   },
   {
-    "name": "MotG/FR: Ash of War: Seppuku - scarab to E",
+    "name": "MotG/FL: Ash of War: Seppuku - scarab to E",
     "sections": [
       {
-        "name": "MotG/FR: Ash of War: Seppuku - scarab to E"
+        "name": "MotG/FL: Ash of War: Seppuku - scarab to E"
       }
     ],
     "map_locations": [
@@ -29217,10 +29217,10 @@
     ]
   },
   {
-    "name": "MotG/FR: Golden Rune [11] - to E on top of hill",
+    "name": "MotG/FL: Golden Rune [11] - to E on top of hill",
     "sections": [
       {
-        "name": "MotG/FR: Golden Rune [11] - to E on top of hill"
+        "name": "MotG/FL: Golden Rune [11] - to E on top of hill"
       }
     ],
     "map_locations": [
@@ -29265,10 +29265,10 @@
     ]
   },
   {
-    "name": "MotG/FR: Dragon Heart - boss drop to SE",
+    "name": "MotG/FL: Dragon Heart - boss drop to SE",
     "sections": [
       {
-        "name": "MotG/FR: Dragon Heart - boss drop to SE"
+        "name": "MotG/FL: Dragon Heart - boss drop to SE"
       }
     ],
     "map_locations": [
@@ -29607,7 +29607,7 @@
         "name": "FP/FF: Starlight Shards - to NE past seedtree by statue"
       },
       {
-        "name": "FP/FF: Somber Smithing Stone [7] - enemy drop near basin overlooking chain from MotG, follow N path to lower area"
+        "name": "FP/FF: Somber Smithing Stone [7] - enemy drop to NE past seedtree near statue"
       }
     ],
     "map_locations": [
@@ -29619,10 +29619,10 @@
     ]
   },
   {
-    "name": "FP/FF: Somber Smithing Stone [7] - enemy drop to NE past seedtree near statue",
+    "name": "FP/FF: Somber Smithing Stone [7] - enemy drop near basin overlooking chain from MotG, follow N path to lower area",
     "sections": [
       {
-        "name": "FP/FF: Somber Smithing Stone [7] - enemy drop to NE past seedtree near statue"
+        "name": "FP/FF: Somber Smithing Stone [7] - enemy drop near basin overlooking chain from MotG, follow N path to lower area"
       }
     ],
     "map_locations": [
@@ -44610,10 +44610,10 @@
     ]
   },
   {
-    "name": "AW/AW: Shadow Realm Rune [7] - to SE and left up hill, S of WT grace between 2 giant",
+    "name": "AW/AW: Shadow Realm Rune [7] - to SE and left up hill, S of WT grace between 2 giant trees",
     "sections": [
       {
-        "name": "AW/AW: Shadow Realm Rune [7] - to SE and left up hill, S of WT grace between 2 giant"
+        "name": "AW/AW: Shadow Realm Rune [7] - to SE and left up hill, S of WT grace between 2 giant trees"
       }
     ],
     "map_locations": [

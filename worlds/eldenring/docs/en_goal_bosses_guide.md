@@ -668,6 +668,7 @@ This table shows all Boss Groups you can use for your Goal
 <tr><td><strong>Erdtree Avatar (LL/MEW)</strong></td></tr>
 <tr><td><strong>Erdtree Burial Watchdog (LL/CC)</strong></td></tr>
 <tr><td><strong>Glintstone Dragon Smarag (LL)</strong></td></tr>
+<tr><td><strong>Grafted Scion (CA)</strong></td></tr>
 <tr><td><strong>Loretta, Royal Knight (LL)</strong></td></tr>
 <tr><td><strong>Magma Wyrm Makar (RSP)</strong></td></tr>
 <tr><td><strong>Night&#x27;s Cavalry (LL/BC)</strong></td></tr>

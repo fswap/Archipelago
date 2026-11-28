@@ -700,7 +700,7 @@ Links | [Base Game Region Acronyms](#base-game-1) | [DLC Region Acronyms](#dlc-1
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/ASVR</strong></td><td> </td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/CSMG</strong></td><td> </td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/FCM</strong></td><td> </td></tr>
-<tr style="height:45px"><td style="text-align: center"><strong>MotG/FR</strong></td><td> </td></tr>
+<tr style="height:45px"><td style="text-align: center"><strong>MotG/FL</strong></td><td> </td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/GG</strong></td><td> </td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/HR</strong></td><td> </td></tr>
 <tr style="height:45px"><td style="text-align: center"><strong>MotG/LCE</strong></td><td> </td></tr>

@@ -127,7 +127,7 @@ class _LocationStatus(Enum):
 # Main World
 class EldenRing(World):
     """ 
-    Elden Ring Archipeligo.
+    Elden Ring Archipelago.
     """ # description
 
     game = "EldenRing"
@@ -195,6 +195,7 @@ class EldenRing(World):
     all_starting_items: list[int] = []
     starting_inventory: list[str] = [] # start inv from options
     goal_bosses: list[ERBossInfo] = []
+    boss_scaling: Dict[int, int] = {}
     dupe_location_dictionary: Dict[str, ERLocationData] = {}
     dupe_location_tables: Dict[str, list[ERLocationData]] = {}
     prio_in_region: Dict[str, list[str]] = {}
@@ -237,6 +238,7 @@ class EldenRing(World):
         self.all_starting_items = []
         self.starting_inventory = []
         self.goal_bosses = []
+        self.boss_scaling = {}
         self.dupe_location_dictionary = {}
         self.dupe_location_tables = {}
         self.ignored_marker_entrance_rules: Set[str] = set()
@@ -312,6 +314,7 @@ class EldenRing(World):
         self.base_enabled = not (self.dlc_enabled and self.options.dlc_start)
         if not self.dlc_enabled or not self.base_enabled:
             self.options.separate_progression.value = False
+            self.options.final_boss_order.value = 0
         
         self.created_regions = set()
         self.all_excluded_locations.update(self.options.exclude_locations.value)
@@ -3219,6 +3222,12 @@ class EldenRing(World):
         if self.invis_assassin_location and self.invis_assassin_location != default_invis_assassin_location:
             text += f"\nInvisible Assassin takes the place of {self.invis_assassin_location.name} in {self.player_name}'s world.\n"
 
+        if self.options.ap_sphere_scaling:
+            text += "\nNew Boss Scaling:"
+            for boss in sorted(all_bosses, key=lambda boss: (self.boss_scaling[boss.flag] if boss.flag in self.boss_scaling.keys() else 999) + (50 if boss.dlc else 0)):
+                if boss.flag in self.boss_scaling:
+                    text += f"\n{boss.name}, {self.boss_scaling[boss.flag]}"
+
         # if self.options.excluded_location_behavior == "forbid_useful":
         #     text += f"\nExcluded locations: {sorted(self.all_excluded_locations)}\n"
 
@@ -3254,6 +3263,108 @@ class EldenRing(World):
                 else _LocationStatus.UNRANDOMIZED_UNMISSABLE
             )
 
+    def _calculate_boss_scaling(self): # MARK: Boss scaling
+        """Currently scales bosses to a minimum of vanilla-10% to a maximum of vanilla +4 base or +2 DLC."""
+        @dataclass
+        class region_sphere:
+            region_name: str = ""
+            vanilla_tier: int = 0
+            max_tier: int = 0
+            
+        region_table = [
+            region_sphere("Limgrave", 2, 2),
+            region_sphere("Siofra River", 2, 6),
+            region_sphere("Weeping Peninsula", 3, 7),
+            region_sphere("Stormveil Castle", 4, 8),
+            region_sphere("Ainsel River", 6, 10),
+            region_sphere("Liurnia of The Lakes", 7, 9),
+            region_sphere("Raya Lucaria Academy", 7, 11),
+            region_sphere("Caelid", 8, 12),
+            region_sphere("Altus Plateau", 9, 13),
+            region_sphere("Mt. Gelmir", 10, 14),
+            region_sphere("Capital Outskirts", 10, 14),
+            region_sphere("Nokron, Eternal City", 10, 14),
+            region_sphere("Leyndell, Royal Capital", 11, 15),
+            region_sphere("Forbidden Lands", 11, 15),
+            region_sphere("Volcano Manor", 12, 16),
+            region_sphere("Deeproot Depths", 12, 16),
+            region_sphere("Lake of Rot", 12, 16),
+            region_sphere("Mountaintops of the Giants", 13, 17),
+            region_sphere("Moonlight Altar", 14, 18),
+            region_sphere("Subterranean Shunning-Grounds", 14, 18),
+            region_sphere("Farum Azula", 15, 19),
+            region_sphere("Dragonbarrow", 16, 20),
+            region_sphere("Leyndell, Ashen Capital", 16, 20),
+            region_sphere("Consecrated Snowfield", 17, 21),
+            region_sphere("Mohgwyn Palace", 18, 21),
+            region_sphere("Miquella's Haligtree", 19, 21),
+            region_sphere("Final", 17, 21),
+            
+            region_sphere("Gravesite Plain", 1, 3),
+            region_sphere("Belurat", 2, 5),
+            region_sphere("Ellac River", 3, 5),
+            region_sphere("Castle Ensis", 4, 6),
+            region_sphere("Cerulean Coast", 4, 6),
+            region_sphere("Scadu Altus", 5, 7),
+            region_sphere("Rauh Base", 6, 8),
+            region_sphere("Charo's Hidden Grave", 6, 8),
+            region_sphere("Jagged Peak", 7, 9),
+            region_sphere("Shadow Keep", 7, 9),
+            region_sphere("Stone Coffin Fissure", 7, 9),
+            region_sphere("Recluses' River", 9, 11),
+            region_sphere("Ancient Ruins of Rauh", 10, 12),
+            region_sphere("Midra's Manse", 11, 13),
+            region_sphere("Hinterland", 11, 13),
+            region_sphere("Finger Ruins", 12, 14),
+            region_sphere("DLC Final", 13, 14),
+        ]
+        
+        boss_override = [ # WIP, didnt check if all base game bosses should be scaled dif
+            region_sphere("Solder of Godrick", 1, 1),
+            region_sphere("Ulcerated Tree Spirit (LG/FHG)", 5, 9),
+            region_sphere("Starscourge Radahn (CL)", 11, 16),
+            region_sphere("Malenia, Blade of Miquella (EBH)", 21, 21),
+            
+            region_sphere("Scadutree Avatar (SB)", 8, 10),
+            region_sphere("Base Serpent Messmer (SK)", 9, 11),
+            region_sphere("Commander Gaius (ScV)", 10, 12),
+            region_sphere("Ancient Dragon Senessax (JP)", 11, 13),
+            region_sphere("Bayle the Dread (JP)", 12, 14),
+        ]
+        
+        base_minimum_sphere = 1
+        dlc_minimum_sphere = 1
+        # sort region table by ap spheres
+        for sphere in sorted(region_table, key=lambda s, alb=all_bosses: min(self.boss_scaling[boss.flag] for boss in alb if s.region_name in boss.type and boss.flag in self.boss_scaling)):
+            if self.base_enabled:
+                base_found = False
+                for boss in base_bosses:
+                    if sphere.region_name in boss.type:
+                        base_found = True
+                        if boss.name in [b.region_name for b in boss_override]:
+                            for boss_region in boss_override: 
+                                if boss_region.region_name == boss.name:
+                                    self.boss_scaling[boss.flag] = max(boss_region.vanilla_tier, min(boss_region.max_tier - round(sphere.vanilla_tier/10), base_minimum_sphere))
+                        elif boss.flag in self.boss_scaling: self.boss_scaling[boss.flag] = max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, base_minimum_sphere))
+                        else: self.boss_scaling.update({boss.flag: max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, base_minimum_sphere))})
+                if base_found:
+                    print(f"{sphere.region_name}, Vanilla: {sphere.vanilla_tier}, Calculated: {max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, base_minimum_sphere))}")
+                    base_minimum_sphere += 1
+            if self.dlc_enabled:
+                dlc_found = False
+                for boss in dlc_bosses:
+                    if sphere.region_name in boss.type:
+                        dlc_found = True
+                        if boss.name in [b.region_name for b in boss_override]:
+                            for boss_region in boss_override: 
+                                if boss_region.region_name == boss.name:
+                                    self.boss_scaling[boss.flag] = max(boss_region.vanilla_tier - round(sphere.vanilla_tier/10), min(boss_region.max_tier, dlc_minimum_sphere))
+                        elif boss.flag in self.boss_scaling: self.boss_scaling[boss.flag] = max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, dlc_minimum_sphere))
+                        else: self.boss_scaling.update({boss.flag: max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, dlc_minimum_sphere))})
+                if dlc_found:
+                    print(f"{sphere.region_name}, Vanilla: {sphere.vanilla_tier}, Calculated: {max(sphere.vanilla_tier - round(sphere.vanilla_tier/10), min(sphere.max_tier, dlc_minimum_sphere))}")
+                    dlc_minimum_sphere += 1
+
     @classmethod
     def stage_post_fill(cls, multiworld: MultiWorld):
         """If item smoothing is enabled, rearrange items so they scale up smoothly through the run.
@@ -3264,6 +3375,17 @@ class EldenRing(World):
         items, later spheres get higher-level ones. Within a sphere, items in ER are distributed in
         region order, and then the best items in a sphere go into the multiworld.
         """
+        # find boss spheres
+        er_worlds = [world for world in cast(List[EldenRing], multiworld.get_game_worlds(cls.game)) if world.options.ap_sphere_scaling]
+        if er_worlds:
+            for sphere_number, sphere in enumerate(multiworld.get_spheres(), start=1):
+                for loc in sorted(sphere):
+                    if loc.name in all_boss_locations_dictionary:
+                        for er in er_worlds:
+                            if loc.player == er.player:
+                                er.boss_scaling.update({all_boss_locations_dictionary[loc.name].flag: sphere_number})
+                                break
+        
         er_worlds = [world for world in cast(List[EldenRing], multiworld.get_game_worlds(cls.game)) if
                       world.options.smooth_upgrade_items
                       or world.options.smooth_rune_items]
@@ -3482,7 +3604,10 @@ class EldenRing(World):
                         else:
                             dungeon_sweep_flag_to_locations.append(sweep_flags(flag, locations))
                         break
-
+        
+        if self.options.ap_sphere_scaling:
+            self._calculate_boss_scaling()
+            
         slot_data = {
             "options": {
                 "final_boss_order": self.options.final_boss_order.value,
@@ -3582,6 +3707,7 @@ class EldenRing(World):
                 if shard_list[shard] in self.options.key_item_shards.value and self.options.key_item_shards.value[shard_list[shard]]['Max'] > 1
             },
             "forceBosses": force_bosses,
+            "forceScaling": self.boss_scaling,
             "apIdsToItemIds": ap_ids_to_er_ids,
             "itemCounts": item_counts,
             "locationIdsToKeys": location_ids_to_keys,

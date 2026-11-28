@@ -155,8 +155,8 @@ class EnableDLC(DefaultOnToggle):
     display_name = "Enable DLC"
 
 class AddDLCItems(Toggle):
-    """Adds DLC items into the itempool but excludes all DLC locations, **forces DLC on**.
-    \nThis also allows DLC bosses to appear in base game."""
+    """Adds DLC items into the itempool but excludes all DLC locations and goals, also blocks off entrance to DLC, **forces DLC on**.
+    \nThis also allows DLC bosses to appear in base game only runs."""
     display_name = "Add DLC Items"
 
 class SeparateProgression(Toggle):
@@ -288,7 +288,7 @@ class RykardEncounter(DefaultOnToggle):
     If off Serpent-Hunter will be randomized and be required for whatever Rykard/Serpent blocks."""
     display_name = "Rykard Encounter"
     
-class BossScalingPercent(Range): # unsupported, till after first release
+class BossScalingPercent(Range): # unsupported
     """Scales HP and damage for enemies placed into boss slots.
 
     100 keeps the current static randomizer scaling. 90 means 90% of the boss
@@ -298,6 +298,14 @@ class BossScalingPercent(Range): # unsupported, till after first release
     range_start = 25
     range_end = 200
     default = 100
+    visibility = Visibility.none
+
+class APSphereScaling(Toggle): # unsupported, note to edit the example if it changes
+    """Scale bosses by AP spheres, tries to stay close to vanilla scaling.
+    Example: if weeping is unlocked very late into the run it'll be scaled to tier 7 instead of the vanilla tier 3
+    
+    Vanilla region scaling if disabled."""
+    display_name = "AP Sphere Scaling"
     visibility = Visibility.none
 
 class DisableGargoylePoisonCloudDamage(Toggle):
@@ -316,7 +324,7 @@ class NightBosses(Choice):
     # option_require_item = 2
     default = 1
 
-class DungeonSweep(Toggle): # unsupported, till after first release
+class DungeonSweep(Toggle): # unsupported
     """After killing the boss of a mini dungeon collect all remaining items within that dungeon automatically."""
     display_name = "Dungeon Sweep"
     visibility = Visibility.none
@@ -367,7 +375,7 @@ class MaterialRando(DefaultOnToggle):
     """Randomizes the indefinitely spawning materials among themselves."""
     display_name = "Material Randomizer"
 
-class DeathLinkAmnesty(Range): # unsupported, till after first release
+class DeathLinkAmnesty(Range): # unsupported
     """How many deaths before you send a deathlink to the multiworld."""
     display_name = "DeathLink Amnesty"
     range_start = 1
@@ -820,6 +828,7 @@ class EROptions(PerGameCommonOptions):
     restrictive_bosses: RestrictiveBossPlacement
     rykard_encounter: RykardEncounter
     boss_scaling_percent: BossScalingPercent
+    ap_sphere_scaling: APSphereScaling
     disable_gargoyle_poison_cloud_damage: DisableGargoylePoisonCloudDamage
     night_bosses: NightBosses
     dungeon_sweep: DungeonSweep
@@ -897,6 +906,7 @@ option_groups = [
         RestrictiveBossPlacement,
         RykardEncounter,
         BossScalingPercent,
+        APSphereScaling,
         DisableGargoylePoisonCloudDamage,
         NightBosses,
         DungeonSweep,
